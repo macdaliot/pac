@@ -1,21 +1,21 @@
 package cmd
 
 import (
-	"fmt"
-	"github.com/PyramidSystemsInc/go/errors"
-	"github.com/PyramidSystemsInc/go/logger"
-	"github.com/spf13/cobra"
+  "fmt"
+  "github.com/PyramidSystemsInc/go/errors"
+  "github.com/PyramidSystemsInc/go/logger"
+  "github.com/spf13/cobra"
 )
 
 var addCmd = &cobra.Command{
-	Use:   "add",
-	Short: "Add to an existing project",
-	Long: `Generate skeleton code for a new front-end page or back-end service`,
-	Run: func(cmd *cobra.Command, args []string) {
+  Use:   "add",
+  Short: "Add to an existing project",
+  Long: `Generate skeleton code for a new front-end page or back-end service`,
+  Run: func(cmd *cobra.Command, args []string) {
     logger.SetLogLevel("info")
     addType := validateTypeArgument(args)
     add(cmd, addType)
-	},
+  },
 }
 
 var name string
@@ -29,7 +29,7 @@ var putMethod bool
 var deleteMethod bool
 
 func init() {
-	RootCmd.AddCommand(addCmd)
+  RootCmd.AddCommand(addCmd)
   addCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "name of the new page/service (required)")
   addCmd.PersistentFlags().StringVar(&color, "color", "#4285f4", "either hex code or CSS color for a new page (only for 'page' type)")
   addCmd.PersistentFlags().StringVar(&icon, "icon", "build", "either FontAwesome class or Material icon name for a new page (only for 'page' type)")
