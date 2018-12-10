@@ -17,3 +17,5 @@ The Pyramid App Constructor (PAC) is a toolkit to help jumpstart the application
 2. `go get -u github.com/PyramidSystemsInc/go/...` installs Pyramid's Golang helper functions
 
 3. `go install github.com/PyramidSystemsInc/pac` installs pac CLI
+
+4. Start by trying `pac create --help`
