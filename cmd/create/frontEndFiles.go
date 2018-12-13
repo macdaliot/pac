@@ -2,6 +2,7 @@ package create
 
 import (
   "github.com/PyramidSystemsInc/pac/cmd/create/frontEndFiles"
+  "github.com/PyramidSystemsInc/go/logger"
 )
 
 func FrontEndFiles(projectDirectory string, projectName string, description string) {
@@ -23,6 +24,7 @@ func FrontEndFiles(projectDirectory string, projectName string, description stri
   frontEndFiles.CreateSidebarButtonStyles(projectDirectory + "/app/src/components/Sidebar/parts/Button/button.scss")
   frontEndFiles.CreateNotFoundPageComponent(projectDirectory + "/app/src/components/pages/NotFound/NotFound.js")
   frontEndFiles.CreateNotFoundPageStyles(projectDirectory + "/app/src/components/pages/NotFound/not-found.scss")
+  logger.Info("Created ReactJS front-end")
 }
 
 func createConfig(projectName string, description string) map[string]string {

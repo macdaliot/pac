@@ -2,6 +2,7 @@ package cmd
 
 import (
   "fmt"
+  "github.com/PyramidSystemsInc/pac/cmd/add"
   "github.com/PyramidSystemsInc/go/errors"
   "github.com/PyramidSystemsInc/go/logger"
   "github.com/spf13/cobra"
@@ -14,19 +15,9 @@ var addCmd = &cobra.Command{
   Run: func(cmd *cobra.Command, args []string) {
     logger.SetLogLevel("info")
     addType := validateTypeArgument(args)
-    add(cmd, addType)
+    addFiles(cmd, addType)
   },
 }
-
-var name string
-var color string
-var dividerAfter bool
-var icon string
-var uri string
-var getMethod bool
-var postMethod bool
-var putMethod bool
-var deleteMethod bool
 
 func init() {
   RootCmd.AddCommand(addCmd)
@@ -35,7 +26,7 @@ func init() {
   addCmd.PersistentFlags().StringVar(&icon, "icon", "build", "either FontAwesome class or Material icon name for a new page (only for 'page' type)")
   addCmd.PersistentFlags().BoolVar(&dividerAfter, "dividerAfter", false, "adds a divider after the sidebar button (only for 'page' type)")
   addCmd.PersistentFlags().StringVar(&uri, "uri", "/<page-name>", "URI for a new page (only for 'page' type)")
-  addCmd.PersistentFlags().BoolVar(&getMethod, "get", true, "creates an HTTP GET method stub (only for 'service' type)")
+  addCmd.PersistentFlags().BoolVar(&getMethod, "get", false, "creates an HTTP GET method stub (only for 'service' type)")
   addCmd.PersistentFlags().BoolVar(&postMethod, "post", false, "creates an HTTP POST method stub (only for 'service' type)")
   addCmd.PersistentFlags().BoolVar(&putMethod, "put", false, "creates an HTTP PUT method stub (only for 'service' type)")
   addCmd.PersistentFlags().BoolVar(&deleteMethod, "delete", false, "creates an HTTP DELETE method stub (only for 'service' type)")
@@ -56,11 +47,13 @@ func validateTypeArgument(args []string) string {
   return ""
 }
 
-func add(cmd *cobra.Command, addType string) {
+func addFiles(cmd *cobra.Command, addType string) {
   if addType == "page" {
     addPage(cmd)
   } else if addType == "service" {
     addService(cmd)
+  } else {
+    errors.LogAndQuit("The type was set to an invalid value. The valid types are 'page' and 'service'")
   }
 }
 
@@ -69,5 +62,24 @@ func addPage(cmd *cobra.Command) {
 }
 
 func addService(cmd *cobra.Command) {
-  fmt.Println(cmd.Flags())
+  name := getName(cmd)
+  add.Service(name)
 }
+
+var name string
+
+func getName(cmd *cobra.Command) string {
+  name, err := cmd.Flags().GetString("name")
+  errors.QuitIfError(err)
+  return name
+}
+
+var color string
+var dividerAfter bool
+var icon string
+var uri string
+var getMethod bool
+var postMethod bool
+var putMethod bool
+var deleteMethod bool
+
