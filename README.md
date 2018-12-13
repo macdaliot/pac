@@ -8,7 +8,17 @@
 The Pyramid App Constructor (PAC) is a toolkit to help jumpstart the application development process, specifically designed for compressed time-duration events like hackathons and tech challenges. PAC will generate scaffolding composed of reusable components, templates, and pipelines to help accelerate development velocity, while ensuring security and quality discipline, to achieve acceptable software hygiene. PAC is an evolving toolkit, and currently supports the MERN stack (MongoDB, Express, React, Node). It leverages Jenkins for pipelines, Auth0 for authentication, AWS as the cloud platform, and is supported by relevant open source libraries
 
 
-#### Installing (Temporary Instructions)
+#### Installation Instructions
+
+1. `wget https://s3.us-east-2.amazonaws.com/pac-cli/pac`
+
+2. `chmod 755 pac`
+
+3. Ensure the `pac` binary is in your `$PATH`
+
+4. Start by trying `pac create --help`
+
+#### Cloning For Development (Temporary Instructions)
 
 1. [Install Go](https://golang.org/doc/install)
 
