@@ -10,7 +10,7 @@ const express: any = require('express');
 const bodyParser: any = require('body-parser');
 const uuidv4: any = require('uuid/v4');
 const port: number = 3000;
-const serviceName: string = '{{.serviceName}}';
+const serviceName: string = 'users';
 
 const app: any = express();
 app.use(bodyParser.json());
@@ -21,17 +21,9 @@ AWS.config.update({
 });
 const dynamo: any = new AWS.DynamoDB();
 
-app.get('/api/{{.serviceName}}', function(request, response) {
-  let params: any = {
-    ExpressionAttributeValues: {
-      ":a": {
-        S: "Person"
-      }
-    },
-    FilterExpression: "Artist = :a",
-    TableName: "pac-{{.serviceName}}-dev"
-  };
-  dynamo.scan(params, function(err, data) {
+app.get('/api/users/:id', function(request, response) {
+  let whereClause: any = buildGetByIdParams(request.params.id);
+  dynamo.scan(whereClause, function(err, data) {
     if (!err) {
       response.send(data);
     } else {
@@ -41,24 +33,36 @@ app.get('/api/{{.serviceName}}', function(request, response) {
   });
 });
 
-app.post('/api/{{.serviceName}}', function(request, response) {
+app.get('/api/users', function(request, response) {
+  let whereClause: any = buildQueryStringParams(request.query);
+  dynamo.scan(whereClause, function(err, data) {
+    if (!err) {
+      response.send(data);
+    } else {
+      response.send("ERROR. See console");
+      console.error(err);
+    }
+  });
+});
+
+app.get('/post/users', function(request, response) {
   let params: any = {
     "RequestItems": {
-      "pac-{{.serviceName}}-dev": [
+      "pac-users-dev": [
         {
           "PutRequest": {
             "Item": {
               "id": {
                 "S": uuidv4()
               },
-              "AlbumTitle": {
-                "S": "Something Cool"
+              "UserName": {
+                "S": "bobby"
               },
-              "Artist": {
-                "S": "Person"
+              "FirstName": {
+                "S": "Robert"
               },
-              "SongTitle": {
-                "S": "14th Symphony in D-Minor"
+              "LastName": {
+                "S": "Jones"
               }
             }
           }
@@ -75,6 +79,40 @@ app.post('/api/{{.serviceName}}', function(request, response) {
     }
   });
 });
+
+let buildQueryStringParams = function(query) {
+  let params: any = {
+    TableName: 'pac-users-dev'
+  };
+  let queryKeys: any = Object.keys(query);
+  if (queryKeys.length > 0) {
+    params.ExpressionAttributeValues = {};
+    params.FilterExpression = "";
+    queryKeys.forEach(function(key, i) {
+      params.ExpressionAttributeValues[":" + key] = {
+        S: query[key]
+      };
+      if (i != 0) {
+        params.FilterExpression += " and ";
+      }
+      let keyUpperCase: string = key.charAt(0).toUpperCase() + key.slice(1);
+      params.FilterExpression += keyUpperCase + " = :" + key;
+    });
+  }
+  return params;
+};
+
+let buildGetByIdParams = function(id) {
+  let params: any = {
+    ExpressionAttributeValues: {},
+    FilterExpression: 'id = :id',
+    TableName: 'pac-users-dev'
+  };
+  params.ExpressionAttributeValues[":id"] = {
+    S: id
+  };
+  return params;
+};
 
 app.listen(port);
 `
