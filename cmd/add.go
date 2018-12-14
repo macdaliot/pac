@@ -82,4 +82,3 @@ var getMethod bool
 var postMethod bool
 var putMethod bool
 var deleteMethod bool
-

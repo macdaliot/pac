@@ -5,7 +5,7 @@ import (
   "github.com/PyramidSystemsInc/go/logger"
 )
 
-func DynamoDb(projectName string) {
-  commands.Run("docker run --name pac-" + projectName + "-db-local -p 8000:8000 -d amazon/dynamodb-local -jar DynamoDBLocal.jar -sharedDb", "")
+func DynamoDb() {
+  commands.Run("docker run --name pac-db-local -d -p 8000:8000 amazon/dynamodb-local -jar DynamoDBLocal.jar -sharedDb", "")
   logger.Info("Started local DynamoDB running in Docker")
 }
