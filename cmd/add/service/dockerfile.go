@@ -12,7 +12,7 @@ WORKDIR "/app"
 COPY . /app/
 RUN cd /app
 
-EXPOSE 3000 8000
+EXPOSE 3000
 CMD ["npm", "start"]
 `
 	files.CreateFromTemplate(filePath, template, nil)
