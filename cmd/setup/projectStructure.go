@@ -1,4 +1,4 @@
-package create
+package setup
 
 import (
   "github.com/PyramidSystemsInc/go/directories"
@@ -45,8 +45,8 @@ func createReadmeMd(projectDirectory string, config map[string]string) {
 
 To get started, try running:
 
-* pac create page --name <page-name> from /app -OR-
-* pac create service --name <service-name> from /svc
+* pac add page --name <page-name> from /app -OR-
+* pac add service --name <service-name> from /svc
 
 {{.description}}
 `

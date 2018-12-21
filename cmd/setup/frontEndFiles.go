@@ -1,7 +1,7 @@
-package create
+package setup
 
 import (
-  "github.com/PyramidSystemsInc/pac/cmd/create/frontEndFiles"
+  "github.com/PyramidSystemsInc/pac/cmd/setup/frontEndFiles"
   "github.com/PyramidSystemsInc/go/logger"
 )
 

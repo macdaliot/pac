@@ -1,4 +1,4 @@
-package create
+package setup
 
 import (
   "github.com/PyramidSystemsInc/go/commands"

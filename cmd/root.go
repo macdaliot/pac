@@ -18,9 +18,9 @@ time-duration events like hackathons and tech challenges. PAC will generate
 scaffolding composed of reusable components, templates, and pipelines to help
 accelerate development velocity, while ensuring security and quality discipline,
 to achieve acceptable software hygiene. PAC is an evolving toolkit, and
-currently supports the MERN stack (MongoDB, Express, React, Node). It leverages
-Jenkins for pipelines, Auth0 for authentication, AWS as the cloud platform, and
-is supported by relevant open source libraries`,
+currently supports a slightly adjusted MERN stack (DynamoDB, Express, React,
+Node). It leverages Jenkins for pipelines, Auth0 for authentication, AWS as the
+cloud platform, and is supported by relevant open source libraries`,
 }
 
 func Execute() {

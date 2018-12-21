@@ -1,7 +1,7 @@
 package cmd
 
 import (
-  "github.com/PyramidSystemsInc/pac/cmd/create"
+  "github.com/PyramidSystemsInc/pac/cmd/setup"
   "github.com/PyramidSystemsInc/go/errors"
   "github.com/PyramidSystemsInc/go/logger"
   "github.com/spf13/cobra"
@@ -9,9 +9,9 @@ import (
 
 var projectDirectory string
 
-var createCmd = &cobra.Command{
-  Use:   "create",
-  Short: "Create a new project",
+var setupCmd = &cobra.Command{
+  Use:   "setup",
+  Short: "Setup a new project",
   Long: `Generate a new project with PAC (The default stack is a ReactJS front-end,
 NodeJS/Express back-end, and DynamoDB database)`,
   Run: func(cmd *cobra.Command, args []string) {
@@ -22,32 +22,32 @@ NodeJS/Express back-end, and DynamoDB database)`,
     description := getDescription(cmd)
     gitUser := getGitUser(cmd)
     gitPass := getGitPass(cmd)
-    projectDirectory := create.ProjectStructure(projectName, description)
-    create.Jenkins(projectName)
-    create.FrontEndFiles(projectDirectory, projectName, description)
-    create.DynamoDb()
-    create.GitRepository(projectName, gitUser, gitPass, projectDirectory)
+    projectDirectory := setup.ProjectStructure(projectName, description)
+    setup.Jenkins(projectName)
+    setup.FrontEndFiles(projectDirectory, projectName, description)
+    setup.DynamoDb()
+    setup.GitRepository(projectName, gitUser, gitPass, projectDirectory)
   },
 }
 
 func init() {
-  RootCmd.AddCommand(createCmd)
-  createCmd.PersistentFlags().StringVarP(&projectName, "name", "n", "", "project name (required)")
-  createCmd.MarkFlagRequired("name")
-  createCmd.PersistentFlags().StringVar(&description, "description", "Project created by PAC", "short description of the project")
-  createCmd.PersistentFlags().StringVar(&path, "path", ".", "location where to create the project (Note: PAC creates the project's folder)")
-  createCmd.PersistentFlags().StringVarP(&frontEnd, "front", "f", "ReactJS", "front-end framework/library")
-  createCmd.PersistentFlags().StringVarP(&backEnd, "back", "b", "Express", "back-end framework/library")
-  createCmd.PersistentFlags().StringVarP(&database, "database", "d", "DynamoDB", "database type")
-  createCmd.PersistentFlags().StringVar(&gitUser, "gitUser", "", "GitHub user name (must be used with --gitPass)")
-  createCmd.PersistentFlags().StringVar(&gitPass, "gitPass", "", "GitHub password (must be used with --gitUser)")
-  //createCmd.PersistentFlags().StringVarP(&pages, "pages", "p", "", "pages to be created on the front-end")
-  //createCmd.PersistentFlags().StringVarP(&services, "services", "s", "", "services to be created on the back-end")
+  RootCmd.AddCommand(setupCmd)
+  setupCmd.PersistentFlags().StringVarP(&projectName, "name", "n", "", "project name (required)")
+  setupCmd.MarkFlagRequired("name")
+  setupCmd.PersistentFlags().StringVar(&description, "description", "Project created by PAC", "short description of the project")
+  setupCmd.PersistentFlags().StringVar(&path, "path", ".", "location where the project is generated (Note: PAC creates the project's folder)")
+  setupCmd.PersistentFlags().StringVarP(&frontEnd, "front", "f", "ReactJS", "front-end framework/library")
+  setupCmd.PersistentFlags().StringVarP(&backEnd, "back", "b", "Express", "back-end framework/library")
+  setupCmd.PersistentFlags().StringVarP(&database, "database", "d", "DynamoDB", "database type")
+  setupCmd.PersistentFlags().StringVar(&gitUser, "gitUser", "", "GitHub user name (must be used with --gitPass)")
+  setupCmd.PersistentFlags().StringVar(&gitPass, "gitPass", "", "GitHub password (must be used with --gitUser)")
+  //setupCmd.PersistentFlags().StringVarP(&pages, "pages", "p", "", "pages to be created on the front-end")
+  //setupCmd.PersistentFlags().StringVarP(&services, "services", "s", "", "services to be created on the back-end")
 }
 
 func warnArgumentsAreIgnored(args []string) {
   if len(args) > 0 {
-    logger.Warn("Arguments were provided, but all arguments after 'create' and before the flags are ignored")
+    logger.Warn("Arguments were provided, but all arguments after 'setup' and before the flags are ignored")
   }
 }
 

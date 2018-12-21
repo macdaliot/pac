@@ -1,13 +1,13 @@
-package create
+package setup
 
 import (
-  "github.com/PyramidSystemsInc/go/commands"
-  "github.com/PyramidSystemsInc/go/errors"
-  "github.com/PyramidSystemsInc/go/logger"
   "bytes"
   "encoding/base64"
   "encoding/json"
   "net/http"
+  "github.com/PyramidSystemsInc/go/commands"
+  "github.com/PyramidSystemsInc/go/errors"
+  "github.com/PyramidSystemsInc/go/logger"
 )
 
 type CreateRepoRequest struct {
