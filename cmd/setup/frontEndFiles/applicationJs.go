@@ -13,7 +13,6 @@ import { hot } from 'react-hot-loader';
 import routes from './routes/routes';
 import Header from './components/Header/Header';
 import Sidebar from './components/Sidebar/Sidebar';
-import '@jeff.diederiks/pyramid-react/styles.css';
 import './scss/main.scss';
 
 class Application extends React.Component {

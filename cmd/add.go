@@ -14,7 +14,7 @@ var addCmd = &cobra.Command{
   Long: `Generate skeleton code for a new front-end page or back-end service`,
   Run: func(cmd *cobra.Command, args []string) {
     logger.SetLogLevel("info")
-    addType := validateTypeArgument(args)
+    addType := validateAddTypeArgument(args)
     addFiles(cmd, addType)
   },
 }
@@ -32,7 +32,7 @@ func init() {
   addCmd.PersistentFlags().BoolVar(&deleteMethod, "delete", false, "creates an HTTP DELETE method stub (only for 'service' type)")
 }
 
-func validateTypeArgument(args []string) string {
+func validateAddTypeArgument(args []string) string {
   if len(args) == 1 {
     if args[0] == "page" || args[0] == "service" {
       return args[0]

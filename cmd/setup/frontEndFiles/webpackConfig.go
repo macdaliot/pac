@@ -59,10 +59,6 @@ module.exports = {
       from: 'src/index.html',
       to: path.join(__dirname, 'dist')
     }]),
-    new CopyWebpackPlugin([{
-      from: 'src/assets/',
-      to: path.join(__dirname, 'dist')
-    }]),
     new ExtractTextPlugin('styles.css')
   ]
 };

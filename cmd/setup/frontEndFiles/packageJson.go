@@ -20,7 +20,6 @@ func CreatePackageJson(filePath string, config map[string]string) {
     "@babel/core": "^7.2.0",
     "@babel/plugin-transform-runtime": "^7.2.0",
     "@babel/runtime": "^7.2.0",
-    "@jeff.diederiks/pyramid-react": "0.0.28",
     "autoprefixer": "^9.4.2",
     "aws-sdk": "^2.373.0",
     "axios": "^0.18.0",

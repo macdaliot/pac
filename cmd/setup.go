@@ -22,7 +22,7 @@ NodeJS/Express back-end, and DynamoDB database)`,
     description := getDescription(cmd)
     gitUser := getGitUser(cmd)
     gitPass := getGitPass(cmd)
-    projectDirectory := setup.ProjectStructure(projectName, description)
+    projectDirectory := setup.ProjectStructure(projectName, description, gitUser, gitPass)
     setup.Jenkins(projectName)
     setup.FrontEndFiles(projectDirectory, projectName, description)
     setup.DynamoDb()
