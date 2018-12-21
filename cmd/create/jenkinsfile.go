@@ -18,7 +18,6 @@ func Jenkinsfile(pipelineName string) {
     stage('Init') {
       steps {
         echo 'Jenkins Pipeline present.'
-        echo
       }
     }
   }
@@ -31,7 +30,6 @@ func Jenkinsfile(pipelineName string) {
     stage('Init') {
       steps {
         echo 'Jenkins Pipeline present.'
-        echo
       }
     }
 /* NPM INSTALL */

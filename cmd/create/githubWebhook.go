@@ -2,7 +2,6 @@ package create
 
 import (
   "io/ioutil"
-  "fmt"
   "bytes"
   "encoding/json"
   "net/http"
@@ -90,7 +89,6 @@ func createWebhookRequestBody(jenkinsUrl string) *bytes.Buffer {
       ContentType: "json",
     },
   })
-  fmt.Println(string(webhookRequest))
   errors.LogIfError(err)
   return bytes.NewBuffer(webhookRequest)
 }
