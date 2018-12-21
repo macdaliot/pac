@@ -21,7 +21,7 @@ var addCmd = &cobra.Command{
 
 func init() {
   RootCmd.AddCommand(addCmd)
-  addCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "name of the new page/service (required)")
+  addCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "name of the new page/service/stage (required)")
   addCmd.PersistentFlags().StringVar(&color, "color", "#4285f4", "either hex code or CSS color for a new page (only for 'page' type)")
   addCmd.PersistentFlags().StringVar(&icon, "icon", "build", "either FontAwesome class or Material icon name for a new page (only for 'page' type)")
   addCmd.PersistentFlags().BoolVar(&dividerAfter, "dividerAfter", false, "adds a divider after the sidebar button (only for 'page' type)")
@@ -34,13 +34,13 @@ func init() {
 
 func validateAddTypeArgument(args []string) string {
   if len(args) == 1 {
-    if args[0] == "page" || args[0] == "service" {
+    if args[0] == "page" || args[0] == "service" || args[0] == "stage" {
       return args[0]
     } else {
-      errors.LogAndQuit("The type was set to an invalid value. The valid types are 'page' and 'service'")
+      errors.LogAndQuit("The type was set to an invalid value. The valid types are 'page', 'service', and 'stage'")
     }
   } else if len(args) == 0 {
-    errors.LogAndQuit("A type must be specifed after the 'add' command. The valid types are 'page' and 'service'")
+    errors.LogAndQuit("A type must be specifed after the 'add' command. The valid types are 'page', 'service', and 'stage'")
   } else if len(args) > 1 {
     errors.LogAndQuit("Only one type may be passed for each 'add' command")
   }
@@ -52,8 +52,10 @@ func addFiles(cmd *cobra.Command, addType string) {
     addPage(cmd)
   } else if addType == "service" {
     addService(cmd)
+  } else if addType == "stage" {
+    addStage(cmd)
   } else {
-    errors.LogAndQuit("The type was set to an invalid value. The valid types are 'page' and 'service'")
+    errors.LogAndQuit("The type was set to an invalid value. The valid types are 'page', 'service', and 'stage'")
   }
 }
 
@@ -64,6 +66,11 @@ func addPage(cmd *cobra.Command) {
 func addService(cmd *cobra.Command) {
   name := getName(cmd)
   add.Service(name)
+}
+
+func addStage(cmd *cobra.Command) {
+  name := getName(cmd)
+  add.Stage(name)
 }
 
 var name string
