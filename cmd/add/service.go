@@ -49,10 +49,12 @@ func createServiceFiles(serviceName string, config map[string]string) {
 func createDynamoDbTable(serviceName string) {
 	workingDirectory := directories.GetWorking()
 	commands.Run("aws dynamodb create-table --cli-input-json file://"+workingDirectory+"/"+serviceName+"/dynamoConfig.json --endpoint-url http://localhost:8000", "")
-	logger.Info("Created " + serviceName + " DynamoDB table")
+	logger.Info("Created " + serviceName + " DynamoDB table locally")
+	commands.Run("aws dynamodb create-table --cli-input-json file://"+workingDirectory+"/"+serviceName+"/dynamoConfig.json --region us-east-2", "")
+	logger.Info("Created " + serviceName + " DynamoDB table in AWS cloud")
 }
 
 func launchMicroservice(serviceName string) {
 	commands.Run("./launch.sh", "./"+serviceName)
-	logger.Info("Launched " + serviceName + " microservice Docker container (available at localhost:3000/api/" + serviceName + ")")
+	logger.Info("Launched " + serviceName + " microservice Docker container locally (available at localhost:3000/api/" + serviceName + ")")
 }
