@@ -16,11 +16,9 @@ const serviceName: string = '{{.serviceName}}';
 const app: any = express();
 app.use(bodyParser.json());
 
-AWS.config.update({
-  region: 'local',
-  endpoint: 'http://pac-db-local:8000'
-});
-const dynamo: any = new AWS.DynamoDB();
+const awsSdkConfig = require('./awsSdkConfig.js');
+AWS.config.update(awsSdkConfig.local);
+const dynamo = new AWS.DynamoDB({ apiVersion: '2012-10-08' });
 
 app.get('/api/{{.serviceName}}/:id', function(request, response) {
   let whereClause: any = buildGetByIdParams(request.params.id);
@@ -47,7 +45,7 @@ app.get('/api/{{.serviceName}}', function(request, response) {
 app.post('/api/{{.serviceName}}', function(request, response) {
   let params: any = {
     "RequestItems": {
-      "pac-{{.serviceName}}-dev": [
+      "pac-{{.serviceName}}": [
         {
           "PutRequest": {
             "Item": {
@@ -80,7 +78,7 @@ app.post('/api/{{.serviceName}}', function(request, response) {
 
 let buildQueryStringParams = function(query) {
   let params: any = {
-    TableName: 'pac-{{.serviceName}}-dev'
+    TableName: 'pac-{{.serviceName}}'
   };
   let queryKeys: any = Object.keys(query);
   if (queryKeys.length > 0) {
@@ -104,7 +102,7 @@ let buildGetByIdParams = function(id) {
   let params: any = {
     ExpressionAttributeValues: {},
     FilterExpression: 'id = :id',
-    TableName: 'pac-{{.serviceName}}-dev'
+    TableName: 'pac-{{.serviceName}}'
   };
   params.ExpressionAttributeValues[":id"] = {
     S: id

@@ -38,11 +38,12 @@ func createServiceDirectory(serviceName string) {
 }
 
 func createServiceFiles(serviceName string, config map[string]string) {
-	service.CreatePackageJSON(serviceName+"/package.json", config)
+	service.CreatePackageJSON(serviceName + "/package.json", config)
 	service.CreateDockerfile(serviceName + "/Dockerfile")
-	service.CreateServerTs(serviceName+"/server.ts", config)
-	service.CreateDynamoConfigJSON(serviceName+"/dynamoConfig.json", config)
-	service.CreateLaunchSh(serviceName+"/launch.sh", config)
+	service.CreateServerTs(serviceName + "/server.ts", config)
+	service.CreateDynamoConfigJSON(serviceName + "/dynamoConfig.json", config)
+	service.CreateAwsSdkConfigJs(serviceName + "/awsSdkConfig.js", config)
+	service.CreateLaunchSh(serviceName + "/launch.sh", config)
 	logger.Info("Created " + serviceName + " Express microservice files")
 }
 
