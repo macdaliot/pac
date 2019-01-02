@@ -26,6 +26,7 @@ NodeJS/Express back-end, and DynamoDB database)`,
     setup.Jenkins(projectName)
     setup.FrontEndFiles(projectDirectory, projectName, description)
     setup.DynamoDb()
+    setup.ElasticLoadBalancer(projectName)
     setup.GitRepository(projectName, gitUser, gitPass, projectDirectory)
   },
 }

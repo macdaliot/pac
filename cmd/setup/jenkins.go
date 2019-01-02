@@ -11,9 +11,12 @@ import (
 )
 
 type PacFile struct {
-  ProjectName  string  `json:"projectName"`
-  GitAuth      string  `json:"gitAuth"`
-  JenkinsUrl   string  `json:"jenkinsUrl"`
+  ProjectName      string  `json:"projectName"`
+  GitAuth          string  `json:"gitAuth"`
+  JenkinsUrl       string  `json:"jenkinsUrl"`
+  LoadBalancerArn  string  `json:"loadBalancerArn"`
+  ListenerArn      string  `json:"listenerArn"`
+  ServiceUrl       string  `json:"serviceUrl"`
 }
 
 func Jenkins(projectName string) {

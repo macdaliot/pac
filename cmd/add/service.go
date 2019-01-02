@@ -51,8 +51,6 @@ func createDynamoDbTable(serviceName string) {
 	workingDirectory := directories.GetWorking()
 	commands.Run("aws dynamodb create-table --cli-input-json file://"+workingDirectory+"/"+serviceName+"/dynamoConfig.json --endpoint-url http://localhost:8000", "")
 	logger.Info("Created " + serviceName + " DynamoDB table locally")
-	commands.Run("aws dynamodb create-table --cli-input-json file://"+workingDirectory+"/"+serviceName+"/dynamoConfig.json --region us-east-2", "")
-	logger.Info("Created " + serviceName + " DynamoDB table in AWS cloud")
 }
 
 func launchMicroservice(serviceName string) {

@@ -37,8 +37,16 @@ func createProjectFiles(projectDirectory string, projectName string, description
   config["projectName"] = projectName
   config["description"] = description
   config["gitBasicAuth"] = base64.StdEncoding.EncodeToString([]byte(gitUser + ":" + gitPass))
+  createGitIgnore(projectDirectory)
   createReadmeMd(projectDirectory, config)
   createPacFile(projectDirectory, config)
+}
+
+func createGitIgnore(projectDirectory string) {
+  const template = `svc/*/node_modules
+svc/*/server.js
+`
+  files.CreateFromTemplate(projectDirectory + "/.gitignore", template, nil)
 }
 
 func createReadmeMd(projectDirectory string, config map[string]string) {
