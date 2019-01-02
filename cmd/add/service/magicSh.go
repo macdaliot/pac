@@ -9,6 +9,7 @@ func CreateMagicSh(filePath string, serviceName string) {
 	const template = `
 #! /bin/bash
 
+ls
 # Perform Setup
 SERVICE_NAME=$(sed -e 's/.*\///g' <<< $(pwd))
 FULL_SERVICE_NAME=pac-"$SERVICE_NAME"
@@ -22,6 +23,7 @@ TARGET_GROUP_ARN=$(aws elbv2 create-target-group --name "$FULL_SERVICE_NAME" --t
 TARGET_GROUP_ARN=$(sed -e 's/^"//g' -e 's/"$//g' <<< $TARGET_GROUP_ARN)
 
 # Create Lambda Function
+npm i
 npx tsc server.ts
 echo $(sed -e 's/awsSdkConfig.local/awsSdkConfig.cloud/g' -e 's/app.listen(port);/module.exports = app;/g' server.js) > server.js
 npx claudia generate-serverless-express-proxy --express-module server >> /dev/null
@@ -43,5 +45,5 @@ aws elbv2 create-rule --region us-east-2 --cli-input-json '{ "ListenerArn": "'"$
 aws dynamodb create-table --cli-input-json file://dynamoConfig.json --region us-east-2 >> /dev/null
 `
 	files.CreateFromTemplate(filePath, template, nil)
-	commands.Run("chmod 755 " + serviceName + "/launch.sh", "")
+	commands.Run("chmod 755 " + serviceName + "/magic.sh", "")
 }

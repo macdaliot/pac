@@ -47,7 +47,7 @@ func createWebhookIfDoesNotExist(pacFile PacFile) {
     defer response.Body.Close()
     logger.Info("Created webhook to Jenkins on GitHub.com")
   } else {
-    logger.Info("Skipping GitHub webhook because it already exists")
+    logger.Info("Skipping GitHub webhook either because it already exists or there is no repository")
   }
 }
 

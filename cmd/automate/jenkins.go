@@ -6,6 +6,7 @@ import (
   "github.com/PyramidSystemsInc/go/commands"
   "github.com/PyramidSystemsInc/go/errors"
   "github.com/PyramidSystemsInc/go/files"
+  "github.com/PyramidSystemsInc/go/logger"
 )
 
 type PacFile struct {
@@ -24,6 +25,7 @@ func Jenkins() {
   createPipelineProvisionerXml(pacFile.ProjectName, jenkinsUrl)
   createPipelineProvisionerJob(jenkinsUrl)
   cleanUp()
+  logger.Info("Jenkins is now configured to create individual pipelines for the front-end and each microservice")
 }
 
 func readPacFile() PacFile {
