@@ -28,6 +28,7 @@ NodeJS/Express back-end, and DynamoDB database)`,
     setup.DynamoDb()
     setup.ElasticLoadBalancer(projectName)
     setup.GitRepository(projectName, gitUser, gitPass, projectDirectory)
+    setup.GitHubWebhook(projectName)
   },
 }
 

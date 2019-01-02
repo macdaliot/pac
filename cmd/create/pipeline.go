@@ -2,6 +2,8 @@ package create
 
 import (
   "encoding/base64"
+  "encoding/json"
+  "io/ioutil"
   "os"
   "strings"
   "github.com/PyramidSystemsInc/go/commands"
@@ -10,6 +12,15 @@ import (
   "github.com/PyramidSystemsInc/go/files"
   "github.com/PyramidSystemsInc/go/logger"
 )
+
+type PacFile struct {
+  ProjectName      string  `json:"projectName"`
+  GitAuth          string  `json:"gitAuth"`
+  JenkinsUrl       string  `json:"jenkinsUrl"`
+  LoadBalancerArn  string  `json:"loadBalancerArn"`
+  ListenerArn      string  `json:"listenerArn"`
+  ServiceUrl       string  `json:"serviceUrl"`
+}
 
 func Pipeline(pipelineName string, branches string, description string) {
   // TODO: Allow multiple branches
@@ -139,3 +150,14 @@ func cleanUp() {
   }
   commands.Run("rm jenkins-cli.jar", "")
 }
+
+func readPacFile() PacFile {
+  // TODO: Should run from anywhere
+  // TODO: Should not depend on pacFile for git
+  var pacFile PacFile
+  pacFileData, err := ioutil.ReadFile(".pac")
+  errors.QuitIfError(err)
+  json.Unmarshal(pacFileData, &pacFile)
+  return pacFile
+}
+

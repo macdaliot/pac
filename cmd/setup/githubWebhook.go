@@ -1,4 +1,4 @@
-package create
+package setup
 
 import (
   "io/ioutil"
@@ -21,35 +21,9 @@ type CreateWebhookRequestConfig struct {
   ContentType  string  `json:"content_type"`
 }
 
-type PacFile struct {
-  ProjectName  string  `json:"projectName"`
-  GitAuth      string  `json:"gitAuth"`
-  JenkinsUrl   string  `json:"jenkinsUrl"`
-}
-
-func GitHubWebhook() {
-  pacFile := readPacFile()
+func GitHubWebhook(projectName string) {
+  pacFile := readPacFile(projectName)
   createWebhookIfDoesNotExist(pacFile)
-/*
-  if (gitUser != "" && gitPass != "") {
-    repoConfig := createRepoConfig(projectName)
-    postToGitHub(repoConfig, gitUser, gitPass)
-    setupRepository(projectName, projectDirectory)
-    logger.Info("Created GitHub repository")
-  } else {
-    logger.Warn("Skipping creation of GitHub repository due to one or more of the following being blank: --gitUser, --gitPass")
-  }
-*/
-}
-
-func readPacFile() PacFile {
-  // TODO: Should run from anywhere
-  // TODO: Should not depend on pacFile for git
-  var pacFile PacFile
-  pacFileData, err := ioutil.ReadFile(".pac")
-  errors.QuitIfError(err)
-  json.Unmarshal(pacFileData, &pacFile)
-  return pacFile
 }
 
 func createWebhookIfDoesNotExist(pacFile PacFile) {
@@ -92,10 +66,3 @@ func createWebhookRequestBody(jenkinsUrl string) *bytes.Buffer {
   errors.LogIfError(err)
   return bytes.NewBuffer(webhookRequest)
 }
-
-/*
-func setupRepository(projectName string, projectDirectory string) {
-  commands.Run("git init", projectDirectory)
-  commands.Run("git remote add origin git@github.com:PyramidSystemsInc/" + projectName + ".git", projectDirectory)
-}
-*/
