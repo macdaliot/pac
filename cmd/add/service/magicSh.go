@@ -6,10 +6,8 @@ import (
 )
 
 func CreateMagicSh(filePath string, serviceName string) {
-	const template = `
-#! /bin/bash
+	const template = `#! /bin/bash
 
-ls
 # Perform Setup
 SERVICE_NAME=$(sed -e 's/.*\///g' <<< $(pwd))
 FULL_SERVICE_NAME=pac-"$SERVICE_NAME"

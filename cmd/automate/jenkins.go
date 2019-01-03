@@ -88,6 +88,7 @@ func createPipelineProvisionerXml(projectName string, jenkinsUrl string) {
       if java -jar ~/jenkins-cli.jar -s http://localhost:8080 -auth pyramid:systems get-job &quot;${DIR}&quot;; then
         echo &quot;${DIR} Jenkins Pipeline Exists. Skipping&quot;
       else
+        PROJECT_NAME=$(sed -e &apos;s/.*\///g&apos; -e &apos;s/.git$//g&apos; &lt;&lt;&lt; $(echo &quot;$GIT_URL&quot;))
 cat &lt;&lt;- EOF &gt; job.xml
 &lt;?xml version=&apos;1.1&apos; encoding=&apos;UTF-8&apos;?&gt;
 &lt;flow-definition plugin=&quot;workflow-job@2.31&quot;&gt;
@@ -95,7 +96,7 @@ cat &lt;&lt;- EOF &gt; job.xml
   &lt;keepDependencies&gt;false&lt;/keepDependencies&gt;
   &lt;properties&gt;
     &lt;com.coravy.hudson.plugins.github.GithubProjectProperty plugin=&quot;github@1.29.3&quot;&gt;
-      &lt;projectUrl&gt;https://github.com/PyramidSystemsInc/foxtrot/&lt;/projectUrl&gt;
+      &lt;projectUrl&gt;https://github.com/PyramidSystemsInc/$PROJECT_NAME/&lt;/projectUrl&gt;
       &lt;displayName&gt;&lt;/displayName&gt;
     &lt;/com.coravy.hudson.plugins.github.GithubProjectProperty&gt;
     &lt;org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty&gt;
@@ -111,7 +112,7 @@ cat &lt;&lt;- EOF &gt; job.xml
       &lt;configVersion&gt;2&lt;/configVersion&gt;
       &lt;userRemoteConfigs&gt;
         &lt;hudson.plugins.git.UserRemoteConfig&gt;
-          &lt;url&gt;https://github.com/PyramidSystemsInc/foxtrot.git&lt;/url&gt;
+          &lt;url&gt;https://github.com/PyramidSystemsInc/$PROJECT_NAME.git&lt;/url&gt;
           &lt;credentialsId&gt;gitcredentials&lt;/credentialsId&gt;
         &lt;/hudson.plugins.git.UserRemoteConfig&gt;
       &lt;/userRemoteConfigs&gt;

@@ -2,7 +2,6 @@ package setup
 
 import (
   "bytes"
-  "encoding/base64"
   "encoding/json"
   "net/http"
   "github.com/PyramidSystemsInc/go/commands"
@@ -16,15 +15,11 @@ type CreateRepoRequest struct {
   Description  string  `json:"description"`
 }
 
-func GitRepository(projectName string, gitUser string, gitPass string, projectDirectory string) {
-  if (gitUser != "" && gitPass != "") {
-    repoConfig := createRepoConfig(projectName)
-    postToGitHub(repoConfig, gitUser, gitPass)
-    setupRepository(projectName, projectDirectory)
-    logger.Info("Created GitHub repository")
-  } else {
-    logger.Warn("Skipping creation of GitHub repository due to one or more of the following being blank: --gitUser, --gitPass")
-  }
+func GitRepository(projectName string, gitAuth string, projectDirectory string) {
+  repoConfig := createRepoConfig(projectName)
+  postToGitHub(repoConfig, gitAuth)
+  setupRepository(projectName, projectDirectory)
+  logger.Info("Created GitHub repository")
 }
 
 func createRepoConfig(projectName string) *bytes.Buffer {
@@ -37,11 +32,10 @@ func createRepoConfig(projectName string) *bytes.Buffer {
   return bytes.NewBuffer(repoConfig)
 }
 
-func postToGitHub(repoConfig *bytes.Buffer, gitUser string, gitPass string) {
+func postToGitHub(repoConfig *bytes.Buffer, gitAuth string) {
   request, err := http.NewRequest("POST", "https://api.github.com/orgs/PyramidSystemsInc/repos", repoConfig)
   errors.LogIfError(err)
-  basicAuth := base64.StdEncoding.EncodeToString([]byte(gitUser + ":" + gitPass))
-  request.Header.Add("Authorization", "Basic " + basicAuth)
+  request.Header.Add("Authorization", "Basic " + gitAuth)
   client := &http.Client{}
   response, err := client.Do(request)
   errors.LogIfError(err)

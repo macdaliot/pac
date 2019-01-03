@@ -1,15 +1,14 @@
 package setup
 
 import (
-  "encoding/base64"
   "github.com/PyramidSystemsInc/go/directories"
   "github.com/PyramidSystemsInc/go/files"
   "github.com/PyramidSystemsInc/go/logger"
 )
 
-func ProjectStructure(projectName string, description string, gitUser string, gitPass string) string {
+func ProjectStructure(projectName string, description string, gitAuth string) string {
   projectDirectory := createProjectDirectories(projectName)
-  createProjectFiles(projectDirectory, projectName, description, gitUser, gitPass)
+  createProjectFiles(projectDirectory, projectName, description, gitAuth)
   logger.Info("Created project structure")
   return projectDirectory
 }
@@ -32,11 +31,11 @@ func createRootProjectDirectory(projectName string) string {
   return projectDirectory
 }
 
-func createProjectFiles(projectDirectory string, projectName string, description string, gitUser string, gitPass string) {
+func createProjectFiles(projectDirectory string, projectName string, description string, gitAuth string) {
   config := make(map[string]string)
   config["projectName"] = projectName
   config["description"] = description
-  config["gitBasicAuth"] = base64.StdEncoding.EncodeToString([]byte(gitUser + ":" + gitPass))
+  config["gitAuth"] = gitAuth
   createGitIgnore(projectDirectory)
   createReadmeMd(projectDirectory, config)
   createPacFile(projectDirectory, config)
@@ -65,7 +64,7 @@ To get started, try running:
 func createPacFile(projectDirectory string, config map[string]string) {
   const template = `{
   "projectName": "{{.projectName}}",
-  "gitAuth": "{{.gitBasicAuth}}"
+  "gitAuth": "{{.gitAuth}}"
 }
 `
   files.CreateFromTemplate(projectDirectory + "/.pac", template, config)
