@@ -16,5 +16,5 @@ func ElasticLoadBalancer(projectName string) {
   pacFile.ListenerArn = listenerArn
   pacFile.ServiceUrl = serviceUrl
   writePacFile(pacFile)
-  logger.Info("Created elastic load balancer and HTTP listener to support future microservices")
+  logger.Info("Created application load balancer and HTTP listener to support future microservices")
 }
