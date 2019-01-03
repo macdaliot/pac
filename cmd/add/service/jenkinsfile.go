@@ -5,16 +5,38 @@ import (
 )
 
 func CreateJenkinsfile(filePath string) {
-	const template = `
-JOB = "${env.JOB_NAME}"
+	const template = `JOB = "${env.JOB_NAME}"
 pipeline {
   agent any
   stages {
-    stage('Magic') {
+    stage('Build') {
       steps {
         sh '''#!/bin/bash
           cd svc/'''+JOB+'''
-          ./magic.sh
+          ./.build.sh
+        '''
+      }
+    }
+    stage('Test') {
+      steps {
+        echo "Test"
+      }
+    }
+    stage('Integrate') {
+      steps {
+        echo "Integrate"
+      }
+    }
+    stage('Inspect') {
+      steps {
+        echo "Inspect"
+      }
+    }
+    stage('Deploy') {
+      steps {
+        sh '''#!/bin/bash
+          cd svc/'''+JOB+'''
+          ./.deploy.sh
         '''
       }
     }

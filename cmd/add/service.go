@@ -45,7 +45,8 @@ func createServiceFiles(serviceName string, config map[string]string) {
   service.CreateAwsSdkConfigJs(serviceName + "/awsSdkConfig.js", config)
   service.CreateLaunchSh(serviceName + "/launch.sh", config)
   service.CreateJenkinsfile(serviceName + "/Jenkinsfile")
-  service.CreateMagicSh(serviceName + "/magic.sh", serviceName)
+  service.CreateBuildSh(serviceName + "/.build.sh", serviceName)
+  service.CreateDeploySh(serviceName + "/.deploy.sh", serviceName)
   logger.Info("Created " + serviceName + " Express microservice files")
 }
 
