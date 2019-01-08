@@ -8,8 +8,8 @@ import (
 
 func ElasticLoadBalancer(projectName string) {
   region := "us-east-2"
+  name := "pac-" + projectName + "-integration"
   awsSession := aws.CreateAwsSession(region)
-  name := "pac-" + projectName
   loadBalancerArn, listenerArn, serviceUrl := elbv2.CreateLoadBalancer(name, awsSession)
   pacFile := readPacFile(projectName)
   pacFile.LoadBalancerArn = loadBalancerArn

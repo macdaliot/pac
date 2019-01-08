@@ -5,12 +5,12 @@ import (
 	"github.com/PyramidSystemsInc/go/files"
 )
 
-func CreateDeploySh(filePath string, serviceName string) {
+func CreateDeploySh(filePath string, config map[string]string) {
 	const template = `#! /bin/bash
 
 # Perform setup
 SERVICE_NAME=$(sed -e 's/.*\///g' <<< $(pwd))
-FULL_SERVICE_NAME=pac-"$SERVICE_NAME"
+FULL_SERVICE_NAME=pac-{{.projectName}}-integration-"$SERVICE_NAME"
 
 # If AWS resources already exist...
 if aws elbv2 describe-target-groups --names $FULL_SERVICE_NAME --region us-east-2; then
@@ -52,6 +52,6 @@ else
   echo "INFO (6/6 Completed): Created DynamoDB table"
 fi
 `
-	files.CreateFromTemplate(filePath, template, nil)
-	commands.Run("chmod 755 " + serviceName + "/.deploy.sh", "")
+	files.CreateFromTemplate(filePath, template, config)
+	commands.Run("chmod 755 " + config["serviceName"] + "/.deploy.sh", "")
 }

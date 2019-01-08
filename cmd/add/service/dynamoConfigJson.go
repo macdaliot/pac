@@ -7,7 +7,7 @@ import (
 // CreateDynamoConfigJSON creates a dynamo config for the local instance
 func CreateDynamoConfigJSON(filePath string, config map[string]string) {
 	const template = `{
-  "TableName": "pac-{{.serviceName}}",
+  "TableName": "pac-{{.projectName}}-integration-{{.serviceName}}",
   "KeySchema": [
     {
       "AttributeName": "id",

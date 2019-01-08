@@ -45,7 +45,7 @@ app.get('/api/{{.serviceName}}', function(request, response) {
 app.post('/api/{{.serviceName}}', function(request, response) {
   let params: any = {
     "RequestItems": {
-      "pac-{{.serviceName}}": [
+      "pac-{{.projectName}}-integration-{{.serviceName}}": [
         {
           "PutRequest": {
             "Item": {
@@ -78,7 +78,7 @@ app.post('/api/{{.serviceName}}', function(request, response) {
 
 let buildQueryStringParams = function(query) {
   let params: any = {
-    TableName: 'pac-{{.serviceName}}'
+    TableName: 'pac-{{.projectName}}-integration-{{.serviceName}}'
   };
   let queryKeys: any = Object.keys(query);
   if (queryKeys.length > 0) {
@@ -102,7 +102,7 @@ let buildGetByIdParams = function(id) {
   let params: any = {
     ExpressionAttributeValues: {},
     FilterExpression: 'id = :id',
-    TableName: 'pac-{{.serviceName}}'
+    TableName: 'pac-{{.projectName}}-integration-{{.serviceName}}'
   };
   params.ExpressionAttributeValues[":id"] = {
     S: id

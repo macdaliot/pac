@@ -160,4 +160,3 @@ func readPacFile() PacFile {
   json.Unmarshal(pacFileData, &pacFile)
   return pacFile
 }
-

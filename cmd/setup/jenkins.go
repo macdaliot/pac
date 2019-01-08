@@ -21,11 +21,12 @@ type PacFile struct {
 
 func Jenkins(projectName string) {
   region := "us-east-2"
-  ecr.Login(region)
-  awsSession := aws.CreateAwsSession(region)
   clusterName := "pac-" + projectName
   familyName := clusterName + "-jenkins"
-  ecs.RegisterFargateTaskDefinition(familyName, awsSession, "pac-jenkins")
+  imageName := "pac-jenkins"
+  ecr.Login(region)
+  awsSession := aws.CreateAwsSession(region)
+  ecs.RegisterFargateTaskDefinition(familyName, awsSession, imageName)
   publicIp := ecs.LaunchFargateContainer(familyName, clusterName, awsSession)
   saveJenkinsIpToPacFile(projectName, publicIp)
   logger.Info("Jenkins will start up in a minute or so running at " + publicIp + ":8080")
