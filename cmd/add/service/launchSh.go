@@ -1,6 +1,7 @@
 package service
 
 import (
+  "runtime"
   "github.com/PyramidSystemsInc/go/files"
   "github.com/PyramidSystemsInc/go/str"
 )
@@ -26,5 +27,9 @@ else
 fi
 `
   files.CreateFromTemplate(filePath, template, config)
-  files.ChangePermissions(str.Concat("./", config["serviceName"], "/launch.sh"), 0755)
+  if runtime.GOOS == "windows" {
+    files.ChangePermissions(str.Concat(".\\", config["serviceName"], "\\launch.sh"), 0755)
+  } else {
+    files.ChangePermissions(str.Concat("./", config["serviceName"], "/launch.sh"), 0755)
+  }
 }
