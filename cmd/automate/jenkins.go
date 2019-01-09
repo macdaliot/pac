@@ -40,7 +40,7 @@ func readPacFile() PacFile {
 }
 
 func downloadJenkinsCliJar(jenkinsUrl string) {
-  commands.Run(str.Concat("wget ", jenkinsUrl, "/jnlpJars/jenkins-cli.jar"), "")
+  files.Download(str.Concat("http://", jenkinsUrl, "/jnlpJars/jenkins-cli.jar"), "./jenkins-cli.jar")
 }
 
 func createPipelineProvisionerXml(projectName string, jenkinsUrl string) {

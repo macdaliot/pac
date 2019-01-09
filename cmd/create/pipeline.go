@@ -95,7 +95,7 @@ func createJobXml(pipelineDir string, config map[string]string) {
 }
 
 func downloadJenkinsCliJar(jenkinsUrl string) {
-  commands.Run(str.Concat("wget ", jenkinsUrl, "/jnlpJars/jenkins-cli.jar"), "")
+  files.Download(str.Concat("http://", jenkinsUrl, "/jnlpJars/jenkins-cli.jar"), "./jenkins-cli.jar")
 }
 
 func createCredentialsXml(pacFile PacFile) {

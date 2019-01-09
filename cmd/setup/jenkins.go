@@ -4,7 +4,6 @@ import (
   "encoding/json"
   "io/ioutil"
   "github.com/PyramidSystemsInc/go/aws"
-  "github.com/PyramidSystemsInc/go/aws/ecr"
   "github.com/PyramidSystemsInc/go/aws/ecs"
   "github.com/PyramidSystemsInc/go/errors"
   "github.com/PyramidSystemsInc/go/logger"
@@ -25,7 +24,6 @@ func Jenkins(projectName string) {
   clusterName := str.Concat("pac-", projectName)
   familyName := str.Concat(clusterName, "-jenkins")
   imageName := "pac-jenkins"
-  ecr.Login(region)
   awsSession := aws.CreateAwsSession(region)
   ecs.RegisterFargateTaskDefinition(familyName, awsSession, imageName)
   publicIp := ecs.LaunchFargateContainer(familyName, clusterName, awsSession)
