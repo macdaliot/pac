@@ -1,7 +1,6 @@
 package service
 
 import (
-  "github.com/PyramidSystemsInc/go/commands"
   "github.com/PyramidSystemsInc/go/files"
   "github.com/PyramidSystemsInc/go/str"
 )
@@ -17,5 +16,5 @@ npx claudia generate-serverless-express-proxy --express-module server
 zip -r function awsSdkConfig.js lambda.js server.js node_modules >> /dev/null
 `
   files.CreateFromTemplate(filePath, template, nil)
-  commands.Run(str.Concat("chmod 755 ", serviceName, "/.build.sh"), "")
+  files.ChangePermissions(str.Concat("./", serviceName, "/build.sh"), 0755)
 }

@@ -1,7 +1,6 @@
 package service
 
 import (
-  "github.com/PyramidSystemsInc/go/commands"
   "github.com/PyramidSystemsInc/go/files"
   "github.com/PyramidSystemsInc/go/str"
 )
@@ -27,5 +26,5 @@ else
 fi
 `
   files.CreateFromTemplate(filePath, template, config)
-  commands.Run(str.Concat("chmod 755 ", config["serviceName"], "/launch.sh"), "")
+  files.ChangePermissions(str.Concat("./", config["serviceName"], "/launch.sh"), 0755)
 }
