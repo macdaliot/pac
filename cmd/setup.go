@@ -20,13 +20,13 @@ NodeJS/Express back-end, and DynamoDB database)`,
     validateStack(cmd)
     projectName := getProjectName(cmd)
     description := getDescription(cmd)
-    gitUser := getGitUser(cmd)
-    gitPass := getGitPass(cmd)
-    projectDirectory := setup.ProjectStructure(projectName, description, gitUser, gitPass)
+    projectDirectory := setup.ProjectStructure(projectName, description, gitAuth)
     setup.Jenkins(projectName)
     setup.FrontEndFiles(projectDirectory, projectName, description)
     setup.DynamoDb()
-    setup.GitRepository(projectName, gitUser, gitPass, projectDirectory)
+    setup.ElasticLoadBalancer(projectName)
+    setup.GitRepository(projectName, gitAuth, projectDirectory)
+    setup.GitHubWebhook(projectName)
   },
 }
 
@@ -35,14 +35,9 @@ func init() {
   setupCmd.PersistentFlags().StringVarP(&projectName, "name", "n", "", "project name (required)")
   setupCmd.MarkFlagRequired("name")
   setupCmd.PersistentFlags().StringVar(&description, "description", "Project created by PAC", "short description of the project")
-  setupCmd.PersistentFlags().StringVar(&path, "path", ".", "location where the project is generated (Note: PAC creates the project's folder)")
   setupCmd.PersistentFlags().StringVarP(&frontEnd, "front", "f", "ReactJS", "front-end framework/library")
   setupCmd.PersistentFlags().StringVarP(&backEnd, "back", "b", "Express", "back-end framework/library")
   setupCmd.PersistentFlags().StringVarP(&database, "database", "d", "DynamoDB", "database type")
-  setupCmd.PersistentFlags().StringVar(&gitUser, "gitUser", "", "GitHub user name (must be used with --gitPass)")
-  setupCmd.PersistentFlags().StringVar(&gitPass, "gitPass", "", "GitHub password (must be used with --gitUser)")
-  //setupCmd.PersistentFlags().StringVarP(&pages, "pages", "p", "", "pages to be created on the front-end")
-  //setupCmd.PersistentFlags().StringVarP(&services, "services", "s", "", "services to be created on the back-end")
 }
 
 func warnArgumentsAreIgnored(args []string) {
@@ -60,6 +55,8 @@ func validateStack(cmd *cobra.Command) {
   }
 }
 
+var gitAuth string = "amRpZWRlcmlrc0Bwc2ktaXQuY29tOkRpZWRyZV4yMDE4"
+
 var projectName string
 
 func getProjectName(cmd *cobra.Command) string {
@@ -74,22 +71,6 @@ func getDescription(cmd *cobra.Command) string {
   description, err := cmd.Flags().GetString("description")
   errors.QuitIfError(err)
   return description
-}
-
-var gitUser string
-
-func getGitUser(cmd *cobra.Command) string {
-  gitUser, err := cmd.Flags().GetString("gitUser")
-  errors.QuitIfError(err)
-  return gitUser
-}
-
-var gitPass string
-
-func getGitPass(cmd *cobra.Command) string {
-  gitPass, err := cmd.Flags().GetString("gitPass")
-  errors.QuitIfError(err)
-  return gitPass
 }
 
 var frontEnd string

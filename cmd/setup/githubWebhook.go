@@ -1,13 +1,13 @@
-package create
+package setup
 
 import (
   "io/ioutil"
-  "fmt"
   "bytes"
   "encoding/json"
   "net/http"
   "github.com/PyramidSystemsInc/go/errors"
   "github.com/PyramidSystemsInc/go/logger"
+  "github.com/PyramidSystemsInc/go/str"
 )
 
 type CreateWebhookRequest struct {
@@ -22,40 +22,14 @@ type CreateWebhookRequestConfig struct {
   ContentType  string  `json:"content_type"`
 }
 
-type PacFile struct {
-  ProjectName  string  `json:"projectName"`
-  GitAuth      string  `json:"gitAuth"`
-  JenkinsUrl   string  `json:"jenkinsUrl"`
-}
-
-func GitHubWebhook() {
-  pacFile := readPacFile()
+func GitHubWebhook(projectName string) {
+  pacFile := readPacFile(projectName)
   createWebhookIfDoesNotExist(pacFile)
-/*
-  if (gitUser != "" && gitPass != "") {
-    repoConfig := createRepoConfig(projectName)
-    postToGitHub(repoConfig, gitUser, gitPass)
-    setupRepository(projectName, projectDirectory)
-    logger.Info("Created GitHub repository")
-  } else {
-    logger.Warn("Skipping creation of GitHub repository due to one or more of the following being blank: --gitUser, --gitPass")
-  }
-*/
-}
-
-func readPacFile() PacFile {
-  // TODO: Should run from anywhere
-  // TODO: Should not depend on pacFile for git
-  var pacFile PacFile
-  pacFileData, err := ioutil.ReadFile(".pac")
-  errors.QuitIfError(err)
-  json.Unmarshal(pacFileData, &pacFile)
-  return pacFile
 }
 
 func createWebhookIfDoesNotExist(pacFile PacFile) {
-  hooksApiEndpoint := "https://api.github.com/repos/PyramidSystemsInc/" + pacFile.ProjectName + "/hooks"
-  basicAuth := "Basic " + pacFile.GitAuth
+  hooksApiEndpoint := str.Concat("https://api.github.com/repos/PyramidSystemsInc/", pacFile.ProjectName, "/hooks")
+  basicAuth := str.Concat("Basic ", pacFile.GitAuth)
   request, err := http.NewRequest("GET", hooksApiEndpoint, nil)
   errors.LogIfError(err)
   request.Header.Add("Authorization", basicAuth)
@@ -74,7 +48,7 @@ func createWebhookIfDoesNotExist(pacFile PacFile) {
     defer response.Body.Close()
     logger.Info("Created webhook to Jenkins on GitHub.com")
   } else {
-    logger.Info("Skipping GitHub webhook because it already exists")
+    logger.Info("Skipping GitHub webhook either because it already exists or there is no repository")
   }
 }
 
@@ -86,18 +60,10 @@ func createWebhookRequestBody(jenkinsUrl string) *bytes.Buffer {
       "push",
     },
     Config: CreateWebhookRequestConfig{
-      Url: "http://" + jenkinsUrl + "/github-webhook/",
+      Url: str.Concat("http://", jenkinsUrl, "/github-webhook/"),
       ContentType: "json",
     },
   })
-  fmt.Println(string(webhookRequest))
   errors.LogIfError(err)
   return bytes.NewBuffer(webhookRequest)
 }
-
-/*
-func setupRepository(projectName string, projectDirectory string) {
-  commands.Run("git init", projectDirectory)
-  commands.Run("git remote add origin git@github.com:PyramidSystemsInc/" + projectName + ".git", projectDirectory)
-}
-*/

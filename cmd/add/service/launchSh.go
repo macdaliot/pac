@@ -1,13 +1,14 @@
 package service
 
 import (
-	"github.com/PyramidSystemsInc/go/commands"
-	"github.com/PyramidSystemsInc/go/files"
+  "github.com/PyramidSystemsInc/go/commands"
+  "github.com/PyramidSystemsInc/go/files"
+  "github.com/PyramidSystemsInc/go/str"
 )
 
 // CreateLaunchSh creates a templated shell script to launch the service
 func CreateLaunchSh(filePath string, config map[string]string) {
-	const template = `#! /bin/bash
+  const template = `#! /bin/bash
 
 AWS_ACCESS_KEY_ID=$(aws --profile default configure get aws_access_key_id)
 AWS_SECRET_ACCESS_KEY=$(aws --profile default configure get aws_secret_access_key)
@@ -25,6 +26,6 @@ else
   echo "ABORTED LAUNCH: The AWS keys were not found. Try running 'aws configure'"
 fi
 `
-	files.CreateFromTemplate(filePath, template, config)
-	commands.Run("chmod 755 "+config["serviceName"]+"/launch.sh", "")
+  files.CreateFromTemplate(filePath, template, config)
+  commands.Run(str.Concat("chmod 755 ", config["serviceName"], "/launch.sh"), "")
 }

@@ -17,7 +17,6 @@ var createCmd = &cobra.Command{
     resourceName := getResourceName(cmd)
     branches := getBranches(cmd)
     resourceDescription := getResourceDescription(cmd)
-    create.GitHubWebhook()
     create.Jenkinsfile(resourceName)
     create.Pipeline(resourceName, branches, resourceDescription)
   },

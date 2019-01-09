@@ -17,14 +17,15 @@ func CreatePackageJSON(filePath string, config map[string]string) {
   "author": "Pyramid Systems, Inc.",
   "license": "ISC",
   "dependencies": {
-    "@types/node": "^10.12.12",
     "aws-sdk": "^2.375.0",
+    "aws-serverless-express": "^3.3.5",
     "body-parser": "^1.18.3",
+    "claudia": "^5.3.0",
     "express": "^4.16.4",
-    "mongodb": "^3.1.10",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
+    "@types/node": "^10.12.12",
     "typescript": "^3.2.2"
   }
 }

@@ -2,7 +2,6 @@ package stages
 
 import (
   "encoding/json"
-  "fmt"
   "io/ioutil"
   "regexp"
   "strings"
@@ -34,7 +33,6 @@ func AppendDeploy(filePath string) {
   jenkinsfileData, err := ioutil.ReadFile(".Jenkinsfile")
   errors.QuitIfError(err)
   template = replaceValuesInTemplate(template)
-  fmt.Println(template)
   newJenkinsfile := strings.Replace(string(jenkinsfileData), "/* WEB APP DEPLOY */", template, 1)
   ioutil.WriteFile(".Jenkinsfile", []byte(newJenkinsfile), 0644)
   commentRegEx := regexp.MustCompile(`\/\*.*\*\/`)
