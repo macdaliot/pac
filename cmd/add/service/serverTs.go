@@ -1,12 +1,12 @@
 package service
 
 import (
-	"github.com/PyramidSystemsInc/go/files"
+  "github.com/PyramidSystemsInc/go/files"
 )
 
 // CreateServerTs creates a server.ts file based on the configuration passed in
 func CreateServerTs(filePath string, config map[string]string) {
-	const template = `const AWS: any = require('aws-sdk');
+  const template = `const AWS: any = require('aws-sdk');
 const express: any = require('express');
 const bodyParser: any = require('body-parser');
 const uuidv4: any = require('uuid/v4');
@@ -112,5 +112,5 @@ let buildGetByIdParams = function(id) {
 
 app.listen(port);
 `
-	files.CreateFromTemplate(filePath, template, config)
+  files.CreateFromTemplate(filePath, template, config)
 }

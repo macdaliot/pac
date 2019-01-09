@@ -4,11 +4,12 @@ import (
   "github.com/PyramidSystemsInc/go/aws"
   "github.com/PyramidSystemsInc/go/aws/elbv2"
   "github.com/PyramidSystemsInc/go/logger"
+  "github.com/PyramidSystemsInc/go/str"
 )
 
 func ElasticLoadBalancer(projectName string) {
   region := "us-east-2"
-  name := "pac-" + projectName + "-integration"
+  name := str.Concat("pac-", projectName, "-integration")
   awsSession := aws.CreateAwsSession(region)
   loadBalancerArn, listenerArn, serviceUrl := elbv2.CreateLoadBalancer(name, awsSession)
   pacFile := readPacFile(projectName)

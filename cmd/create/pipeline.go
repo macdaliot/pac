@@ -11,6 +11,7 @@ import (
   "github.com/PyramidSystemsInc/go/errors"
   "github.com/PyramidSystemsInc/go/files"
   "github.com/PyramidSystemsInc/go/logger"
+  "github.com/PyramidSystemsInc/go/str"
 )
 
 type PacFile struct {
@@ -24,18 +25,18 @@ type PacFile struct {
 
 func Pipeline(pipelineName string, branches string, description string) {
   // TODO: Allow multiple branches
-  pipelineDir := "./jenkins/" + pipelineName
+  pipelineDir := str.Concat("./jenkins/", pipelineName)
   pacFile := readPacFile()
-  jenkinsUrl := "http://" + pacFile.JenkinsUrl
+  jenkinsUrl := str.Concat("http://", pacFile.JenkinsUrl)
   config := createPipelineConfig(pipelineName, pacFile.ProjectName, branches, description)
   createJobXml(pipelineDir, config)
   downloadJenkinsCliJar(jenkinsUrl)
-  jenkinsCliCommandStart := "java -jar jenkins-cli.jar -s " + jenkinsUrl + " -auth pyramid:systems"
+  jenkinsCliCommandStart := str.Concat("java -jar jenkins-cli.jar -s ", jenkinsUrl, " -auth pyramid:systems")
   saveGitCredentialsToJenkinsIfDoesNotExist(pacFile, jenkinsCliCommandStart)
   createJenkinsPipelineJob(pipelineName, pipelineDir, jenkinsCliCommandStart)
   // performInitialBuildOfNewJob(pipelineName, jenkinsCliCommandStart)
   cleanUp()
-  logger.Info("Created " + pipelineName + " pipeline job in Jenkins")
+  logger.Info(str.Concat("Created ", pipelineName, " pipeline job in Jenkins"))
 }
 
 func createPipelineConfig(pipelineName string, projectName string, branches string, description string) map[string]string {
@@ -90,11 +91,11 @@ func createJobXml(pipelineDir string, config map[string]string) {
   <disabled>false</disabled>
 </flow-definition>
 `
-  files.CreateFromTemplate(pipelineDir + "/job.xml", template, config)
+  files.CreateFromTemplate(str.Concat(pipelineDir, "/job.xml"), template, config)
 }
 
 func downloadJenkinsCliJar(jenkinsUrl string) {
-  commands.Run("wget " + jenkinsUrl + "/jnlpJars/jenkins-cli.jar", "")
+  commands.Run(str.Concat("wget ", jenkinsUrl, "/jnlpJars/jenkins-cli.jar"), "")
 }
 
 func createCredentialsXml(pacFile PacFile) {
@@ -107,7 +108,7 @@ func createCredentialsXml(pacFile PacFile) {
   <password>{{.gitPass}}</password>
 </com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl>
 `
-  files.CreateFromTemplate(directories.GetWorking() + "/credentials.xml", template, config)
+  files.CreateFromTemplate(str.Concat(directories.GetWorking(), "/credentials.xml"), template, config)
 }
 
 func createGitCredentialsConfig(pacFile PacFile) map[string]string {
@@ -124,23 +125,23 @@ func saveGitCredentialsToJenkinsIfDoesNotExist(pacFile PacFile, jenkinsCliComman
   if !doJenkinsCredentialsExist(jenkinsCliCommandStart) {
     createCredentialsXml(pacFile)
     credentialData := files.Read("./credentials.xml")
-    commands.RunWithStdin(jenkinsCliCommandStart + " create-credentials-by-xml system::system::jenkins (global)", string(credentialData), "")
+    commands.RunWithStdin(str.Concat(jenkinsCliCommandStart, " create-credentials-by-xml system::system::jenkins (global)"), string(credentialData), "")
   }
 }
 
 func doJenkinsCredentialsExist(jenkinsCliCommandStart string) bool {
-  results := commands.Run(jenkinsCliCommandStart + " list-credentials system::system::jenkins", "")
+  results := commands.Run(str.Concat(jenkinsCliCommandStart, " list-credentials system::system::jenkins"), "")
   return strings.Contains(results, "gitcredentials")
 }
 
 func createJenkinsPipelineJob(pipelineName string, pipelineDir string, jenkinsCliCommandStart string) {
-  jobData := files.Read(pipelineDir + "/job.xml")
-  createJobCommand := jenkinsCliCommandStart + " create-job " + pipelineName
+  jobData := files.Read(str.Concat(pipelineDir, "/job.xml"))
+  createJobCommand := str.Concat(jenkinsCliCommandStart, " create-job ", pipelineName)
   commands.RunWithStdin(createJobCommand, string(jobData), "")
 }
 
 func performInitialBuildOfNewJob(pipelineName string, jenkinsCliCommandStart string) {
-  buildJobCommand := jenkinsCliCommandStart + " build " + pipelineName
+  buildJobCommand := str.Concat(jenkinsCliCommandStart, " build ", pipelineName)
   commands.Run(buildJobCommand, "")
 }
 

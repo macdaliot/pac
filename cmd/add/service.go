@@ -8,6 +8,7 @@ import (
   "github.com/PyramidSystemsInc/go/directories"
   "github.com/PyramidSystemsInc/go/errors"
   "github.com/PyramidSystemsInc/go/logger"
+  "github.com/PyramidSystemsInc/go/str"
   "github.com/PyramidSystemsInc/pac/cmd/add/service"
 )
 
@@ -46,31 +47,31 @@ func createTemplateConfig(serviceName string) map[string]string {
 
 func createServiceDirectory(serviceName string) {
   workingDirectory := directories.GetWorking()
-  directories.Create(workingDirectory + "/" + serviceName)
+  directories.Create(str.Concat(workingDirectory, "/", serviceName))
 }
 
 func createServiceFiles(serviceName string, config map[string]string) {
-  service.CreatePackageJSON(serviceName + "/package.json", config)
-  service.CreateDockerfile(serviceName + "/Dockerfile")
-  service.CreateServerTs(serviceName + "/server.ts", config)
-  service.CreateDynamoConfigJSON(serviceName + "/dynamoConfig.json", config)
-  service.CreateAwsSdkConfigJs(serviceName + "/awsSdkConfig.js", config)
-  service.CreateLaunchSh(serviceName + "/launch.sh", config)
-  service.CreateJenkinsfile(serviceName + "/Jenkinsfile")
-  service.CreateBuildSh(serviceName + "/.build.sh", serviceName)
-  service.CreateDeploySh(serviceName + "/.deploy.sh", config)
-  logger.Info("Created " + serviceName + " Express microservice files")
+  service.CreatePackageJSON(str.Concat(serviceName, "/package.json"), config)
+  service.CreateDockerfile(str.Concat(serviceName, "/Dockerfile"))
+  service.CreateServerTs(str.Concat(serviceName, "/server.ts"), config)
+  service.CreateDynamoConfigJSON(str.Concat(serviceName, "/dynamoConfig.json"), config)
+  service.CreateAwsSdkConfigJs(str.Concat(serviceName, "/awsSdkConfig.js"), config)
+  service.CreateLaunchSh(str.Concat(serviceName, "/launch.sh"), config)
+  service.CreateJenkinsfile(str.Concat(serviceName, "/Jenkinsfile"))
+  service.CreateBuildSh(str.Concat(serviceName, "/.build.sh"), serviceName)
+  service.CreateDeploySh(str.Concat(serviceName, "/.deploy.sh"), config)
+  logger.Info(str.Concat("Created ", serviceName, " Express microservice files"))
 }
 
 func createDynamoDbTable(serviceName string) {
   workingDirectory := directories.GetWorking()
-  commands.Run("aws dynamodb create-table --cli-input-json file://" + workingDirectory + "/" + serviceName + "/dynamoConfig.json --endpoint-url http://localhost:8000", "")
-  logger.Info("Created " + serviceName + " DynamoDB table locally")
+  commands.Run(str.Concat("aws dynamodb create-table --cli-input-json file://", workingDirectory, "/", serviceName, "/dynamoConfig.json --endpoint-url http://localhost:8000"), "")
+  logger.Info(str.Concat("Created ", serviceName, " DynamoDB table locally"))
 }
 
 func launchMicroservice(serviceName string) {
-  commands.Run("./launch.sh", "./" + serviceName)
-  logger.Info("Launched " + serviceName + " microservice Docker container locally (available at localhost:3000/api/" + serviceName + ")")
+  commands.Run("./launch.sh", str.Concat("./", serviceName))
+  logger.Info(str.Concat("Launched ", serviceName, " microservice Docker container locally (available at localhost:3000/api/", serviceName, ")"))
 }
 
 func readPacFile() PacFile {

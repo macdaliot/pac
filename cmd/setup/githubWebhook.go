@@ -7,6 +7,7 @@ import (
   "net/http"
   "github.com/PyramidSystemsInc/go/errors"
   "github.com/PyramidSystemsInc/go/logger"
+  "github.com/PyramidSystemsInc/go/str"
 )
 
 type CreateWebhookRequest struct {
@@ -27,8 +28,8 @@ func GitHubWebhook(projectName string) {
 }
 
 func createWebhookIfDoesNotExist(pacFile PacFile) {
-  hooksApiEndpoint := "https://api.github.com/repos/PyramidSystemsInc/" + pacFile.ProjectName + "/hooks"
-  basicAuth := "Basic " + pacFile.GitAuth
+  hooksApiEndpoint := str.Concat("https://api.github.com/repos/PyramidSystemsInc/", pacFile.ProjectName, "/hooks")
+  basicAuth := str.Concat("Basic ", pacFile.GitAuth)
   request, err := http.NewRequest("GET", hooksApiEndpoint, nil)
   errors.LogIfError(err)
   request.Header.Add("Authorization", basicAuth)
@@ -59,7 +60,7 @@ func createWebhookRequestBody(jenkinsUrl string) *bytes.Buffer {
       "push",
     },
     Config: CreateWebhookRequestConfig{
-      Url: "http://" + jenkinsUrl + "/github-webhook/",
+      Url: str.Concat("http://", jenkinsUrl, "/github-webhook/"),
       ContentType: "json",
     },
   })

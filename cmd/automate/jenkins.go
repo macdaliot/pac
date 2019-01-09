@@ -7,6 +7,7 @@ import (
   "github.com/PyramidSystemsInc/go/errors"
   "github.com/PyramidSystemsInc/go/files"
   "github.com/PyramidSystemsInc/go/logger"
+  "github.com/PyramidSystemsInc/go/str"
 )
 
 type PacFile struct {
@@ -39,7 +40,7 @@ func readPacFile() PacFile {
 }
 
 func downloadJenkinsCliJar(jenkinsUrl string) {
-  commands.Run("wget " + jenkinsUrl + "/jnlpJars/jenkins-cli.jar", "")
+  commands.Run(str.Concat("wget ", jenkinsUrl, "/jnlpJars/jenkins-cli.jar"), "")
 }
 
 func createPipelineProvisionerXml(projectName string, jenkinsUrl string) {
@@ -147,9 +148,9 @@ fi</command>
 }
 
 func createPipelineProvisionerJob(jenkinsUrl string) {
-  jenkinsCliCommandStart := "java -jar jenkins-cli.jar -s http://" + jenkinsUrl + " -auth pyramid:systems"
+  jenkinsCliCommandStart := str.Concat("java -jar jenkins-cli.jar -s http://", jenkinsUrl, " -auth pyramid:systems")
   jobData := files.Read("pipeline-provisioner-job.xml")
-  createJobCommand := jenkinsCliCommandStart + " create-job pipeline-provisioner"
+  createJobCommand := str.Concat(jenkinsCliCommandStart, " create-job pipeline-provisioner")
   commands.RunWithStdin(createJobCommand, string(jobData), "")
 }
 

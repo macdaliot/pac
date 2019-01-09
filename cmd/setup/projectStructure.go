@@ -4,6 +4,7 @@ import (
   "github.com/PyramidSystemsInc/go/directories"
   "github.com/PyramidSystemsInc/go/files"
   "github.com/PyramidSystemsInc/go/logger"
+  "github.com/PyramidSystemsInc/go/str"
 )
 
 func ProjectStructure(projectName string, description string, gitAuth string) string {
@@ -15,18 +16,18 @@ func ProjectStructure(projectName string, description string, gitAuth string) st
 
 func createProjectDirectories(projectName string) string {
   projectDirectory := createRootProjectDirectory(projectName)
-  directories.Create(projectDirectory + "/app/src/components/Header")
-  directories.Create(projectDirectory + "/app/src/components/Sidebar/parts/Button")
-  directories.Create(projectDirectory + "/app/src/components/pages/NotFound")
-  directories.Create(projectDirectory + "/app/src/routes")
-  directories.Create(projectDirectory + "/app/src/scss")
-  directories.Create(projectDirectory + "/svc")
+  directories.Create(str.Concat(projectDirectory, "/app/src/components/Header"))
+  directories.Create(str.Concat(projectDirectory, "/app/src/components/Sidebar/parts/Button"))
+  directories.Create(str.Concat(projectDirectory, "/app/src/components/pages/NotFound"))
+  directories.Create(str.Concat(projectDirectory, "/app/src/routes"))
+  directories.Create(str.Concat(projectDirectory, "/app/src/scss"))
+  directories.Create(str.Concat(projectDirectory, "/svc"))
   return projectDirectory
 }
 
 func createRootProjectDirectory(projectName string) string {
   workingDirectory := directories.GetWorking()
-  projectDirectory := workingDirectory + "/" + projectName
+  projectDirectory := str.Concat(workingDirectory, "/", projectName)
   directories.Create(projectDirectory)
   return projectDirectory
 }
@@ -45,7 +46,7 @@ func createGitIgnore(projectDirectory string) {
   const template = `svc/*/node_modules
 svc/*/server.js
 `
-  files.CreateFromTemplate(projectDirectory + "/.gitignore", template, nil)
+  files.CreateFromTemplate(str.Concat(projectDirectory, "/.gitignore"), template, nil)
 }
 
 func createReadmeMd(projectDirectory string, config map[string]string) {
@@ -58,7 +59,7 @@ To get started, try running:
 
 {{.description}}
 `
-  files.CreateFromTemplate(projectDirectory + "/README.md", template, config)
+  files.CreateFromTemplate(str.Concat(projectDirectory, "/README.md"), template, config)
 }
 
 func createPacFile(projectDirectory string, config map[string]string) {
@@ -67,5 +68,5 @@ func createPacFile(projectDirectory string, config map[string]string) {
   "gitAuth": "{{.gitAuth}}"
 }
 `
-  files.CreateFromTemplate(projectDirectory + "/.pac", template, config)
+  files.CreateFromTemplate(str.Concat(projectDirectory, "/.pac"), template, config)
 }

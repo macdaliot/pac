@@ -1,12 +1,13 @@
 package service
 
 import (
-	"github.com/PyramidSystemsInc/go/commands"
-	"github.com/PyramidSystemsInc/go/files"
+  "github.com/PyramidSystemsInc/go/commands"
+  "github.com/PyramidSystemsInc/go/files"
+  "github.com/PyramidSystemsInc/go/str"
 )
 
 func CreateDeploySh(filePath string, config map[string]string) {
-	const template = `#! /bin/bash
+  const template = `#! /bin/bash
 
 # Perform setup
 SERVICE_NAME=$(sed -e 's/.*\///g' <<< $(pwd))
@@ -52,6 +53,6 @@ else
   echo "INFO (6/6 Completed): Created DynamoDB table"
 fi
 `
-	files.CreateFromTemplate(filePath, template, config)
-	commands.Run("chmod 755 " + config["serviceName"] + "/.deploy.sh", "")
+  files.CreateFromTemplate(filePath, template, config)
+  commands.Run(str.Concat("chmod 755 ", config["serviceName"], "/.deploy.sh"), "")
 }

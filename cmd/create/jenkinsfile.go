@@ -4,6 +4,7 @@ import (
   "github.com/PyramidSystemsInc/go/directories"
   "github.com/PyramidSystemsInc/go/files"
   "github.com/PyramidSystemsInc/go/logger"
+  "github.com/PyramidSystemsInc/go/str"
 )
 
 func Jenkinsfile(pipelineName string) {
@@ -11,7 +12,7 @@ func Jenkinsfile(pipelineName string) {
   config := make(map[string]string)
   config["projectName"] = pacFile.ProjectName
   config["pipelineName"] = pipelineName
-  directories.Create("./jenkins/" + pipelineName)
+  directories.Create(str.Concat("./jenkins/", pipelineName))
   template := `pipeline {
   agent any
   stages {
@@ -23,7 +24,7 @@ func Jenkinsfile(pipelineName string) {
   }
 }
 `
-  files.CreateFromTemplate("./jenkins/" + pipelineName + "/Jenkinsfile", template, config)
+  files.CreateFromTemplate(str.Concat("./jenkins/", pipelineName, "/Jenkinsfile"), template, config)
   template = `pipeline {
   agent any
   stages {
@@ -38,6 +39,6 @@ func Jenkinsfile(pipelineName string) {
   }
 }
 `
-  files.CreateFromTemplate("./jenkins/" + pipelineName + "/.Jenkinsfile", template, config)
+  files.CreateFromTemplate(str.Concat("./jenkins/", pipelineName, "/.Jenkinsfile"), template, config)
   logger.Info("Created skeleton Jenkinsfile")
 }

@@ -7,6 +7,7 @@ import (
   "github.com/PyramidSystemsInc/go/commands"
   "github.com/PyramidSystemsInc/go/errors"
   "github.com/PyramidSystemsInc/go/logger"
+  "github.com/PyramidSystemsInc/go/str"
 )
 
 type CreateRepoRequest struct {
@@ -26,7 +27,7 @@ func createRepoConfig(projectName string) *bytes.Buffer {
   repoConfig, err := json.Marshal(CreateRepoRequest{
     Name: projectName,
     Private: true,
-    Description: projectName + " project (created by PAC)",
+    Description: str.Concat(projectName, " project (created by PAC)"),
   })
   errors.LogIfError(err)
   return bytes.NewBuffer(repoConfig)
@@ -35,7 +36,7 @@ func createRepoConfig(projectName string) *bytes.Buffer {
 func postToGitHub(repoConfig *bytes.Buffer, gitAuth string) {
   request, err := http.NewRequest("POST", "https://api.github.com/orgs/PyramidSystemsInc/repos", repoConfig)
   errors.LogIfError(err)
-  request.Header.Add("Authorization", "Basic " + gitAuth)
+  request.Header.Add("Authorization", str.Concat("Basic ", gitAuth))
   client := &http.Client{}
   response, err := client.Do(request)
   errors.LogIfError(err)
@@ -44,5 +45,5 @@ func postToGitHub(repoConfig *bytes.Buffer, gitAuth string) {
 
 func setupRepository(projectName string, projectDirectory string) {
   commands.Run("git init", projectDirectory)
-  commands.Run("git remote add origin git@github.com:PyramidSystemsInc/" + projectName + ".git", projectDirectory)
+  commands.Run(str.Concat("git remote add origin git@github.com:PyramidSystemsInc/", projectName, ".git"), projectDirectory)
 }
