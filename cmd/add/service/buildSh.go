@@ -11,10 +11,10 @@ func CreateBuildSh(filePath string, serviceName string) {
 
 # Zip up Lambda function code
 npm i
-npx tsc server.ts
-echo $(sed -e 's/awsSdkConfig.local/awsSdkConfig.cloud/g' -e 's/app.listen(port);/module.exports = app;/g' server.js) > server.js
-npx claudia generate-serverless-express-proxy --express-module server
-zip -r function awsSdkConfig.js lambda.js server.js node_modules >> /dev/null
+npx tsc
+echo $(sed -e 's/awsSdkConfig.local/awsSdkConfig.cloud/g' -e 's/app.listen(port);/module.exports = app;/g' dist/server.js) > dist/server.js
+npx claudia generate-serverless-express-proxy --express-module dist/server
+zip -r function dist/* lambda.js node_modules >> /dev/null
 `
   files.CreateFromTemplate(filePath, template, nil)
   if runtime.GOOS == "windows" {
