@@ -27,7 +27,7 @@ func Service(serviceName string) {
   createServiceDirectory(serviceName)
   config := createTemplateConfig(serviceName)
   createServiceFiles(serviceName, config)
-  createDynamoDbTable(serviceName)
+  // createDynamoDbTable(serviceName)
   launchMicroservice(serviceName)
 }
 

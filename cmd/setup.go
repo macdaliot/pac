@@ -23,7 +23,7 @@ NodeJS/Express back-end, and DynamoDB database)`,
     projectDirectory := setup.ProjectStructure(projectName, description, gitAuth)
     setup.Jenkins(projectName)
     setup.FrontEndFiles(projectDirectory, projectName, description)
-    setup.DynamoDb()
+    // setup.DynamoDb()
     setup.ElasticLoadBalancer(projectName)
     setup.GitRepository(projectName, gitAuth, projectDirectory)
     setup.GitHubWebhook(projectName)
