@@ -13,6 +13,7 @@ pipeline {
       steps {
         sh '''#!/bin/bash
           cd svc/'''+JOB+'''
+          chmod 755 ./.build.sh
           ./.build.sh
         '''
       }
@@ -36,6 +37,7 @@ pipeline {
       steps {
         sh '''#!/bin/bash
           cd svc/'''+JOB+'''
+          chmod 755 ./.deploy.sh
           ./.deploy.sh
         '''
       }
