@@ -84,6 +84,7 @@ func createServiceFiles(serviceName string, config map[string]string) {
 	service.CreateServerTs(str.Concat(serviceName, "/src", "/server.ts"), config)
 	service.CreateDynamoConfigJSON(str.Concat(serviceName, "/dynamoConfig.json"), config)
 	service.CreateAwsSdkConfigJs(str.Concat(serviceName, "/src", "/awsSdkConfig.js"), config)
+	service.CreateLaunchBat(str.Concat(serviceName, "/launch.bat"), config)
 	service.CreateLaunchSh(str.Concat(serviceName, "/launch.sh"), config)
 	service.CreateJenkinsfile(str.Concat(serviceName, "/Jenkinsfile"))
 	service.CreateBuildSh(str.Concat(serviceName, "/.build.sh"), serviceName)

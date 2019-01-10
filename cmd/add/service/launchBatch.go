@@ -6,8 +6,8 @@ import (
   "github.com/PyramidSystemsInc/go/str"
 )
 
-// CreateLaunchSh creates a templated shell script to launch the service
-func CreateLaunchSh(filePath string, config map[string]string) {
+// CreateLaunchBat creates a templated shell script to launch the service
+func CreateLaunchBat(filePath string, config map[string]string) {
   const template = `@if "%DEBUG%" == "" @echo off
 @rem ##########################################################################
 @rem
@@ -47,8 +47,8 @@ exit /b %errorlevel%
 `
   files.CreateFromTemplate(filePath, template, config)
   if runtime.GOOS == "windows" {
-    files.ChangePermissions(str.Concat(".\\", config["serviceName"], "\\launch.sh"), 0755)
+    files.ChangePermissions(str.Concat(".\\", config["serviceName"], "\\launch.bat"), 0755)
   } else {
-    files.ChangePermissions(str.Concat("./", config["serviceName"], "/launch.sh"), 0755)
+    files.ChangePermissions(str.Concat("./", config["serviceName"], "/launch.bat"), 0755)
   }
 }
