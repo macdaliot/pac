@@ -1,12 +1,12 @@
 package service
 
 import (
-  "github.com/PyramidSystemsInc/go/files"
+	"github.com/PyramidSystemsInc/go/files"
 )
 
 // CreateServerTs creates a server.ts file based on the configuration passed in
 func CreateServerTs(filePath string, config map[string]string) {
-  const template = `const AWS: any = require('aws-sdk');
+	const template = `const AWS: any = require('aws-sdk');
 const express: any = require('express');
 const bodyParser: any = require('body-parser');
 const uuidv4: any = require('uuid/v4');
@@ -16,7 +16,7 @@ const serviceName: string = '{{.serviceName}}';
 const app: any = express();
 app.use(bodyParser.json());
 
-const awsSdkConfig = require('./awsSdkConfig.js');
+import * as awsSdkConfig from './awsSdkConfig.js';
 AWS.config.update(awsSdkConfig.local);
 const dynamo = new AWS.DynamoDB({ apiVersion: '2012-10-08' });
 
@@ -112,5 +112,5 @@ let buildGetByIdParams = function(id) {
 
 app.listen(port);
 `
-  files.CreateFromTemplate(filePath, template, config)
+	files.CreateFromTemplate(filePath, template, config)
 }

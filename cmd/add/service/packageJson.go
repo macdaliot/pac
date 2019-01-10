@@ -12,7 +12,8 @@ func CreatePackageJSON(filePath string, config map[string]string) {
   "description": "{{.serviceName}} service (created by PAC)",
   "main": "server.js",
   "scripts": {
-    "start": "node server"
+    "start": "tsc && node dist/server",
+    "test": "mocha --require ts-node/register tests/**/*.spec.ts"
   },
   "author": "Pyramid Systems, Inc.",
   "license": "ISC",
@@ -26,7 +27,11 @@ func CreatePackageJSON(filePath string, config map[string]string) {
   },
   "devDependencies": {
     "@types/node": "^10.12.12",
-    "typescript": "^3.2.2"
+    "@types/mocha": "^5.2.5",
+    "typescript": "^3.2.2",
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
+    "ts-node": "^7.0.1"
   }
 }
 `
