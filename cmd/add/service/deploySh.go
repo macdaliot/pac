@@ -1,7 +1,7 @@
 package service
 
 import (
-  "github.com/PyramidSystemsInc/go/commands"
+  "runtime"
   "github.com/PyramidSystemsInc/go/files"
   "github.com/PyramidSystemsInc/go/str"
 )
@@ -54,5 +54,9 @@ else
 fi
 `
   files.CreateFromTemplate(filePath, template, config)
-  commands.Run(str.Concat("chmod 755 ", config["serviceName"], "/.deploy.sh"), "")
+  if runtime.GOOS == "windows" {
+    files.ChangePermissions(str.Concat(".\\", config["serviceName"], "\\.deploy.sh"), 0755)
+  } else {
+    files.ChangePermissions(str.Concat("./", config["serviceName"], "/.deploy.sh"), 0755)
+  }
 }
