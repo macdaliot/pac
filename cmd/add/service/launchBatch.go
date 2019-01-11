@@ -24,8 +24,8 @@ if not [%AWS_ACCESS_KEY_ID%] == [] goto AWSCheck
 if not [%AWS_SECRET_ACCESS_KEY%] == [] goto AWSCheck
 
 :AWSCheck
-for /f "delims=" %i in ('aws configure get aws_access_key_id') do set AWS_ACCESS_KEY_ID=%i
-for /f "delims=" %i in ('aws configure get aws_secret_access_key') do set AWS_SECRET_ACCESS_KEY=%i
+for /f "delims=" %%i in ('aws configure get aws_access_key_id') do set AWS_ACCESS_KEY_ID=%%i
+for /f "delims=" %%u in ('aws configure get aws_secret_access_key') do set AWS_SECRET_ACCESS_KEY=%%u
 
 
 if not exist node_modules npm i
