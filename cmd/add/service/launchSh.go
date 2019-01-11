@@ -38,7 +38,7 @@ if [ ! -z "$AWS_ACCESS_KEY_ID" ] || [ ! -z "$AWS_SECRET_ACCESS_KEY" ]; then
   aws dynamodb create-table --cli-input-json file://dynamoConfig.json --endpoint-url http://localhost:8000 >> /dev/null 2> /dev/null
 
   # Compile, build, and run
-  npx tsc server.ts
+  npx tsc
   docker build -t pac-{{.serviceName}}-service .
   docker run --name pac-{{.serviceName}}-service -p 3000:3000 --link pac-db-local -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -d pac-{{.serviceName}}-service
   echo "DONE! Launched microservice locally"
