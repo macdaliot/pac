@@ -23,8 +23,9 @@ func Jenkins() {
   pacFile := readPacFile()
   jenkinsUrl := pacFile.JenkinsUrl
   downloadJenkinsCliJar(jenkinsUrl)
-  createPipelineProvisionerXml(pacFile.ProjectName, jenkinsUrl)
-  createPipelineProvisionerJob(jenkinsUrl)
+  createPipelineProvisionerXml(pacFile.ProjectName)
+  createS3PipelineXml(pacFile.ProjectName)
+  createPipelineJobs(jenkinsUrl)
   cleanUp()
   logger.Info("Jenkins is now configured to create individual pipelines for the front-end and each microservice")
 }
@@ -43,7 +44,7 @@ func downloadJenkinsCliJar(jenkinsUrl string) {
   files.Download(str.Concat("http://", jenkinsUrl, "/jnlpJars/jenkins-cli.jar"), "./jenkins-cli.jar")
 }
 
-func createPipelineProvisionerXml(projectName string, jenkinsUrl string) {
+func createPipelineProvisionerXml(projectName string) {
   filePath := "pipeline-provisioner-job.xml"
   config := make(map[string]string)
   config["projectName"] = projectName
@@ -147,13 +148,65 @@ fi</command>
   files.CreateFromTemplate(filePath, template, config)
 }
 
-func createPipelineProvisionerJob(jenkinsUrl string) {
+func createS3PipelineXml(projectName string) {
+  filePath := "s3-pipeline-job.xml"
+  config := make(map[string]string)
+  config["projectName"] = projectName
+  const template = `<?xml version="1.1" encoding="UTF-8"?><flow-definition plugin="workflow-job@2.31">
+  <description/>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.3">
+      <projectUrl>https://github.com/PyramidSystemsInc/{{.projectName}}/</projectUrl>
+      <displayName/>
+    </com.coravy.hudson.plugins.github.GithubProjectProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers>
+        <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.29.3">
+          <spec/>
+        </com.cloudbees.jenkins.GitHubPushTrigger>
+      </triggers>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.61">
+    <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.1">
+      <configVersion>2</configVersion>
+      <userRemoteConfigs>
+        <hudson.plugins.git.UserRemoteConfig>
+          <url>https://github.com/PyramidSystemsInc/{{.projectName}}.git</url>
+          <credentialsId>gitcredentials</credentialsId>
+        </hudson.plugins.git.UserRemoteConfig>
+      </userRemoteConfigs>
+      <branches>
+        <hudson.plugins.git.BranchSpec>
+          <name>*/master</name>
+        </hudson.plugins.git.BranchSpec>
+      </branches>
+      <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+      <submoduleCfg class="list"/>
+      <extensions/>
+    </scm>
+    <scriptPath>app/Jenkinsfile</scriptPath>
+    <lightweight>true</lightweight>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
+`
+  files.CreateFromTemplate(filePath, template, config)
+}
+
+func createPipelineJobs(jenkinsUrl string) {
   jenkinsCliCommandStart := str.Concat("java -jar jenkins-cli.jar -s http://", jenkinsUrl, " -auth pyramid:systems")
   jobData := files.Read("pipeline-provisioner-job.xml")
   createJobCommand := str.Concat(jenkinsCliCommandStart, " create-job pipeline-provisioner")
   commands.RunWithStdin(createJobCommand, string(jobData), "")
+  jobData = files.Read("s3-pipeline-job.xml")
+  createJobCommand = str.Concat(jenkinsCliCommandStart, " create-job front-end-integration")
+  commands.RunWithStdin(createJobCommand, string(jobData), "")
 }
 
 func cleanUp() {
-  commands.Run("rm jenkins-cli.jar pipeline-provisioner-job.xml", "")
+  // TODO: Change to os.Rm() or something in order to support Windows CMD
+  commands.Run("rm jenkins-cli.jar pipeline-provisioner-job.xml s3-pipeline-job.xml", "")
 }

@@ -9,6 +9,7 @@ import (
 func FrontEndFiles(projectDirectory string, projectName string, description string) {
   config := createConfig(projectName, description)
   frontEndFiles.CreatePackageJson(str.Concat(projectDirectory, "/app/package.json"), config)
+  frontEndFiles.CreateJenkinsfile(str.Concat(projectDirectory, "/app/Jenkinsfile"), config)
   frontEndFiles.CreateWebpackConfig(str.Concat(projectDirectory, "/app/webpack.config.js"))
   frontEndFiles.CreateIndexHtml(str.Concat(projectDirectory, "/app/src/index.html"), config)
   frontEndFiles.CreateApplicationJs(str.Concat(projectDirectory, "/app/src/Application.js"))

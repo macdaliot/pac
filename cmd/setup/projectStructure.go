@@ -43,7 +43,8 @@ func createProjectFiles(projectDirectory string, projectName string, description
 }
 
 func createGitIgnore(projectDirectory string) {
-	const template = `svc/*/node_modules
+	const template = `app/node_modules
+svc/*/node_modules
 svc/*/dist
 `
 	files.CreateFromTemplate(str.Concat(projectDirectory, "/.gitignore"), template, nil)
