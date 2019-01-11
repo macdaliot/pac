@@ -19,16 +19,14 @@ func CreateLaunchBat(filePath string, config map[string]string) {
 if "%OS%"=="Windows_NT" setlocal
 
 
-set AWS_ACCESS_KEY_ID=aws --profile default configure get aws_access_key_id
+set AWS_ACCESS_KEY_ID=aws
 if not [%AWS_ACCESS_KEY_ID%] == [] goto AWSCheck
 if not [%AWS_SECRET_ACCESS_KEY%] == [] goto AWSCheck
 
 :AWSCheck
-aws --profile default configure get aws_access_key_id > A1
-set /p AWS_ACCESS_KEY_ID=<A1
-aws --profile default configure get aws_secret_access_key > A1
-set /p AWS_SECRET_ACCESS_KEY=<A1
-del /q A1
+for /f "delims=" %i in ('aws configure get aws_access_key_id') do set AWS_ACCESS_KEY_ID=%i
+for /f "delims=" %i in ('aws configure get aws_secret_access_key') do set AWS_SECRET_ACCESS_KEY=%i
+
 
 if not exist node_modules npm i
 

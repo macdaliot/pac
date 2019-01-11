@@ -1,2 +1,6 @@
 pac
 pac.exe
+
+cmd/add/service/launchBatch\.go~
+
+*.go~
