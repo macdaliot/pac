@@ -20,7 +20,11 @@ pipeline {
     }
     stage('Test') {
       steps {
-        echo "Test"
+        sh '''#!/bin/bash
+          cd svc/'''+JOB+'''
+          chmod 755 ./.test.sh
+          ./.test.sh
+        '''
       }
     }
     stage('Integrate') {

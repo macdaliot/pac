@@ -36,7 +36,8 @@ func Service(serviceName string) {
 	createTestsDirectory(serviceName)
 	createTestFiles(config)
 	// createDynamoDbTable(serviceName)
-	launchMicroservice(serviceName)
+	// launchMicroservice(serviceName)
+	commands.Run("npm i", str.Concat("./", serviceName))
 }
 
 func ensureRunningFromServicesDirectory() {
@@ -88,6 +89,7 @@ func createServiceFiles(serviceName string, config map[string]string) {
 	service.CreateLaunchSh(str.Concat(serviceName, "/launch.sh"), config)
 	service.CreateJenkinsfile(str.Concat(serviceName, "/Jenkinsfile"))
 	service.CreateBuildSh(str.Concat(serviceName, "/.build.sh"), serviceName)
+	service.CreateTestSh(str.Concat(serviceName, "/.test.sh"), serviceName)
 	service.CreateDeploySh(str.Concat(serviceName, "/.deploy.sh"), config)
 	logger.Info(str.Concat("Created ", serviceName, " Express microservice files"))
 }
