@@ -9,7 +9,7 @@ import (
 
 func ElasticLoadBalancer(projectName string) {
   region := "us-east-2"
-  name := str.Concat("pac-", projectName, "-integration")
+  name := str.Concat("pac-", projectName, "-i")
   awsSession := aws.CreateAwsSession(region)
   loadBalancerArn, listenerArn, serviceUrl := elbv2.CreateLoadBalancer(name, awsSession)
   pacFile := readPacFile(projectName)

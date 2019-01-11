@@ -11,7 +11,7 @@ func CreateDeploySh(filePath string, config map[string]string) {
 
 # Perform setup
 SERVICE_NAME=$(sed -e 's/.*\///g' <<< $(pwd))
-FULL_SERVICE_NAME=pac-{{.projectName}}-integration-"$SERVICE_NAME"
+FULL_SERVICE_NAME=pac-{{.projectName}}-i-"$SERVICE_NAME"
 
 # If AWS resources already exist...
 if aws elbv2 describe-target-groups --names $FULL_SERVICE_NAME --region us-east-2; then
