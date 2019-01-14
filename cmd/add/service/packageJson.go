@@ -22,6 +22,7 @@ func CreatePackageJSON(filePath string, config map[string]string) {
     "aws-serverless-express": "^3.3.5",
     "body-parser": "^1.18.3",
     "claudia": "^5.3.0",
+    "cors": "^2.8.5",
     "express": "^4.16.4",
     "uuid": "^3.3.2"
   },

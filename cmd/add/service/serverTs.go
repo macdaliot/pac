@@ -9,12 +9,14 @@ func CreateServerTs(filePath string, config map[string]string) {
   const template = `const AWS: any = require('aws-sdk');
 const express: any = require('express');
 const bodyParser: any = require('body-parser');
+const cors: any = require('cors');
 const uuidv4: any = require('uuid/v4');
 const port: number = 3000;
 const serviceName: string = '{{.serviceName}}';
 
 const app: any = express();
 app.use(bodyParser.json());
+app.use(cors());
 
 import * as awsSdkConfig from './awsSdkConfig.js';
 AWS.config.update(awsSdkConfig.local);
