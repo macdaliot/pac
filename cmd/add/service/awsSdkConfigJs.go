@@ -1,12 +1,12 @@
 package service
 
 import (
-	"github.com/PyramidSystemsInc/go/files"
+  "github.com/PyramidSystemsInc/go/files"
 )
 
 // CreateAwsSdkConfig creates a awsSdkConfig.js file based on the configuration passed in
 func CreateAwsSdkConfigJs(filePath string, config map[string]string) {
-	const template = `const cloud = {
+  const template = `const cloud = {
   region: 'us-east-2'
 };
 
@@ -20,5 +20,5 @@ module.exports = {
   local: local
 };
 `
-	files.CreateFromTemplate(filePath, template, config)
+  files.CreateFromTemplate(filePath, template, config)
 }

@@ -1,12 +1,12 @@
 package service
 
 import (
-	"github.com/PyramidSystemsInc/go/files"
+  "github.com/PyramidSystemsInc/go/files"
 )
 
 // CreateDynamoConfigJSON creates a dynamo config for the local instance
 func CreateDynamoConfigJSON(filePath string, config map[string]string) {
-	const template = `{
+  const template = `{
   "TableName": "pac-{{.projectName}}-i-{{.serviceName}}",
   "KeySchema": [
     {
@@ -26,5 +26,5 @@ func CreateDynamoConfigJSON(filePath string, config map[string]string) {
   }
 }
 `
-	files.CreateFromTemplate(filePath, template, config)
+  files.CreateFromTemplate(filePath, template, config)
 }

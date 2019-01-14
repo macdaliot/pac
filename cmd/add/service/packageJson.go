@@ -1,12 +1,12 @@
 package service
 
 import (
-	"github.com/PyramidSystemsInc/go/files"
+  "github.com/PyramidSystemsInc/go/files"
 )
 
 // CreatePackageJSON creates a default package.json based on passed in config
 func CreatePackageJSON(filePath string, config map[string]string) {
-	const template = `{
+  const template = `{
   "name": "pac-{{.serviceName}}-service",
   "version": "0.0.1",
   "description": "{{.serviceName}} service (created by PAC)",
@@ -35,5 +35,5 @@ func CreatePackageJSON(filePath string, config map[string]string) {
   }
 }
 `
-	files.CreateFromTemplate(filePath, template, config)
+  files.CreateFromTemplate(filePath, template, config)
 }

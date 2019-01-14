@@ -1,12 +1,12 @@
 package service
 
 import (
-	"github.com/PyramidSystemsInc/go/files"
+  "github.com/PyramidSystemsInc/go/files"
 )
 
 // CreateTestFile creates a default test file based on passed in config
 func CreateTestFile(filePath string, config map[string]string) {
-	const template = `import 'mocha';
+  const template = `import 'mocha';
     import * as chai from 'chai';
     const should = chai.should();
     const expect = chai.expect;
@@ -22,5 +22,5 @@ func CreateTestFile(filePath string, config map[string]string) {
     });
     
 `
-	files.CreateFromTemplate(filePath, template, config)
+  files.CreateFromTemplate(filePath, template, config)
 }

@@ -1,7 +1,7 @@
 package frontEndFiles
 
 import (
-	"github.com/PyramidSystemsInc/go/files"
+  "github.com/PyramidSystemsInc/go/files"
 )
 
 func CreatePackageJson(filePath string, config map[string]string) {

@@ -1,11 +1,11 @@
 package service
 
 import (
-	"github.com/PyramidSystemsInc/go/files"
+  "github.com/PyramidSystemsInc/go/files"
 )
 
 func CreateJenkinsfile(filePath string) {
-	const template = `JOB = "${env.JOB_NAME}"
+  const template = `JOB = "${env.JOB_NAME}"
 pipeline {
   agent any
   stages {
@@ -49,5 +49,5 @@ pipeline {
   }
 }
 `
-	files.CreateFromTemplate(filePath, template, nil)
+  files.CreateFromTemplate(filePath, template, nil)
 }
