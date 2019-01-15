@@ -1,12 +1,12 @@
 package service
 
 import (
-  "github.com/PyramidSystemsInc/go/files"
+	"github.com/PyramidSystemsInc/go/files"
 )
 
 // CreatePackageJSON creates a default package.json based on passed in config
 func CreatePackageJSON(filePath string, config map[string]string) {
-  const template = `{
+	const template = `{
   "name": "pac-{{.serviceName}}-service",
   "version": "0.0.1",
   "description": "{{.serviceName}} service (created by PAC)",
@@ -27,6 +27,8 @@ func CreatePackageJSON(filePath string, config map[string]string) {
     "uuid": "^3.3.2"
   },
   "devDependencies": {
+    "@types/express": "^4.16.0",
+    "@types/uuid": "^3.4.4",
     "@types/node": "^10.12.12",
     "@types/mocha": "^5.2.5",
     "typescript": "^3.2.2",
@@ -36,5 +38,5 @@ func CreatePackageJSON(filePath string, config map[string]string) {
   }
 }
 `
-  files.CreateFromTemplate(filePath, template, config)
+	files.CreateFromTemplate(filePath, template, config)
 }
