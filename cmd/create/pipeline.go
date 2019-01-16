@@ -1,55 +1,56 @@
 package create
 
 import (
-  "encoding/base64"
-  "encoding/json"
-  "io/ioutil"
-  "os"
-  "strings"
-  "github.com/PyramidSystemsInc/go/commands"
-  "github.com/PyramidSystemsInc/go/directories"
-  "github.com/PyramidSystemsInc/go/errors"
-  "github.com/PyramidSystemsInc/go/files"
-  "github.com/PyramidSystemsInc/go/logger"
-  "github.com/PyramidSystemsInc/go/str"
+	"encoding/base64"
+	"encoding/json"
+	"io/ioutil"
+	"os"
+	"strings"
+
+	"github.com/PyramidSystemsInc/go/commands"
+	"github.com/PyramidSystemsInc/go/directories"
+	"github.com/PyramidSystemsInc/go/errors"
+	"github.com/PyramidSystemsInc/go/files"
+	"github.com/PyramidSystemsInc/go/logger"
+	"github.com/PyramidSystemsInc/go/str"
 )
 
 type PacFile struct {
-  ProjectName      string  `json:"projectName"`
-  GitAuth          string  `json:"gitAuth"`
-  JenkinsUrl       string  `json:"jenkinsUrl"`
-  LoadBalancerArn  string  `json:"loadBalancerArn"`
-  ListenerArn      string  `json:"listenerArn"`
-  ServiceUrl       string  `json:"serviceUrl"`
+	ProjectName     string `json:"projectName"`
+	GitAuth         string `json:"gitAuth"`
+	JenkinsUrl      string `json:"jenkinsUrl"`
+	LoadBalancerArn string `json:"loadBalancerArn"`
+	ListenerArn     string `json:"listenerArn"`
+	ServiceUrl      string `json:"serviceUrl"`
 }
 
 func Pipeline(pipelineName string, branches string, description string) {
-  // TODO: Allow multiple branches
-  pipelineDir := str.Concat("./jenkins/", pipelineName)
-  pacFile := readPacFile()
-  jenkinsUrl := str.Concat("http://", pacFile.JenkinsUrl)
-  config := createPipelineConfig(pipelineName, pacFile.ProjectName, branches, description)
-  createJobXml(pipelineDir, config)
-  downloadJenkinsCliJar(jenkinsUrl)
-  jenkinsCliCommandStart := str.Concat("java -jar jenkins-cli.jar -s ", jenkinsUrl, " -auth pyramid:systems")
-  saveGitCredentialsToJenkinsIfDoesNotExist(pacFile, jenkinsCliCommandStart)
-  createJenkinsPipelineJob(pipelineName, pipelineDir, jenkinsCliCommandStart)
-  // performInitialBuildOfNewJob(pipelineName, jenkinsCliCommandStart)
-  cleanUp()
-  logger.Info(str.Concat("Created ", pipelineName, " pipeline job in Jenkins"))
+	// TODO: Allow multiple branches
+	pipelineDir := str.Concat("./jenkins/", pipelineName)
+	pacFile := readPacFile()
+	jenkinsUrl := str.Concat("http://", pacFile.JenkinsUrl)
+	config := createPipelineConfig(pipelineName, pacFile.ProjectName, branches, description)
+	createJobXml(pipelineDir, config)
+	downloadJenkinsCliJar(jenkinsUrl)
+	jenkinsCliCommandStart := str.Concat("java -jar jenkins-cli.jar -s ", jenkinsUrl, " -auth pyramid:systems")
+	saveGitCredentialsToJenkinsIfDoesNotExist(pacFile, jenkinsCliCommandStart)
+	createJenkinsPipelineJob(pipelineName, pipelineDir, jenkinsCliCommandStart)
+	// performInitialBuildOfNewJob(pipelineName, jenkinsCliCommandStart)
+	cleanUp()
+	logger.Info(str.Concat("Created ", pipelineName, " pipeline job in Jenkins"))
 }
 
 func createPipelineConfig(pipelineName string, projectName string, branches string, description string) map[string]string {
-  config := make(map[string]string)
-  config["pipelineName"] = pipelineName
-  config["projectName"] = projectName
-  config["branches"] = branches
-  config["description"] = description
-  return config
+	config := make(map[string]string)
+	config["pipelineName"] = pipelineName
+	config["projectName"] = projectName
+	config["branches"] = branches
+	config["description"] = description
+	return config
 }
 
 func createJobXml(pipelineDir string, config map[string]string) {
-  const template = `<?xml version='1.1' encoding='UTF-8'?>
+	const template = `<?xml version='1.1' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.31">
   <description>{{.description}}</description>
   <keepDependencies>false</keepDependencies>
@@ -91,16 +92,16 @@ func createJobXml(pipelineDir string, config map[string]string) {
   <disabled>false</disabled>
 </flow-definition>
 `
-  files.CreateFromTemplate(str.Concat(pipelineDir, "/job.xml"), template, config)
+	files.CreateFromTemplate(str.Concat(pipelineDir, "/job.xml"), template, config)
 }
 
 func downloadJenkinsCliJar(jenkinsUrl string) {
-  files.Download(str.Concat("http://", jenkinsUrl, "/jnlpJars/jenkins-cli.jar"), "./jenkins-cli.jar")
+	files.Download(str.Concat(jenkinsUrl, "/jnlpJars/jenkins-cli.jar"), "./jenkins-cli.jar")
 }
 
 func createCredentialsXml(pacFile PacFile) {
-  config := createGitCredentialsConfig(pacFile)
-  const template = `<com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl plugin="credentials@2.1.18">
+	config := createGitCredentialsConfig(pacFile)
+	const template = `<com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl plugin="credentials@2.1.18">
   <scope>GLOBAL</scope>
   <id>gitcredentials</id>
   <description></description>
@@ -108,56 +109,56 @@ func createCredentialsXml(pacFile PacFile) {
   <password>{{.gitPass}}</password>
 </com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl>
 `
-  files.CreateFromTemplate(str.Concat(directories.GetWorking(), "/credentials.xml"), template, config)
+	files.CreateFromTemplate(str.Concat(directories.GetWorking(), "/credentials.xml"), template, config)
 }
 
 func createGitCredentialsConfig(pacFile PacFile) map[string]string {
-  decoded, err := base64.StdEncoding.DecodeString(pacFile.GitAuth)
-  errors.LogIfError(err)
-  separatorIndex := strings.Index(string(decoded), ":")
-  config := make(map[string]string)
-  config["gitUser"] = string(decoded)[0:separatorIndex]
-  config["gitPass"] = string(decoded)[separatorIndex + 1:len(string(decoded))]
-  return config
+	decoded, err := base64.StdEncoding.DecodeString(pacFile.GitAuth)
+	errors.LogIfError(err)
+	separatorIndex := strings.Index(string(decoded), ":")
+	config := make(map[string]string)
+	config["gitUser"] = string(decoded)[0:separatorIndex]
+	config["gitPass"] = string(decoded)[separatorIndex+1 : len(string(decoded))]
+	return config
 }
 
 func saveGitCredentialsToJenkinsIfDoesNotExist(pacFile PacFile, jenkinsCliCommandStart string) {
-  if !doJenkinsCredentialsExist(jenkinsCliCommandStart) {
-    createCredentialsXml(pacFile)
-    credentialData := files.Read("./credentials.xml")
-    commands.RunWithStdin(str.Concat(jenkinsCliCommandStart, " create-credentials-by-xml system::system::jenkins (global)"), string(credentialData), "")
-  }
+	if !doJenkinsCredentialsExist(jenkinsCliCommandStart) {
+		createCredentialsXml(pacFile)
+		credentialData := files.Read("./credentials.xml")
+		commands.RunWithStdin(str.Concat(jenkinsCliCommandStart, " create-credentials-by-xml system::system::jenkins (global)"), string(credentialData), "")
+	}
 }
 
 func doJenkinsCredentialsExist(jenkinsCliCommandStart string) bool {
-  results := commands.Run(str.Concat(jenkinsCliCommandStart, " list-credentials system::system::jenkins"), "")
-  return strings.Contains(results, "gitcredentials")
+	results := commands.Run(str.Concat(jenkinsCliCommandStart, " list-credentials system::system::jenkins"), "")
+	return strings.Contains(results, "gitcredentials")
 }
 
 func createJenkinsPipelineJob(pipelineName string, pipelineDir string, jenkinsCliCommandStart string) {
-  jobData := files.Read(str.Concat(pipelineDir, "/job.xml"))
-  createJobCommand := str.Concat(jenkinsCliCommandStart, " create-job ", pipelineName)
-  commands.RunWithStdin(createJobCommand, string(jobData), "")
+	jobData := files.Read(str.Concat(pipelineDir, "/job.xml"))
+	createJobCommand := str.Concat(jenkinsCliCommandStart, " create-job ", pipelineName)
+	commands.RunWithStdin(createJobCommand, string(jobData), "")
 }
 
 func performInitialBuildOfNewJob(pipelineName string, jenkinsCliCommandStart string) {
-  buildJobCommand := str.Concat(jenkinsCliCommandStart, " build ", pipelineName)
-  commands.Run(buildJobCommand, "")
+	buildJobCommand := str.Concat(jenkinsCliCommandStart, " build ", pipelineName)
+	commands.Run(buildJobCommand, "")
 }
 
 func cleanUp() {
-  if _, err := os.Stat("credentials.xml"); !os.IsNotExist(err) {
-    commands.Run("rm credentials.xml", "")
-  }
-  commands.Run("rm jenkins-cli.jar", "")
+	if _, err := os.Stat("credentials.xml"); !os.IsNotExist(err) {
+		commands.Run("rm credentials.xml", "")
+	}
+	commands.Run("rm jenkins-cli.jar", "")
 }
 
 func readPacFile() PacFile {
-  // TODO: Should run from anywhere
-  // TODO: Should not depend on pacFile for git
-  var pacFile PacFile
-  pacFileData, err := ioutil.ReadFile(".pac")
-  errors.QuitIfError(err)
-  json.Unmarshal(pacFileData, &pacFile)
-  return pacFile
+	// TODO: Should run from anywhere
+	// TODO: Should not depend on pacFile for git
+	var pacFile PacFile
+	pacFileData, err := ioutil.ReadFile(".pac")
+	errors.QuitIfError(err)
+	json.Unmarshal(pacFileData, &pacFile)
+	return pacFile
 }
