@@ -24,9 +24,16 @@ func Jenkins(projectName string) {
   clusterName := str.Concat("pac-", projectName)
   familyName := str.Concat(clusterName, "-jenkins")
   imageName := "pac-jenkins"
+  securityGroupName := "pac-jenkins"
   awsSession := aws.CreateAwsSession(region)
-  ecs.RegisterFargateTaskDefinition(familyName, awsSession, imageName)
-  publicIp := ecs.LaunchFargateContainer(familyName, clusterName, awsSession)
+  ecs.RegisterFargateTaskDefinition(familyName, awsSession, []ecs.Container{
+    {
+      Name: imageName,
+      ImageName: imageName,
+      Essential: true,
+    },
+  })
+  publicIp := ecs.LaunchFargateContainer(familyName, clusterName, securityGroupName, awsSession)
   saveJenkinsIpToPacFile(projectName, publicIp)
   logger.Info(str.Concat("Jenkins will start up in a minute or so running at ", publicIp, ":8080"))
 }
