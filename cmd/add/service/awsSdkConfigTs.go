@@ -5,7 +5,7 @@ import (
 )
 
 // CreateAwsSdkConfig creates a awsSdkConfig.js file based on the configuration passed in
-func CreateAwsSdkConfigTs(filePath string, config map[string]string) {
+func CreateAwsSdkConfigTs(filePath string) {
 	const template = `export const cloud = {
     region: 'us-east-2'
   };
@@ -15,5 +15,5 @@ func CreateAwsSdkConfigTs(filePath string, config map[string]string) {
     endpoint: 'http://pac-db-local:8000'
   };
 `
-	files.CreateFromTemplate(filePath, template, config)
+	files.CreateFromTemplate(filePath, template, nil)
 }

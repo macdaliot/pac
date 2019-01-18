@@ -6,111 +6,29 @@ import (
 
 // CreateServerTs creates a server.ts file based on the configuration passed in
 func CreateServerTs(filePath string, config map[string]string) {
-	const template = `import AWS = require('aws-sdk');
-  import express = require('express');
-  import bodyParser = require('body-parser');
-  import uuidv4 = require('uuid/v4');
-  const port: number = 3000;
-  const serviceName: string = '{{.serviceName}}';
-  
+	const template = `import * as express from 'express';
+  import apiRouter from './routes/routes'
+  import * as cors from 'cors';
+  import * as loggerMiddleware from './middleware/logger/loggerMiddleware';
   const app = express();
-  app.use(bodyParser.json());
+  const port = 3000;
+  /* TODO: update error handling */
+  /* need configMap here */
+  app
+      .use(cors())
   
-  import awsSdkConfig = require('./awsSdkConfig');
-  AWS.config.update(awsSdkConfig.local);
-  const dynamo = new AWS.DynamoDB({ apiVersion: '2012-10-08' });
+      /* parse middleware */
+      /* https://expressjs.com/en/api.html#express.json */
+      .use(express.json())
+      .use(express.urlencoded({ extended: true }))
   
-  app.get('/api/{{.serviceName}}/:id', (request, response) => {
-    const whereClause = buildGetByIdParams(request.params.id);
-    dynamo.scan(whereClause, function(err, data) {
-      if (!err) {
-        response.send(data);
-      } else {
-        response.status(500).send(err);
-      }
-    });
-  });
+      /* logging middleware, order matters */
+      .use('', loggerMiddleware._loggers)
   
-  app.get('/api/{{.serviceName}}', (request, response) => {
-    const whereClause = buildQueryStringParams(request.query);
-    dynamo.scan(whereClause, function(err, data) {
-      if (!err) {
-        response.send(data);
-      } else {
-        response.status(500).send(err);
-      }
-    });
-  });
+      /* routes */
+      .use('/api', apiRouter)
   
-  app.post('/api/{{.serviceName}}', (request, response) => {
-    let params: any = {
-      "RequestItems": {
-        "pac-{{.projectName}}-i-{{.serviceName}}": [
-          {
-            "PutRequest": {
-              "Item": {
-                "id": {
-                  "S": uuidv4()
-                },
-                "UserName": {
-                  "S": "bobby"
-                },
-                "FirstName": {
-                  "S": "Robert"
-                },
-                "LastName": {
-                  "S": "Jones"
-                }
-              }
-            }
-          }
-        ]
-      }
-    };
-    dynamo.batchWriteItem(params, (err, data) => {
-      if (!err) {
-        response.send(data);
-      } else {
-        response.status(500).send(err);
-      }
-    });
-  });
-  
-  let buildQueryStringParams = (query: any) => {
-    let params: AWS.DynamoDB.ScanInput = {
-      TableName: 'pac-{{.projectName}}-i-{{.serviceName}}'
-    };
-    let queryKeys: any = Object.keys(query);
-    if (queryKeys.length > 0) {
-      params.ExpressionAttributeValues = {};
-      params.FilterExpression = "";
-      queryKeys.forEach((key: string, i: number) => {
-        params.ExpressionAttributeValues[":" + key] = {
-          S: query[key]
-        };
-        if (i != 0) {
-          params.FilterExpression += " and ";
-        }
-        let keyUpperCase: string = key.charAt(0).toUpperCase() + key.slice(1);
-        params.FilterExpression += keyUpperCase + " = :" + key;
-      });
-    }
-    return params;
-  };
-  
-  let buildGetByIdParams = (id: string) => {
-    let params: AWS.DynamoDB.ScanInput = {
-      ExpressionAttributeValues: {},
-      FilterExpression: 'id = :id',
-      TableName: 'pac-{{.projectName}}-i-{{.serviceName}}'
-    };
-    params.ExpressionAttributeValues[":id"] = {
-      S: id
-    };
-    return params;
-  };
-  
-  app.listen(port);  
+  app.listen(port, () => console.log(` + "`" + `{{.serviceName}} is running on port ${port}!` + "`" + `))
 `
 	files.CreateFromTemplate(filePath, template, config)
 }

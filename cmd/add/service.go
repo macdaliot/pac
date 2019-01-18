@@ -58,7 +58,6 @@ func createServiceDirectory(serviceName string) {
 	workingDirectory := directories.GetWorking()
 	var serviceDirectory string = str.Concat(workingDirectory, "/", serviceName)
 	directories.Create(serviceDirectory)
-	directories.Create(str.Concat(serviceDirectory, "/src"))
 }
 
 func createTestsDirectory(serviceName string) {
@@ -68,7 +67,10 @@ func createTestsDirectory(serviceName string) {
 
 func createTestFiles(config map[string]string) {
 	/* add more tests as needed */
-	service.CreateTestFile(getPathForTest("server.spec.ts"), config)
+	service.CreateDefaultControllerSpecTs(getPathForTest("defaultController.spec.ts"), config)
+	service.CreateDefaultServiceSpecTs(getPathForTest("defaultService.spec.ts"), config)
+	service.CreateMockDynamoDbTs(getPathForTest("mockDynamoDb.ts"))
+	service.CreateMockDefaultServiceTs(getPathForTest("mockDefaultService.ts"))
 }
 
 func getPathForTestsFolder() string {
@@ -82,16 +84,52 @@ func createServiceFiles(serviceName string, config map[string]string) {
 	service.CreatePackageJSON(str.Concat(serviceName, "/package.json"), config)
 	service.CreateDockerfile(str.Concat(serviceName, "/Dockerfile"))
 	service.CreateTsConfig(str.Concat(serviceName, "/tsconfig.json"), config)
-	service.CreateServerTs(str.Concat(serviceName, "/src", "/server.ts"), config)
 	service.CreateDynamoConfigJSON(str.Concat(serviceName, "/dynamoConfig.json"), config)
-	service.CreateAwsSdkConfigTs(str.Concat(serviceName, "/src", "/awsSdkConfig.ts"), config)
 	service.CreateLaunchBat(str.Concat(serviceName, "/launch.bat"), config)
 	service.CreateLaunchSh(str.Concat(serviceName, "/launch.sh"), config)
 	service.CreateJenkinsfile(str.Concat(serviceName, "/Jenkinsfile"))
 	service.CreateBuildSh(str.Concat(serviceName, "/.build.sh"), serviceName)
 	service.CreateTestSh(str.Concat(serviceName, "/.test.sh"), serviceName)
 	service.CreateDeploySh(str.Concat(serviceName, "/.deploy.sh"), config)
+	service.CreateNodemonJson(str.Concat(serviceName, "/nodemon.json"))
+	createServiceSource(serviceName, config)
 	logger.Info(str.Concat("Created ", serviceName, " Express microservice files"))
+}
+
+func createServiceSource(serviceName string, config map[string]string) {
+	/* need a better way to construct folders */
+	workingDirectory := directories.GetWorking()
+	var serviceDirectory = str.Concat(workingDirectory, "/", serviceName)
+	var serviceSourceDirectory = str.Concat(serviceDirectory, "/src")
+	directories.Create(str.Concat(serviceSourceDirectory))
+	service.CreateServerTs(str.Concat(serviceName, "/src", "/server.ts"), config)
+
+	directories.Create(str.Concat(serviceSourceDirectory, "/config"))
+	service.CreateAwsSdkConfigTs(str.Concat(serviceSourceDirectory, "/config", "/awsSdkConfig.ts"))
+
+	directories.Create(str.Concat(serviceSourceDirectory, "/controllers"))
+	service.CreateControllerInterfaceTs(str.Concat(serviceSourceDirectory, "/controllers", "/controller.interface.ts"))
+	service.CreateDefaultControllerTs(str.Concat(serviceSourceDirectory, "/controllers", "/defaultController.ts"))
+
+	directories.Create(str.Concat(serviceSourceDirectory, "/database"))
+	service.CreateDbInterfaceTs(str.Concat(serviceSourceDirectory, "/database", "/db.interface.ts"))
+	service.CreateDynamoDbTs(str.Concat(serviceSourceDirectory, "/database", "/dynamo.db.ts"), config)
+
+	directories.Create(str.Concat(serviceSourceDirectory, "/middleware"))
+	directories.Create(str.Concat(serviceSourceDirectory, "/middleware", "/logger"))
+	service.CreateLoggerTs(str.Concat(serviceSourceDirectory, "/middleware", "/logger", "/logger.ts"))
+	service.CreateLoggerMiddlewareTs(str.Concat(serviceSourceDirectory, "/middleware", "/logger", "/loggerMiddleware.ts"))
+
+	directories.Create(str.Concat(serviceSourceDirectory, "/routes"))
+	service.CreateRoutesTS(str.Concat(serviceSourceDirectory, "/routes", "/routes.ts"), config)
+
+	directories.Create(str.Concat(serviceSourceDirectory, "/services"))
+	service.CreateDefaultServiceTs(str.Concat(serviceSourceDirectory, "/services", "/defaultService.ts"))
+	service.CreateServiceInterfaceTs(str.Concat(serviceSourceDirectory, "/services", "/service.interface.ts"))
+
+	directories.Create(str.Concat(serviceSourceDirectory, "/utility"))
+	service.CreateFunctions_indexTs(str.Concat(serviceSourceDirectory, "/utility", "/index.ts"))
+	service.CreateFunctionsTs(str.Concat(serviceSourceDirectory, "/utility", "/functions.ts"))
 }
 
 func createDynamoDbTable(serviceName string) {
