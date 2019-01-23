@@ -1,0 +1,43 @@
+JOB = "${env.JOB_NAME}"
+pipeline {
+  agent any
+  stages {
+    stage('Build') {
+      steps {
+        sh '''#!/bin/bash
+          cd svc/'''+JOB+'''
+          chmod 755 ./.build.sh
+          ./.build.sh
+        '''
+      }
+    }
+    stage('Test') {
+      steps {
+        sh '''#!/bin/bash
+          cd svc/'''+JOB+'''
+          chmod 755 ./.test.sh
+          ./.test.sh
+        '''
+      }
+    }
+    stage('Integrate') {
+      steps {
+        echo "Integrate"
+      }
+    }
+    stage('Inspect') {
+      steps {
+        echo "Inspect"
+      }
+    }
+    stage('Deploy') {
+      steps {
+        sh '''#!/bin/bash
+          cd svc/'''+JOB+'''
+          chmod 755 ./.deploy.sh
+          ./.deploy.sh
+        '''
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-package frontEndFiles
+package authservice
 
 import (
 	"path/filepath"
@@ -9,7 +9,7 @@ import (
 )
 
 func CreateAllTemplatedFiles(targetDirectory string, config map[string]string) {
-	box := packr.NewBox("./frontEndTemplates")
+	box := packr.NewBox("./authServiceTemplates")
 	for _, templatePath := range box.List() {
 		logger.Info(templatePath)
 		fullPath := filepath.Join(targetDirectory, templatePath)
