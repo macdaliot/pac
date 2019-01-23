@@ -1,11 +1,4 @@
-package frontEndFiles
-
-import (
-  "github.com/PyramidSystemsInc/go/files"
-)
-
-func CreatePackageJson(filePath string, config map[string]string) {
-  const template = `{
+{
   "name": "{{.projectName}}",
   "version": "0.0.1",
   "description": "{{.description}}",
@@ -43,9 +36,11 @@ func CreatePackageJson(filePath string, config map[string]string) {
     "promise-polyfill": "^8.1.0",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
+    "react-redux": "^6.0.0",
     "react-router": "^4.3.1",
     "react-router-config": "^4.4.0-beta.6",
     "react-router-dom": "^4.3.1",
+    "redux": "^4.0.1",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",
     "url-loader": "^1.1.2",
@@ -59,7 +54,4 @@ func CreatePackageJson(filePath string, config map[string]string) {
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.10"
   }
-}
-`
-  files.CreateFromTemplate(filePath, template, config)
 }

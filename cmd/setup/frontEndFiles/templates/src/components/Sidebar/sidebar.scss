@@ -1,11 +1,4 @@
-package frontEndFiles
-
-import (
-  "github.com/PyramidSystemsInc/go/files"
-)
-
-func CreateSidebarStyles(filePath string) {
-  const template = `@import '../../scss/variables.scss';
+@import '../../scss/variables.scss';
 
 .sidebar-component {
   background-color: white;
@@ -32,7 +25,4 @@ func CreateSidebarStyles(filePath string) {
   flex-basis: 250px;
   padding-left: 6px;
   padding-right: 6px;
-}
-`
-  files.CreateFromTemplate(filePath, template, nil)
 }

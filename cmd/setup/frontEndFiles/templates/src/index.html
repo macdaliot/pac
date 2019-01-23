@@ -1,11 +1,4 @@
-package frontEndFiles
-
-import (
-  "github.com/PyramidSystemsInc/go/files"
-)
-
-func CreateIndexHtml(filePath string, config map[string]string) {
-  const template = `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <title>{{.projectName}}</title>
@@ -24,6 +17,3 @@ func CreateIndexHtml(filePath string, config map[string]string) {
     <script src="/bundle.js"></script>
   </body>
 </html>
-`
-  files.CreateFromTemplate(filePath, template, config)
-}

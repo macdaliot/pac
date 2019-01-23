@@ -1,11 +1,4 @@
-package frontEndFiles
-
-import (
-  "github.com/PyramidSystemsInc/go/files"
-)
-
-func CreateJenkinsfile(filePath string, config map[string]string) {
-  const template = `pipeline {
+pipeline {
   agent any
   stages {
     stage('Build') {
@@ -34,7 +27,4 @@ func CreateJenkinsfile(filePath string, config map[string]string) {
       }
     }
   }
-}
-`
-  files.CreateFromTemplate(filePath, template, config)
 }

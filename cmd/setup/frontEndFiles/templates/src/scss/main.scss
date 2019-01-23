@@ -1,11 +1,4 @@
-package frontEndFiles
-
-import (
-  "github.com/PyramidSystemsInc/go/files"
-)
-
-func CreateScssMain(filePath string) {
-  const template = `@import 'variables';
+@import 'variables';
 
 html, body {
   height: 100%;
@@ -56,7 +49,4 @@ a {
 
 button {
   font-family: $font-sans-serif;
-}
-`
-  files.CreateFromTemplate(filePath, template, nil)
 }

@@ -1,11 +1,4 @@
-package frontEndFiles
-
-import (
-  "github.com/PyramidSystemsInc/go/files"
-)
-
-func CreateHeaderStyles(filePath string) {
-  const template = `@import '../../scss/variables.scss';
+@import '../../scss/variables.scss';
 
 .header-component {
   align-items: center;
@@ -88,7 +81,4 @@ func CreateHeaderStyles(filePath string) {
     line-height: 40px;
     margin-left: 12px;
   }
-}
-`
-  files.CreateFromTemplate(filePath, template, nil)
 }

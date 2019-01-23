@@ -1,11 +1,4 @@
-package frontEndFiles
-
-import (
-  "github.com/PyramidSystemsInc/go/files"
-)
-
-func CreateSidebarButtonComponent(filePath string) {
-  const template = `import React from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { hot } from 'react-hot-loader';
 import './button.scss';
@@ -57,6 +50,3 @@ class Button extends React.Component {
 }
 
 export default hot(module)(Button);
-`
-  files.CreateFromTemplate(filePath, template, nil)
-}

@@ -1,12 +1,6 @@
-package frontEndFiles
-
-import (
-  "github.com/PyramidSystemsInc/go/files"
-)
-
-func CreateHeaderComponent(filePath string, config map[string]string) {
-  const template = `import React from 'react';
+import React from 'react';
 import { hot } from 'react-hot-loader';
+import { connect } from 'react-redux';
 import * as routeData from '../../routes/routes.json';
 import './header.scss';
 
@@ -19,6 +13,8 @@ class Header extends React.Component {
     this.onClickMenuButton = this.onClickMenuButton.bind(this);
   }
 
+  //static contextType = UserContext;
+
   render() {
     var matchingRoute = this.findMatchingRoute();
     var pageTitle = this.getPageTitle(matchingRoute);
@@ -30,12 +26,12 @@ class Header extends React.Component {
           <span className="page-title">{pageTitle}</span>
         </div>
         <div className="section center">
-          <span className="application-title">{{.projectName}}</span>
+        <span className="application-title">{{.projectName}}</span>
         </div>
         <div className="section right">
           <span className="profile-button">
             <span className="fas fa-user-circle"></span>
-            <span className="user-name">User Name</span>
+            <span className="user-name">{this.props.isAuthenticated ? this.props.user.name : "Not Logged In" }</span>
           </span>
         </div>
       </header>
@@ -83,8 +79,6 @@ class Header extends React.Component {
     }
   }
 }
-
-export default hot(module)(Header);
-`
-  files.CreateFromTemplate(filePath, template, config)
-}
+const mapState = state => ({ user: state.user, isAuthenticated: (state.user != null) });
+const mapDispatch = dispatch => ({});
+export default hot(module)(connect(mapState, mapDispatch)(Header))

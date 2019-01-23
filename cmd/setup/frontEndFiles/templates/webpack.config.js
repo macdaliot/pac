@@ -1,11 +1,4 @@
-package frontEndFiles
-
-import (
-  "github.com/PyramidSystemsInc/go/files"
-)
-
-func CreateWebpackConfig(filePath string) {
-  const template = `const path = require('path');
+const path = require('path');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -62,6 +55,3 @@ module.exports = {
     new ExtractTextPlugin('styles.css')
   ]
 };
-`
-  files.CreateFromTemplate(filePath, template, nil)
-}

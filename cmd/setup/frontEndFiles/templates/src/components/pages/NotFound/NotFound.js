@@ -1,11 +1,4 @@
-package frontEndFiles
-
-import (
-  "github.com/PyramidSystemsInc/go/files"
-)
-
-func CreateNotFoundPageComponent(filePath string) {
-  const template = `import React from 'react';
+import React from 'react';
 import { hot } from 'react-hot-loader';
 import { Alert } from '@pyramidlabs/react-ui';
 import './not-found.scss';
@@ -21,6 +14,3 @@ class NotFound extends React.Component {
 }
 
 export default hot(module)(NotFound);
-`
-  files.CreateFromTemplate(filePath, template, nil)
-}
