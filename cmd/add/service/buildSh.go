@@ -12,8 +12,6 @@ func CreateBuildSh(filePath string, serviceName string) {
 # Zip up Lambda function code
 npm i
 npx tsc
-echo $(sed -e 's/app.listen(port.*);/module.exports = app;/g' dist/server.js) > dist/server.js
-echo $(sed -e 's/awsSdkConfig.local/awsSdkConfig.cloud/g' dist/database/dynamo.db.js) > dist/database/dynamo.db.js
 zip -r function dist/* lambda.js node_modules >> /dev/null
 `
   files.CreateFromTemplate(filePath, template, nil)

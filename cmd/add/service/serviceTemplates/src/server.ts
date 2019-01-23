@@ -37,4 +37,9 @@ app
   /* routes */
   .use('/api', apiRouter)
 
+const isInLambda = !!process.env.LAMBDA_TASK_ROOT;
+if (isInLambda) {
+  module.exports = app;
+} else {
   app.listen(port, () => console.log(` + "`" + `{{.serviceName}} is running on port ${port}!` + "`" + `))
+}  

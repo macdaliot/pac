@@ -16,7 +16,12 @@ func CreateDynamoDbTs(filePath string, config map[string]string) {
 	export class DynamoDB implements Database {
 		dbInstance: AWS.DynamoDB;
 		constructor() {
-			AWS.config.update(awsSdkConfig.local);
+      const isInLambda = !!process.env.LAMBDA_TASK_ROOT;
+      if (isInLambda) {
+        AWS.config.update(awsSdkConfig.cloud);
+      } else {
+        AWS.config.update(awsSdkConfig.local);
+      }  
 			this.dbInstance = new AWS.DynamoDB({ apiVersion: '2012-10-08' });
 		}
 	
