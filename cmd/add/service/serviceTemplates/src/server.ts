@@ -14,8 +14,8 @@ dotenv.load();
 
 let opts: JwtStrategyOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.JWT_SECRET,
-  issuer: process.env.JWT_ISSUER,
+  secretOrKey: '4pWQUrx6RkgU6o2TC',
+  issuer: 'urn:pacAuth',
 }
 //opts.audience = 'yoursite.net';
 passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
