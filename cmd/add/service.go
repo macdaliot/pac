@@ -91,6 +91,7 @@ func createServiceFiles(serviceName string, config map[string]string) {
 	service.CreateDeploySh(str.Concat(serviceName, "/.deploy.sh"), config)
 	service.CreateNodemonJson(str.Concat(serviceName, "/nodemon.json"))
 	service.CreateLambdaJs(str.Concat(serviceName, "/lambda.js"))
+	service.CreateAllTemplatedFiles(serviceName, config)
 	createServiceSource(serviceName, config)
 	logger.Info(str.Concat("Created ", serviceName, " Express microservice files"))
 }
