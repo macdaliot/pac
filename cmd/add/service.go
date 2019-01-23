@@ -81,9 +81,7 @@ func getPathForTest(filePath string) string {
 }
 
 func createServiceFiles(serviceName string, config map[string]string) {
-	service.CreatePackageJSON(str.Concat(serviceName, "/package.json"), config)
 	service.CreateDockerfile(str.Concat(serviceName, "/Dockerfile"))
-	service.CreateTsConfig(str.Concat(serviceName, "/tsconfig.json"), config)
 	service.CreateDynamoConfigJSON(str.Concat(serviceName, "/dynamoConfig.json"), config)
 	service.CreateLaunchBat(str.Concat(serviceName, "/launch.bat"), config)
 	service.CreateLaunchSh(str.Concat(serviceName, "/launch.sh"), config)
@@ -103,7 +101,6 @@ func createServiceSource(serviceName string, config map[string]string) {
 	var serviceDirectory = str.Concat(workingDirectory, "/", serviceName)
 	var serviceSourceDirectory = str.Concat(serviceDirectory, "/src")
 	directories.Create(str.Concat(serviceSourceDirectory))
-	service.CreateServerTs(str.Concat(serviceName, "/src", "/server.ts"), config)
 
 	directories.Create(str.Concat(serviceSourceDirectory, "/config"))
 	service.CreateAwsSdkConfigTs(str.Concat(serviceSourceDirectory, "/config", "/awsSdkConfig.ts"))
