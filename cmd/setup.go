@@ -24,6 +24,7 @@ NodeJS/Express back-end, and DynamoDB database)`,
     setup.ElasticLoadBalancer(projectName)
     setup.Jenkins(projectName)
     setup.SonarQube(projectName)
+    setup.Selenium(projectName)
     setup.FrontEndFiles(projectDirectory, projectName, description)
     // setup.LocalDynamoDb()
     setup.GitRepository(projectName, gitAuth, projectDirectory)
