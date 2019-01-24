@@ -1,13 +1,14 @@
 package service
 
 import (
-  "runtime"
-  "github.com/PyramidSystemsInc/go/files"
-  "github.com/PyramidSystemsInc/go/str"
+	"runtime"
+
+	"github.com/PyramidSystemsInc/go/files"
+	"github.com/PyramidSystemsInc/go/str"
 )
 
 func CreateDeploySh(filePath string, config map[string]string) {
-  const template = `#! /bin/bash
+	const template = `#! /bin/bash
 
 # Perform setup
 SERVICE_NAME=$(sed -e 's/.*\///g' <<< $(pwd))
@@ -46,6 +47,7 @@ else
   # Create ELB Rule
   NEW_PRIORITY=$(aws elbv2 describe-rules --listener-arn "$LISTENER_ARN" --region us-east-2 | jq '.Rules' | jq length)
   aws elbv2 create-rule --region us-east-2 --cli-input-json '{ "ListenerArn": "'"$LISTENER_ARN"'", "Priority": '"$NEW_PRIORITY"', "Conditions": [ { "Field": "path-pattern", "Values": [ "/api/'"$SERVICE_NAME"'" ] } ], "Actions": [ { "TargetGroupArn": "'"$TARGET_GROUP_ARN"'", "Type": "forward", "Order": 1 } ] }'
+  aws elbv2 create-rule --region us-east-2 --cli-input-json '{ "ListenerArn": "'"$LISTENER_ARN"'", "Priority": '"$((NEW_PRIORITY+1))"', "Conditions": [ { "Field": "path-pattern", "Values": [ "/api/'"$SERVICE_NAME"'/*" ] } ], "Actions": [ { "TargetGroupArn": "'"$TARGET_GROUP_ARN"'", "Type": "forward", "Order": 1 } ] }'
   echo "INFO (5/6 Completed): Created Rule in ELB"
 
   # Create DynamoDB Table
@@ -53,10 +55,10 @@ else
   echo "INFO (6/6 Completed): Created DynamoDB table"
 fi
 `
-  files.CreateFromTemplate(filePath, template, config)
-  if runtime.GOOS == "windows" {
-    files.ChangePermissions(str.Concat(".\\", config["serviceName"], "\\.deploy.sh"), 0755)
-  } else {
-    files.ChangePermissions(str.Concat("./", config["serviceName"], "/.deploy.sh"), 0755)
-  }
+	files.CreateFromTemplate(filePath, template, config)
+	if runtime.GOOS == "windows" {
+		files.ChangePermissions(str.Concat(".\\", config["serviceName"], "\\.deploy.sh"), 0755)
+	} else {
+		files.ChangePermissions(str.Concat("./", config["serviceName"], "/.deploy.sh"), 0755)
+	}
 }
