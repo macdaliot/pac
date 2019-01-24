@@ -13,7 +13,6 @@ import './scss/main.scss';
 
 class Application extends React.Component {
   handleLogin(){
-    console.log(appStore.getState());
     this.setState({ loggedIn: (appStore.getState().user != null)})
   }
 
