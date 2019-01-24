@@ -35,8 +35,6 @@ func Service(serviceName string) {
 	createServiceFiles(serviceName, config)
 	createTestsDirectory(serviceName)
 	createTestFiles(config)
-	// createDynamoDbTable(serviceName)
-	// launchMicroservice(serviceName)
 	commands.Run("npm i", str.Concat("./", serviceName))
 }
 
@@ -92,7 +90,6 @@ func createServiceFiles(serviceName string, config map[string]string) {
 	service.CreateTestSh(str.Concat(serviceName, "/.test.sh"), serviceName)
 	service.CreateDeploySh(str.Concat(serviceName, "/.deploy.sh"), config)
 	service.CreateNodemonJson(str.Concat(serviceName, "/nodemon.json"))
-	service.CreateLambdaJs(str.Concat(serviceName, "/lambda.js"))
 	service.CreateAllTemplatedFiles(serviceName, config)
 	createServiceSource(serviceName, config)
 	service.CreateFrontEndClient(str.Concat("../app/src/services/", strings.Title(serviceName), ".js"), config)
@@ -107,7 +104,6 @@ func createServiceSource(serviceName string, config map[string]string) {
 	directories.Create(str.Concat(serviceSourceDirectory))
 
 	directories.Create(str.Concat(serviceSourceDirectory, "/config"))
-	service.CreateAwsSdkConfigTs(str.Concat(serviceSourceDirectory, "/config", "/awsSdkConfig.ts"))
 
 	directories.Create(str.Concat(serviceSourceDirectory, "/controllers"))
 	service.CreateControllerInterfaceTs(str.Concat(serviceSourceDirectory, "/controllers", "/controller.interface.ts"))
@@ -115,7 +111,6 @@ func createServiceSource(serviceName string, config map[string]string) {
 
 	directories.Create(str.Concat(serviceSourceDirectory, "/database"))
 	service.CreateDbInterfaceTs(str.Concat(serviceSourceDirectory, "/database", "/db.interface.ts"))
-	service.CreateDynamoDbTs(str.Concat(serviceSourceDirectory, "/database", "/dynamo.db.ts"), config)
 
 	directories.Create(str.Concat(serviceSourceDirectory, "/middleware"))
 	directories.Create(str.Concat(serviceSourceDirectory, "/middleware", "/logger"))
