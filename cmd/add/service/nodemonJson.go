@@ -14,7 +14,7 @@ func CreateNodemonJson(filePath string) {
 		"ignore": [
 			"src/**/*.spec.ts"
 		],
-		"exec": "ts-node ./src/server.ts"
+		"exec": "ts-node ./src/local.ts"
 	}
 `
 	files.CreateFromTemplate(filePath, template, nil)

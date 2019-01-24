@@ -7,15 +7,14 @@ import * as passport from 'passport'
 import * as dotenv from 'dotenv';
 
 const app = express();
-const port = 3000;
 /* TODO: update error handling */
 /* need configMap here */
 dotenv.load();
 
 let opts: JwtStrategyOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.JWT_SECRET,
-  issuer: process.env.JWT_ISSUER,
+  secretOrKey: process.env.JWT_SECRET || 'nosecretshere',
+  issuer: process.env.JWT_ISSUER || 'noissuerhere'
 }
 //opts.audience = 'yoursite.net';
 passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
@@ -37,4 +36,4 @@ app
   /* routes */
   .use('/api', apiRouter)
 
-  app.listen(port, () => console.log(` + "`" + `{{.serviceName}} is running on port ${port}!` + "`" + `))
+export default app;
