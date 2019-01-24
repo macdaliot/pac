@@ -21,11 +21,11 @@ NodeJS/Express back-end, and DynamoDB database)`,
     projectName := getProjectName(cmd)
     description := getDescription(cmd)
     projectDirectory := setup.ProjectStructure(projectName, description, gitAuth)
+    setup.ElasticLoadBalancer(projectName)
     setup.Jenkins(projectName)
     setup.SonarQube(projectName)
     setup.FrontEndFiles(projectDirectory, projectName, description)
     // setup.LocalDynamoDb()
-    setup.ElasticLoadBalancer(projectName)
     setup.GitRepository(projectName, gitAuth, projectDirectory)
     setup.GitHubWebhook(projectName)
   },
