@@ -49,7 +49,9 @@ func ensureRunningFromServicesDirectory() {
 
 func createTemplateConfig(serviceName string) map[string]string {
 	config := make(map[string]string)
-	config["projectName"] = readPacFile().ProjectName
+  pacFile := readPacFile()
+	config["projectName"] = pacFile.ProjectName
+	config["serviceUrl"] = pacFile.ServiceUrl
 	config["serviceName"] = serviceName
 	return config
 }
@@ -93,6 +95,7 @@ func createServiceFiles(serviceName string, config map[string]string) {
 	service.CreateLambdaJs(str.Concat(serviceName, "/lambda.js"))
 	service.CreateAllTemplatedFiles(serviceName, config)
 	createServiceSource(serviceName, config)
+	service.CreateFrontEndClient(str.Concat("../app/src/services/", strings.Title(serviceName), ".js"), config)
 	logger.Info(str.Concat("Created ", serviceName, " Express microservice files"))
 }
 
