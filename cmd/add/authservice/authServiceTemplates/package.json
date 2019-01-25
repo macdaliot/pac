@@ -4,7 +4,7 @@
   "description": "auth service (created by PAC)",
   "main": "server.js",
   "scripts": {
-    "start": "tsc && node dist/server",
+    "start": "tsc && node dist/local",
     "test": "mocha --require ts-node/register tests/**/*.spec.ts"
   },
   "author": "Pyramid Systems, Inc.",
