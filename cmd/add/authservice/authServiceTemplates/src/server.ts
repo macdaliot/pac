@@ -53,4 +53,4 @@ passport.deserializeUser(function (user, done) {
 
 app.use('/api/auth', authRouter);
 
-app.listen(port);  
+export default app;
