@@ -33,8 +33,8 @@ func Service(serviceName string) {
 	createServiceDirectory(serviceName)
 	config := createTemplateConfig(serviceName)
 	createServiceFiles(serviceName, config)
-	createTestsDirectory(serviceName)
-	createTestFiles(config)
+	// createTestsDirectory(serviceName)
+	// createTestFiles(config)
 	commands.Run("npm i", str.Concat("./", serviceName))
 }
 
@@ -47,7 +47,7 @@ func ensureRunningFromServicesDirectory() {
 
 func createTemplateConfig(serviceName string) map[string]string {
 	config := make(map[string]string)
-  pacFile := readPacFile()
+	pacFile := readPacFile()
 	config["projectName"] = pacFile.ProjectName
 	config["serviceUrl"] = pacFile.ServiceUrl
 	config["serviceName"] = serviceName
@@ -89,9 +89,8 @@ func createServiceFiles(serviceName string, config map[string]string) {
 	service.CreateBuildSh(str.Concat(serviceName, "/.build.sh"), serviceName)
 	service.CreateTestSh(str.Concat(serviceName, "/.test.sh"), serviceName)
 	service.CreateDeploySh(str.Concat(serviceName, "/.deploy.sh"), config)
-	service.CreateNodemonJson(str.Concat(serviceName, "/nodemon.json"))
 	service.CreateAllTemplatedFiles(serviceName, config)
-	createServiceSource(serviceName, config)
+	// createServiceSource(serviceName, config)
 	service.CreateFrontEndClient(str.Concat("../app/src/services/", strings.Title(serviceName), ".js"), config)
 	logger.Info(str.Concat("Created ", serviceName, " Express microservice files"))
 }

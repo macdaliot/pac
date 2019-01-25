@@ -1,15 +1,16 @@
 import * as express from 'express';
-import apiRouter from './routes/routes'
 import * as cors from 'cors';
 import * as loggerMiddleware from './middleware/logger/loggerMiddleware';
 import { Strategy as JwtStrategy, StrategyOptions as JwtStrategyOptions, ExtractJwt } from 'passport-jwt';
 import * as passport from 'passport'
 import * as dotenv from 'dotenv';
 
+dotenv.load();
 const app = express();
 /* TODO: update error handling */
 /* need configMap here */
-dotenv.load();
+
+import apiRouter from './routes/routes'
 
 let opts: JwtStrategyOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -24,7 +25,6 @@ passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
 passport.initialize();
 app
   .use(cors())
-
   /* parse middleware */
   /* https://expressjs.com/en/api.html#express.json */
   .use(express.json())

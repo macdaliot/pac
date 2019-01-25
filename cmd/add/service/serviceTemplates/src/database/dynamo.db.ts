@@ -1,113 +1,112 @@
 import { Database } from './db.interface';
-import AWS = require('aws-sdk');
-import awsConfig from '../config/awsSdkConfig';
+import { config, DynamoDB as Dynamo } from 'aws-sdk';
+import { projectName, serviceName, awsConfig } from '../config'
 import * as uuidv4 from 'uuid/v4'
-/* need configMap here */
-/* TODO need to refactor all the dynamodb */
+import * as _ from 'lodash';
+import * as AWS from 'aws-sdk';
 
+const _tableName = `pac-${projectName}-i-${serviceName}`;
 export class DynamoDB implements Database {
-    dbInstance: AWS.DynamoDB;
+    /* DocumentClient API: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html */
+    dbInstance: Dynamo.DocumentClient;
     constructor() {
         let env = process.env.ENVIRONMENT || "cloud";
-        AWS.config.update(awsConfig[env]);
-        this.dbInstance = new AWS.DynamoDB({ apiVersion: '2012-10-08' });
+        config.update(awsConfig[env]);
+        this.dbInstance = new Dynamo.DocumentClient({ apiVersion: '2012-10-08' });
     }
 
-    /* TODO: need to create a generalize query function 
-        this function should replace getById and getByParams
-    */
-    /* rewrite to use documentClient */
-    query(params) {
-    }
-
-    update(params: any, object: any) {
-    }
-
-    delete(id) {
-    }
-
-    create = async (object: any) => {
-        let params: any = {
-            "RequestItems": {
-                "pac-{{.projectName}}-i-{{.serviceName}}": [
-                    {
-                        "PutRequest": {
-                            "Item": {
-                                "id": {
-                                    "S": uuidv4()
-                                },
-                                "UserName": {
-                                    "S": "bobby"
-                                },
-                                "FirstName": {
-                                    "S": "Robert"
-                                },
-                                "LastName": {
-                                    "S": "Jones"
-                                }
-                            }
-                        }
-                    }
-                ]
+    query = async (params) => {
+        let whereClause;
+        try {
+            if (_.isEmpty(params)) {
+                whereClause = this.buildGetParams(params);
+                return await this.dbInstance.scan(whereClause).promise()
+            } else {
+                whereClause = this.buildQueryParams(params);
+                return await this.dbInstance.query(whereClause).promise();
             }
-        };
-        try {
-            return await this.dbInstance.batchWriteItem(params).promise();
+
         } catch (err) {
             throw err;
         }
     }
 
-    async getById(id: string) {
-        const whereClause = this.buildGetByIdParams(id);
+    update = async (params: any, object: any) => {
+        const whereClause = this.buildUpdateParams(params);
         try {
-            return await this.dbInstance.scan(whereClause).promise();
-        } catch (err) {
-            throw err;
-        }
-
-    }
-
-    async getByQuery(query: any) {
-        const whereClause = this.buildQueryStringParams(query);
-        try {
-            return await this.dbInstance.scan(whereClause).promise();
+            return await this.dbInstance.update(whereClause).promise();
         } catch (err) {
             throw err;
         }
     }
 
-    buildGetByIdParams = (id: string) => {
-        let params: AWS.DynamoDB.ScanInput = {
-            ExpressionAttributeValues: {},
-            FilterExpression: 'id = :id',
-            TableName: 'pac-{{.projectName}}-i-{{.serviceName}}'
-        };
-        params.ExpressionAttributeValues[":id"] = {
-            S: id
-        };
+    delete = async (query) => {
+        const whereClause = this.buildDeleteParams(query);
+        try {
+            return await this.dbInstance.delete(whereClause).promise();
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    create = async (object: any): Promise<AWS.DynamoDB.DocumentClient.PutItemOutput> => {
+        const whereClause = this.buildCreateParams(object);
+        try {
+            return await this.dbInstance.put(whereClause).promise();
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    buildGetParams = (query): AWS.DynamoDB.DocumentClient.GetItemInput => {
+        return {
+            TableName: _tableName,
+            Key: query
+        }
+    }
+
+    /* TODO: only support single level json */
+    buildQueryParams = (query): AWS.DynamoDB.DocumentClient.QueryInput => {
+        const queryInput: AWS.DynamoDB.DocumentClient.QueryInput = {
+            TableName: _tableName
+        }
+        queryInput.KeyConditionExpression = this.createKeyConditionExpression(query);
+        queryInput.ExpressionAttributeValues = this.createExpressionAttributeValues(query);
+        return queryInput;
+    }
+
+    buildCreateParams = (body): AWS.DynamoDB.DocumentClient.PutItemInput => {
+        return {
+            TableName: _tableName,
+            Item: body
+        }
+    }
+
+    buildDeleteParams = (query): AWS.DynamoDB.DocumentClient.DeleteItemInput => {
+        return {
+            TableName: _tableName,
+            Key: query
+        }
+    }
+
+    buildUpdateParams = (query): AWS.DynamoDB.DocumentClient.UpdateItemInput => {
+        const params: AWS.DynamoDB.DocumentClient.UpdateItemInput = {
+            TableName: _tableName,
+            Key: query,
+            ReturnValues: "UPDATED_NEW"
+        }
+
+        /* TODO: construct the string for update Expression and expressionAttributeValues */
+        params.UpdateExpression = '';
+        params.ExpressionAttributeValues = {};
         return params;
-    };
+    }
 
-    buildQueryStringParams = (query: any) => {
-        let params: AWS.DynamoDB.ScanInput = {
-            TableName: 'pac-{{.projectName}}-i-{{.serviceName}}'
-        };
-        let queryKeys: any = Object.keys(query);
-        if (queryKeys.length > 0) {
-            params.ExpressionAttributeValues = {};
-            params.FilterExpression = "";
-            queryKeys.forEach((key: string, i: number) => {
-                params.ExpressionAttributeValues[":" + key] = {
-                    S: query[key]
-                };
-                if (i != 0) {
-                    params.FilterExpression += " and ";
-                }
-                let keyUpperCase: string = key.charAt(0).toUpperCase() + key.slice(1);
-                params.FilterExpression += keyUpperCase + " = :" + key;
-            });
+    private createKeyConditionExpression = query => Object.keys(query).map(key => `${key} = :_${key}`).join(' and ');
+    private createExpressionAttributeValues = query => Object.keys(query).reduce(
+        (accumulator, key) => {
+            accumulator[`:_${key}`] = query[key]
+            return accumulator;
         }
-        return params;
-    };
+        , {});
 }

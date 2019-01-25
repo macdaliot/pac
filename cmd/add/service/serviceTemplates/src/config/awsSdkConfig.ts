@@ -7,5 +7,4 @@ const local = {
     endpoint: 'http://pac-db-local:8000'
 };
 
-const awsConfig = { "local" : local, "cloud" : cloud };
-export default awsConfig;
+export const awsConfig = { local, cloud };
