@@ -19,7 +19,7 @@ let opts: JwtStrategyOptions = {
 }
 //opts.audience = 'yoursite.net';
 passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
-  done(jwt_payload);
+  done(null, jwt_payload);
 }));
 
 passport.initialize();

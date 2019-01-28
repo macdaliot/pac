@@ -7,8 +7,11 @@ const jwtSecret = process.env.JWT_SECRET || "foobar";
 
 const createJwt = (req: Request, callback: jwt.SignCallback): void => {
     let groups = [];
-    for (let groupname of req.user["http://schemas.xmlsoap.org/claims/Group"]){
-        groups.push(groupname);
+    let groupSource = req.user["http://schemas.xmlsoap.org/claims/Group"];
+    if (groupSource && Array.isArray(groupSource)){
+        for (let groupname of groupSource){
+            groups.push(groupname);
+        }
     }
     let token = {
         "name": req.user["http://schemas.auth0.com/nickname"],

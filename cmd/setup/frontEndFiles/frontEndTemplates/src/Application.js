@@ -10,11 +10,15 @@ import Sidebar from './components/Sidebar/Sidebar';
 import { appStore } from './redux/Store';
 import '@pyramidlabs/react-ui/styles.css';
 import './scss/main.scss';
+import axios from 'axios';
 
 class Application extends React.Component {
   handleLogin(){
-    this.setState({ loggedIn: (appStore.getState().user != null)})
-  }
+    if (appStore.getState().user != null){
+      axios.defaults.headers.common['Authorization'] = `Bearer ${appStore.getState().token}`
+      this.setState({loggedIn: true});
+    }
+    this.setState({ loggedIn: false});  }
 
   constructor(props) {
     super(props);
