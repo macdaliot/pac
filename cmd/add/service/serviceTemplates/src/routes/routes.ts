@@ -1,6 +1,7 @@
 import { DefaultController } from '../controllers/defaultController';
 import { errorHandler } from '../utility';
 import * as express from 'express';
+import { serviceName } from '../config'
 import { passportAuthenticator } from '../middleware/jwtAuth';
 
 let apiRouter = express.Router();
