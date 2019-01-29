@@ -6,13 +6,14 @@ import bodyParser = require('body-parser');
 import * as passport from 'passport'
 import { Strategy as SamlStrategy} from 'passport-saml';
 import { authRouter } from './authRouter';
-import { generateRandomString } from 'functions'
+import { generateRandomString } from './functions'
 
 const port: number = 3000;
 const serviceName: string = 'auth';
 
 const signingCert = process.env.SAML_SIGNER ?
   Buffer.from(process.env.SAML_SIGNER, 'base64').toString('ascii') :
+  generateRandomString();
 
 const app = express();
 app.use(bodyParser.json());
