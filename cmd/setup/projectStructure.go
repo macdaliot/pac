@@ -15,15 +15,15 @@ func ProjectStructure(projectName string, description string, gitAuth string) st
 }
 
 func createProjectDirectories(projectName string) string {
-  projectDirectory := createRootProjectDirectory(projectName)
-  directories.Create(str.Concat(projectDirectory, "/app/src/components/Header"))
-  directories.Create(str.Concat(projectDirectory, "/app/src/components/Sidebar/parts/Button"))
-  directories.Create(str.Concat(projectDirectory, "/app/src/components/pages/NotFound"))
-  directories.Create(str.Concat(projectDirectory, "/app/src/routes"))
-  directories.Create(str.Concat(projectDirectory, "/app/src/services"))
-  directories.Create(str.Concat(projectDirectory, "/app/src/scss"))
-  directories.Create(str.Concat(projectDirectory, "/svc"))
-  return projectDirectory
+	projectDirectory := createRootProjectDirectory(projectName)
+	directories.Create(str.Concat(projectDirectory, "/app/src/components/Header"))
+	directories.Create(str.Concat(projectDirectory, "/app/src/components/Sidebar/parts/Button"))
+	directories.Create(str.Concat(projectDirectory, "/app/src/components/pages/NotFound"))
+	directories.Create(str.Concat(projectDirectory, "/app/src/routes"))
+	directories.Create(str.Concat(projectDirectory, "/app/src/services"))
+	directories.Create(str.Concat(projectDirectory, "/app/src/scss"))
+	directories.Create(str.Concat(projectDirectory, "/svc"))
+	return projectDirectory
 }
 
 func createRootProjectDirectory(projectName string) string {
@@ -47,7 +47,7 @@ func createGitIgnore(projectDirectory string) {
 	const template = `app/node_modules
 svc/*/node_modules
 svc/*/dist
-svc/*/.env
+svc/**/.env
 `
 	files.CreateFromTemplate(str.Concat(projectDirectory, "/.gitignore"), template, nil)
 }

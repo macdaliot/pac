@@ -1,9 +1,11 @@
-import { Router, Request } from 'express';
+import { Router, Request, Response } from 'express';
 import * as passport from 'passport';
 import * as jwt from 'jsonwebtoken';
+import { errorHandler, generateRandomString } from './functions'
+
 export let authRouter = Router();
 
-const jwtSecret = process.env.JWT_SECRET || "foobar";
+const jwtSecret = process.env.JWT_SECRET || generateRandomString();
 
 const createJwt = (req: Request, callback: jwt.SignCallback): void => {
     let groups = [];
@@ -20,14 +22,16 @@ const createJwt = (req: Request, callback: jwt.SignCallback): void => {
     };
     const options = {
         expiresIn: "10h",
-        issuer: "urn:pacAuth" // APPEND SERVICE NAME HERE
+        issuer: "urn:pacAuth"
     }
     jwt.sign(token, jwtSecret, options, callback);
 }
+authRouter.use(passport.authenticate('saml', { session: false }));
+
+authRouter.get('/login', (req, res) => { res.status(200).send("OK")});
 
 // Perform the final stage of authentication and redirect to previously requested URL or '/user'
-authRouter.post('/callback', 
-    passport.authenticate('saml'),
+authRouter.post('/callback',
     (req, res) => {
         createJwt(req, (err, encoded) => {
             if (err){
@@ -39,3 +43,4 @@ authRouter.post('/callback',
             }
         });
     });
+authRouter.use("*", errorHandler);

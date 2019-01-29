@@ -8,3 +8,7 @@ export const errorHandler = (err, req, res, next) => {
     _logger.error(`error: ${err}`);
     res.status(getError(err)).send(err);
 }
+
+export const generateRandomString = () => {
+    return Math.random().toString(36).substring(2, 15);
+}

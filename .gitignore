@@ -4,3 +4,4 @@ pac.exe
 cmd/add/service/launchBatch\.go~
 
 *.go~
+**/.DS_Store
