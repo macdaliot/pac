@@ -5,6 +5,7 @@ import (
   "io/ioutil"
   "github.com/PyramidSystemsInc/go/aws"
   "github.com/PyramidSystemsInc/go/aws/ecs"
+  "github.com/PyramidSystemsInc/go/aws/route53"
   "github.com/PyramidSystemsInc/go/errors"
   "github.com/PyramidSystemsInc/go/logger"
   "github.com/PyramidSystemsInc/go/str"
@@ -19,7 +20,7 @@ type PacFile struct {
   ServiceUrl       string  `json:"serviceUrl"`
 }
 
-func Jenkins(projectName string) {
+func Jenkins(projectName string, projectFqdn string) {
   region := "us-east-2"
   clusterName := str.Concat("pac-", projectName)
   familyName := str.Concat(clusterName, "-jenkins")
@@ -35,7 +36,14 @@ func Jenkins(projectName string) {
   })
   publicIp := ecs.LaunchFargateContainer(familyName, clusterName, securityGroupName, awsSession)
   saveJenkinsIpToPacFile(projectName, publicIp)
-  logger.Info(str.Concat("Jenkins will start up in a minute or so running at ", publicIp, ":8080"))
+  jenkinsUrl := publicIp
+  if projectFqdn != str.Concat(projectName, ".") {
+    jenkinsFqdn := str.Concat("jenkins.", projectFqdn)
+    var ttl int64 = 300
+    route53.ChangeRecord(projectFqdn, "A", jenkinsFqdn, []string{publicIp}, ttl, awsSession)
+    jenkinsUrl = jenkinsFqdn
+  }
+  logger.Info(str.Concat("Jenkins will start up in a minute or so running at ", jenkinsUrl, ":8080"))
 }
 
 func saveJenkinsIpToPacFile(projectName string, publicIp string) {

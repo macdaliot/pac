@@ -4,6 +4,7 @@ import (
   "github.com/PyramidSystemsInc/pac/cmd/setup"
   "github.com/PyramidSystemsInc/go/errors"
   "github.com/PyramidSystemsInc/go/logger"
+  "github.com/PyramidSystemsInc/go/str"
   "github.com/spf13/cobra"
 )
 
@@ -20,11 +21,14 @@ NodeJS/Express back-end, and DynamoDB database)`,
     validateStack(cmd)
     projectName := getProjectName(cmd)
     description := getDescription(cmd)
+    hostedZone := getHostedZone(cmd)
     projectDirectory := setup.ProjectStructure(projectName, description, gitAuth)
-    setup.ElasticLoadBalancer(projectName)
-    setup.Jenkins(projectName)
-    setup.SonarQube(projectName)
-    setup.Selenium(projectName)
+    setup.Route53HostedZone(projectName, hostedZone)
+    projectFqdn := str.Concat(projectName, ".", hostedZone)
+    setup.ElasticLoadBalancer(projectName, projectFqdn)
+    setup.Jenkins(projectName, projectFqdn)
+    setup.SonarQube(projectName, projectFqdn)
+    setup.Selenium(projectName, projectFqdn)
     setup.FrontEndFiles(projectDirectory, projectName, description)
     // setup.LocalDynamoDb()
     setup.GitRepository(projectName, gitAuth, projectDirectory)
@@ -37,6 +41,7 @@ func init() {
   setupCmd.PersistentFlags().StringVarP(&projectName, "name", "n", "", "project name (required)")
   setupCmd.MarkFlagRequired("name")
   setupCmd.PersistentFlags().StringVar(&description, "description", "Project created by PAC", "short description of the project")
+  setupCmd.PersistentFlags().StringVar(&hostedZone, "hostedZone", "pac.pyramidchallenges.com", "Existing AWS hosted zone FQDN (i.e. pac.pyramidchallenges.com)")
   setupCmd.PersistentFlags().StringVarP(&frontEnd, "front", "f", "ReactJS", "front-end framework/library")
   setupCmd.PersistentFlags().StringVarP(&backEnd, "back", "b", "Express", "back-end framework/library")
   setupCmd.PersistentFlags().StringVarP(&database, "database", "d", "DynamoDB", "database type")
@@ -73,6 +78,14 @@ func getDescription(cmd *cobra.Command) string {
   description, err := cmd.Flags().GetString("description")
   errors.QuitIfError(err)
   return description
+}
+
+var hostedZone string
+
+func getHostedZone(cmd *cobra.Command) string {
+  hostedZone, err := cmd.Flags().GetString("hostedZone")
+  errors.QuitIfError(err)
+  return hostedZone
 }
 
 var frontEnd string
