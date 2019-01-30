@@ -25,6 +25,7 @@ NodeJS/Express back-end, and DynamoDB database)`,
     projectDirectory := setup.ProjectStructure(projectName, description, gitAuth)
     setup.Route53HostedZone(projectName, hostedZone)
     projectFqdn := str.Concat(projectName, ".", hostedZone)
+    setup.S3Buckets(projectName, projectFqdn)
     setup.ElasticLoadBalancer(projectName, projectFqdn)
     setup.Jenkins(projectName, projectFqdn)
     setup.SonarQube(projectName, projectFqdn)
