@@ -9,9 +9,13 @@ import (
 )
 
 func HaProxy(projectDirectory string, projectName string) {
-  createHaProxyConfig(projectDirectory, projectName)
-  createDockerNetwork(projectName)
-  runHaProxyContainer(projectName)
+	logger.Info("Creating local proxy for future services in Docker")
+	logger.Info("   Creating proxy config")
+	createHaProxyConfig(projectDirectory, projectName)
+	logger.Info("   Creating local network")
+	createDockerNetwork(projectName)
+	logger.Info("   Running proxy")
+	runHaProxyContainer(projectName)
 	logger.Info("Created local proxy for future services in Docker")
 }
 
@@ -24,15 +28,16 @@ func createHaProxyConfig(projectDirectory string, projectName string) {
     option tcplog
     timeout client 50000
 `
-  filePath := str.Concat(projectDirectory, "/svc/haproxy.cfg")
+	filePath := str.Concat(projectDirectory, "/svc/haproxy.cfg")
 	files.CreateFromTemplate(filePath, template, config)
 }
 
 func createDockerNetwork(projectName string) {
-  commands.Run(str.Concat("docker network create pac-", projectName), "")
+	commands.Run(str.Concat("docker network create pac-", projectName), "")
 }
 
 func runHaProxyContainer(projectName string) {
-  cmd := str.Concat("docker run --name pac-proxy-local --network pac-", projectName, " -p 3000:3000 -v ", directories.GetWorking(), "/", projectName, "/svc:/usr/local/etc/haproxy:ro -d haproxy")
-  commands.Run(cmd, "")
+	cmd := str.Concat("docker run --name pac-proxy-local --network pac-", projectName, " -p 3000:3000 -v ", directories.GetWorking(), "/", projectName, "/svc:/usr/local/etc/haproxy:ro -d haproxy")
+	logger.Info(cmd)
+	commands.Run(cmd, "")
 }
