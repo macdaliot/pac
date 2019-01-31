@@ -105,7 +105,6 @@ func getPathForTest(filePath string) string {
 func createServiceFiles(serviceName string, config map[string]string) {
 	service.CreateDockerfile(str.Concat(serviceName, "/Dockerfile"))
 	service.CreateDynamoConfigJSON(str.Concat(serviceName, "/dynamoConfig.json"), config)
-	service.CreateLaunchBat(str.Concat(serviceName, "/launch.bat"), config)
 	service.CreateLaunchSh(str.Concat(serviceName, "/launch.sh"), config)
 	service.CreateJenkinsfile(str.Concat(serviceName, "/Jenkinsfile"))
 	service.CreateBuildSh(str.Concat(serviceName, "/.build.sh"), serviceName)
