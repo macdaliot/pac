@@ -8,6 +8,7 @@ import (
 	"github.com/PyramidSystemsInc/go/commands"
 	"github.com/PyramidSystemsInc/go/directories"
 	"github.com/PyramidSystemsInc/go/errors"
+	"github.com/PyramidSystemsInc/go/files"
 	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/go/str"
 	"github.com/PyramidSystemsInc/pac/cmd/add/service"
@@ -36,6 +37,27 @@ func Service(serviceName string) {
 	// createTestsDirectory(serviceName)
 	// createTestFiles(config)
 	commands.Run("npm i", str.Concat("./", serviceName))
+  editHaProxyConfig(serviceName, config["projectName"])
+}
+
+func editHaProxyConfig(serviceName string, projectName string) {
+  serviceConfig := str.Concat(`backend backend_`, serviceName, `
+    mode http
+    server `, serviceName, ` pac-`, projectName, `-`, serviceName, `
+    timeout connect 5000
+    timeout server 50000
+
+
+
+`)
+  proxyAcl := str.Concat(`
+
+    acl path_`, serviceName, ` path_beg /api/`, serviceName, `
+    use_backend backend_`, serviceName, ` if path_`, serviceName, `
+`)
+  files.Prepend("haproxy.cfg", []byte(serviceConfig))
+  files.Append("haproxy.cfg", []byte(proxyAcl))
+  logger.Info("Updated the local microservice proxy configuration")
 }
 
 func ensureRunningFromServicesDirectory() {
