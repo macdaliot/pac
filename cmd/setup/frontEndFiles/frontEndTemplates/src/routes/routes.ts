@@ -3,7 +3,7 @@ import LoginCallback from '../components/LoginCallback/LoginCallback';
 import * as routeData from './routes.json';
 
 var routes = [];
-routeData.default.forEach(function(route) {
+routeData.routes.forEach(function(route) {
   route['component'] = eval(route.pageTitle).default;
   routes.push(route);
 }.bind(this));

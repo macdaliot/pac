@@ -1,24 +1,21 @@
-import React from 'react';
-import { hot } from 'react-hot-loader';
+import * as React from 'react';
+import { hot } from 'react-hot-loader/root';
 import { connect } from 'react-redux';
 import * as routeData from '../../routes/routes.json';
 import './header.scss';
 
-class Header extends React.Component {
+class Header extends React.Component<any> {
   constructor(props) {
     super(props);
-    this.createStyleSpec = this.createStyleSpec.bind(this);
-    this.findMatchingRoute = this.findMatchingRoute.bind(this);
-    this.getPageTitle = this.getPageTitle.bind(this);
-    this.onClickMenuButton = this.onClickMenuButton.bind(this);
   }
-
-  //static contextType = UserContext;
-
   render() {
     var matchingRoute = this.findMatchingRoute();
     var pageTitle = this.getPageTitle(matchingRoute);
     var styleSpec = this.createStyleSpec(matchingRoute);
+    var host = "http://localhost:3000";
+    //var host = "http://<insert elb name here>.us-east-2.elb.amazonaws.com";
+    let login = <a href={host + "/api/auth/login"}>Login</a>
+
     return (
       <header className="header-component" style={styleSpec.header}>
         <div className="section left">
@@ -26,12 +23,12 @@ class Header extends React.Component {
           <span className="page-title">{pageTitle}</span>
         </div>
         <div className="section center">
-        <span className="application-title">{{.projectName}}</span>
+        <span className="application-title">barbaz</span>
         </div>
         <div className="section right">
           <span className="profile-button">
             <span className="fas fa-user-circle"></span>
-            <span className="user-name">{this.props.isAuthenticated ? this.props.user.name : "Not Logged In" }</span>
+            <span className="user-name">{this.props.isAuthenticated ? this.props.username : login }</span>
           </span>
         </div>
       </header>
@@ -58,14 +55,14 @@ class Header extends React.Component {
   findMatchingRoute() {
     var pathName = location.pathname;
     if (pathName === '/') {
-      return routeData.default[0];
+      return routeData.routes[0];
     }
     var matchingRoute;
-    routeData.default.forEach(function(route) {
+    routeData.routes.forEach((route) => {
       if (route.path === pathName) {
         matchingRoute = route;
       }
-    }.bind(this));
+    });
     return matchingRoute;
   }
 
@@ -79,6 +76,6 @@ class Header extends React.Component {
     }
   }
 }
-const mapState = state => ({ user: state.user, isAuthenticated: (state.user != null) });
+const mapState = state => ({username: state.user ? state.user.name : null, isAuthenticated: state.user ? true : false});
 const mapDispatch = dispatch => ({});
-export default hot(module)(connect(mapState, mapDispatch)(Header))
+export default connect(mapState, mapDispatch)(hot(Header));

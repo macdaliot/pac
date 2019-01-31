@@ -1,10 +1,16 @@
-import React from 'react';
-import { hot } from 'react-hot-loader';
+import * as React from 'react';
+import { hot } from 'react-hot-loader/root';
 import Button from './parts/Button/Button';
 import * as routeData from '../../routes/routes.json';
 import './sidebar.scss';
 
-class Sidebar extends React.Component {
+interface Props {
+  sidebar: any;
+}
+interface State {
+  expanded: boolean;
+}
+export class Sidebar extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     this.sidebar = React.createRef();
@@ -17,6 +23,7 @@ class Sidebar extends React.Component {
       expanded: true
     };
   }
+  sidebar: React.Ref<HTMLDivElement>;
 
   componentDidMount() {
     this.linkRef(this);
@@ -31,7 +38,7 @@ class Sidebar extends React.Component {
     return (
       <div className={classSpec.sidebar} ref={this.sidebar}>
         {
-          routeData.default.map(function(route, key) {
+          routeData.routes.map(function(route, key) {
             return (
               <div className="sidebar-element" key={key}>
                 <Button route={route} />
@@ -74,4 +81,4 @@ class Sidebar extends React.Component {
   }
 }
 
-export default hot(module)(Sidebar);
+export default hot(Sidebar);

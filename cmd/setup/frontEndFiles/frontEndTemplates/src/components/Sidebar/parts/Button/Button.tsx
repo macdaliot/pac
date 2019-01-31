@@ -1,9 +1,9 @@
-import React from 'react';
+import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { hot } from 'react-hot-loader';
+import { hot } from 'react-hot-loader/root';
 import './button.scss';
 
-class Button extends React.Component {
+class Button extends React.Component<any> {
   constructor(props) {
     super(props);
     this.createStyleSpec = this.createStyleSpec.bind(this);
@@ -49,4 +49,4 @@ class Button extends React.Component {
   }
 }
 
-export default hot(module)(Button);
+export default hot(Button);

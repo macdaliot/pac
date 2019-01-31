@@ -1,5 +1,6 @@
 import { JWT_RECEIVED } from './Actions'
 import { createStore } from 'redux';
+import { Buffer } from 'buffer';
 
 const reducer = (state = { user: null, token: null }, action) => {
     switch (action.type) {

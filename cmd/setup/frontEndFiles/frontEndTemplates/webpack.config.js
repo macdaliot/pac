@@ -2,53 +2,107 @@ const path = require('path');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 
 module.exports = {
-  entry: {
-    output: ['css-hot-loader/hotModuleReplacement', path.resolve(__dirname, 'src/Application.js')]
-  },
+  entry: [
+    'css-hot-loader/hotModuleReplacement',
+    'react-hot-loader/patch', // activate HMR for React
+    path.resolve(__dirname, 'src/index.tsx')
+  ],
   mode: 'development',
   devServer: {
     contentBase: './dist',
     hot: true
   },
+  devtool: 'inline-source-map',
   output: {
     path: path.resolve(__dirname, './dist/'),
     filename: 'bundle.js'
   },
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    alias: {
+      //'react-hot-loader': path.resolve(path.join(__dirname, './../../')),
+      //react: path.resolve(path.join(__dirname, './node_modules/react')),
+    },
+  },
   module: {
-    rules: [{
-      test: /\.css$/,
-      use: ['css-hot-loader'].concat(ExtractTextPlugin.extract({
-        fallback: 'style-loader',
-        use: [ 'css-loader' ]
-      }))
-    }, {
-      test: /\.scss$/,
-      use: ['css-hot-loader'].concat(ExtractTextPlugin.extract({
-        fallback: 'style-loader',
-        use: [
-          'css-hot-loader',
-          'css-loader',
-          'sass-loader'
-        ]
-      }))
-    }, {
-      test: /\.(png|gif|jpg|jpeg|svg|xml)$/,
-      use: [ 'url-loader' ]
-    }, {
-      test: /\.js$/,
-      exclude: /node_modules/,
-      use: {
-        loader: 'babel-loader',
-        options: {
-          presets: ['@babel/preset-react', '@babel/preset-env'],
-          plugins: ['@babel/plugin-proposal-class-properties']
+    rules: [
+      {
+        test: /\.css$/,
+        use: ['css-hot-loader'].concat(ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: ['css-loader']
+        }))
+      }, 
+      {
+        test: /\.scss$/,
+        use: ['css-hot-loader'].concat(ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [
+            'css-hot-loader',
+            'css-loader',
+            'sass-loader'
+          ]
+        }))
+      }, 
+      {
+        test: /\.(png|gif|jpg|jpeg|svg|xml)$/,
+        use: ['url-loader']
+      },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-react', '@babel/preset-env'],
+            plugins: ['@babel/plugin-proposal-class-properties']
+          }
         }
-      }
-    }]
+      },
+      // Following line for tsc-based compilation
+      //{ test: /\.tsx?$/, loader: 'awesome-typescript-loader' },
+      //Following block for Babel-based compilation
+      {
+        test: /\.(j|t)sx?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            cacheDirectory: true,
+            babelrc: false,
+            presets: [
+              [
+                '@babel/preset-env',
+                { targets: { browsers: 'last 2 versions' } }, // or whatever your project requires
+              ],
+              '@babel/preset-typescript',
+              '@babel/preset-react',
+            ],
+            plugins: [
+              //plugin-proposal-decorators is only needed if you're using experimental decorators in TypeScript
+              //['@babel/plugin-proposal-decorators', { legacy: true }],
+              ['@babel/plugin-proposal-class-properties', { loose: true }],
+              'react-hot-loader/babel',
+            ],
+          },
+        },
+      },
+      { enforce: "pre", test: /\.js$/, loader: "source-map-loader" },
+    ]
+  },
+  externals: {
+    "react": "React",
+    "react-dom": "ReactDOM"
   },
   plugins: [
+    new ForkTsCheckerWebpackPlugin(),
+    new webpack.NamedModulesPlugin(),
+//    new webpack.HotModuleReplacementPlugin(),
+    //new HtmlWebpackPlugin(),
     new CopyWebpackPlugin([{
       from: 'src/index.html',
       to: path.join(__dirname, 'dist')

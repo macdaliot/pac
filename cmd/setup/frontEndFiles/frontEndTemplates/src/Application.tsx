@@ -1,35 +1,33 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import * as React from 'react';
 import { renderRoutes } from 'react-router-config';
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { hot } from 'react-hot-loader';
+import { hot } from 'react-hot-loader/root';
 import routes from './routes/routes';
-import Header from './components/Header/Header';
-import Sidebar from './components/Sidebar/Sidebar';
+import { Sidebar } from './components/Sidebar/Sidebar';
 import { appStore } from './redux/Store';
 import '@pyramidlabs/react-ui/styles.css';
 import './scss/main.scss';
 import axios from 'axios';
+import Header from './components/Header/Header';
 
-class Application extends React.Component {
-  handleLogin(){
-    if (appStore.getState().user != null){
-      axios.defaults.headers.common['Authorization'] = `Bearer ${appStore.getState().token}`
-      this.setState({loggedIn: true});
-    }
-    this.setState({ loggedIn: false});  }
-
+interface State {
+  loggedIn: boolean;
+  sidebar: Sidebar;
+}
+class Application extends React.Component<{}, State> {
   constructor(props) {
     super(props);
-    this.setSidebarRef = this.setSidebarRef.bind(this);
-    this.state = {
-      sidebar: undefined
-    }
-    appStore.subscribe(this.handleLogin.bind(this));
-
+    appStore.subscribe(this.handleLogin);
+    this.state = { loggedIn: false, sidebar: null};
   }
-
+  handleLogin = () => {
+    if (appStore.getState().user != null){
+      axios.defaults.headers.common['Authorization'] = `Bearer ${appStore.getState().token}`
+      return this.setState({loggedIn: true});
+    }
+    this.setState({ loggedIn: false});  
+  }
 
   render() {
     return (
@@ -49,12 +47,11 @@ class Application extends React.Component {
     );
   }
 
-  setSidebarRef(ref) {
+  setSidebarRef = (ref: Sidebar) => {
     this.setState({
       sidebar: ref
     });
   }
 }
 
-ReactDOM.render(<Application />, document.getElementById('container'));
-export default hot(module)(Application);
+export default hot(Application);

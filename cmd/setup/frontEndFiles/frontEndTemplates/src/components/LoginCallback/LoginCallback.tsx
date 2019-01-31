@@ -1,11 +1,15 @@
-import React from 'react';
-import { hot } from 'react-hot-loader';
+import * as React from 'react';
+import { hot } from 'react-hot-loader/root';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-class LoginCallback extends React.Component {
+class Props {
+    setToken = (token) => {};
+    location: any;
+}
+class LoginCallback extends React.Component<Props> {
 
-    constructor(props) {
+    constructor(props: any) {
         super(props);
     }
     componentDidMount() {
@@ -22,4 +26,4 @@ const mapState = state => ({});
 const mapDispatch = dispatch => ({
     setToken: token => dispatch({ type: 'JWT_RECEIVED', token: token }) 
 });
-export default hot(module)(connect(mapState, mapDispatch)(LoginCallback))
+export default connect(mapState, mapDispatch)(hot(LoginCallback))
