@@ -23,7 +23,7 @@ class Header extends React.Component<any> {
           <span className="page-title">{pageTitle}</span>
         </div>
         <div className="section center">
-        <span className="application-title">barbaz</span>
+        <span className="application-title">{{.projectName}}</span>
         </div>
         <div className="section right">
           <span className="profile-button">
