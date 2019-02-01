@@ -37,7 +37,7 @@ func validateStack(frontEnd string, backEnd string, database string) {
 func validateALBUniqueName(projectName string) {
   region := "us-east-2"
   awsSession := aws.CreateAwsSession(region)
-  if elbv2.LoadBalancerExists(str.Concat("pac-", projectName, "-i"), awsSession) {
+  if elbv2.Exists(str.Concat("pac-", projectName, "-i"), awsSession) {
     errors.LogAndQuit("The project name supplied matches resources already provisioned in AWS")
   }
 }

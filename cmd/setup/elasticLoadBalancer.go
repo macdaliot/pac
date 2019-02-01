@@ -12,7 +12,8 @@ func ElasticLoadBalancer(projectName string, projectFqdn string) {
   region := "us-east-2"
   name := str.Concat("pac-", projectName, "-i")
   awsSession := aws.CreateAwsSession(region)
-  loadBalancerArn, listenerArn, serviceUrl := elbv2.CreateLoadBalancer(name, awsSession)
+  loadBalancerArn, listenerArn, serviceUrl := elbv2.Create(name, awsSession)
+  elbv2.Tag(name, "pac-project-name", projectName, awsSession)
   pacFile := readPacFile(projectName)
   pacFile.LoadBalancerArn = loadBalancerArn
   pacFile.ListenerArn = listenerArn
