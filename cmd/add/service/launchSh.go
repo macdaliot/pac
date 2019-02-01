@@ -28,7 +28,12 @@ if [ ! -z "$AWS_ACCESS_KEY_ID" ] || [ ! -z "$AWS_SECRET_ACCESS_KEY" ]; then
     echo "Docker network already exists, skipping network creation"
   else
     docker network create pac-$PROJECT_NAME >>/dev/null
-    echo "Created Docker network pac-$PROJECT_NAME"
+    if [ $(echo $?) -eq 0 ]; then
+      echo "Created Docker network pac-$PROJECT_NAME"
+    else
+      echo "ERROR: Something went wrong creating your Docker network. Are you in the necessary Docker groups?"
+      exit 2
+    fi
   fi
 
   # Start DynamoDB if not running
@@ -37,7 +42,12 @@ if [ ! -z "$AWS_ACCESS_KEY_ID" ] || [ ! -z "$AWS_SECRET_ACCESS_KEY" ]; then
     echo "Local DynamoDB already exists, skipping DynamoDB creation"
   else
     docker run --name pac-db-local --network pac-$PROJECT_NAME -p $DYNAMO_PORT:$DYNAMO_PORT -d amazon/dynamodb-local -jar DynamoDBLocal.jar -sharedDb >>/dev/null
-    echo "Created local DynamoDB Docker container running on port $DYNAMO_PORT"
+    if [ $(echo $?) -eq 0 ]; then
+      echo "Created local DynamoDB Docker container running on port $DYNAMO_PORT"
+    else
+      echo "ERROR: Something went wrong creating the DynamoDB Docker container. Is port $DYNAMO_PORT open?"
+      exit 2
+    fi
   fi
 
   # Delete current service's container, if it exists
@@ -78,7 +88,12 @@ if [ ! -z "$AWS_ACCESS_KEY_ID" ] || [ ! -z "$AWS_SECRET_ACCESS_KEY" ]; then
         echo "Started building $SERVICE_NAME Docker image"
         docker build -t pac-$PROJECT_NAME-$SERVICE_NAME .
         docker run --name pac-$PROJECT_NAME-$SERVICE_NAME --network pac-$PROJECT_NAME -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -d pac-$PROJECT_NAME-$SERVICE_NAME
-        echo "The $SERVICE_NAME microservice was successfully launched locally"
+        if [ $(echo $?) -eq 0 ]; then
+          echo "The $SERVICE_NAME microservice was successfully launched locally"
+        else
+          echo "ERROR: Something went wrong creating the $SERVICE_NAME microservice Docker container"
+          exit 2
+        fi
         popd >>/dev/null
       fi
     fi
@@ -89,12 +104,22 @@ if [ ! -z "$AWS_ACCESS_KEY_ID" ] || [ ! -z "$AWS_SECRET_ACCESS_KEY" ]; then
   if docker port pac-proxy-local >>/dev/null 2>/dev/null; then
     echo "Local microservice proxy already exists, skipping proxy creation"
     docker kill -s HUP pac-proxy-local >>/dev/null
-    echo "Reloaded local microservice proxy configuration"
+    if [ $(echo $?) -eq 0 ]; then
+      echo "Reloaded local microservice proxy configuration"
+    else
+      echo "ERROR: Something went wrong reloading the microservice proxy configuration"
+      exit 2
+    fi
   else
     HAPROXY_CONFIG_PATH=$(echo $(pwd) | sed -e 's/\(.*\)\/.*/\1/')
     HAPROXY_CONFIG_PATH=$(sed -e 's/^\/c/C:/g' <<< $HAPROXY_CONFIG_PATH)
     docker run --name pac-proxy-local --network pac-$PROJECT_NAME -p $HAPROXY_PORT:$HAPROXY_PORT -v $HAPROXY_CONFIG_PATH:/usr/local/etc/haproxy:ro -d haproxy >>/dev/null
-    echo "Launched local microservice proxy running on port $HAPROXY_PORT"
+    if [ $(echo $?) -eq 0 ]; then
+      echo "Launched local microservice proxy running on port $HAPROXY_PORT"
+    else
+      echo "ERROR: Something went wrong launching the local microservice proxy Docker container. Is port $HAPROXY_PORT open?"
+      exit 2
+    fi
   fi
   echo "All microservices are now available at port $HAPROXY_PORT:"
   echo "    i.e. http://localhost:$HAPROXY_PORT/api/$SERVICE_NAME"
