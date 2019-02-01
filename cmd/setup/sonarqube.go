@@ -42,5 +42,6 @@ func SonarQube(projectName string, projectFqdn string) {
     route53.ChangeRecord(projectFqdn, "A", sonarqubeFqdn, []string{publicIp}, ttl, awsSession)
     sonarqubeUrl = sonarqubeFqdn
   }
+  ecs.TagCluster(clusterName, "pac-project-name", projectName, awsSession)
   logger.Info(str.Concat("SonarQube will start up in a minute or so running at ", sonarqubeUrl, ":9000"))
 }

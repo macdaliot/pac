@@ -29,5 +29,6 @@ func Selenium(projectName string, projectFqdn string) {
     route53.ChangeRecord(projectFqdn, "A", seleniumFqdn, []string{publicIp}, ttl, awsSession)
     seleniumUrl = seleniumFqdn
   }
+  ecs.TagCluster(clusterName, "pac-project-name", projectName, awsSession)
   logger.Info(str.Concat("Selenium will start up in a minute or so running at ", seleniumUrl, ":4444"))
 }

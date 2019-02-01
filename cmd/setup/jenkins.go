@@ -43,6 +43,7 @@ func Jenkins(projectName string, projectFqdn string) {
     route53.ChangeRecord(projectFqdn, "A", jenkinsFqdn, []string{publicIp}, ttl, awsSession)
     jenkinsUrl = jenkinsFqdn
   }
+  ecs.TagCluster(clusterName, "pac-project-name", projectName, awsSession)
   logger.Info(str.Concat("Jenkins will start up in a minute or so running at ", jenkinsUrl, ":8080"))
 }
 
