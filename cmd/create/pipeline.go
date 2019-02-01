@@ -131,7 +131,8 @@ func saveGitCredentialsToJenkinsIfDoesNotExist(pacFile PacFile, jenkinsCliComman
 }
 
 func doJenkinsCredentialsExist(jenkinsCliCommandStart string) bool {
-	results := commands.Run(str.Concat(jenkinsCliCommandStart, " list-credentials system::system::jenkins"), "")
+	results, err := commands.Run(str.Concat(jenkinsCliCommandStart, " list-credentials system::system::jenkins"), "")
+  errors.LogIfError(err)
 	return strings.Contains(results, "gitcredentials")
 }
 

@@ -4,7 +4,6 @@ import (
   "github.com/PyramidSystemsInc/pac/cmd/setup"
   "github.com/PyramidSystemsInc/go/errors"
   "github.com/PyramidSystemsInc/go/logger"
-  "github.com/PyramidSystemsInc/go/str"
   "github.com/spf13/cobra"
 )
 
@@ -17,14 +16,16 @@ var setupCmd = &cobra.Command{
 NodeJS/Express back-end, and DynamoDB database)`,
   Run: func(cmd *cobra.Command, args []string) {
     logger.SetLogLevel("info")
-    warnArgumentsAreIgnored(args)
-    validateStack(cmd)
     projectName := getProjectName(cmd)
     description := getDescription(cmd)
     hostedZone := getHostedZone(cmd)
+    frontEnd := getFrontEnd(cmd)
+    backEnd := getBackEnd(cmd)
+    database := getDatabase(cmd)
+    warnExtraArgumentsAreIgnored(args)
+    setup.ValidateInputs(projectName, frontEnd, backEnd, database)
     projectDirectory := setup.ProjectStructure(projectName, description, gitAuth)
-    setup.Route53HostedZone(projectName, hostedZone)
-    projectFqdn := str.Concat(projectName, ".", hostedZone)
+    projectFqdn := setup.Route53HostedZone(projectName, hostedZone)
     setup.S3Buckets(projectName, projectFqdn)
     setup.ElasticLoadBalancer(projectName, projectFqdn)
     setup.Jenkins(projectName, projectFqdn)
@@ -43,23 +44,15 @@ func init() {
   setupCmd.MarkFlagRequired("name")
   setupCmd.PersistentFlags().StringVar(&description, "description", "Project created by PAC", "short description of the project")
   setupCmd.PersistentFlags().StringVar(&hostedZone, "hostedZone", "pac.pyramidchallenges.com", "Existing AWS hosted zone FQDN (i.e. pac.pyramidchallenges.com)")
+  setupCmd.MarkFlagRequired("hostedZone")
   setupCmd.PersistentFlags().StringVarP(&frontEnd, "front", "f", "ReactJS", "front-end framework/library")
   setupCmd.PersistentFlags().StringVarP(&backEnd, "back", "b", "Express", "back-end framework/library")
   setupCmd.PersistentFlags().StringVarP(&database, "database", "d", "DynamoDB", "database type")
 }
 
-func warnArgumentsAreIgnored(args []string) {
+func warnExtraArgumentsAreIgnored(args []string) {
   if len(args) > 0 {
     logger.Warn("Arguments were provided, but all arguments after 'setup' and before the flags are ignored")
-  }
-}
-
-func validateStack(cmd *cobra.Command) {
-  frontEnd := getFrontEnd(cmd)
-  backEnd := getBackEnd(cmd)
-  database := getDatabase(cmd)
-  if frontEnd != "ReactJS" || backEnd != "Express" || database != "DynamoDB" {
-    errors.LogAndQuit("Sorry, PAC only supports the following stack at this time: ReactJS, Express, DynamoDB. Check back soon")
   }
 }
 
