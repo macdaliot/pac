@@ -14,13 +14,15 @@ func Selenium(projectName string, projectFqdn string) {
   familyName := str.Concat(clusterName, "-selenium")
   securityGroupName := "pac-selenium"
   awsSession := aws.CreateAwsSession(region)
-  ecs.RegisterFargateTaskDefinition(familyName, awsSession, []ecs.Container{
+  taskDefinitionArn := ecs.RegisterFargateTaskDefinition(familyName, awsSession, []ecs.Container{
     {
       Name: "selenium",
       ImageName: "selenium",
       Essential: true,
     },
   })
+  tagKey := "pac-project-name"
+  ecs.TagTaskDefinition(taskDefinitionArn, tagKey, projectName, awsSession)
   publicIp := ecs.LaunchFargateContainer(familyName, clusterName, securityGroupName, awsSession)
   seleniumUrl := publicIp
   if projectFqdn != str.Concat(projectName, ".") {
@@ -29,6 +31,6 @@ func Selenium(projectName string, projectFqdn string) {
     route53.ChangeRecord(projectFqdn, "A", seleniumFqdn, []string{publicIp}, ttl, awsSession)
     seleniumUrl = seleniumFqdn
   }
-  ecs.TagCluster(clusterName, "pac-project-name", projectName, awsSession)
+  ecs.TagCluster(clusterName, tagKey, projectName, awsSession)
   logger.Info(str.Concat("Selenium will start up in a minute or so running at ", seleniumUrl, ":4444"))
 }

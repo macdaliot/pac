@@ -27,13 +27,15 @@ func Jenkins(projectName string, projectFqdn string) {
   imageName := "pac-jenkins"
   securityGroupName := "pac-jenkins"
   awsSession := aws.CreateAwsSession(region)
-  ecs.RegisterFargateTaskDefinition(familyName, awsSession, []ecs.Container{
+  taskDefinitionArn := ecs.RegisterFargateTaskDefinition(familyName, awsSession, []ecs.Container{
     {
       Name: imageName,
       ImageName: imageName,
       Essential: true,
     },
   })
+  tagKey := "pac-project-name"
+  ecs.TagTaskDefinition(taskDefinitionArn, tagKey, projectName, awsSession)
   publicIp := ecs.LaunchFargateContainer(familyName, clusterName, securityGroupName, awsSession)
   saveJenkinsIpToPacFile(projectName, publicIp)
   jenkinsUrl := publicIp
@@ -43,7 +45,7 @@ func Jenkins(projectName string, projectFqdn string) {
     route53.ChangeRecord(projectFqdn, "A", jenkinsFqdn, []string{publicIp}, ttl, awsSession)
     jenkinsUrl = jenkinsFqdn
   }
-  ecs.TagCluster(clusterName, "pac-project-name", projectName, awsSession)
+  ecs.TagCluster(clusterName, tagKey, projectName, awsSession)
   logger.Info(str.Concat("Jenkins will start up in a minute or so running at ", jenkinsUrl, ":8080"))
 }
 

@@ -14,7 +14,7 @@ func SonarQube(projectName string, projectFqdn string) {
   familyName := str.Concat(clusterName, "-sonarqube")
   securityGroupName := "pac-sonarqube"
   awsSession := aws.CreateAwsSession(region)
-  ecs.RegisterFargateTaskDefinition(familyName, awsSession, []ecs.Container{
+  taskDefinitionArn := ecs.RegisterFargateTaskDefinition(familyName, awsSession, []ecs.Container{
     {
       Name: "sonar-db",
       ImageName: "pac-sonar-db",
@@ -34,6 +34,8 @@ func SonarQube(projectName string, projectFqdn string) {
       },
     },
   })
+  tagKey := "pac-project-name"
+  ecs.TagTaskDefinition(taskDefinitionArn, tagKey, projectName, awsSession)
   publicIp := ecs.LaunchFargateContainer(familyName, clusterName, securityGroupName, awsSession)
   sonarqubeUrl := publicIp
   if projectFqdn != str.Concat(projectName, ".") {
@@ -42,6 +44,6 @@ func SonarQube(projectName string, projectFqdn string) {
     route53.ChangeRecord(projectFqdn, "A", sonarqubeFqdn, []string{publicIp}, ttl, awsSession)
     sonarqubeUrl = sonarqubeFqdn
   }
-  ecs.TagCluster(clusterName, "pac-project-name", projectName, awsSession)
+  ecs.TagCluster(clusterName, tagKey, projectName, awsSession)
   logger.Info(str.Concat("SonarQube will start up in a minute or so running at ", sonarqubeUrl, ":9000"))
 }
