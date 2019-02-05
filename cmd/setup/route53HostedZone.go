@@ -13,6 +13,7 @@ func Route53HostedZone(projectName string, hostedZone string) string {
   awsSession := aws.CreateAwsSession(region)
   domainName := str.Concat(projectName, ".", hostedZone)
   nameServers := route53.CreateHostedZone(domainName, awsSession)
+  route53.TagHostedZone(domainName, "pac-project-name", projectName, awsSession)
   route53.ChangeRecord(hostedZone, "NS", domainName, nameServers, ttl, awsSession)
   logger.Info(str.Concat("Created name server records for ", domainName))
   projectFqdn := str.Concat(projectName, ".", hostedZone)

@@ -13,15 +13,18 @@ import (
 func S3Buckets(projectName string, projectFqdn string) {
   region := "us-east-2"
   awsSession := aws.CreateAwsSession(region)
-  createBucket("integration", projectFqdn, region, awsSession)
-  createBucket("demo", projectFqdn, region, awsSession)
+  createBucket("integration", projectFqdn, projectName, region, awsSession)
+  createBucket("demo", projectFqdn, projectName, region, awsSession)
 }
 
-func createBucket(suiteName string, projectFqdn string, region string, awsSession *session.Session) {
+func createBucket(suiteName string, projectFqdn string, projectName string, region string, awsSession *session.Session) {
   frontEndFqdn := str.Concat(suiteName, ".", projectFqdn)
   s3.MakeBucket(frontEndFqdn, "public-read", region, awsSession)
   s3.EnableWebsiteHosting(frontEndFqdn, awsSession)
+  tagKey := "pac-project-name"
+  s3.TagBucket(frontEndFqdn, tagKey, projectName, awsSession)
   cloudfrontFqdn := cloudfront.CreateDistributionFromS3Bucket(frontEndFqdn, awsSession)
+  cloudfront.TagDistribution(cloudfrontFqdn, tagKey, projectName, awsSession)
   var ttl int64 = 300
   route53.ChangeRecord(projectFqdn, "CNAME", frontEndFqdn, []string{cloudfrontFqdn}, ttl, awsSession)
   bucketFqdn := str.Concat(frontEndFqdn, ".s3-website-", region, ".amazonaws.com")
