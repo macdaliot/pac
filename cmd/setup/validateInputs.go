@@ -1,6 +1,7 @@
 package setup
 
 import (
+  "os"
   "github.com/PyramidSystemsInc/go/aws"
 	"github.com/PyramidSystemsInc/go/aws/elbv2"
 	"github.com/PyramidSystemsInc/go/commands"
@@ -10,11 +11,19 @@ import (
 )
 
 func ValidateInputs(projectName string, frontEnd string, backEnd string, database string) {
+  validateProjectName(projectName)
   validateDockerAndPorts()
   validateStack(frontEnd, backEnd, database)
   validateALBUniqueName(projectName)
   // TODO: validateGitHubRepoUniqueName
   // TODO: validateHostedZoneIsRegistered
+}
+
+func validateProjectName(projectName string) {
+  if !str.IsAllLowercaseCharacters(projectName) {
+    logger.Err("Project names must be lowercase with no special characters")
+    os.Exit(2)
+  }
 }
 
 func validateDockerAndPorts() {
