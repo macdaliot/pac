@@ -34,6 +34,7 @@ else
   # Create Lambda Function
   LAMBDA_ARN=$(aws lambda create-function --function-name "$FULL_SERVICE_NAME" --runtime nodejs8.10 --role arn:aws:iam::118104210923:role/service-role/god --handler lambda.handler --zip-file fileb://function.zip --region us-east-2 | jq '.FunctionArn')
   LAMBDA_ARN=$(sed -e 's/^"//g' -e 's/"$//g' <<< $LAMBDA_ARN)
+  aws lambda tag-resource --resource $LAMBDA_ARN --tags pac-project-name={{.projectName}}
   echo "INFO (2/6 Completed): Created Lambda Function"
 
   # Adjust Lambda permissions
@@ -51,7 +52,10 @@ else
   echo "INFO (5/6 Completed): Created Rule in ELB"
 
   # Create DynamoDB Table
-  aws dynamodb create-table --cli-input-json file://dynamoConfig.json --region us-east-2
+  DYNAMO_TABLE_ARN=$(aws dynamodb create-table --cli-input-json file://dynamoConfig.json --region us-east-2 | jq '.TableDescription.TableArn')
+  DYNAMO_TABLE_ARN=$(sed -e 's/^"//g' -e 's/"$//g' <<< $DYNAMO_TABLE_ARN)
+  sleep 15
+  aws dynamodb tag-resource --resource-arn $DYNAMO_TABLE_ARN --tags Key=pac-project-name,Value={{.projectName}}
   echo "INFO (6/6 Completed): Created DynamoDB table"
 fi
 `
