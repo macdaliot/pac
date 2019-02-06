@@ -71,10 +71,16 @@ func createReadmeMd(projectDirectory string, config map[string]string) {
 * git commit -m "Initial commit"
 * git push origin master
 
-4. Manually run each newly created microservice pipeline from the Jenkins GUI (only needed on the first run)
-
 The above workflow will set up your project and deploys it to AWS
 
+### Helpful Links
+* [http://integration.{{.projectName}}.pac.pyramidchallenges.com](http://integration.{{.projectName}}.pac.pyramidchallenges.com) (takes ~15 minutes to provision)
+* [http://api.{{.projectName}}.pac.pyramidchallenges.com/api/<service-name>](http://api.{{.projectName}}.pac.pyramidchallenges.com/api/<service-name>)
+* [http://jenkins.{{.projectName}}.pac.pyramidchallenges.com:8080](http://jenkins.{{.projectName}}.pac.pyramidchallenges.com:8080)
+* [http://sonarqube.{{.projectName}}.pac.pyramidchallenges.com:9000](http://sonarqube.{{.projectName}}.pac.pyramidchallenges.com:9000)
+* [http://selenium.{{.projectName}}.pac.pyramidchallenges.com:4444](http://selenium.{{.projectName}}.pac.pyramidchallenges.com:4444)
+
+### Description
 {{.description}}
 `
 	files.CreateFromTemplate(str.Concat(projectDirectory, "/README.md"), template, config)
