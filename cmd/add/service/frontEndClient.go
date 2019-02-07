@@ -43,5 +43,5 @@ Sample Usage:
   }.bind(this));
 */
 `
-	files.CreateFromTemplate(filePath, template, config)
+	files.CreateFromTemplate(fullPath, template, config)
 }
