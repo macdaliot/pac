@@ -22,7 +22,7 @@ pipeline {
       steps {
         script {
           if (params.EXEC_UNITTEST){
-            sh 'npm run test'
+            sh 'cd app; npm run test'
           }
         }
       }
