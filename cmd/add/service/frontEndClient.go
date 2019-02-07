@@ -1,12 +1,16 @@
 package service
 
 import (
-  "strings"
+	"path/filepath"
+	"strings"
+
 	"github.com/PyramidSystemsInc/go/files"
 )
 
-func CreateFrontEndClient(filePath string, config map[string]string) {
-  config["serviceNameUpperCase"] = strings.Title(config["serviceName"])
+func CreateFrontEndClient(fullPath string, config map[string]string) {
+	files.EnsurePath(filepath.Dir(fullPath))
+
+	config["serviceNameUpperCase"] = strings.Title(config["serviceName"])
 	const template = `import axios from 'axios';
 
 export class {{.serviceNameUpperCase}} {
