@@ -37,11 +37,11 @@ func Service(serviceName string) {
 	// createTestsDirectory(serviceName)
 	// createTestFiles(config)
 	commands.Run("npm i", str.Concat("./", serviceName))
-  editHaProxyConfig(serviceName, config["projectName"])
+	editHaProxyConfig(serviceName, config["projectName"])
 }
 
 func editHaProxyConfig(serviceName string, projectName string) {
-  serviceConfig := str.Concat(`backend backend_`, serviceName, `
+	serviceConfig := str.Concat(`backend backend_`, serviceName, `
     mode http
     server `, serviceName, ` pac-`, projectName, `-`, serviceName, `
     timeout connect 5000
@@ -50,14 +50,14 @@ func editHaProxyConfig(serviceName string, projectName string) {
 
 
 `)
-  proxyAcl := str.Concat(`
+	proxyAcl := str.Concat(`
 
     acl path_`, serviceName, ` path_beg /api/`, serviceName, `
     use_backend backend_`, serviceName, ` if path_`, serviceName, `
 `)
-  files.Prepend("haproxy.cfg", []byte(serviceConfig))
-  files.Append("haproxy.cfg", []byte(proxyAcl))
-  logger.Info("Updated the local microservice proxy configuration")
+	files.Prepend("haproxy.cfg", []byte(serviceConfig))
+	files.Append("haproxy.cfg", []byte(proxyAcl))
+	logger.Info("Updated the local microservice proxy configuration")
 }
 
 func ensureRunningFromServicesDirectory() {
@@ -106,7 +106,6 @@ func createServiceFiles(serviceName string, config map[string]string) {
 	service.CreateDockerfile(str.Concat(serviceName, "/Dockerfile"))
 	service.CreateDynamoConfigJSON(str.Concat(serviceName, "/dynamoConfig.json"), config)
 	service.CreateLaunchSh(str.Concat(serviceName, "/launch.sh"), config)
-	service.CreateJenkinsfile(str.Concat(serviceName, "/Jenkinsfile"))
 	service.CreateBuildSh(str.Concat(serviceName, "/.build.sh"), serviceName)
 	service.CreateTestSh(str.Concat(serviceName, "/.test.sh"), serviceName)
 	service.CreateDeploySh(str.Concat(serviceName, "/.deploy.sh"), config)

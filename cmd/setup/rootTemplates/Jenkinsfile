@@ -1,0 +1,79 @@
+def pipelineComponents
+withCredentials([string(credentialsId: 'PipelineComponents', variable: 'COMPONENTS')]) {
+    pipelineComponents = env.COMPONENTS.split(",")
+}
+def builds = [:]
+def unitTests = [:]
+def integrationTests = [:]
+def deployments = [:]
+
+for (x in pipelineComponents){
+    def jobName = x.trim()
+    // create builds
+    builds[jobName] = {
+        build job: jobName, 
+            parameters: [
+                    booleanParam(name: 'EXEC_DEPLOY', value: false), 
+                    booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
+                    booleanParam(name: 'EXEC_UNITTEST', value: false)
+                ]
+    }
+    // create unit test runs
+    unitTests[jobName] = {
+        build job: jobName, 
+            parameters: [
+                    booleanParam(name: 'EXEC_DEPLOY', value: false), 
+                    booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false)
+                ]
+    }
+    // create integration test runs
+    integrationTests[jobName] = {
+        build job: jobName, 
+            parameters: [
+                    booleanParam(name: 'EXEC_BUILD', value: false), 
+                    booleanParam(name: 'EXEC_DEPLOY', value: false), 
+                    booleanParam(name: 'EXEC_UNITTEST', value: false)
+                ]
+    }
+    // create deployments
+    deployments[jobName] = {
+        build job: jobName, 
+            parameters: [
+                    booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
+                    booleanParam(name: 'EXEC_UNITTEST', value: false)
+                ]
+    }
+}
+node {
+    stage("SCM Checkout") {
+        checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'gitcredentials', url: 'http://github.com/PyramidSystemsInc/{{.projectName}}.git']]])
+    }
+    stage("Build") {
+        parallel builds
+    }
+    stage("Unit Tests") {
+        parallel unitTests
+    }
+    stage("Deploy to Integration"){
+        parallel deployments
+    }
+    stage("Integration Tests"){
+        parallel integrationTests
+    }
+    stage("Inspect") {
+        withCredentials([string(credentialsId: 'SONARLOGIN', variable: 'SONARLOGIN')]) {
+            script {
+                // scan services for test coverage
+                sh '(test -d svc && find svc -type d -maxdepth 1 -mindepth 1 -exec sh coverage.sh {} \\;) || true'
+                sh 'rm -rf coverage ; mkdir coverage ; (test -d svc && cd svc ; npm i ; npx lcov-result-merger "**/lcov.info" ../coverage/all.info ; cd ..) || true'                // run sonar scan
+                sh 'npm i typescript'
+                sh 'sonar-scanner -Dsonar.login=$SONARLOGIN'
+            }
+        }
+    }
+    stage("Deploy to Demo"){
+        script {
+            sh 'echo Run Demo Deploy here'
+        }
+    }
+}
