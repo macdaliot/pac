@@ -1,6 +1,7 @@
 package setup
 
 import (
+  "runtime"
 	"github.com/PyramidSystemsInc/go/directories"
 	"github.com/PyramidSystemsInc/go/files"
 	"github.com/PyramidSystemsInc/go/logger"
@@ -41,6 +42,8 @@ func createProjectFiles(projectDirectory string, projectName string, description
 	createGitIgnore(projectDirectory)
 	createReadmeMd(projectDirectory, config)
 	createPacFile(projectDirectory, config)
+  createCoverageSh(projectDirectory, projectName)
+  createJenkinsfile(projectDirectory, config)
 }
 
 func createGitIgnore(projectDirectory string) {
@@ -93,4 +96,111 @@ func createPacFile(projectDirectory string, config map[string]string) {
 }
 `
 	files.CreateFromTemplate(str.Concat(projectDirectory, "/.pac"), template, config)
+}
+
+func createCoverageSh(projectDirectory string, projectName string) {
+	const template = `#!/bin/sh
+TARGET=$1
+
+echo $TARGET
+cd $TARGET
+ls -la
+npm i
+npm run-script test-coverage
+`
+	files.CreateFromTemplate(str.Concat(projectDirectory, "/coverage.sh"), template, nil)
+	if runtime.GOOS == "windows" {
+		files.ChangePermissions(str.Concat(".\\", projectName, "\\coverage.sh"), 0755)
+	} else {
+		files.ChangePermissions(str.Concat("./", projectName, "/coverage.sh"), 0755)
+	}
+}
+
+func createJenkinsfile(projectDirectory string, config map[string]string) {
+	const template = `def pipelineComponents
+withCredentials([string(credentialsId: 'PipelineComponents', variable: 'COMPONENTS')]) {
+    pipelineComponents = env.COMPONENTS.split(",")
+}
+
+def builds = [:]
+def unitTests = [:]
+def integrationTests = [:]
+def deployments = [:]
+
+for (x in pipelineComponents){
+    def jobName = x.trim()
+    // create builds
+    builds[jobName] = {
+        build job: jobName,
+            parameters: [
+                    booleanParam(name: 'EXEC_DEPLOY', value: false),
+                    booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
+                    booleanParam(name: 'EXEC_UNITTEST', value: false)
+                ]
+    }
+    // create unit test runs
+    unitTests[jobName] = {
+        build job: jobName,
+            parameters: [
+                    booleanParam(name: 'EXEC_DEPLOY', value: false),
+                    booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false)
+                ]
+    }
+    // create integration test runs
+    integrationTests[jobName] = {
+        build job: jobName,
+            parameters: [
+                    booleanParam(name: 'EXEC_BUILD', value: false),
+                    booleanParam(name: 'EXEC_DEPLOY', value: false),
+                    booleanParam(name: 'EXEC_UNITTEST', value: false)
+                ]
+    }
+    // create deployments
+    deployments[jobName] = {
+        build job: jobName,
+            parameters: [
+                    booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
+                    booleanParam(name: 'EXEC_UNITTEST', value: false)
+                ]
+    }
+}
+
+node {
+    stage("Git Checkout") {
+        checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'gitcredentials', url: 'http://github.com/PyramidSystemsInc/{{.projectName}}.git']]])
+    }
+    stage("Build") {
+        parallel builds
+    }
+    stage("Unit Tests") {
+        parallel unitTests
+    }
+    stage("Coverage") {
+        script {
+            // scan services for test coverage
+            sh 'find svc -type d -maxdepth 1 -mindepth 1 -exec sh coverage.sh {} \\;'
+            sh 'rm -rf coverage ; mkdir coverage ; cd svc ; npm i ; npx lcov-result-merger "**/lcov.info" ../coverage/all.info'
+        }
+    }
+    stage("Deploy"){
+        parallel deployments
+    }
+    stage("Inspect") {
+        withCredentials([string(credentialsId: 'SONARLOGIN', variable: 'SONARLOGIN')]) {
+            script {
+                sh 'npm i typescript'
+                sh 'sonar-scanner \
+                    -Dsonar.projectKey=app \
+                    -Dsonar.sources=. \
+                    -Dsonar.host.url=http://sonarqube.{{.projectName}}.pac.pyramidchallenges.com:9000 \
+                    -Dsonar.login=$SONARLOGIN'
+            }
+        }
+    }
+    stage("Integration Tests"){
+        parallel integrationTests
+    }
+}
+`
+	files.CreateFromTemplate(str.Concat(projectDirectory, "/Jenkinsfile"), template, config)
 }

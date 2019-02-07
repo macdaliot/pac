@@ -58,7 +58,7 @@ func createPipelineProvisionerXml(projectName string) {
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties/>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.1">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@4.0.0-rc">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -89,12 +89,20 @@ func createPipelineProvisionerXml(projectName string) {
     <hudson.tasks.Shell>
       <command>if [ -d ./svc ]; then
   cd svc
+  NEW_PIPELINES=&quot;&quot;
   for DIR in *; do
     if [ -d &quot;${DIR}&quot; ]; then
       if java -jar ~/jenkins-cli.jar -s http://localhost:8080 -auth pyramid:systems get-job &quot;${DIR}&quot;; then
         echo &quot;${DIR} Jenkins Pipeline Exists. Skipping&quot;
       else
         PROJECT_NAME=$(sed -e &apos;s/.*\///g&apos; -e &apos;s/.git$//g&apos; &lt;&lt;&lt; $(echo &quot;$GIT_URL&quot;))
+        if [ -z $NEW_PIPELINES ]; then
+          echo if
+          NEW_PIPELINES=${DIR}
+        else
+          echo else
+          NEW_PIPELINES=$NEW_PIPELINES,${DIR}
+        fi
 cat &lt;&lt;- EOF &gt; job.xml
 &lt;?xml version=&apos;1.1&apos; encoding=&apos;UTF-8&apos;?&gt;
 &lt;flow-definition plugin=&quot;workflow-job@2.31&quot;&gt;
@@ -136,11 +144,29 @@ EOF
     fi
   done
 fi
+cat &lt;&lt;- EOF &gt; pipeline-components.xml
+&lt;org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl plugin=&quot;plain-credentials@1.5&quot;&gt;
+  &lt;scope&gt;GLOBAL&lt;/scope&gt;
+  &lt;id&gt;PipelineComponents&lt;/id&gt;
+  &lt;description&gt;PipelineComponents&lt;/description&gt;
+  &lt;secret&gt;$PipelineComponents,$NEW_PIPELINES&lt;/secret&gt;
+&lt;/org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl&gt;
+EOF
+        java -jar ~/jenkins-cli.jar -s http://localhost:8080 -auth pyramid:systems update-credentials-by-xml system::system::jenkins \(global\) PipelineComponents &lt; pipeline-components.xml
 java -jar ~/jenkins-cli.jar -s http://localhost:8080 -auth pyramid:systems build {{.projectName}}</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
-  <buildWrappers/>
+  <buildWrappers>
+    <org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper plugin="credentials-binding@1.17">
+      <bindings>
+        <org.jenkinsci.plugins.credentialsbinding.impl.StringBinding>
+          <credentialsId>PipelineComponents</credentialsId>
+          <variable>PipelineComponents</variable>
+        </org.jenkinsci.plugins.credentialsbinding.impl.StringBinding>
+      </bindings>
+    </org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper>
+  </buildWrappers>
 </project>
 `
   files.CreateFromTemplate(filePath, template, config)
@@ -241,6 +267,7 @@ func createPipelineJobs(jenkinsUrl string, projectName string, jenkinsCliCommand
 }
 
 func createPipelineComponentsSecret(jenkinsUrl string, jenkinsCliCommandStart string) {
+  createCredentialsCommand := str.Concat(jenkinsCliCommandStart, " create-credentials-by-xml system::system::jenkins (global)")
   pipelineComponentsXml := []byte(`<org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl plugin="plain-credentials@1.5">
   <scope>GLOBAL</scope>
   <id>PipelineComponents</id>
@@ -248,8 +275,6 @@ func createPipelineComponentsSecret(jenkinsUrl string, jenkinsCliCommandStart st
   <secret>front-end-integration</secret>
 </org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl>
 `)
-  // files.Write("pipeline-components.xml", pipelineComponentsXml)
-  createCredentialsCommand := str.Concat(jenkinsCliCommandStart, " create-credentials-by-xml system::system::jenkins (global)")
   commands.RunWithStdin(createCredentialsCommand, string(pipelineComponentsXml), "")
 }
 
