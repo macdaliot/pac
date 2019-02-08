@@ -36,7 +36,7 @@ else
 
   # Create ELB Rule
   NEW_PRIORITY=$(aws elbv2 describe-rules --listener-arn "$LISTENER_ARN" --region us-east-2 | jq '.Rules' | jq length)
-  aws elbv2 create-rule --region us-east-2 --cli-input-json '{ "ListenerArn": "'"$LISTENER_ARN"'", "Priority": '"$NEW_PRIORITY"', "Conditions": [ { "Field": "path-pattern", "Values": [ "/api/'"$SERVICE_NAME"'" ] } ], "Actions": [ { "TargetGroupArn": "'"$TARGET_GROUP_ARN"'", "Type": "forward", "Order": 1 } ] }'
+  aws elbv2 create-rule --region us-east-2 --cli-input-json '{ "ListenerArn": "'"$LISTENER_ARN"'", "Priority": '"$NEW_PRIORITY"', "Conditions": [ { "Field": "path-pattern", "Values": [ "/api/'"$SERVICE_NAME*"'" ] } ], "Actions": [ { "TargetGroupArn": "'"$TARGET_GROUP_ARN"'", "Type": "forward", "Order": 1 } ] }'
   echo "INFO (5/6 Completed): Created Rule in ELB"
 
   # Create DynamoDB Table

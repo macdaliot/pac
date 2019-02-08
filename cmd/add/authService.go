@@ -14,4 +14,5 @@ func AuthService() {
 	config := createTemplateConfig(_serviceName)
 	authservice.CreateAllTemplatedFiles(_serviceName, config)
 	commands.Run("npm i", str.Concat("./", _serviceName))
+	editHaProxyConfig(_serviceName, config["projectName"])
 }
