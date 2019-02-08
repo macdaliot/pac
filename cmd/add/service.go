@@ -111,7 +111,7 @@ func createServiceFiles(serviceName string, config map[string]string) {
 	service.CreateDeploySh(str.Concat(serviceName, "/.deploy.sh"), config)
 	service.CreateAllTemplatedFiles(serviceName, config)
 	// createServiceSource(serviceName, config)
-	service.CreateFrontEndClient(str.Concat("../app/src/services/", strings.Title(serviceName), ".js"), config)
+	service.CreateFrontEndClient(str.Concat("../app/src/services/", strings.Title(serviceName), ".ts"), config)
 	logger.Info(str.Concat("Created ", serviceName, " Express microservice files"))
 }
 

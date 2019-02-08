@@ -1,0 +1,2 @@
+JWT_SECRET=4pWQUrx6RkgU6o2TC
+JWT_ISSUER=urn:pacAuth

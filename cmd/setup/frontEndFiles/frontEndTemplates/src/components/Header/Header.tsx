@@ -3,18 +3,14 @@ import { hot } from 'react-hot-loader/root';
 import { connect } from 'react-redux';
 import * as routeData from '../../routes/routes.json';
 import './header.scss';
+import { UrlConfig } from '../../config'
 
 class Header extends React.Component<any> {
-  constructor(props) {
-    super(props);
-  }
   render() {
     var matchingRoute = this.findMatchingRoute();
     var pageTitle = this.getPageTitle(matchingRoute);
     var styleSpec = this.createStyleSpec(matchingRoute);
-    var host = "http://localhost:3000";
-    //var host = "http://<insert elb name here>.us-east-2.elb.amazonaws.com";
-    let login = <a href={host + "/api/auth/login"}>Login</a>
+    let login = <a href={UrlConfig.apiUrl + "/api/auth/login"}>Login</a>
 
     return (
       <header className="header-component" style={styleSpec.header}>
