@@ -41,10 +41,9 @@ NodeJS/Express back-end, and DynamoDB database)`,
 func init() {
   RootCmd.AddCommand(setupCmd)
   setupCmd.PersistentFlags().StringVarP(&projectName, "name", "n", "", "project name (required)")
-  setupCmd.MarkFlagRequired("name")
+  setupCmd.MarkPersistentFlagRequired("name")
   setupCmd.PersistentFlags().StringVar(&description, "description", "Project created by PAC", "short description of the project")
   setupCmd.PersistentFlags().StringVar(&hostedZone, "hostedZone", "pac.pyramidchallenges.com", "Existing AWS hosted zone FQDN (i.e. pac.pyramidchallenges.com)")
-  setupCmd.MarkFlagRequired("hostedZone")
   setupCmd.PersistentFlags().StringVarP(&frontEnd, "front", "f", "ReactJS", "front-end framework/library")
   setupCmd.PersistentFlags().StringVarP(&backEnd, "back", "b", "Express", "back-end framework/library")
   setupCmd.PersistentFlags().StringVarP(&database, "database", "d", "DynamoDB", "database type")

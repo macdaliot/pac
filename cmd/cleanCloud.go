@@ -21,7 +21,7 @@ var cleanCloudCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(cleanCloudCmd)
 	cleanCloudCmd.PersistentFlags().StringVarP(&projectToClean, "name", "n", "", "name of the new page/service/stage (required)")
-  cleanCloudCmd.MarkFlagRequired("name")
+  cleanCloudCmd.MarkPersistentFlagRequired("name")
 }
 
 var projectToClean string
