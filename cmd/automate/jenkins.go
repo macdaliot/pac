@@ -97,10 +97,8 @@ func createPipelineProvisionerXml(projectName string) {
       else
         PROJECT_NAME=$(sed -e &apos;s/.*\///g&apos; -e &apos;s/.git$//g&apos; &lt;&lt;&lt; $(echo &quot;$GIT_URL&quot;))
         if [ -z $NEW_PIPELINES ]; then
-          echo if
           NEW_PIPELINES=${DIR}
         else
-          echo else
           NEW_PIPELINES=$NEW_PIPELINES,${DIR}
         fi
 cat &lt;&lt;- EOF &gt; job.xml
@@ -144,6 +142,9 @@ EOF
     fi
   done
 fi
+if [ -z $NEW_PIPELINES ]; then
+  echo &quot;No new pipeline components to trigger&quot;
+else
 cat &lt;&lt;- EOF &gt; pipeline-components.xml
 &lt;org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl plugin=&quot;plain-credentials@1.5&quot;&gt;
   &lt;scope&gt;GLOBAL&lt;/scope&gt;
@@ -152,7 +153,8 @@ cat &lt;&lt;- EOF &gt; pipeline-components.xml
   &lt;secret&gt;$PipelineComponents,$NEW_PIPELINES&lt;/secret&gt;
 &lt;/org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl&gt;
 EOF
-        java -jar ~/jenkins-cli.jar -s http://localhost:8080 -auth pyramid:systems update-credentials-by-xml system::system::jenkins \(global\) PipelineComponents &lt; pipeline-components.xml
+  java -jar ~/jenkins-cli.jar -s http://localhost:8080 -auth pyramid:systems update-credentials-by-xml system::system::jenkins \(global\) PipelineComponents &lt; pipeline-components.xml
+fi
 java -jar ~/jenkins-cli.jar -s http://localhost:8080 -auth pyramid:systems build {{.projectName}}</command>
     </hudson.tasks.Shell>
   </builders>
