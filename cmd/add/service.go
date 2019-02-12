@@ -1,10 +1,7 @@
 package add
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"strings"
-
 	"github.com/PyramidSystemsInc/go/commands"
 	"github.com/PyramidSystemsInc/go/directories"
 	"github.com/PyramidSystemsInc/go/errors"
@@ -12,16 +9,8 @@ import (
 	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/go/str"
 	"github.com/PyramidSystemsInc/pac/cmd/add/service"
+	"github.com/PyramidSystemsInc/pac/config"
 )
-
-type PacFile struct {
-	ProjectName     string `json:"projectName"`
-	GitAuth         string `json:"gitAuth"`
-	JenkinsUrl      string `json:"jenkinsUrl"`
-	LoadBalancerArn string `json:"loadBalancerArn"`
-	ListenerArn     string `json:"listenerArn"`
-	ServiceUrl      string `json:"serviceUrl"`
-}
 
 var _serviceName string
 
@@ -68,12 +57,11 @@ func ensureRunningFromServicesDirectory() {
 }
 
 func createTemplateConfig(serviceName string) map[string]string {
-	config := make(map[string]string)
-	pacFile := readPacFile()
-	config["projectName"] = pacFile.ProjectName
-	config["serviceUrl"] = pacFile.ServiceUrl
-	config["serviceName"] = serviceName
-	return config
+	cfg := make(map[string]string)
+	cfg["projectName"] = config.Get("projectName")
+	cfg["serviceUrl"] = config.Get("serviceUrl")
+	cfg["serviceName"] = serviceName
+	return cfg
 }
 
 func createServiceDirectory(serviceName string) {
@@ -116,7 +104,6 @@ func createServiceFiles(serviceName string, config map[string]string) {
 }
 
 func createServiceSource(serviceName string, config map[string]string) {
-	/* need a better way to construct folders */
 	workingDirectory := directories.GetWorking()
 	var serviceDirectory = str.Concat(workingDirectory, "/", serviceName)
 	var serviceSourceDirectory = str.Concat(serviceDirectory, "/src")
@@ -157,14 +144,4 @@ func createDynamoDbTable(serviceName string) {
 func launchMicroservice(serviceName string) {
 	commands.Run("./launch.sh", str.Concat("./", serviceName))
 	logger.Info(str.Concat("Launched ", serviceName, " microservice Docker container locally (available at localhost:3000/api/", serviceName, ")"))
-}
-
-func readPacFile() PacFile {
-	// TODO: Should run from anywhere
-	// TODO: Should not depend on pacFile for git
-	var pacFile PacFile
-	pacFileData, err := ioutil.ReadFile("../.pac")
-	errors.QuitIfError(err)
-	json.Unmarshal(pacFileData, &pacFile)
-	return pacFile
 }

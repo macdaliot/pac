@@ -8,6 +8,7 @@ import (
   "github.com/PyramidSystemsInc/go/errors"
   "github.com/PyramidSystemsInc/go/logger"
   "github.com/PyramidSystemsInc/go/str"
+  "github.com/PyramidSystemsInc/pac/config"
 )
 
 type CreateWebhookRequest struct {
@@ -23,13 +24,8 @@ type CreateWebhookRequestConfig struct {
 }
 
 func GitHubWebhook(projectName string) {
-  pacFile := readPacFile(projectName)
-  createWebhookIfDoesNotExist(pacFile)
-}
-
-func createWebhookIfDoesNotExist(pacFile PacFile) {
-  hooksApiEndpoint := str.Concat("https://api.github.com/repos/PyramidSystemsInc/", pacFile.ProjectName, "/hooks")
-  basicAuth := str.Concat("Basic ", pacFile.GitAuth)
+  hooksApiEndpoint := str.Concat("https://api.github.com/repos/PyramidSystemsInc/", config.Get("projectName"), "/hooks")
+  basicAuth := str.Concat("Basic ", config.Get("gitAuth"))
   request, err := http.NewRequest("GET", hooksApiEndpoint, nil)
   errors.LogIfError(err)
   request.Header.Add("Authorization", basicAuth)
@@ -39,7 +35,7 @@ func createWebhookIfDoesNotExist(pacFile PacFile) {
   defer response.Body.Close()
   bodyData, err := ioutil.ReadAll(response.Body)
   if string(bodyData) == "[]" {
-    webhookRequest := createWebhookRequestBody(pacFile.JenkinsUrl)
+    webhookRequest := createWebhookRequestBody(config.Get("jenkinsUrl"))
     request, err = http.NewRequest("POST", hooksApiEndpoint, webhookRequest)
     errors.LogIfError(err)
     request.Header.Add("Authorization", basicAuth)

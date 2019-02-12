@@ -1,28 +1,16 @@
 package automate
 
 import (
-  "encoding/json"
-  "io/ioutil"
   "github.com/PyramidSystemsInc/go/commands"
-  "github.com/PyramidSystemsInc/go/errors"
   "github.com/PyramidSystemsInc/go/files"
   "github.com/PyramidSystemsInc/go/logger"
   "github.com/PyramidSystemsInc/go/str"
+  "github.com/PyramidSystemsInc/pac/config"
 )
 
-type PacFile struct {
-  ProjectName      string  `json:"projectName"`
-  GitAuth          string  `json:"gitAuth"`
-  JenkinsUrl       string  `json:"jenkinsUrl"`
-  LoadBalancerArn  string  `json:"loadBalancerArn"`
-  ListenerArn      string  `json:"listenerArn"`
-  ServiceUrl       string  `json:"serviceUrl"`
-}
-
 func Jenkins() {
-  pacFile := readPacFile()
-  projectName := pacFile.ProjectName
-  jenkinsUrl := pacFile.JenkinsUrl
+  projectName := config.Get("projectName")
+  jenkinsUrl := config.Get("jenkinsUrl")
   downloadJenkinsCliJar(jenkinsUrl)
   createPipelineProvisionerXml(projectName)
   createS3PipelineXml(projectName)
@@ -32,16 +20,6 @@ func Jenkins() {
   createPipelineComponentsSecret(jenkinsUrl, jenkinsCliCommandStart)
   cleanUp()
   logger.Info("Jenkins is now configured to create individual pipelines for the front-end and each microservice")
-}
-
-func readPacFile() PacFile {
-  // TODO: Should run from anywhere
-  // TODO: Should not depend on pacFile for git
-  var pacFile PacFile
-  pacFileData, err := ioutil.ReadFile(".pac")
-  errors.QuitIfError(err)
-  json.Unmarshal(pacFileData, &pacFile)
-  return pacFile
 }
 
 func downloadJenkinsCliJar(jenkinsUrl string) {

@@ -1,6 +1,7 @@
 package setup
 
 import (
+  "os"
 	"path/filepath"
 
 	"github.com/PyramidSystemsInc/go/directories"
@@ -27,6 +28,7 @@ func createRootProjectDirectory(projectName string) string {
 	workingDirectory := directories.GetWorking()
 	projectDirectory := filepath.Join(workingDirectory, projectName)
 	directories.Create(projectDirectory)
+  os.Chdir(projectDirectory)
 	return projectDirectory
 }
 

@@ -6,6 +6,7 @@ import (
   "github.com/PyramidSystemsInc/go/aws/route53"
   "github.com/PyramidSystemsInc/go/logger"
   "github.com/PyramidSystemsInc/go/str"
+  "github.com/PyramidSystemsInc/pac/config"
 )
 
 func ElasticLoadBalancer(projectName string, projectFqdn string) {
@@ -14,11 +15,9 @@ func ElasticLoadBalancer(projectName string, projectFqdn string) {
   awsSession := aws.CreateAwsSession(region)
   loadBalancerArn, listenerArn, serviceUrl := elbv2.Create(name, awsSession)
   elbv2.Tag(name, "pac-project-name", projectName, awsSession)
-  pacFile := readPacFile(projectName)
-  pacFile.LoadBalancerArn = loadBalancerArn
-  pacFile.ListenerArn = listenerArn
-  pacFile.ServiceUrl = serviceUrl
-  writePacFile(pacFile)
+  config.Set("loadBalancerArn", loadBalancerArn)
+  config.Set("listenerArn", listenerArn)
+  config.Set("serviceUrl", serviceUrl)
   if projectFqdn != str.Concat(projectName, ".") {
     var ttl int64 = 300
     route53.ChangeRecord(projectFqdn, "CNAME", str.Concat("api.", projectFqdn), []string{serviceUrl}, ttl, awsSession)
