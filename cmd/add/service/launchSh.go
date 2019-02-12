@@ -1,14 +1,11 @@
 package service
 
 import (
-	"runtime"
-
 	"github.com/PyramidSystemsInc/go/files"
-	"github.com/PyramidSystemsInc/go/str"
 )
 
 // CreateLaunchSh creates a templated shell script to launch the service
-func CreateLaunchSh(filePath string, config map[string]string) {
+func CreateLaunchSh(fileName string, config map[string]string) {
 	const template = `#! /bin/bash
 
 # Ensure AWS credentials were provided
@@ -127,10 +124,6 @@ else
   echo "ABORTED LAUNCH: The AWS keys were not found. Try running 'aws configure'"
 fi
 `
-	files.CreateFromTemplate(filePath, template, config)
-	if runtime.GOOS == "windows" {
-		files.ChangePermissions(str.Concat(".\\", config["serviceName"], "\\launch.sh"), 0755)
-	} else {
-		files.ChangePermissions(str.Concat("./", config["serviceName"], "/launch.sh"), 0755)
-	}
+	files.CreateFromTemplate(fileName, template, config)
+  files.ChangePermissions(fileName, 0755)
 }

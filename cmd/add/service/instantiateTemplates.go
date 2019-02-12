@@ -8,13 +8,12 @@ import (
 	"github.com/gobuffalo/packr"
 )
 
-func CreateAllTemplatedFiles(targetDirectory string, config map[string]string) {
+func CreateAllTemplatedFiles(config map[string]string) {
 	box := packr.NewBox("./serviceTemplates")
 	for _, templatePath := range box.List() {
 		logger.Info(templatePath)
-		fullPath := filepath.Join(targetDirectory, templatePath)
-		files.EnsurePath(filepath.Dir(fullPath))
+		files.EnsurePath(filepath.Dir(templatePath))
 		template, _ := box.FindString(templatePath)
-		files.CreateFromTemplate(fullPath, template, config)
+		files.CreateFromTemplate(templatePath, template, config)
 	}
 }

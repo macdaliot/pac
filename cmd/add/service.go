@@ -1,10 +1,11 @@
 package add
 
 import (
+  "os"
+  "path"
 	"strings"
 	"github.com/PyramidSystemsInc/go/commands"
 	"github.com/PyramidSystemsInc/go/directories"
-	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/go/files"
 	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/go/str"
@@ -12,24 +13,45 @@ import (
 	"github.com/PyramidSystemsInc/pac/config"
 )
 
-var _serviceName string
-
-const _testPath string = "/tests"
-
 // Service adds a new service to the application
 func Service(serviceName string) {
-	_serviceName = serviceName
-	ensureRunningFromServicesDirectory()
 	createServiceDirectory(serviceName)
-	config := createTemplateConfig(serviceName)
-	createServiceFiles(serviceName, config)
-	// createTestsDirectory(serviceName)
-	// createTestFiles(config)
-	commands.Run("npm i", str.Concat("./", serviceName))
-	editHaProxyConfig(serviceName, config["projectName"])
+	cfg := createTemplateConfig(serviceName)
+	createServiceFiles(serviceName, cfg)
+	commands.Run("npm i", path.Join("svc/", serviceName))
+	editHaProxyConfig(serviceName, cfg["projectName"])
+}
+
+func createServiceDirectory(serviceName string) {
+	serviceDirectory := str.Concat("svc/", serviceName)
+	directories.Create(serviceDirectory)
+}
+
+func createTemplateConfig(serviceName string) map[string]string {
+	cfg := make(map[string]string)
+	cfg["projectName"] = config.Get("projectName")
+	cfg["serviceUrl"] = config.Get("serviceUrl")
+	cfg["serviceName"] = serviceName
+	return cfg
+}
+
+func createServiceFiles(serviceName string, cfg map[string]string) {
+  os.Chdir(config.GetRootDirectory())
+  os.Chdir(path.Join("svc/", serviceName))
+	service.CreateDockerfile("Dockerfile")
+	service.CreateDynamoConfigJSON("dynamoConfig.json", cfg)
+	service.CreateLaunchSh("launch.sh", cfg)
+	service.CreateBuildSh(".build.sh", serviceName)
+	service.CreateTestSh(".test.sh", serviceName)
+	service.CreateDeploySh(".deploy.sh", cfg)
+	service.CreateAllTemplatedFiles(cfg)
+  os.Chdir(config.GetRootDirectory())
+	service.CreateFrontEndClient(str.Concat(strings.Title(serviceName), ".ts"), cfg)
+	logger.Info(str.Concat("Created ", serviceName, " Express microservice files"))
 }
 
 func editHaProxyConfig(serviceName string, projectName string) {
+  haProxyConfigPath := "svc/haproxy.cfg"
 	serviceConfig := str.Concat(`backend backend_`, serviceName, `
     mode http
     server `, serviceName, ` pac-`, projectName, `-`, serviceName, `
@@ -44,104 +66,7 @@ func editHaProxyConfig(serviceName string, projectName string) {
     acl path_`, serviceName, ` path_beg /api/`, serviceName, `
     use_backend backend_`, serviceName, ` if path_`, serviceName, `
 `)
-	files.Prepend("haproxy.cfg", []byte(serviceConfig))
-	files.Append("haproxy.cfg", []byte(proxyAcl))
+	files.Prepend(haProxyConfigPath, []byte(serviceConfig))
+	files.Append(haProxyConfigPath, []byte(proxyAcl))
 	logger.Info("Updated the local microservice proxy configuration")
-}
-
-func ensureRunningFromServicesDirectory() {
-	workingDirectory := directories.GetWorking()
-	if !strings.HasSuffix(workingDirectory, "svc") {
-		errors.LogAndQuit("`pac add service [flags]` must be run from the svc directory")
-	}
-}
-
-func createTemplateConfig(serviceName string) map[string]string {
-	cfg := make(map[string]string)
-	cfg["projectName"] = config.Get("projectName")
-	cfg["serviceUrl"] = config.Get("serviceUrl")
-	cfg["serviceName"] = serviceName
-	return cfg
-}
-
-func createServiceDirectory(serviceName string) {
-	workingDirectory := directories.GetWorking()
-	var serviceDirectory string = str.Concat(workingDirectory, "/", serviceName)
-	directories.Create(serviceDirectory)
-}
-
-func createTestsDirectory(serviceName string) {
-	workingDirectory := directories.GetWorking()
-	directories.Create(str.Concat(workingDirectory, "/", getPathForTestsFolder()))
-}
-
-func createTestFiles(config map[string]string) {
-	/* add more tests as needed */
-	service.CreateDefaultControllerSpecTs(getPathForTest("defaultController.spec.ts"), config)
-	service.CreateDefaultServiceSpecTs(getPathForTest("defaultService.spec.ts"), config)
-	service.CreateMockDynamoDbTs(getPathForTest("mockDynamoDb.ts"))
-	service.CreateMockDefaultServiceTs(getPathForTest("mockDefaultService.ts"))
-}
-
-func getPathForTestsFolder() string {
-	return str.Concat(_serviceName, _testPath)
-}
-func getPathForTest(filePath string) string {
-	return str.Concat(getPathForTestsFolder(), "/", filePath)
-}
-
-func createServiceFiles(serviceName string, config map[string]string) {
-	service.CreateDockerfile(str.Concat(serviceName, "/Dockerfile"))
-	service.CreateDynamoConfigJSON(str.Concat(serviceName, "/dynamoConfig.json"), config)
-	service.CreateLaunchSh(str.Concat(serviceName, "/launch.sh"), config)
-	service.CreateBuildSh(str.Concat(serviceName, "/.build.sh"), serviceName)
-	service.CreateTestSh(str.Concat(serviceName, "/.test.sh"), serviceName)
-	service.CreateDeploySh(str.Concat(serviceName, "/.deploy.sh"), config)
-	service.CreateAllTemplatedFiles(serviceName, config)
-	// createServiceSource(serviceName, config)
-	service.CreateFrontEndClient(str.Concat("../app/src/services/", strings.Title(serviceName), ".ts"), config)
-	logger.Info(str.Concat("Created ", serviceName, " Express microservice files"))
-}
-
-func createServiceSource(serviceName string, config map[string]string) {
-	workingDirectory := directories.GetWorking()
-	var serviceDirectory = str.Concat(workingDirectory, "/", serviceName)
-	var serviceSourceDirectory = str.Concat(serviceDirectory, "/src")
-	directories.Create(str.Concat(serviceSourceDirectory))
-
-	directories.Create(str.Concat(serviceSourceDirectory, "/config"))
-
-	directories.Create(str.Concat(serviceSourceDirectory, "/controllers"))
-	service.CreateControllerInterfaceTs(str.Concat(serviceSourceDirectory, "/controllers", "/controller.interface.ts"))
-	service.CreateDefaultControllerTs(str.Concat(serviceSourceDirectory, "/controllers", "/defaultController.ts"))
-
-	directories.Create(str.Concat(serviceSourceDirectory, "/database"))
-	service.CreateDbInterfaceTs(str.Concat(serviceSourceDirectory, "/database", "/db.interface.ts"))
-
-	directories.Create(str.Concat(serviceSourceDirectory, "/middleware"))
-	directories.Create(str.Concat(serviceSourceDirectory, "/middleware", "/logger"))
-	service.CreateLoggerTs(str.Concat(serviceSourceDirectory, "/middleware", "/logger", "/logger.ts"))
-	service.CreateLoggerMiddlewareTs(str.Concat(serviceSourceDirectory, "/middleware", "/logger", "/loggerMiddleware.ts"))
-
-	directories.Create(str.Concat(serviceSourceDirectory, "/routes"))
-	service.CreateRoutesTS(str.Concat(serviceSourceDirectory, "/routes", "/routes.ts"), config)
-
-	directories.Create(str.Concat(serviceSourceDirectory, "/services"))
-	service.CreateDefaultServiceTs(str.Concat(serviceSourceDirectory, "/services", "/defaultService.ts"))
-	service.CreateServiceInterfaceTs(str.Concat(serviceSourceDirectory, "/services", "/service.interface.ts"))
-
-	directories.Create(str.Concat(serviceSourceDirectory, "/utility"))
-	service.CreateFunctions_indexTs(str.Concat(serviceSourceDirectory, "/utility", "/index.ts"))
-	service.CreateFunctionsTs(str.Concat(serviceSourceDirectory, "/utility", "/functions.ts"))
-}
-
-func createDynamoDbTable(serviceName string) {
-	workingDirectory := directories.GetWorking()
-	commands.Run(str.Concat("aws dynamodb create-table --cli-input-json file://", workingDirectory, "/", serviceName, "/dynamoConfig.json --endpoint-url http://localhost:8000"), "")
-	logger.Info(str.Concat("Created ", serviceName, " DynamoDB table locally"))
-}
-
-func launchMicroservice(serviceName string) {
-	commands.Run("./launch.sh", str.Concat("./", serviceName))
-	logger.Info(str.Concat("Launched ", serviceName, " microservice Docker container locally (available at localhost:3000/api/", serviceName, ")"))
 }

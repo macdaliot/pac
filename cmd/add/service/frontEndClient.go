@@ -1,16 +1,17 @@
 package service
 
 import (
-	"path/filepath"
+  "path"
 	"strings"
 
+	"github.com/PyramidSystemsInc/go/directories"
 	"github.com/PyramidSystemsInc/go/files"
 )
 
-func CreateFrontEndClient(fullPath string, config map[string]string) {
-	files.EnsurePath(filepath.Dir(fullPath))
-
-	config["serviceNameUpperCase"] = strings.Title(config["serviceName"])
+func CreateFrontEndClient(fileName string, cfg map[string]string) {
+  frontEndClientPath := "app/src/services"
+  directories.Create(frontEndClientPath)
+	cfg["serviceNameUpperCase"] = strings.Title(cfg["serviceName"])
 	const template = `import axios from 'axios';
 import { UrlConfig } from '../config';
 
@@ -42,5 +43,5 @@ Sample Usage:
   }.bind(this));
 */
 `
-	files.CreateFromTemplate(fullPath, template, config)
+	files.CreateFromTemplate(path.Join(frontEndClientPath, fileName), template, cfg)
 }

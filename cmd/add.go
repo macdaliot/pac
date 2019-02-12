@@ -1,9 +1,11 @@
 package cmd
 
 import (
+  "os"
 	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/pac/cmd/add"
+	"github.com/PyramidSystemsInc/pac/config"
 	"github.com/spf13/cobra"
 )
 
@@ -14,6 +16,7 @@ var addCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		logger.SetLogLevel("info")
 		addType := validateAddTypeArgument(args)
+    os.Chdir(config.GetRootDirectory())
 		addFiles(cmd, addType)
 	},
 }

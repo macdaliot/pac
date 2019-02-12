@@ -1,12 +1,11 @@
 package service
 
 import (
-  "runtime"
   "github.com/PyramidSystemsInc/go/files"
   "github.com/PyramidSystemsInc/go/str"
 )
 
-func CreateTestSh(filePath string, serviceName string) {
+func CreateTestSh(fileName string, serviceName string) {
   const template = `#! /bin/bash
 
 npm run test
@@ -17,10 +16,6 @@ else
   exit 2
 fi
 `
-  files.CreateFromTemplate(filePath, template, nil)
-  if runtime.GOOS == "windows" {
-    files.ChangePermissions(str.Concat(".\\", serviceName, "\\.test.sh"), 0755)
-  } else {
-    files.ChangePermissions(str.Concat("./", serviceName, "/.test.sh"), 0755)
-  }
+  files.CreateFromTemplate(fileName, template, nil)
+  files.ChangePermissions(str.Concat("./", fileName), 0755)
 }

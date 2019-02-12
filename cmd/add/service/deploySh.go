@@ -1,13 +1,11 @@
 package service
 
 import (
-	"runtime"
-
 	"github.com/PyramidSystemsInc/go/files"
 	"github.com/PyramidSystemsInc/go/str"
 )
 
-func CreateDeploySh(filePath string, config map[string]string) {
+func CreateDeploySh(fileName string, config map[string]string) {
 	const template = `#! /bin/bash
 
 # Perform setup
@@ -59,10 +57,6 @@ else
   echo "INFO (6/6 Completed): Created DynamoDB table"
 fi
 `
-	files.CreateFromTemplate(filePath, template, config)
-	if runtime.GOOS == "windows" {
-		files.ChangePermissions(str.Concat(".\\", config["serviceName"], "\\.deploy.sh"), 0755)
-	} else {
-		files.ChangePermissions(str.Concat("./", config["serviceName"], "/.deploy.sh"), 0755)
-	}
+	files.CreateFromTemplate(fileName, template, config)
+  files.ChangePermissions(str.Concat("./", fileName), 0755)
 }
