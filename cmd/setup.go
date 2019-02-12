@@ -24,7 +24,7 @@ NodeJS/Express back-end, and DynamoDB database)`,
     database := getDatabase(cmd)
     warnExtraArgumentsAreIgnored(args)
     setup.ValidateInputs(projectName, frontEnd, backEnd, database)
-    projectDirectory := setup.ProjectStructure(projectName, description, gitAuth)
+    setup.ProjectStructure(projectName, description, gitAuth)
     projectFqdn := setup.Route53HostedZone(projectName, hostedZone)
     setup.S3Buckets(projectName, projectFqdn)
     setup.ElasticLoadBalancer(projectName, projectFqdn)
@@ -33,7 +33,7 @@ NodeJS/Express back-end, and DynamoDB database)`,
     setup.Selenium(projectName, projectFqdn)
     setup.FrontEndFiles()
     setup.HaProxy(projectName)
-    setup.GitRepository(projectName, gitAuth, projectDirectory)
+    setup.GitRepository(projectName)
     setup.GitHubWebhook(projectName)
   },
 }

@@ -10,26 +10,23 @@ import (
 	"github.com/gobuffalo/packr"
 )
 
-func ProjectStructure(projectName string, description string, gitAuth string) string {
-	projectDirectory := createProjectDirectories(projectName)
+func ProjectStructure(projectName string, description string, gitAuth string) {
+  createProjectDirectories(projectName)
 	createProjectFiles(projectName, description, gitAuth)
 	logger.Info("Created project structure")
-	return projectDirectory
 }
 
-func createProjectDirectories(projectName string) string {
-	projectDirectory := createRootProjectDirectory(projectName)
+func createProjectDirectories(projectName string) {
+	createRootProjectDirectory(projectName)
 	directories.Create("app")
 	directories.Create("svc")
-	return projectDirectory
 }
 
-func createRootProjectDirectory(projectName string) string {
+func createRootProjectDirectory(projectName string) {
 	workingDirectory := directories.GetWorking()
 	projectDirectory := filepath.Join(workingDirectory, projectName)
 	directories.Create(projectDirectory)
   os.Chdir(projectDirectory)
-	return projectDirectory
 }
 
 func createProjectFiles(projectName string, description string, gitAuth string) {
