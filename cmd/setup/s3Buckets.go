@@ -7,12 +7,14 @@ import (
   "github.com/PyramidSystemsInc/go/aws/s3"
   "github.com/PyramidSystemsInc/go/logger"
   "github.com/PyramidSystemsInc/go/str"
+  "github.com/PyramidSystemsInc/pac/config"
   "github.com/aws/aws-sdk-go/aws/session"
 )
 
-func S3Buckets(projectName string, projectFqdn string) {
+func S3Buckets(projectName string) {
   region := "us-east-2"
   awsSession := aws.CreateAwsSession(region)
+  projectFqdn := config.Get("projectFqdn")
   createBucket("integration", projectFqdn, projectName, region, awsSession)
   createBucket("demo", projectFqdn, projectName, region, awsSession)
 }

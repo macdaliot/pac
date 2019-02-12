@@ -6,9 +6,10 @@ import (
   "github.com/PyramidSystemsInc/go/aws/route53"
   "github.com/PyramidSystemsInc/go/logger"
   "github.com/PyramidSystemsInc/go/str"
+  "github.com/PyramidSystemsInc/pac/config"
 )
 
-func SonarQube(projectName string, projectFqdn string) {
+func SonarQube(projectName string) {
   region := "us-east-2"
   clusterName := str.Concat("pac-", projectName)
   familyName := str.Concat(clusterName, "-sonarqube")
@@ -36,12 +37,12 @@ func SonarQube(projectName string, projectFqdn string) {
   })
   tagKey := "pac-project-name"
   ecs.TagTaskDefinition(taskDefinitionArn, tagKey, projectName, awsSession)
-  publicIp := ecs.LaunchFargateContainer(familyName, clusterName, securityGroupName, awsSession)
-  sonarqubeUrl := publicIp
+  sonarqubeUrl := ecs.LaunchFargateContainer(familyName, clusterName, securityGroupName, awsSession)
+  projectFqdn := config.Get("projectFqdn")
   if projectFqdn != str.Concat(projectName, ".") {
     sonarqubeFqdn := str.Concat("sonarqube.", projectFqdn)
     var ttl int64 = 300
-    route53.ChangeRecord(projectFqdn, "A", sonarqubeFqdn, []string{publicIp}, ttl, awsSession)
+    route53.ChangeRecord(projectFqdn, "A", sonarqubeFqdn, []string{sonarqubeUrl}, ttl, awsSession)
     sonarqubeUrl = sonarqubeFqdn
   }
   ecs.TagCluster(clusterName, tagKey, projectName, awsSession)

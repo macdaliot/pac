@@ -6,9 +6,10 @@ import (
   "github.com/PyramidSystemsInc/go/aws/route53"
   "github.com/PyramidSystemsInc/go/logger"
   "github.com/PyramidSystemsInc/go/str"
+  "github.com/PyramidSystemsInc/pac/config"
 )
 
-func Selenium(projectName string, projectFqdn string) {
+func Selenium(projectName string) {
   region := "us-east-2"
   clusterName := str.Concat("pac-", projectName)
   familyName := str.Concat(clusterName, "-selenium")
@@ -23,12 +24,12 @@ func Selenium(projectName string, projectFqdn string) {
   })
   tagKey := "pac-project-name"
   ecs.TagTaskDefinition(taskDefinitionArn, tagKey, projectName, awsSession)
-  publicIp := ecs.LaunchFargateContainer(familyName, clusterName, securityGroupName, awsSession)
-  seleniumUrl := publicIp
+  seleniumUrl := ecs.LaunchFargateContainer(familyName, clusterName, securityGroupName, awsSession)
+  projectFqdn := config.Get("projectFqdn")
   if projectFqdn != str.Concat(projectName, ".") {
     seleniumFqdn := str.Concat("selenium.", projectFqdn)
     var ttl int64 = 300
-    route53.ChangeRecord(projectFqdn, "A", seleniumFqdn, []string{publicIp}, ttl, awsSession)
+    route53.ChangeRecord(projectFqdn, "A", seleniumFqdn, []string{seleniumUrl}, ttl, awsSession)
     seleniumUrl = seleniumFqdn
   }
   ecs.TagCluster(clusterName, tagKey, projectName, awsSession)

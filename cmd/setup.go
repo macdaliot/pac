@@ -25,16 +25,16 @@ NodeJS/Express back-end, and DynamoDB database)`,
     warnExtraArgumentsAreIgnored(args)
     setup.ValidateInputs(projectName, frontEnd, backEnd, database)
     setup.ProjectStructure(projectName, description, gitAuth)
-    projectFqdn := setup.Route53HostedZone(projectName, hostedZone)
-    setup.S3Buckets(projectName, projectFqdn)
-    setup.ElasticLoadBalancer(projectName, projectFqdn)
-    setup.Jenkins(projectName, projectFqdn)
-    setup.SonarQube(projectName, projectFqdn)
-    setup.Selenium(projectName, projectFqdn)
+    setup.Route53HostedZone(projectName, hostedZone)
+    setup.S3Buckets(projectName)
+    setup.ElasticLoadBalancer(projectName)
+    setup.Jenkins(projectName)
+    setup.SonarQube(projectName)
+    setup.Selenium(projectName)
     setup.FrontEndFiles()
     setup.HaProxy(projectName)
     setup.GitRepository(projectName)
-    setup.GitHubWebhook(projectName)
+    setup.GitHubWebhook()
   },
 }
 

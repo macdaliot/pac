@@ -28,7 +28,7 @@ func createRepoConfig(projectName string) *bytes.Buffer {
   repoConfig, err := json.Marshal(CreateRepoRequest{
     Name: projectName,
     Private: true,
-    Description: str.Concat(projectName, " project (created by PAC)"),
+    Description: config.Get("description"),
   })
   errors.LogIfError(err)
   return bytes.NewBuffer(repoConfig)

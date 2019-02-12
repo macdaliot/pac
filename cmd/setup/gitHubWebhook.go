@@ -23,7 +23,7 @@ type CreateWebhookRequestConfig struct {
   ContentType  string  `json:"content_type"`
 }
 
-func GitHubWebhook(projectName string) {
+func GitHubWebhook() {
   hooksApiEndpoint := str.Concat("https://api.github.com/repos/PyramidSystemsInc/", config.Get("projectName"), "/hooks")
   basicAuth := str.Concat("Basic ", config.Get("gitAuth"))
   request, err := http.NewRequest("GET", hooksApiEndpoint, nil)

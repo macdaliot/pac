@@ -9,7 +9,7 @@ import (
   "github.com/PyramidSystemsInc/pac/config"
 )
 
-func Jenkins(projectName string, projectFqdn string) {
+func Jenkins(projectName string) {
   region := "us-east-2"
   clusterName := str.Concat("pac-", projectName)
   familyName := str.Concat(clusterName, "-jenkins")
@@ -27,6 +27,7 @@ func Jenkins(projectName string, projectFqdn string) {
   ecs.TagTaskDefinition(taskDefinitionArn, tagKey, projectName, awsSession)
   jenkinsUrl := ecs.LaunchFargateContainer(familyName, clusterName, securityGroupName, awsSession)
   config.Set("jenkinsUrl", str.Concat(jenkinsUrl, ":8080"))
+  projectFqdn := config.Get("projectFqdn")
   if projectFqdn != str.Concat(projectName, ".") {
     jenkinsFqdn := str.Concat("jenkins.", projectFqdn)
     var ttl int64 = 300

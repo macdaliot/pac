@@ -9,7 +9,7 @@ import (
   "github.com/PyramidSystemsInc/pac/config"
 )
 
-func ElasticLoadBalancer(projectName string, projectFqdn string) {
+func ElasticLoadBalancer(projectName string) {
   region := "us-east-2"
   name := str.Concat("pac-", projectName, "-i")
   awsSession := aws.CreateAwsSession(region)
@@ -18,6 +18,7 @@ func ElasticLoadBalancer(projectName string, projectFqdn string) {
   config.Set("loadBalancerArn", loadBalancerArn)
   config.Set("listenerArn", listenerArn)
   config.Set("serviceUrl", serviceUrl)
+  projectFqdn := config.Get("projectFqdn")
   if projectFqdn != str.Concat(projectName, ".") {
     var ttl int64 = 300
     route53.ChangeRecord(projectFqdn, "CNAME", str.Concat("api.", projectFqdn), []string{serviceUrl}, ttl, awsSession)
