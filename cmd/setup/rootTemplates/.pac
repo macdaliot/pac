@@ -1,4 +1,5 @@
 {
-    "projectName": "{{.projectName}}",
-    "gitAuth": "{{.gitAuth}}"
-  }
+  "projectName": "{{.projectName}}",
+  "gitAuth": "{{.gitAuth}}",
+  "description": "{{.description}}"
+}

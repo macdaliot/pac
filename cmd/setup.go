@@ -31,8 +31,8 @@ NodeJS/Express back-end, and DynamoDB database)`,
     setup.Jenkins(projectName, projectFqdn)
     setup.SonarQube(projectName, projectFqdn)
     setup.Selenium(projectName, projectFqdn)
-    setup.FrontEndFiles(projectDirectory, projectName, description)
-    setup.HaProxy(projectDirectory, projectName)
+    setup.FrontEndFiles()
+    setup.HaProxy(projectName)
     setup.GitRepository(projectName, gitAuth, projectDirectory)
     setup.GitHubWebhook(projectName)
   },

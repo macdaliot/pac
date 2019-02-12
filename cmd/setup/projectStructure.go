@@ -12,15 +12,15 @@ import (
 
 func ProjectStructure(projectName string, description string, gitAuth string) string {
 	projectDirectory := createProjectDirectories(projectName)
-	createProjectFiles(projectDirectory, projectName, description, gitAuth)
+	createProjectFiles(projectName, description, gitAuth)
 	logger.Info("Created project structure")
 	return projectDirectory
 }
 
 func createProjectDirectories(projectName string) string {
 	projectDirectory := createRootProjectDirectory(projectName)
-	directories.Create(filepath.Join(projectDirectory, "app"))
-	directories.Create(filepath.Join(projectDirectory, "svc"))
+	directories.Create("app")
+	directories.Create("svc")
 	return projectDirectory
 }
 
@@ -32,7 +32,7 @@ func createRootProjectDirectory(projectName string) string {
 	return projectDirectory
 }
 
-func createProjectFiles(projectDirectory string, projectName string, description string, gitAuth string) {
+func createProjectFiles(projectName string, description string, gitAuth string) {
 	config := make(map[string]string)
 	config["projectName"] = projectName
 	config["description"] = description
@@ -40,9 +40,8 @@ func createProjectFiles(projectDirectory string, projectName string, description
 	box := packr.NewBox("./rootTemplates")
 	for _, templatePath := range box.List() {
 		logger.Info(templatePath)
-		fullPath := filepath.Join(projectDirectory, templatePath)
-		files.EnsurePath(filepath.Dir(fullPath))
+		files.EnsurePath(filepath.Dir(templatePath))
 		template, _ := box.FindString(templatePath)
-		files.CreateFromTemplate(fullPath, template, config)
+		files.CreateFromTemplate(templatePath, template, config)
 	}
 }
