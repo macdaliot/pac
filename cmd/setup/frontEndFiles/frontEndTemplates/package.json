@@ -6,7 +6,9 @@
   "scripts": {
     "build": "webpack --config webpack.config.js",
     "dev-server": "webpack-dev-server --hot --history-api-fallback",
-    "test": "echo please write unit tests"
+    "test": "echo please write unit tests",
+    "test-ci": "echo please write unit tests",
+    "test-sonar": "echo please write unit tests"
   },
   "author": "Pyramid Systems, Inc.",
   "license": "ISC",

@@ -6,6 +6,7 @@ def builds = [:]
 def unitTests = [:]
 def integrationTests = [:]
 def deployments = [:]
+def cleanups = [:]
 
 for (x in pipelineComponents){
     def jobName = x.trim()
@@ -13,40 +14,66 @@ for (x in pipelineComponents){
     builds[jobName] = {
         build job: jobName, 
             parameters: [
-                    booleanParam(name: 'EXEC_DEPLOY', value: false), 
+                    booleanParam(name: 'EXEC_BUILD', value: true),
+                    booleanParam(name: 'EXEC_UNITTEST', value: false),
+                    booleanParam(name: 'EXEC_DEPLOY', value: false),
                     booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
-                    booleanParam(name: 'EXEC_UNITTEST', value: false)
+                    booleanParam(name: 'EXEC_CLEANUP', value: false),
+                    stringParam(name: 'PARENTNAME', value: env.BUILD_TAG)
                 ]
     }
     // create unit test runs
     unitTests[jobName] = {
         build job: jobName, 
             parameters: [
-                    booleanParam(name: 'EXEC_DEPLOY', value: false), 
-                    booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false)
+                    booleanParam(name: 'EXEC_BUILD', value: false),
+                    booleanParam(name: 'EXEC_UNITTEST', value: true),
+                    booleanParam(name: 'EXEC_DEPLOY', value: false),
+                    booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
+                    booleanParam(name: 'EXEC_CLEANUP', value: false),
+                    stringParam(name: 'PARENTNAME', value: env.BUILD_TAG)
                 ]
     }
     // create integration test runs
     integrationTests[jobName] = {
         build job: jobName, 
             parameters: [
-                    booleanParam(name: 'EXEC_BUILD', value: false), 
-                    booleanParam(name: 'EXEC_DEPLOY', value: false), 
-                    booleanParam(name: 'EXEC_UNITTEST', value: false)
+                    booleanParam(name: 'EXEC_BUILD', value: false),
+                    booleanParam(name: 'EXEC_UNITTEST', value: false),
+                    booleanParam(name: 'EXEC_DEPLOY', value: false),
+                    booleanParam(name: 'EXEC_INTEGRATIONTEST', value: true),
+                    booleanParam(name: 'EXEC_CLEANUP', value: false),
+                    stringParam(name: 'PARENTNAME', value: env.BUILD_TAG)
                 ]
     }
     // create deployments
     deployments[jobName] = {
         build job: jobName, 
             parameters: [
+                    booleanParam(name: 'EXEC_BUILD', value: false),
+                    booleanParam(name: 'EXEC_UNITTEST', value: false),
+                    booleanParam(name: 'EXEC_DEPLOY', value: true),
                     booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
-                    booleanParam(name: 'EXEC_UNITTEST', value: false)
+                    booleanParam(name: 'EXEC_CLEANUP', value: false),
+                    stringParam(name: 'PARENTNAME', value: env.BUILD_TAG)
+                ]
+    }
+    // create cleanups
+    cleanups[jobName] = {
+        build job: jobName, 
+            parameters: [
+                    booleanParam(name: 'EXEC_BUILD', value: false),
+                    booleanParam(name: 'EXEC_UNITTEST', value: false),
+                    booleanParam(name: 'EXEC_DEPLOY', value: false),
+                    booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
+                    booleanParam(name: 'EXEC_CLEANUP', value: true),
+                    stringParam(name: 'PARENTNAME', value: env.BUILD_TAG)
                 ]
     }
 }
 node {
     stage("SCM Checkout") {
-        checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'gitcredentials', url: 'http://github.com/PyramidSystemsInc/{{.projectName}}.git']]])
+        checkout scm
     }
     stage("Build") {
         parallel builds
@@ -65,8 +92,16 @@ node {
             script {
                 // scan services for test coverage
                 sh '(test -d svc && find svc -type d -maxdepth 1 -mindepth 1 -exec sh coverage.sh {} \\;) || true'
-                sh 'rm -rf coverage ; mkdir coverage ; (test -d svc && cd svc ; npm i ; npx lcov-result-merger "**/lcov.info" ../coverage/all.info ; cd ..) || true'                // run sonar scan
+                // merge coverage
+                sh 'rm -rf coverage ; mkdir coverage ; (test -d svc && cd svc ; npm i ; npx lcov-result-merger "**/lcov.info" ../coverage/all.info ; cd ..) || true'
+                // merge test results
+                sh 'echo "<testExecutions version=\\"1\\">" > test-report.xml'
+                sh 'find . -mindepth 2 -maxdepth 3 -name test-report.xml | xargs cat | grep -v "<\\?xml" | grep -v testExecutions >> test-report.xml'
+                sh 'echo "</testExecutions>" >> test-report.xml'
+                // install typescript so sonar can run
                 sh 'npm i typescript'
+                // run sonar scan
+                sh 'cat test-report.xml'
                 sh 'sonar-scanner -Dsonar.login=$SONARLOGIN'
             }
         }
@@ -76,4 +111,5 @@ node {
             sh 'echo Run Demo Deploy here'
         }
     }
+    parallel cleanups
 }

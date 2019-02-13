@@ -1,58 +1,59 @@
-pipeline {
-  parameters {
-    booleanParam(name: 'EXEC_BUILD', defaultValue: true, description: 'Should execute build')
-    booleanParam(name: 'EXEC_DEPLOY', defaultValue: true, description: 'Should execute deploy')
-    booleanParam(name: 'EXEC_INTEGRATIONTEST', defaultValue: true, description: 'Should execute integration tests')
-    booleanParam(name: 'EXEC_UNITTEST', defaultValue: true, description: 'Should execute unit tests')
-  }
-
-  agent any
-  stages {
-    stage('Build') {
-      steps {
-        script {
-          if (params.EXEC_BUILD){
-            sh 'cd app; npm i'
-            sh 'cd app; npm run build'
-          }
+properties([
+  parameters([
+    booleanParam(name: 'EXEC_BUILD', defaultValue: true, description: 'Should execute build'),
+    booleanParam(name: 'EXEC_DEPLOY', defaultValue: true, description: 'Should execute deploy'),
+    booleanParam(name: 'EXEC_INTEGRATIONTEST', defaultValue: true, description: 'Should execute integration tests'),
+    booleanParam(name: 'EXEC_UNITTEST', defaultValue: true, description: 'Should execute unit tests'),
+    booleanParam(name: 'EXEC_CLEANUP', defaultValue: true, description: 'Should execute workspace cleanup'),
+    stringParam(name: 'PARENTNAME', defaultValue: 'none', description: 'Supplied by parent pipeline')
+  ])
+])
+node {
+  homeDirectory = "app"
+  // ensure that our "wrapper" directory exists
+  sh "mkdir -p ${params.PARENTNAME}"
+  // work in that wrapper directory
+  dir(params.PARENTNAME){
+    // if we're doing a build, do checkout
+    // if we're not doing a build, rely on the SCM checkout already having been done
+    if (params.EXEC_BUILD){
+      checkout scm
+    }
+    // then enter our in-repo "home"
+    dir(homeDirectory){
+      stage('Build') {
+        if (params.EXEC_BUILD){
+          sh 'npm i'
+          sh 'npm run build'
         }
       }
-    }
-    stage('Unit Tests') {
-      steps {
-        script {
-          if (params.EXEC_UNITTEST){
-            sh 'cd app; npm run test'
-          }
+      stage('Unit Tests') {
+        if (params.EXEC_UNITTEST){
+          sh 'npm run test-ci'
         }
       }
-    }
-    stage('Deploy') {
-      steps {
-        script {
-          if (params.EXEC_DEPLOY){
-            sh '''#!/bin/bash
-              bucket_found=$(aws s3 ls --region us-east-2 | grep integration.{{.projectName}}.pac.pyramidchallenges.com)
-              if [ ${#bucket_found} -eq 0 ]; then
-                aws s3 mb s3://integration.{{.projectName}}.pac.pyramidchallenges.com --region us-east-2
-                aws s3 website s3://integration.{{.projectName}}.pac.pyramidchallenges.com --index-document index.html --error-document index.html
-              fi
-              aws s3 sync app/dist s3://integration.{{.projectName}}.pac.pyramidchallenges.com --acl public-read
-              DISTRO_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[].{Id: Id, OriginDomainName: Origins.Items[0].DomainName}[?contains(OriginDomainName, 'integration.{{.projectName}}.pac.pyramidchallenges.com.s3.amazonaws.com')] | [0]" | jq '.Id')
-              DISTRO_ID=$(sed -e 's/^"//g' -e 's/"$//g' <<< $(echo "$DISTRO_ID"))
-              aws cloudfront create-invalidation --distribution-id $DISTRO_ID --paths /bundle.js /styles.css
-            '''
-          }
+      stage('Deploy To Integration') {
+        if (params.EXEC_DEPLOY){
+          sh '''#!/bin/bash
+            bucket_found=$(aws s3 ls --region us-east-2 | grep integration.peachthree.pac.pyramidchallenges.com)
+            if [ ${#bucket_found} -eq 0 ]; then
+              aws s3 mb s3://integration.peachthree.pac.pyramidchallenges.com --region us-east-2
+              aws s3 website s3://integration.peachthree.pac.pyramidchallenges.com --index-document index.html --error-document index.html
+            fi
+            aws s3 sync dist s3://integration.peachthree.pac.pyramidchallenges.com --acl public-read
+            DISTRO_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[].{Id: Id, OriginDomainName: Origins.Items[0].DomainName}[?contains(OriginDomainName, 'integration.peachthree.pac.pyramidchallenges.com.s3.amazonaws.com')] | [0]" | jq '.Id')
+            DISTRO_ID=$(sed -e 's/^"//g' -e 's/"$//g' <<< $(echo "$DISTRO_ID"))
+            aws cloudfront create-invalidation --distribution-id $DISTRO_ID --paths /bundle.js /styles.css
+          '''
         }
       }
-    }
-    stage('Integration Tests') {
-      steps {
-        script {
-          if (params.EXEC_INTEGRATIONTEST){
-            echo "Integration Tests here"
-          }
+      stage('Integration Tests') {
+        if (params.EXEC_INTEGRATIONTEST){
+          echo "Integration Tests here"
         }
+      }
+      if (params.EXEC_CLEANUP){
+        deleteDir()
       }
     }
   }

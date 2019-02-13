@@ -48,7 +48,16 @@ if [ ! -z "$AWS_ACCESS_KEY_ID" ] || [ ! -z "$AWS_SECRET_ACCESS_KEY" ]; then
           npm i
           echo "Finished installing NPM modules for the $SERVICE_NAME microservice"
         fi
-
+        # Attempt creation of DynamoDB table
+        if [[ $(uname) =~ MINGW.* ]]; then
+          if aws.cmd dynamodb create-table --cli-input-json file://dynamoConfig.json --endpoint-url http://localhost:$DYNAMO_PORT >>/dev/null 2>/dev/null; then
+            echo "Created DynamoDB table for the $SERVICE_NAME microservice"
+          fi
+        else
+          if aws dynamodb create-table --cli-input-json file://dynamoConfig.json --endpoint-url http://localhost:$DYNAMO_PORT >>/dev/null 2>/dev/null; then
+            echo "Created DynamoDB table for the $SERVICE_NAME microservice"
+          fi
+        fi
         # Compile, build, and launch
         npx tsc
         echo "Started building $SERVICE_NAME Docker image"

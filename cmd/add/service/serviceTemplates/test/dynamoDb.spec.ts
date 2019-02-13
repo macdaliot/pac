@@ -1,5 +1,3 @@
-import 'mocha';
-import { expect } from 'chai';
 import { DynamoDB } from '../src/database/dynamo.db';
 import * as AWSMock from 'aws-sdk-mock';
 import { QueryOutput } from 'aws-sdk/clients/dynamodb';
@@ -9,7 +7,7 @@ import { serviceName, projectName } from '../src/config/appInfo.config';
 describe(`${projectName}-${serviceName}: DynamoDB`, function () {
     let database: DynamoDB;
 
-    before(done => {
+    beforeEach(done => {
         /* put any prerequisite here */
         mockDbResponses();
         database = new DynamoDB();
@@ -22,21 +20,21 @@ describe(`${projectName}-${serviceName}: DynamoDB`, function () {
         describe('query ', async () => {
             it('should return DB Query', async () => {
                 let dbQueryResult = await database.query({ TableName: '' });
-                expect(dbQueryResult).to.equal(mockDBResponse);
+                expect(dbQueryResult).toEqual(mockDBResponse);
             });
         });
 
         describe('create ', () => {
             it('should return DB put', async () => {
                 let dbQueryResult = await database.create({ test: "test" });
-                expect(dbQueryResult).to.equal(mockDBResponse);
+                expect(dbQueryResult).toEqual(mockDBResponse);
             });
         });
 
         describe('update', () => {
             it('should return DB Update', async () => {
                 let dbQueryResult = await database.update({ TableName: '' }, {});
-                expect(dbQueryResult).to.equal(mockDBResponse);
+                expect(dbQueryResult).toEqual(mockDBResponse);
             });
         });
 
@@ -47,7 +45,7 @@ describe(`${projectName}-${serviceName}: DynamoDB`, function () {
         });
     })
 
-    after(done => {
+    afterEach(done => {
         /* Put any cleanup here */
         AWSMock.restore('DynamoDB.DocumentClient');
         done();

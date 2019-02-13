@@ -12,7 +12,7 @@ apiRouter
 	// Ensure you have correct settings in .env (for local use) or Lambda
 	// environment variables to support authentication and authorization
 	// If you are receiving 401 errors, check logs.
-    .use(passportAuthenticator)
+    // .use(passportAuthenticator)
     .get(`/${serviceName}`, defaultController.get)
     .get(`/${serviceName}/:id`, defaultController.getById)
     .post(`/${serviceName}`, defaultController.post)

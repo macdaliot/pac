@@ -1,9 +1,10 @@
 package add
 
 import (
-  "os"
-  "path"
+	"os"
+	"path"
 	"strings"
+
 	"github.com/PyramidSystemsInc/go/commands"
 	"github.com/PyramidSystemsInc/go/directories"
 	"github.com/PyramidSystemsInc/go/files"
@@ -36,22 +37,16 @@ func createTemplateConfig(serviceName string) map[string]string {
 }
 
 func createServiceFiles(serviceName string, cfg map[string]string) {
-  os.Chdir(config.GetRootDirectory())
-  os.Chdir(path.Join("svc/", serviceName))
-	service.CreateDockerfile("Dockerfile")
-	service.CreateDynamoConfigJSON("dynamoConfig.json", cfg)
-	service.CreateLaunchSh("launch.sh", cfg)
-	service.CreateBuildSh(".build.sh", serviceName)
-	service.CreateTestSh(".test.sh", serviceName)
-	service.CreateDeploySh(".deploy.sh", cfg)
+	os.Chdir(config.GetRootDirectory())
+	os.Chdir(path.Join("svc/", serviceName))
 	service.CreateAllTemplatedFiles(cfg)
-  os.Chdir(config.GetRootDirectory())
+	os.Chdir(config.GetRootDirectory())
 	service.CreateFrontEndClient(str.Concat(strings.Title(serviceName), ".ts"), cfg)
 	logger.Info(str.Concat("Created ", serviceName, " Express microservice files"))
 }
 
 func editHaProxyConfig(serviceName string, projectName string) {
-  haProxyConfigPath := "svc/haproxy.cfg"
+	haProxyConfigPath := "svc/haproxy.cfg"
 	serviceConfig := str.Concat(`backend backend_`, serviceName, `
     mode http
     server `, serviceName, ` pac-`, projectName, `-`, serviceName, `

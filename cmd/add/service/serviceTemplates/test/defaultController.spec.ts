@@ -1,13 +1,11 @@
-import 'mocha';
-import { expect } from 'chai';
 import { DefaultController } from '../src/controllers/defaultController';
 import { MockDefaultService } from './mockDefaultService';
 import { serviceName, projectName } from '../src/config/appInfo.config';
 
 /* TODO: setup way to mock express requests */
-describe(`${projectName}-${serviceName} DefaultController`, function () {
+describe(`${projectName}-${serviceName} DefaultController`, () => {
     let controller = new DefaultController(new MockDefaultService());
-    before(done => {
+    beforeEach(done => {
         /* put any prerequisite here */
         done();
     })
@@ -29,7 +27,7 @@ describe(`${projectName}-${serviceName} DefaultController`, function () {
         });
     });
 
-    after(done => {
+    afterEach(done => {
         /* Put any cleanup here */
         done();
     })

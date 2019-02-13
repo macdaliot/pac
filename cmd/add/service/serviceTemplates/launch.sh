@@ -1,12 +1,4 @@
-package service
-
-import (
-	"github.com/PyramidSystemsInc/go/files"
-)
-
-// CreateLaunchSh creates a templated shell script to launch the service
-func CreateLaunchSh(fileName string, config map[string]string) {
-	const template = `#! /bin/bash
+#! /bin/bash
 
 # Ensure AWS credentials were provided
 if [[ $(uname) =~ MINGW.* ]]; then
@@ -123,7 +115,3 @@ if [ ! -z "$AWS_ACCESS_KEY_ID" ] || [ ! -z "$AWS_SECRET_ACCESS_KEY" ]; then
 else
   echo "ABORTED LAUNCH: The AWS keys were not found. Try running 'aws configure'"
 fi
-`
-	files.CreateFromTemplate(fileName, template, config)
-  files.ChangePermissions(fileName, 0755)
-}
