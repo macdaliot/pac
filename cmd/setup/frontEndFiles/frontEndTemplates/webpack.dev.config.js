@@ -6,8 +6,16 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 
 module.exports = {
-  entry: path.resolve(__dirname, 'src/index.tsx'),
-  mode: 'production',
+  entry: [
+    'css-hot-loader/hotModuleReplacement',
+    'react-hot-loader/patch', // activate HMR for React
+    path.resolve(__dirname, 'src/index.tsx')
+  ],
+  mode: 'development',
+  devServer: {
+    contentBase: './dist',
+    hot: true
+  },
   devtool: 'inline-source-map',
   output: {
     path: path.resolve(__dirname, './dist/'),
@@ -51,9 +59,6 @@ module.exports = {
           }
         }
       },
-      // Following line for tsc-based compilation
-      //{ test: /\.tsx?$/, loader: 'awesome-typescript-loader' },
-      //Following block for Babel-based compilation
       {
         test: /\.(j|t)sx?$/,
         exclude: /node_modules/,

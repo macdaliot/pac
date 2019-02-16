@@ -5,7 +5,7 @@
   "main": "src/Application.js",
   "scripts": {
     "build": "webpack --config webpack.config.js",
-    "dev-server": "webpack-dev-server --hot --history-api-fallback",
+    "dev-server": "webpack-dev-server --config webpack.dev.config.js --hot --history-api-fallback",
     "test": "echo please write unit tests",
     "test-ci": "echo please write unit tests",
     "test-sonar": "echo please write unit tests"
@@ -14,13 +14,10 @@
   "license": "ISC",
   "dependencies": {
     "@pyramidlabs/react-ui": "*",
-    "autoprefixer": "^9.4.2",
     "aws-sdk": "^2.373.0",
     "axios": "^0.18.0",
     "buffer": "^5.2.1",
     "node-sass": "^4.11.0",
-    "postcss-cli": "^6.0.1",
-    "postcss-loader": "^3.0.0",
     "promise-polyfill": "^8.1.0",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
@@ -44,6 +41,7 @@
     "@types/react-redux": "^7.0.1",
     "@types/react-router-config": "^1.1.0",
     "@types/react-router-dom": "^4.3.1",
+    "autoprefixer": "^9.4.2",
     "awesome-typescript-loader": "^5.2.1",
     "babel-loader": "^8.0.5",
     "copy-webpack-plugin": "^4.6.0",
@@ -51,6 +49,9 @@
     "css-loader": "^2.0.0",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "fork-ts-checker-webpack-plugin": "^0.5.2",
+    "html-webpack-plugin": "^3.2.0",
+    "postcss-cli": "^6.0.1",
+    "postcss-loader": "^3.0.0",
     "sass-loader": "^7.1.0",
     "source-map-loader": "^0.2.4",
     "style-loader": "^0.23.1",
@@ -59,7 +60,7 @@
     "typescript": "^3.2.4",
     "url-loader": "^1.1.2",
     "webpack": "^4.27.1",
-    "webpack-bundle-analyzer": "^3.0.3",
+    "webpack-bundle-analyzer": "^3.0.4",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.10"
   }
