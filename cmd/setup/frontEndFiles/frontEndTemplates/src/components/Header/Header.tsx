@@ -3,23 +3,29 @@ import { hot } from 'react-hot-loader/root';
 import { connect } from 'react-redux';
 import * as routeData from '../../routes/routes.json';
 import './header.scss';
-import { UrlConfig } from '../../config'
+import { UrlConfig } from '../../config';
 
-class Header extends React.Component<any> {
+interface HeaderProps {
+  isAuthenticated?: boolean;
+  username?: string;
+}
+export class HeaderComponent extends React.Component<HeaderProps> {
+  constructor(props: HeaderProps){
+    super(props);
+  }
   render() {
     var matchingRoute = this.findMatchingRoute();
     var pageTitle = this.getPageTitle(matchingRoute);
     var styleSpec = this.createStyleSpec(matchingRoute);
-    let login = <a href={UrlConfig.apiUrl + "/api/auth/login"}>Login</a>
-
+    const loginUrl = `${UrlConfig.apiUrl}/auth/login`;
+    let login = <a href={loginUrl}>Login</a>
     return (
       <header className="header-component" style={styleSpec.header}>
         <div className="section left">
-          <span className="menu-button material-icons" onClick={this.onClickMenuButton}>menu</span>
           <span className="page-title">{pageTitle}</span>
         </div>
         <div className="section center">
-        <span className="application-title">{{.projectName}}</span>
+        <span className="application-title">Acme Employee Register</span>
         </div>
         <div className="section right">
           <span className="profile-button">
@@ -65,13 +71,13 @@ class Header extends React.Component<any> {
   getPageTitle(matchingRoute) {
     return matchingRoute ? matchingRoute.pageTitle : 'Not Found';
   }
-
-  onClickMenuButton() {
-    if (this.props.sidebar) {
-      this.props.sidebar.toggle();
-    }
-  }
 }
-const mapState = state => ({username: state.user ? state.user.name : null, isAuthenticated: state.user ? true : false});
+
+export const mapState = state => {
+  return {
+    username: state.user ? state.user.name : null, 
+    isAuthenticated: state.user ? true : false
+  };
+}
 const mapDispatch = dispatch => ({});
-export default connect(mapState, mapDispatch)(hot(Header));
+export default connect(mapState, mapDispatch)(hot(HeaderComponent));
