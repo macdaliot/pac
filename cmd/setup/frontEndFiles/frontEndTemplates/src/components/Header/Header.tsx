@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { hot } from 'react-hot-loader/root';
 import { connect } from 'react-redux';
-import * as routeData from '../../routes/routes.json';
+import routes, { Route } from '../../routes/routes';
 import './header.scss';
 import { UrlConfig } from '../../config';
 
@@ -17,7 +17,7 @@ export class HeaderComponent extends React.Component<HeaderProps> {
     var matchingRoute = this.findMatchingRoute();
     var pageTitle = this.getPageTitle(matchingRoute);
     var styleSpec = this.createStyleSpec(matchingRoute);
-    const loginUrl = `${UrlConfig.apiUrl}/auth/login`;
+    const loginUrl = `${UrlConfig.apiUrl}auth/login`;
     let login = <a href={loginUrl}>Login</a>
     return (
       <header className="header-component" style={styleSpec.header}>
@@ -37,15 +37,15 @@ export class HeaderComponent extends React.Component<HeaderProps> {
     );
   }
 
-  createStyleSpec(matchingRoute) {
-    if (matchingRoute) {
+  createStyleSpec(matchingRoute: Route) {
+    if (matchingRoute && matchingRoute.color) {
       return {
         header: {
           backgroundColor: matchingRoute.color
         }
       };
     } else {
-      var notFoundHeaderColor = '#616161';
+      const notFoundHeaderColor = '#616161';
       return {
         header: {
           backgroundColor: notFoundHeaderColor
@@ -55,12 +55,9 @@ export class HeaderComponent extends React.Component<HeaderProps> {
   }
 
   findMatchingRoute() {
-    var pathName = location.pathname;
-    if (pathName === '/') {
-      return routeData.routes[0];
-    }
-    var matchingRoute;
-    routeData.routes.forEach((route) => {
+    const pathName = location.pathname;
+    let matchingRoute: Route | null;
+    routes && routes.forEach((route) => {
       if (route.path === pathName) {
         matchingRoute = route;
       }
@@ -68,8 +65,8 @@ export class HeaderComponent extends React.Component<HeaderProps> {
     return matchingRoute;
   }
 
-  getPageTitle(matchingRoute) {
-    return matchingRoute ? matchingRoute.pageTitle : 'Not Found';
+  getPageTitle(matchingRoute: Route) {
+    return (matchingRoute && matchingRoute.pageTitle) ? matchingRoute.pageTitle : 'Not Found';
   }
 }
 

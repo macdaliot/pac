@@ -1,25 +1,22 @@
 import NotFound from '../components/pages/NotFound/NotFound';
 import LoginCallback from '../components/LoginCallback/LoginCallback';
-import * as routeData from './routes.json';
 
-var routes = [];
-routeData.routes.forEach(function(route) {
-  route['component'] = eval(route.pageTitle).default;
-  routes.push(route);
-}.bind(this));
+export interface Route {
+  path: string;
+  component: any;
+  exact?: boolean;
+  restricted?: boolean;
+  pageTitle?: string;
+  color?: string;
+}
+var routes = new Array<Route>();
 
 routes.push({
   path: '/login',
   exact: true,
   component: LoginCallback
 });
-
 routes.push({
-  path: '/',
-  exact: true,
-  component: NotFound
-},
-{
   path: '*',
   restricted: false,
   component: NotFound

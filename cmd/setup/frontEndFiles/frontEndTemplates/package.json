@@ -16,6 +16,9 @@
       "@babel/preset-typescript",
       "@babel/preset-react",
       "@babel/preset-env"
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-class-properties"
     ]
   },
   "jest": {
@@ -30,9 +33,9 @@
   "author": "Pyramid Systems, Inc.",
   "license": "ISC",
   "dependencies": {
-    "@pyramidlabs/react-ui": "0.0.22",
+    "@pyramidlabs/react-ui": ">=0.0.39",
     "autoprefixer": "^9.4.2",
-    "aws-sdk": "^2.373.0",
+    "aws-sdk": "^2.407.0",
     "axios": "^0.18.0",
     "buffer": "^5.2.1",
     "node-sass": "^4.11.0",

@@ -1,7 +1,7 @@
 package service
 
 import (
-  "path"
+	"path"
 	"strings"
 
 	"github.com/PyramidSystemsInc/go/directories"
@@ -9,38 +9,28 @@ import (
 )
 
 func CreateFrontEndClient(fileName string, cfg map[string]string) {
-  frontEndClientPath := "app/src/services"
-  directories.Create(frontEndClientPath)
+	frontEndClientPath := "app/src/services"
+	directories.Create(frontEndClientPath)
 	cfg["serviceNameUpperCase"] = strings.Title(cfg["serviceName"])
 	const template = `import axios from 'axios';
 import { UrlConfig } from '../config';
-
 export class {{.serviceNameUpperCase}} {
-  get() {
-    return new Promise(function(resolve, reject) {
-      axios.get(UrlConfig.apiUrl + "/api/{{.serviceName}}", {}).then(function(response) {
-        resolve(response);
-      });
-    })
+  async get() {
+    return axios.get(UrlConfig.apiUrl + "{{.serviceName}}");
   }
 
-  post() {
-    return new Promise(function(resolve, reject) {
-      axios.post(UrlConfig.apiUrl + "/api/{{.serviceName}}", {}).then(function(response) {
-        resolve(response);
-      });
-    })
+  async post(data: any = {}) {
+    return axios.post(UrlConfig.apiUrl + "{{.serviceName}}", data);
   }
 }
 
 /*
 Sample Usage:
 
-  new {{.serviceNameUpperCase}}().get().then(function(result) {
-    this.setState({
-      {{.serviceName}}: result
-    });
-  }.bind(this));
+  const result = await new {{.serviceNameUpperCase}}().get();
+  this.setState({
+    devices: result
+  });  
 */
 `
 	files.CreateFromTemplate(path.Join(frontEndClientPath, fileName), template, cfg)
