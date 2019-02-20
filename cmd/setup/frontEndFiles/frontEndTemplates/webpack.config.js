@@ -2,8 +2,8 @@ const path = require('path');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
+// const HtmlWebpackPlugin = require('html-webpack-plugin')
+// const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 
 module.exports = {
   entry: path.resolve(__dirname, 'src/index.tsx'),
@@ -52,33 +52,33 @@ module.exports = {
         }
       },
       // Following line for tsc-based compilation
-      //{ test: /\.tsx?$/, loader: 'awesome-typescript-loader' },
+      { test: /\.tsx?$/, loader: 'awesome-typescript-loader' },
       //Following block for Babel-based compilation
-      {
-        test: /\.(j|t)sx?$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            cacheDirectory: true,
-            babelrc: false,
-            presets: [
-              [
-                '@babel/preset-env',
-                { targets: { browsers: 'last 2 versions' } }, // or whatever your project requires
-              ],
-              '@babel/preset-typescript',
-              '@babel/preset-react',
-            ],
-            plugins: [
-              //plugin-proposal-decorators is only needed if you're using experimental decorators in TypeScript
-              //['@babel/plugin-proposal-decorators', { legacy: true }],
-              ['@babel/plugin-proposal-class-properties', { loose: true }],
-              'react-hot-loader/babel',
-            ],
-          },
-        },
-      },
+      // {
+      //   test: /\.(j|t)sx?$/,
+      //   exclude: /node_modules/,
+      //   use: {
+      //     loader: 'babel-loader',
+      //     options: {
+      //       cacheDirectory: true,
+      //       babelrc: false,
+      //       presets: [
+      //         [
+      //           '@babel/preset-env',
+      //           { targets: { browsers: 'last 2 versions' } }, // or whatever your project requires
+      //         ],
+      //         '@babel/preset-typescript',
+      //         '@babel/preset-react',
+      //       ],
+      //       plugins: [
+      //         //plugin-proposal-decorators is only needed if you're using experimental decorators in TypeScript
+      //         //['@babel/plugin-proposal-decorators', { legacy: true }],
+      //         ['@babel/plugin-proposal-class-properties', { loose: true }],
+      //         'react-hot-loader/babel',
+      //       ],
+      //     },
+      //   },
+      // },
       {
         enforce: "pre",
         test: /\.js$/,
@@ -97,7 +97,7 @@ module.exports = {
     "react-dom": "ReactDOM"
   },
   plugins: [
-    new ForkTsCheckerWebpackPlugin(),
+    //new ForkTsCheckerWebpackPlugin(),
     new webpack.NamedModulesPlugin(),
     new CopyWebpackPlugin([{
       from: 'src/index.html',

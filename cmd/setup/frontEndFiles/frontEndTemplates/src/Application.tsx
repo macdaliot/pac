@@ -34,7 +34,7 @@ class Application extends React.Component<{}, State> {
       <Provider store={appStore}>
         <Router>
           <div className="app">
-            <Header sidebar={this.state.sidebar} />
+            <Header />
             <main className="main">
               <Sidebar sidebar={this.setSidebarRef} />
               <div className="content">

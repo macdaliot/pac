@@ -4,8 +4,8 @@
   "description": "{{.description}}",
   "main": "src/Application.js",
   "scripts": {
-    "build": "webpack --config webpack.dev.config.js",
-    "dev-server": "webpack-dev-server --hot --history-api-fallback",
+    "build": "webpack --config webpack.config.js",
+    "dev-server": "webpack-dev-server --config webpack.dev.config.js --hot --history-api-fallback",
     "test": "npx jest",
     "test-debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "test-sonar": "npx jest --coverage --testResultsProcessor=jest-sonar-reporter",

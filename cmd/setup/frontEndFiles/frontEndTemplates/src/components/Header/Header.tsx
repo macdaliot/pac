@@ -25,7 +25,7 @@ export class HeaderComponent extends React.Component<HeaderProps> {
           <span className="page-title">{pageTitle}</span>
         </div>
         <div className="section center">
-        <span className="application-title">Acme Employee Register</span>
+        <span className="application-title">{{.projectName}}</span>
         </div>
         <div className="section right">
           <span className="profile-button">
