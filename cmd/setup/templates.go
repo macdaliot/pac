@@ -10,16 +10,11 @@ import (
 	"github.com/gobuffalo/packr"
 )
 
-func ProjectStructure(projectName string, description string, gitAuth string) {
-  createProjectDirectories(projectName)
-	createProjectFiles(projectName, description, gitAuth)
+func Templates(projectName string, description string, gitAuth string) {
+  createRootProjectDirectory(projectName)
+  cfg := createConfig(projectName, description, gitAuth)
+	createProjectFiles(cfg)
 	logger.Info("Created project structure")
-}
-
-func createProjectDirectories(projectName string) {
-	createRootProjectDirectory(projectName)
-	directories.Create("app")
-	directories.Create("svc")
 }
 
 func createRootProjectDirectory(projectName string) {
@@ -29,16 +24,20 @@ func createRootProjectDirectory(projectName string) {
   os.Chdir(projectDirectory)
 }
 
-func createProjectFiles(projectName string, description string, gitAuth string) {
-	config := make(map[string]string)
-	config["projectName"] = projectName
-	config["description"] = description
-	config["gitAuth"] = gitAuth
-	box := packr.NewBox("./rootTemplates")
+func createConfig(projectName string, description string, gitAuth string) map[string]string {
+	cfg := make(map[string]string)
+	cfg["projectName"] = projectName
+	cfg["description"] = description
+	cfg["gitAuth"] = gitAuth
+  return cfg
+}
+
+func createProjectFiles(cfg map[string]string) {
+	box := packr.NewBox("./templates")
 	for _, templatePath := range box.List() {
 		logger.Info(templatePath)
 		files.EnsurePath(filepath.Dir(templatePath))
 		template, _ := box.FindString(templatePath)
-		files.CreateFromTemplate(templatePath, template, config)
+		files.CreateFromTemplate(templatePath, template, cfg)
 	}
 }
