@@ -26,7 +26,7 @@ if [ ! -z "$AWS_ACCESS_KEY_ID" ] || [ ! -z "$AWS_SECRET_ACCESS_KEY" ]; then
   fi
 
   # Start DynamoDB if not running
-  DYNAMO_PORT=8000
+  DYNAMO_PORT=8001
   if docker port pac-db-local >>/dev/null 2>/dev/null ; then
     echo "Local DynamoDB already exists, skipping DynamoDB creation"
   else

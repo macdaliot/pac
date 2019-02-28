@@ -87,7 +87,8 @@ node {
         }
         stage("Integration Tests") {
             script {
-                sh 'echo "Run integration tests here"'
+                sh 'cd integration-tests/gradle/wrapper; jar cf gradle-wrapper.jar *'
+                sh 'cd integration-tests; chmod 755 gradlew; ./gradlew clean test aggregate'
             }
         }
         stage("Inspect") {
@@ -118,8 +119,6 @@ node {
     } catch (e) {
         throw e
     } finally {
-        script {
-            sh 'echo "Publish HTML Serenity report here"'
-        }
+        publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'integration-tests/target/site/serenity', reportFiles: 'index.html', reportName: 'Serenity Report', reportTitles: ''])
     }
 }

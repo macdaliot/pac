@@ -7,3 +7,8 @@ svc/**/.env
 **/.DS_Store
 **/test-report.xml
 **/coverage/**
+integration-tests/build
+integration-tests/history
+integration-tests/out
+integration-tests/target
+integration-tests/gradle/wrapper/gradle-wrapper.jar

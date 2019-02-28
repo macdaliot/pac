@@ -25,11 +25,12 @@ func Selenium(projectName string) {
       Name: "pac-selenium-node-chrome",
       ImageName: "pac-selenium-node-chrome",
       Essential: false,
-    },
-    {
-      Name: "pac-selenium-node-firefox",
-      ImageName: "pac-selenium-node-firefox",
-      Essential: false,
+      EnvironmentVars: map[string]string{
+        "HUB_HOST": "localhost",
+        "HUB_PORT": "4444",
+        "NODE_MAX_INSTANCES": "5",
+        "NODE_MAX_SESSION": "5",
+      },
     },
   })
   tagKey := "pac-project-name"
