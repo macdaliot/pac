@@ -17,9 +17,19 @@ func Selenium(projectName string) {
   awsSession := aws.CreateAwsSession(region)
   taskDefinitionArn := ecs.RegisterFargateTaskDefinition(familyName, awsSession, []ecs.Container{
     {
-      Name: "selenium",
-      ImageName: "selenium",
+      Name: "pac-selenium-hub",
+      ImageName: "pac-selenium-hub",
       Essential: true,
+    },
+    {
+      Name: "pac-selenium-node-chrome",
+      ImageName: "pac-selenium-node-chrome",
+      Essential: false,
+    },
+    {
+      Name: "pac-selenium-node-firefox",
+      ImageName: "pac-selenium-node-firefox",
+      Essential: false,
     },
   })
   tagKey := "pac-project-name"

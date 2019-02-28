@@ -12,7 +12,7 @@ for (x in pipelineComponents){
     def jobName = x.trim()
     // create builds
     builds[jobName] = {
-        build job: jobName, 
+        build job: jobName,
             parameters: [
                     booleanParam(name: 'EXEC_BUILD', value: true),
                     booleanParam(name: 'EXEC_UNITTEST', value: false),
@@ -24,7 +24,7 @@ for (x in pipelineComponents){
     }
     // create unit test runs
     unitTests[jobName] = {
-        build job: jobName, 
+        build job: jobName,
             parameters: [
                     booleanParam(name: 'EXEC_BUILD', value: false),
                     booleanParam(name: 'EXEC_UNITTEST', value: true),
@@ -36,7 +36,7 @@ for (x in pipelineComponents){
     }
     // create integration test runs
     integrationTests[jobName] = {
-        build job: jobName, 
+        build job: jobName,
             parameters: [
                     booleanParam(name: 'EXEC_BUILD', value: false),
                     booleanParam(name: 'EXEC_UNITTEST', value: false),
@@ -48,7 +48,7 @@ for (x in pipelineComponents){
     }
     // create deployments
     deployments[jobName] = {
-        build job: jobName, 
+        build job: jobName,
             parameters: [
                     booleanParam(name: 'EXEC_BUILD', value: false),
                     booleanParam(name: 'EXEC_UNITTEST', value: false),
@@ -60,7 +60,7 @@ for (x in pipelineComponents){
     }
     // create cleanups
     cleanups[jobName] = {
-        build job: jobName, 
+        build job: jobName,
             parameters: [
                     booleanParam(name: 'EXEC_BUILD', value: false),
                     booleanParam(name: 'EXEC_UNITTEST', value: false),
@@ -72,51 +72,54 @@ for (x in pipelineComponents){
     }
 }
 node {
-    stage("SCM Checkout") {
-        checkout scm
-    }
-    stage("Build") {
-        parallel builds
-    }
-    stage("Unit Tests") {
-        parallel unitTests
-    }
-    stage("Deploy to Integration"){
-        parallel deployments
-    }
-    stage("Integration Tests"){
-        parallel integrationTests
-    }
-    stage("Inspect") {
-        withCredentials([string(credentialsId: 'SONARLOGIN', variable: 'SONARLOGIN')]) {
+    try {
+        stage("SCM Checkout") {
+            checkout scm
+        }
+        stage("Build") {
+            parallel builds
+        }
+        stage("Unit Tests") {
+            parallel unitTests
+        }
+        stage("Deploy to Integration"){
+            parallel deployments
+        }
+        stage("Integration Tests") {
             script {
-                // scan services for test coverage
-                sh '(test -d svc && find svc -type d -maxdepth 1 -mindepth 1 -exec sh coverage.sh {} \\;) || true'
-                // merge coverage
-                sh 'rm -rf coverage ; mkdir coverage ; (test -d svc && cd svc ; npm i ; npx lcov-result-merger "**/lcov.info" ../coverage/all.info ; cd ..) || true'
-                // clean up old
-                sh 'rm -f test-report.xml'
-                // do we have any test reports?
-                def script = 'find . -mindepth 2 -maxdepth 3 -name test-report.xml' 
-                def haveReports = sh script:script, returnStatus:true
-                sh 'echo "<testExecutions version=\\"1\\">" > test-report.xml'
-                if (haveReports){
-                    // merge test results
-                    sh 'find . -mindepth 2 -maxdepth 3 -name test-report.xml | xargs cat | grep -v "<\\?xml" | grep -v testExecutions >> test-report.xml'
-                }
-                sh 'echo "</testExecutions>" >> test-report.xml'
-                // install typescript so sonar can run
-                sh 'npm i typescript'
-                // run sonar scan
-                //sh 'cat test-report.xml'
-                sh 'sonar-scanner -Dsonar.login=$SONARLOGIN'
+                sh 'echo "Run integration tests here"'
             }
         }
-    }
-    stage("Deploy to Demo"){
+        stage("Inspect") {
+            withCredentials([string(credentialsId: 'SONARLOGIN', variable: 'SONARLOGIN')]) {
+                script {
+                    // scan services for test coverage
+                    sh '(test -d svc && find svc -type d -maxdepth 1 -mindepth 1 -exec sh coverage.sh {} \\;) || true'
+                    // merge coverage
+                    sh 'rm -rf coverage ; mkdir coverage ; (test -d svc && cd svc ; npm i ; npx lcov-result-merger "**/lcov.info" ../coverage/all.info ; cd ..) || true'
+                    // merge test results
+                    sh 'echo "<testExecutions version=\\"1\\">" > test-report.xml'
+                    sh 'find . -mindepth 2 -maxdepth 3 -name test-report.xml | xargs cat | grep -v "<\\?xml" | grep -v testExecutions >> test-report.xml'
+                    sh 'echo "</testExecutions>" >> test-report.xml'
+                    // install typescript so sonar can run
+                    sh 'npm i typescript'
+                    // run sonar scan
+                    sh 'cat test-report.xml'
+                    sh 'sonar-scanner -Dsonar.login=$SONARLOGIN'
+                }
+            }
+        }
+        stage("Deploy to Demo"){
+            script {
+                sh 'echo Run Demo Deploy here'
+            }
+        }
+        parallel cleanups
+    } catch (e) {
+        throw e
+    } finally {
         script {
-            sh 'echo Run Demo Deploy here'
+            sh 'echo "Publish HTML Serenity report here"'
         }
     }
-    parallel cleanups
 }
