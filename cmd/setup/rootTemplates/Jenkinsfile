@@ -94,14 +94,21 @@ node {
                 sh '(test -d svc && find svc -type d -maxdepth 1 -mindepth 1 -exec sh coverage.sh {} \\;) || true'
                 // merge coverage
                 sh 'rm -rf coverage ; mkdir coverage ; (test -d svc && cd svc ; npm i ; npx lcov-result-merger "**/lcov.info" ../coverage/all.info ; cd ..) || true'
-                // merge test results
+                // clean up old
+                sh 'rm -f test-report.xml'
+                // do we have any test reports?
+                def script = 'find . -mindepth 2 -maxdepth 3 -name test-report.xml' 
+                def haveReports = sh script:script, returnStatus:true
                 sh 'echo "<testExecutions version=\\"1\\">" > test-report.xml'
-                sh 'find . -mindepth 2 -maxdepth 3 -name test-report.xml | xargs cat | grep -v "<\\?xml" | grep -v testExecutions >> test-report.xml'
+                if (haveReports){
+                    // merge test results
+                    sh 'find . -mindepth 2 -maxdepth 3 -name test-report.xml | xargs cat | grep -v "<\\?xml" | grep -v testExecutions >> test-report.xml'
+                }
                 sh 'echo "</testExecutions>" >> test-report.xml'
                 // install typescript so sonar can run
                 sh 'npm i typescript'
                 // run sonar scan
-                sh 'cat test-report.xml'
+                //sh 'cat test-report.xml'
                 sh 'sonar-scanner -Dsonar.login=$SONARLOGIN'
             }
         }
