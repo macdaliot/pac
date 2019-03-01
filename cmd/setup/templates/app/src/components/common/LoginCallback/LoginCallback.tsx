@@ -3,7 +3,7 @@ import { hot } from 'react-hot-loader/root';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { JwtReceivedAction } from '../../../models';
+import { JwtReceivedAction } from '../../../types';
 
 interface LoginCallbackProps {
   setToken(token: string): void;

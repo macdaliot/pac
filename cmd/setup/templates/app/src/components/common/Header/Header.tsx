@@ -3,7 +3,7 @@ import { hot } from 'react-hot-loader/root';
 import { connect } from 'react-redux';
 import { Button, ButtonPriority } from '@pyramidlabs/react-ui';
 import { UrlConfig } from '../../../config';
-import { User } from '../../../models/User';
+import { User } from '../../../types';
 import './header.scss';
 
 interface AuthState {
