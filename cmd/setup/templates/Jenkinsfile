@@ -72,53 +72,51 @@ for (x in pipelineComponents){
     }
 }
 node {
-    try {
-        stage("SCM Checkout") {
-            checkout scm
-        }
-        stage("Build") {
-            parallel builds
-        }
-        stage("Unit Tests") {
-            parallel unitTests
-        }
-        stage("Deploy to Integration"){
-            parallel deployments
-        }
-        stage("Integration Tests") {
-            script {
-                sh 'cd integration-tests/gradle/wrapper; jar cf gradle-wrapper.jar *'
-                sh 'cd integration-tests; chmod 755 gradlew; ./gradlew clean test aggregate'
-            }
-        }
-        stage("Inspect") {
-            withCredentials([string(credentialsId: 'SONARLOGIN', variable: 'SONARLOGIN')]) {
-                script {
-                    // scan services for test coverage
-                    sh '(test -d svc && find svc -type d -maxdepth 1 -mindepth 1 -exec sh coverage.sh {} \\;) || true'
-                    // merge coverage
-                    sh 'rm -rf coverage ; mkdir coverage ; (test -d svc && cd svc ; npm i ; npx lcov-result-merger "**/lcov.info" ../coverage/all.info ; cd ..) || true'
-                    // merge test results
-                    sh 'echo "<testExecutions version=\\"1\\">" > test-report.xml'
-                    sh 'find . -mindepth 2 -maxdepth 3 -name test-report.xml | xargs cat | grep -v "<\\?xml" | grep -v testExecutions >> test-report.xml'
-                    sh 'echo "</testExecutions>" >> test-report.xml'
-                    // install typescript so sonar can run
-                    sh 'npm i typescript'
-                    // run sonar scan
-                    sh 'cat test-report.xml'
-                    sh 'sonar-scanner -Dsonar.login=$SONARLOGIN'
-                }
-            }
-        }
-        stage("Deploy to Demo"){
-            script {
-                sh 'echo Run Demo Deploy here'
-            }
-        }
-        parallel cleanups
-    } catch (e) {
-        throw e
-    } finally {
-        publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'integration-tests/target/site/serenity', reportFiles: 'index.html', reportName: 'Serenity Report', reportTitles: ''])
+    stage("SCM Checkout") {
+        checkout scm
     }
+    stage("Build") {
+        parallel builds
+    }
+    stage("Unit Tests") {
+        parallel unitTests
+    }
+    stage("Deploy to Integration"){
+        parallel deployments
+    }
+    stage("Integration Tests") {
+        script {
+            sh 'cd integration-tests/gradle/wrapper; jar cf gradle-wrapper.jar *'
+            def exitCode = sh(script: 'cd integration-tests; chmod 755 gradlew; ./gradlew clean test aggregate', returnStatus: true)
+            publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'integration-tests/target/site/serenity', reportFiles: 'index.html', reportName: 'Serenity Report', reportTitles: ''])
+            if (exitCode > 0) {
+                sh 'commandthatdoesntexist'
+            }
+        }
+    }
+    stage("Inspect") {
+        withCredentials([string(credentialsId: 'SONARLOGIN', variable: 'SONARLOGIN')]) {
+            script {
+                // scan services for test coverage
+                sh '(test -d svc && find svc -type d -maxdepth 1 -mindepth 1 -exec sh coverage.sh {} \\;) || true'
+                // merge coverage
+                sh 'rm -rf coverage ; mkdir coverage ; (test -d svc && cd svc ; npm i ; npx lcov-result-merger "**/lcov.info" ../coverage/all.info ; cd ..) || true'
+                // merge test results
+                sh 'echo "<testExecutions version=\\"1\\">" > test-report.xml'
+                sh 'find . -mindepth 2 -maxdepth 3 -name test-report.xml | xargs cat | grep -v "<\\?xml" | grep -v testExecutions >> test-report.xml'
+                sh 'echo "</testExecutions>" >> test-report.xml'
+                // install typescript so sonar can run
+                sh 'npm i typescript'
+                // run sonar scan
+                sh 'cat test-report.xml'
+                sh 'sonar-scanner -Dsonar.login=$SONARLOGIN'
+            }
+        }
+    }
+    stage("Deploy to Demo"){
+        script {
+            sh 'echo Run Demo Deploy here'
+        }
+    }
+    parallel cleanups
 }
