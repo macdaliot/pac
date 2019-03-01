@@ -95,11 +95,19 @@ node {
                 script {
                     // scan services for test coverage
                     sh '(test -d svc && find svc -type d -maxdepth 1 -mindepth 1 -exec sh coverage.sh {} \\;) || true'
+                    // scan app for test coverage
+                    sh 'sh coverage.sh app'
                     // merge coverage
-                    sh 'rm -rf coverage ; mkdir coverage ; (test -d svc && cd svc ; npm i ; npx lcov-result-merger "**/lcov.info" ../coverage/all.info ; cd ..) || true'
-                    // merge test results
+                    def script = 'rm -rf coverage ; mkdir coverage ; npx lcov-result-merger "**/lcov.info" coverage/all.info'
+                    sh script:script, returnStatus:true
+                    // clean up old test reports
+                    sh 'rm -f test-report.xml'
+                    // write header
                     sh 'echo "<testExecutions version=\\"1\\">" > test-report.xml'
-                    sh 'find . -mindepth 2 -maxdepth 3 -name test-report.xml | xargs cat | grep -v "<\\?xml" | grep -v testExecutions >> test-report.xml'
+                    // merge reports (safely, capturing error if none existed)
+                    script = 'find . -mindepth 2 -maxdepth 3 -name test-report.xml | xargs cat | grep -v "<\\?xml" | grep -v testExecutions >> test-report.xml' 
+                    sh script:script, returnStatus:true
+                    // write footer
                     sh 'echo "</testExecutions>" >> test-report.xml'
                     // install typescript so sonar can run
                     sh 'npm i typescript'
