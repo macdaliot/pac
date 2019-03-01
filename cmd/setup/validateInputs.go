@@ -27,9 +27,9 @@ func validateProjectName(projectName string) {
 }
 
 func validateDockerAndPorts() {
-  _, stderr := commands.Run("docker run --name pac-porttest -p 3000:3000 -p 8000:8000 hello-world", "")
+  _, stderr := commands.Run("docker run --name pac-porttest -p 3000:3000 -p 8001:8001 hello-world", "")
   if stderr != nil {
-    logger.Err("Docker must be installed and ports 3000 and 8000 must be open in order to run PAC setup")
+    logger.Err("Docker must be installed and ports 3000 and 8001 must be open in order to run PAC setup")
     errors.QuitIfError(stderr)
   } else {
     _, stderr := commands.Run("docker rm pac-porttest", "")

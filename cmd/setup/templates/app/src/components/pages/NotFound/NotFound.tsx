@@ -3,12 +3,8 @@ import { hot } from 'react-hot-loader/root';
 import { Alert, AlertType } from '@pyramidlabs/react-ui';
 import './not-found.scss';
 
-class NotFound extends React.Component {
-  constructor(props){
-    super(props);
-  }
-
-  render() {
+export class NotFoundComponent extends React.Component {
+  render = () => {
     return (
       <div className="not-found-page-component">
         <Alert 
@@ -22,4 +18,4 @@ class NotFound extends React.Component {
   }
 }
 
-export default hot(NotFound);
+export default hot(NotFoundComponent);
