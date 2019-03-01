@@ -43,15 +43,13 @@ class ApplicationComponent extends React.Component<{}, State> {
   }
 
   handleLogin = () => {
-    if (appStore.getState().user != null) {
+    const loggedIn = appStore.getState().user != null;
+    if (loggedIn) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${appStore.getState().token}`;
-      return this.setState({
-        loggedIn: true
-      });
     }
     this.setState({
-      loggedIn: false
-    });  
+      loggedIn: loggedIn
+    });
   }
 }
 
