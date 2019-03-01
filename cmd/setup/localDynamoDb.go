@@ -6,6 +6,6 @@ import (
 )
 
 func LocalDynamoDb() {
-  commands.Run("docker run --name pac-db-local -d -p 8001:8001 amazon/dynamodb-local -jar DynamoDBLocal.jar -sharedDb", "")
+  commands.Run("docker run --name pac-db-local -d -p 8001:8000 amazon/dynamodb-local -jar DynamoDBLocal.jar -sharedDb", "")
   logger.Info("Started local DynamoDB running in Docker")
 }

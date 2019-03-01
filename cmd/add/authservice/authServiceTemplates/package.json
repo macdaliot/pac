@@ -4,7 +4,7 @@
   "description": "auth service (created by PAC)",
   "main": "server.js",
   "scripts": {
-    "start": "tsc && node dist/local",
+    "start": "tsc && node dist/src/local",
     "test": "npx jest --coverage",
     "test-sonar": "npx jest --coverage --testResultsProcessor=jest-sonar-reporter",
     "test-ci": "npx jest --ci --reporters=default --reporters=jest-junit"
