@@ -16,7 +16,7 @@ interface State {
   loggedIn: boolean;
 }
 
-class ApplicationComponent extends React.Component<{}, State> {
+export class ApplicationComponent extends React.Component<{}, State> {
   constructor(props: any) {
     super(props);
     appStore.subscribe(this.handleLogin);
