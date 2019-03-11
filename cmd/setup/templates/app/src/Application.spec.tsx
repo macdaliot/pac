@@ -43,4 +43,11 @@ describe('Application component handles login correctly', () => {
     instance.handleLogin();
     expect(component.state('loggedIn')).toEqual(true);
   });
+
+  it('should fire onSubmit() when onNext() is called', () => {
+    const mockFunction = () => {
+      console.log("Test");
+    }
+    const component = shallow(<CreateReportFormComponent onSubmit={mockFunction} />
+  });
 });
