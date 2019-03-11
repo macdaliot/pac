@@ -86,12 +86,6 @@ module.exports = {
       }
     ]
   },
-  optimization: {
-    splitChunks: {
-      chunks: 'all',
-      maxSize: 244000
-    }
-  },
   externals: {
     "react": "React",
     "react-dom": "ReactDOM"
