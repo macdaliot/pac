@@ -1,7 +1,7 @@
 package setup
 
 import (
-  "os"
+	"os"
 	"path/filepath"
 
 	"github.com/PyramidSystemsInc/go/directories"
@@ -11,8 +11,8 @@ import (
 )
 
 func Templates(projectName string, description string, gitAuth string) {
-  createRootProjectDirectory(projectName)
-  cfg := createConfig(projectName, description, gitAuth)
+	createRootProjectDirectory(projectName)
+	cfg := createConfig(projectName, description, gitAuth)
 	createProjectFiles(cfg)
 	logger.Info("Created project structure")
 }
@@ -21,7 +21,7 @@ func createRootProjectDirectory(projectName string) {
 	workingDirectory := directories.GetWorking()
 	projectDirectory := filepath.Join(workingDirectory, projectName)
 	directories.Create(projectDirectory)
-  os.Chdir(projectDirectory)
+	os.Chdir(projectDirectory)
 }
 
 func createConfig(projectName string, description string, gitAuth string) map[string]string {
@@ -29,7 +29,7 @@ func createConfig(projectName string, description string, gitAuth string) map[st
 	cfg["projectName"] = projectName
 	cfg["description"] = description
 	cfg["gitAuth"] = gitAuth
-  return cfg
+	return cfg
 }
 
 func createProjectFiles(cfg map[string]string) {

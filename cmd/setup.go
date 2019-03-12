@@ -4,6 +4,7 @@ import (
 	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/pac/cmd/setup"
+	"github.com/PyramidSystemsInc/pac/config"
 	"github.com/spf13/cobra"
 )
 
@@ -24,14 +25,19 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		warnExtraArgumentsAreIgnored(args)
 		setup.ValidateInputs(projectName, frontEnd, backEnd, database)
 		setup.Templates(projectName, description, gitAuth)
-		// setup terraform bucket to store state
-		setup.S3Buckets(projectName)
-		// local developent via docker
-		setup.HaProxy(projectName)
-		// create github repository
-		setup.GitRepository(projectName)
-		// creates webhook to talk to Jenkins in AWS
-		setup.GitHubWebhook()
+		config.Set("projectFqdn", projectName+".pac.pyramidchallenges.com")
+		//check if Terraform is installed
+		setup.IsTerraformInstalled()
+		//setup S3 bucket where Terraform can store state
+		// setup.S3Buckets(projectName)
+		//setup terraform provider to create infrastructure
+		setup.CreateTerraformProvider(projectName, "us-east-2", "1.60", "2.1")
+		//local developent via docker
+		// setup.HaProxy(projectName)
+		//create github repository
+		// setup.GitRepository(projectName)
+		//creates webhook to talk to Jenkins in AWS
+		// setup.GitHubWebhook()
 	},
 }
 

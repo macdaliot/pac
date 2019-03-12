@@ -13,7 +13,7 @@ func S3Buckets(projectName string) {
 	region := "us-east-2"
 	awsSession := aws.CreateAwsSession(region)
 	projectFqdn := config.Get("projectFqdn")
-	createBucket("terrafrom", "private", projectFqdn, projectName, region, awsSession)
+	createBucket("terraform", "private", projectFqdn, projectName, region, awsSession)
 }
 
 func createBucket(suiteName string, access string, projectFqdn string, projectName string, region string, awsSession *session.Session) {
