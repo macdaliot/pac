@@ -5,7 +5,7 @@
 #
 terraform {
   backend "s3" {
-    bucket = "{{ .ProjectName }}-terraform-state-dev"
+    bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
     key    = "state/development"
     region = "{{ .Region }}"
   }
