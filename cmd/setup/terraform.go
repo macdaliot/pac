@@ -5,8 +5,11 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path"
+	"path/filepath"
 
 	"github.com/PyramidSystemsInc/go/logger"
+	"github.com/PyramidSystemsInc/pac/config"
 )
 
 //IsTerrafomInstalled attempts to get the Terraform version to demonstrate Terraform is installed and accessible.
@@ -31,11 +34,12 @@ func SetTerraformEnv() {
 //checks for *.tf files and processes them. By default
 //there will only be one *.tf file, which sets up the
 //S3 backend where infrastructure state will be stored
-func InitializeTerraform() {
+func TerraformInitialize() {
 	//switch to terraform directory
-	os.Chdir("./terraform")
+	path := path.Join(config.GetRootDirectory(), "terraform")
+	os.Chdir(path)
 
-	//run terraform
+	//initialize terraform
 	cmd := exec.Command("terraform", "init", "-input=false")
 
 	out, err := cmd.CombinedOutput()
@@ -44,28 +48,49 @@ func InitializeTerraform() {
 	}
 
 	fmt.Println(string(out))
+}
 
-	//////////////////
+// CreateTerraform creates tfplan that will be applied by Terraform to create AWS infrastructure.
+func TerraformCreate() {
+	cmd := exec.Command("terraform", "plan", "-out=tfplan", "-input=false")
 
-	cmd = exec.Command("terraform", "plan", "-out=tfplan", "-input=false")
-
-	out, err = cmd.CombinedOutput()
+	out, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Fatalf("cmd.Run() failed with %s\n", err)
 	}
 
 	fmt.Println(string(out))
-	//////////////////
+}
 
-	cmd = exec.Command("terraform", "apply", "-input=false", "tfplan ")
+// ApplyTerraform applies tfplan
+func TerraformApply() {
+	cmd := exec.Command("terraform", "apply", "-input=false", "tfplan ")
 
-	out, err = cmd.CombinedOutput()
+	out, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Fatalf("cmd.Run() failed with %s\n", err)
 	}
 
 	fmt.Println(string(out))
-	//////////////////
+}
 
-	logger.Info("Terraform is installed.\n")
+// DestroyTerraform destroys all resources managed by Terraform
+func TerraformDestroy() {
+	
+	//navgiate to terraform directory
+	os.Chdir(config.GetRootDirectory())
+	os.Chdir("./terraform")
+
+	fmt.Println(mypath)
+	
+
+	// destory AWS resources managed by Terraform
+	cmd := exec.Command("terraform", "destroy", "-auto-approve")
+
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatalf("Terraform destroy failed with %s\n", err)
+	}
+
+	fmt.Println(string(out))
 }

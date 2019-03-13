@@ -40,8 +40,9 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		//setup S3 bucket where Terraform can store state
 		setup.S3Buckets(projectName)
 		//setup terraform provider to create infrastructure
-		// setup.CreateTerraformProvider(projectName, "us-east-2", "1.60", "2.1")
-		setup.InitializeTerraform()
+		setup.TerraformInitialize()
+		setup.TerraformCreate()
+		setup.TerraformApply()
 		//local developent via docker
 		// setup.HaProxy(projectName)
 		//create github repository
