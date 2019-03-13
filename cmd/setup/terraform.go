@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"path/filepath"
 
 	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/pac/config"
@@ -76,13 +75,9 @@ func TerraformApply() {
 
 // DestroyTerraform destroys all resources managed by Terraform
 func TerraformDestroy() {
-	
 	//navgiate to terraform directory
 	os.Chdir(config.GetRootDirectory())
 	os.Chdir("./terraform")
-
-	fmt.Println(mypath)
-	
 
 	// destory AWS resources managed by Terraform
 	cmd := exec.Command("terraform", "destroy", "-auto-approve")
