@@ -1,6 +1,7 @@
 package cleanCloud
 
 import (
+  "github.com/PyramidSystemsInc/pac/config"
   "github.com/PyramidSystemsInc/go/aws"
   "github.com/PyramidSystemsInc/go/aws/cloudfront"
   "github.com/PyramidSystemsInc/go/aws/resourcegroups"
@@ -10,7 +11,8 @@ import (
   "github.com/PyramidSystemsInc/go/str"
 )
 
-func DeleteAllResources(projectName string) {
+func DeleteAllResources() {
+  projectName := config.Get("projectName")
   region := "us-east-2"
   awsSession := aws.CreateAwsSession(region)
   parentHostedZone := "pac.pyramidchallenges.com"
