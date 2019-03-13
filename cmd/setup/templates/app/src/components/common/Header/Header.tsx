@@ -57,7 +57,7 @@ export class HeaderComponent extends React.Component<HeaderProps> {
 export const mapState = (state: AuthState) => {
   return {
     username: state.user ? state.user.name : null, 
-    isAuthenticated: state.user ? true : false
+    isAuthenticated: Boolean(state.user)
   };
 }
 

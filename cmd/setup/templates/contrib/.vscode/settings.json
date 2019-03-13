@@ -1,0 +1,5 @@
+{
+  "markiscodecoverage.searchCriteria": "**/coverage/lcov*.info",
+  "debug.node.autoAttach": "on",
+  "tslint.configFile": "${workspaceRoot}/tslint.json"
+}

@@ -9,13 +9,13 @@ import (
 	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/go/str"
 	"github.com/PyramidSystemsInc/pac/cmd/setup"
+	"github.com/PyramidSystemsInc/pac/config"
 )
 
-func DeleteAllResources(projectName string) {
+func DeleteAllResources() {
 	//destroy AWS resources managed by Terraform
 	setup.TerraformDestroy()
-
-	//destroy AWS resources not managed by Terraform
+	projectName := config.Get("projectName")
 	region := "us-east-2"
 	awsSession := aws.CreateAwsSession(region)
 	parentHostedZone := "pac.pyramidchallenges.com"
