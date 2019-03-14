@@ -87,5 +87,5 @@ func TerraformDestroy() {
 		log.Fatalf("Terraform destroy failed with %s\n", err)
 	}
 
-	fmt.Println(string(out))
+	logger.Info(string(out))
 }
