@@ -7,6 +7,14 @@ import (
 	"text/template"
 )
 
+//Provider struct hold values used to create Terraform AWS Provider
+type Provider struct {
+	ProjectName     string
+	Region          string
+	AWSVersion      string
+	TemplateVersion string
+}
+
 //Lambda struct provides the necessary fields to populate a AWS Lambda resource template
 //needed by the Pyramid Application Constructor
 type Lambda struct {
