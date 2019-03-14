@@ -11,7 +11,7 @@ import (
 	"github.com/PyramidSystemsInc/pac/config"
 )
 
-//IsTerrafomInstalled attempts to get the Terraform version to demonstrate Terraform is installed and accessible.
+//IsTerraformInstalled attempts to get the Terraform version to demonstrate Terraform is installed and accessible.
 //If Terraform is not installed or accessible the execution of the program is stopped.
 func IsTerraformInstalled() {
 	logger.Info("Checking if Terraform is installed...")
@@ -25,11 +25,12 @@ func IsTerraformInstalled() {
 	logger.Info("Terraform is installed.\n")
 }
 
+//SetTerraformEnv sets the environment variable for Terraform automation
 func SetTerraformEnv() {
 	os.Setenv("TF_IN_AUTOMATION", "NONEMPTYVALUE")
 }
 
-//InitializeTerraform initializes the terraform directory
+//TerraformInitialize initializes the terraform directory
 //checks for *.tf files and processes them. By default
 //there will only be one *.tf file, which sets up the
 //S3 backend where infrastructure state will be stored
@@ -49,7 +50,7 @@ func TerraformInitialize() {
 	fmt.Println(string(out))
 }
 
-// CreateTerraform creates tfplan that will be applied by Terraform to create AWS infrastructure.
+//TerraformCreate creates tfplan that will be applied by Terraform to create AWS infrastructure.
 func TerraformCreate() {
 	cmd := exec.Command("terraform", "plan", "-out=tfplan", "-input=false")
 
@@ -61,7 +62,7 @@ func TerraformCreate() {
 	fmt.Println(string(out))
 }
 
-// ApplyTerraform applies tfplan
+//TerraformApply applies tfplan
 func TerraformApply() {
 	cmd := exec.Command("terraform", "apply", "-input=false", "tfplan ")
 
@@ -73,7 +74,7 @@ func TerraformApply() {
 	fmt.Println(string(out))
 }
 
-// DestroyTerraform destroys all resources managed by Terraform
+//TerraformDestroy destroys all resources managed by Terraform
 func TerraformDestroy() {
 	//navgiate to terraform directory
 	os.Chdir(config.GetRootDirectory())
