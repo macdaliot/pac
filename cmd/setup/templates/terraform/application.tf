@@ -87,6 +87,15 @@ resource "aws_route_table" "application_vpc" {
   }
 }
 
+module "lambda_policy_attachment" {
+  source = "./modules/policy_attach"
+
+  role_name  = "${var.project_name}-lambda-execution-role"
+
+  # managed by AWS so we can hard code it
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaRole"
+}
+
 # DO NOT DELETE
 # disabled until needed due to long create and destroy cycles
 #

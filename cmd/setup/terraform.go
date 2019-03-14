@@ -90,3 +90,9 @@ func TerraformDestroy() {
 
 	logger.Info(string(out))
 }
+
+//TerraformRoot navigates to the terraform directory
+func TerraformRoot() {
+	os.Chdir(config.GetRootDirectory())
+	os.Chdir("./terraform")
+}

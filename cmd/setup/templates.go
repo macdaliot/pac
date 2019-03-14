@@ -10,13 +10,6 @@ import (
 	"github.com/gobuffalo/packr"
 )
 
-type Provider struct {
-	ProjectName     string
-	Region          string
-	AWSVersion      string
-	TemplateVersion string
-}
-
 func Templates(projectName string, description string, gitAuth string, provider Provider) {
 	createRootProjectDirectory(projectName)
 	cfg := createConfig(projectName, description, gitAuth, provider)
