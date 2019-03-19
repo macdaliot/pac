@@ -87,7 +87,12 @@ func destroyVPCs() {
 	os.Chdir(config.GetRootDirectory())
 	os.Chdir("./terraform")
 
-	// destory AWS resources managed by Terraform
+	if _, err := os.Stat("./.terraform"); os.IsNotExist(err) {
+		//Terraform did not initialize, there is nothing to destroy
+		return
+	}
+
+	// destroy AWS resources managed by Terraform
 	cmd := exec.Command("terraform", "destroy", "-auto-approve")
 
 	out, err := cmd.CombinedOutput()
@@ -104,7 +109,12 @@ func destroyLambdas() {
 	os.Chdir(config.GetRootDirectory())
 	os.Chdir("./svc/terraform")
 
-	// destory AWS resources managed by Terraform
+	if _, err := os.Stat("./.terraform"); os.IsNotExist(err) {
+		//Terraform did not initialize, there is nothing to destroy
+		return
+	}
+
+	// destroy AWS resources managed by Terraform
 	cmd := exec.Command("terraform", "destroy", "-auto-approve")
 
 	out, err := cmd.CombinedOutput()
