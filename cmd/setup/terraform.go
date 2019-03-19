@@ -77,6 +77,11 @@ func TerraformApply() {
 
 //TerraformDestroy destroys all resources managed by Terraform
 func TerraformDestroy() {
+	destroyVPCs()
+	destroyLambdas()
+}
+
+func destroyVPCs() {
 	//navgiate to terraform directory
 	os.Chdir(config.GetRootDirectory())
 	os.Chdir("./terraform")
@@ -92,8 +97,18 @@ func TerraformDestroy() {
 	logger.Info(string(out))
 }
 
-//TerraformRoot navigates to the terraform directory
-func TerraformRoot() {
+func destroyLambdas() {
+	//Navigate to svc directory
 	os.Chdir(config.GetRootDirectory())
-	os.Chdir("./terraform")
+	os.Chdir("./svc/terraform")
+
+	// destory AWS resources managed by Terraform
+	cmd := exec.Command("terraform", "destroy", "-auto-approve")
+
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatalf("Terraform destroy failed with %s\n", err)
+	}
+
+	logger.Info(string(out))
 }
