@@ -82,6 +82,7 @@ func TerraformDestroy() {
 }
 
 func destroyVPCs() {
+	logger.Info("Terraform is destroying VPCs...")
 	//navgiate to terraform directory
 	os.Chdir(config.GetRootDirectory())
 	os.Chdir("./terraform")
@@ -98,6 +99,7 @@ func destroyVPCs() {
 }
 
 func destroyLambdas() {
+	logger.Info("Terraform is destroying lambdas(services)...")
 	//Navigate to svc directory
 	os.Chdir(config.GetRootDirectory())
 	os.Chdir("./svc/terraform")
