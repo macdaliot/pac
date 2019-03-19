@@ -3,7 +3,7 @@ output "aws_lb_listener_api_arn" {
 }
 
 output "aws_alb_target_group_jenkins" {
-    value = "${aws_alb_target_group.api.id}"
+    value = "${aws_alb_target_group.jenkins.id}"
 }
 
 output "elasticsearch_created" {
