@@ -28,6 +28,7 @@ func IsTerraformInstalled() {
 //SetTerraformEnv sets the environment variable for Terraform automation
 func SetTerraformEnv() {
 	os.Setenv("TF_IN_AUTOMATION", "NONEMPTYVALUE")
+	os.Setenv("TF_VAR_project_name", config.Get("projectName"))
 }
 
 //TerraformInitialize initializes the terraform directory

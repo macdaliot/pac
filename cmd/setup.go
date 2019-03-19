@@ -43,12 +43,13 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		setup.TerraformInitialize()
 		setup.TerraformCreate()
 		setup.TerraformApply()
+		config.Set("jenkinsUrl", "jenkins."+config.Get("projectFqdn")+":8080")
 		//local developent via docker
-		// setup.HaProxy(projectName)
+		setup.HaProxy(projectName)
 		//create github repository
-		// setup.GitRepository(projectName)
+		setup.GitRepository(projectName)
 		//creates webhook to talk to Jenkins in AWS
-		// setup.GitHubWebhook()
+		setup.GitHubWebhook()
 	},
 }
 

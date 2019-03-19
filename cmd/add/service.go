@@ -31,7 +31,7 @@ func createServiceDirectory(serviceName string) {
 func createTemplateConfig(serviceName string) map[string]string {
 	cfg := make(map[string]string)
 	cfg["projectName"] = config.Get("projectName")
-	cfg["serviceUrl"] = config.Get("serviceUrl")
+	//cfg["serviceUrl"] = config.Get("serviceUrl")
 	cfg["serviceName"] = serviceName
 	return cfg
 }

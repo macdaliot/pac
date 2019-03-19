@@ -10,6 +10,15 @@ import (
 	"github.com/gobuffalo/packr"
 )
 
+//Provider struct hold values used to create Terraform AWS Provider
+type Provider struct {
+	ProjectName     string
+	Region          string
+	AWSVersion      string
+	TemplateVersion string
+}
+
+//Templates creates project directory, config files, and copies project files to project directory.
 func Templates(projectName string, description string, gitAuth string, provider Provider) {
 	createRootProjectDirectory(projectName)
 	cfg := createConfig(projectName, description, gitAuth, provider)

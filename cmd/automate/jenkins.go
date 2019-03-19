@@ -1,36 +1,36 @@
 package automate
 
 import (
-  "github.com/PyramidSystemsInc/go/commands"
-  "github.com/PyramidSystemsInc/go/files"
-  "github.com/PyramidSystemsInc/go/logger"
-  "github.com/PyramidSystemsInc/go/str"
-  "github.com/PyramidSystemsInc/pac/config"
+	"github.com/PyramidSystemsInc/go/commands"
+	"github.com/PyramidSystemsInc/go/files"
+	"github.com/PyramidSystemsInc/go/logger"
+	"github.com/PyramidSystemsInc/go/str"
+	"github.com/PyramidSystemsInc/pac/config"
 )
 
 func Jenkins() {
-  projectName := config.Get("projectName")
-  jenkinsUrl := config.Get("jenkinsUrl")
-  downloadJenkinsCliJar(jenkinsUrl)
-  createPipelineProvisionerXml(projectName)
-  createS3PipelineXml(projectName)
-  createWholePipelineXml(projectName)
-  jenkinsCliCommandStart := str.Concat("java -jar jenkins-cli.jar -s http://", jenkinsUrl, " -auth pyramid:systems")
-  createPipelineJobs(jenkinsUrl, projectName, jenkinsCliCommandStart)
-  createPipelineComponentsSecret(jenkinsUrl, jenkinsCliCommandStart)
-  cleanUp()
-  logger.Info("Jenkins is now configured to create individual pipelines for the front-end and each microservice")
+	projectName := config.Get("projectName")
+	jenkinsUrl := config.Get("jenkinsUrl")
+	downloadJenkinsCliJar(jenkinsUrl)
+	createPipelineProvisionerXml(projectName)
+	createS3PipelineXml(projectName)
+	createWholePipelineXml(projectName)
+	jenkinsCliCommandStart := str.Concat("java -jar jenkins-cli.jar -s http://", jenkinsUrl, " -auth pyramid:systems")
+	createPipelineJobs(jenkinsUrl, projectName, jenkinsCliCommandStart)
+	createPipelineComponentsSecret(jenkinsUrl, jenkinsCliCommandStart)
+	cleanUp()
+	logger.Info("Jenkins is now configured to create individual pipelines for the front-end and each microservice")
 }
 
 func downloadJenkinsCliJar(jenkinsUrl string) {
-  files.Download(str.Concat("http://", jenkinsUrl, "/jnlpJars/jenkins-cli.jar"), "./jenkins-cli.jar")
+	files.Download(str.Concat("http://", jenkinsUrl, "/jnlpJars/jenkins-cli.jar"), "./jenkins-cli.jar")
 }
 
 func createPipelineProvisionerXml(projectName string) {
-  filePath := "pipeline-provisioner-job.xml"
-  config := make(map[string]string)
-  config["projectName"] = projectName
-  const template = `<?xml version='1.1' encoding='UTF-8'?>
+	filePath := "pipeline-provisioner-job.xml"
+	config := make(map[string]string)
+	config["projectName"] = projectName
+	const template = `<?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
   <description></description>
@@ -69,7 +69,7 @@ func createPipelineProvisionerXml(projectName string) {
   cd svc
   NEW_PIPELINES=&quot;&quot;
   for DIR in *; do
-    if [ -d &quot;${DIR}&quot; ]; then
+    if [[ -d &quot;${DIR}&quot; &amp;&amp; &quot;${DIR}&quot; != &quot;terraform&quot; ]]; then
       if java -jar ~/jenkins-cli.jar -s http://localhost:8080 -auth pyramid:systems get-job &quot;${DIR}&quot;; then
         echo &quot;${DIR} Jenkins Pipeline Exists. Skipping&quot;
       else
@@ -149,14 +149,14 @@ java -jar ~/jenkins-cli.jar -s http://localhost:8080 -auth pyramid:systems build
   </buildWrappers>
 </project>
 `
-  files.CreateFromTemplate(filePath, template, config)
+	files.CreateFromTemplate(filePath, template, config)
 }
 
 func createS3PipelineXml(projectName string) {
-  filePath := "s3-pipeline-job.xml"
-  config := make(map[string]string)
-  config["projectName"] = projectName
-  const template = `<?xml version="1.1" encoding="UTF-8"?><flow-definition plugin="workflow-job@2.31">
+	filePath := "s3-pipeline-job.xml"
+	config := make(map[string]string)
+	config["projectName"] = projectName
+	const template = `<?xml version="1.1" encoding="UTF-8"?><flow-definition plugin="workflow-job@2.31">
   <description/>
   <keepDependencies>false</keepDependencies>
   <properties>
@@ -190,14 +190,14 @@ func createS3PipelineXml(projectName string) {
   <disabled>false</disabled>
 </flow-definition>
 `
-  files.CreateFromTemplate(filePath, template, config)
+	files.CreateFromTemplate(filePath, template, config)
 }
 
 func createWholePipelineXml(projectName string) {
-  filePath := "whole-pipeline-job.xml"
-  config := make(map[string]string)
-  config["projectName"] = projectName
-  const template = `<?xml version="1.1" encoding="UTF-8"?><flow-definition plugin="workflow-job@2.31">
+	filePath := "whole-pipeline-job.xml"
+	config := make(map[string]string)
+	config["projectName"] = projectName
+	const template = `<?xml version="1.1" encoding="UTF-8"?><flow-definition plugin="workflow-job@2.31">
   <description/>
   <keepDependencies>false</keepDependencies>
   <properties>
@@ -231,34 +231,34 @@ func createWholePipelineXml(projectName string) {
   <disabled>false</disabled>
 </flow-definition>
 `
-  files.CreateFromTemplate(filePath, template, config)
+	files.CreateFromTemplate(filePath, template, config)
 }
 
 func createPipelineJobs(jenkinsUrl string, projectName string, jenkinsCliCommandStart string) {
-  jobData := files.Read("pipeline-provisioner-job.xml")
-  createJobCommand := str.Concat(jenkinsCliCommandStart, " create-job pipeline-provisioner")
-  commands.RunWithStdin(createJobCommand, string(jobData), "")
-  jobData = files.Read("s3-pipeline-job.xml")
-  createJobCommand = str.Concat(jenkinsCliCommandStart, " create-job front-end-integration")
-  commands.RunWithStdin(createJobCommand, string(jobData), "")
-  jobData = files.Read("whole-pipeline-job.xml")
-  createJobCommand = str.Concat(jenkinsCliCommandStart, " create-job ", projectName)
-  commands.RunWithStdin(createJobCommand, string(jobData), "")
+	jobData := files.Read("pipeline-provisioner-job.xml")
+	createJobCommand := str.Concat(jenkinsCliCommandStart, " create-job pipeline-provisioner")
+	commands.RunWithStdin(createJobCommand, string(jobData), "")
+	jobData = files.Read("s3-pipeline-job.xml")
+	createJobCommand = str.Concat(jenkinsCliCommandStart, " create-job front-end-integration")
+	commands.RunWithStdin(createJobCommand, string(jobData), "")
+	jobData = files.Read("whole-pipeline-job.xml")
+	createJobCommand = str.Concat(jenkinsCliCommandStart, " create-job ", projectName)
+	commands.RunWithStdin(createJobCommand, string(jobData), "")
 }
 
 func createPipelineComponentsSecret(jenkinsUrl string, jenkinsCliCommandStart string) {
-  createCredentialsCommand := str.Concat(jenkinsCliCommandStart, " create-credentials-by-xml system::system::jenkins (global)")
-  pipelineComponentsXml := []byte(`<org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl plugin="plain-credentials@1.5">
+	createCredentialsCommand := str.Concat(jenkinsCliCommandStart, " create-credentials-by-xml system::system::jenkins (global)")
+	pipelineComponentsXml := []byte(`<org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl plugin="plain-credentials@1.5">
   <scope>GLOBAL</scope>
   <id>PipelineComponents</id>
   <description>PipelineComponents</description>
   <secret>front-end-integration</secret>
 </org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl>
 `)
-  commands.RunWithStdin(createCredentialsCommand, string(pipelineComponentsXml), "")
+	commands.RunWithStdin(createCredentialsCommand, string(pipelineComponentsXml), "")
 }
 
 func cleanUp() {
-  // TODO: Change to os.Rm() or something in order to support Windows CMD
-  commands.Run("rm jenkins-cli.jar pipeline-provisioner-job.xml s3-pipeline-job.xml whole-pipeline-job.xml", "")
+	// TODO: Change to os.Rm() or something in order to support Windows CMD
+	commands.Run("rm jenkins-cli.jar pipeline-provisioner-job.xml s3-pipeline-job.xml whole-pipeline-job.xml", "")
 }

@@ -21,7 +21,7 @@ func S3Buckets(projectName string) {
 func createBucket(suiteName string, access string, projectFqdn string, projectName string, region string, awsSession *session.Session) {
 	frontEndFqdn := str.Concat(suiteName, ".", projectFqdn)
 	s3.MakeBucket(frontEndFqdn, access, region, awsSession)
-	time.Sleep(time.Second * 1)
+	time.Sleep(time.Second * 3)
 	tagKey := "pac-project-name"
 	s3.TagBucket(frontEndFqdn, tagKey, projectName, awsSession)
 	bucketFqdn := str.Concat(frontEndFqdn, ".s3-website-", region, ".amazonaws.com")
