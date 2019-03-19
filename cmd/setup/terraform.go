@@ -77,8 +77,8 @@ func TerraformApply() {
 
 //TerraformDestroy destroys all resources managed by Terraform
 func TerraformDestroy() {
-	destroyVPCs()
 	destroyLambdas()
+	destroyVPCs()
 }
 
 func destroyVPCs() {
