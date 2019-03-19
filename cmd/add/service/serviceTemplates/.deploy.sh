@@ -5,7 +5,7 @@ TF_VERSION="0.11.13"
 
 
 ## Navigate to Terraform directory
-cd ./svc/terraform
+cd ../terraform
 
 ## Initialize terraform
 terraform init -input=false
