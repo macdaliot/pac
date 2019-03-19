@@ -2,7 +2,7 @@ variable "hosted_zone" {
     default = "pac.pyramidchallenges.com"
 }
 variable "project_name" {
-    default = "testacular"
+    default="testacular"
     description = "project name"
 }
 
@@ -49,4 +49,20 @@ variable "lambda_function_payload" {
     type = "string"
     description = "Name of code file for lambda function"
     default = "function.zip"
+}
+
+variable "create_elasticsearch" {
+  description = "Whether or not to create Elasticsearch service"
+  default = "false"
+}
+
+variable "es_version" {
+    default = "6.4"
+}
+variable "es_instance_type" {
+    default = "r4.large.elasticsearch"
+}
+
+variable "es_automated_snapshot_start_hour" {
+    default = 23
 }

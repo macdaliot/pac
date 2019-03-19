@@ -1,3 +1,4 @@
+
 resource "aws_vpc" "application" {
   cidr_block = "10.1.0.0/16"
 
@@ -37,41 +38,50 @@ resource "aws_alb" "main" {
   security_groups = ["${aws_security_group.lb.id}"]
 }
 
-module "cnames" {
-  source = "./modules/route53_record"
+variable "cnames" {
+  default = ["api", "jenkins", "selenium", "sonar"]
+}
 
-  zone_id = "${module.route53_zone.child_zone_id}"
-  names = ["api", "jenkins", "selenium", "sonar"]
-  type = "CNAME"
+#
+# https://www.terraform.io/docs/providers/aws/r/route53_record.html
+#
+resource "aws_route53_record" "record" {
+  
+
+  count   = "${length(var.cnames)}"
+  zone_id = "${aws_route53_zone.main.zone_id}"
+  name    = "${element(var.cnames,count.index)}"
+  type    = "CNAME"
+  ttl     = "60"
   records = ["${aws_alb.main.dns_name}"]
 }
 
-#
-# https://www.terraform.io/docs/providers/aws/r/lb_listener.html
-# alb listener
-#
-resource "aws_lb_listener" "api" {
-  load_balancer_arn = "${aws_alb.main.arn}"
-  port              = "80"
-  protocol          = "HTTP"
+resource "aws_s3_bucket" "integration" {
+  bucket = "integration.${var.project_name}.${var.hosted_zone}"
+  acl    = "public"
 
-  default_action {
-    type             = "redirect"
+  website {
+    index_document = "index.html"
+    error_document = "index.html"
+  }
 
-    redirect {
-      port        = "80"
-      protocol    = "HTTP"
-      status_code = "HTTP_301"
-      path        = "/#{host}/api"
-      query       = "#{query}"
-    }
+  tags = {
+    Name = "${var.project_name} integration bucket"
   }
 }
 
-module "pac_bucket" {
-  source = "./modules/s3"
+resource "aws_s3_bucket" "demo" {
+  bucket = "demo.${var.project_name}.${var.hosted_zone}"
+  acl    = "public"
 
-  project_name = "${var.project_name}"
+    website {
+    index_document = "index.html"
+    error_document = "index.html"
+  }
+
+  tags = {
+    Name = "${var.project_name} demo bucket"
+  }
 }
 
 resource "aws_route_table" "application_vpc" {
@@ -87,13 +97,36 @@ resource "aws_route_table" "application_vpc" {
   }
 }
 
-module "lambda_policy_attachment" {
-  source = "./modules/policy_attach"
+# https://www.terraform.io/docs/providers/aws/r/iam_role.html
+# IAM role
+#
+resource "aws_iam_role" "pac_lambda_execution_role" {
+  name = "${var.project_name}-lambda-execution-role"
 
-  role_name  = "${var.project_name}-lambda-execution-role"
+  assume_role_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": "sts:AssumeRole",
+            "Principal": {
+                "Service": "lambda.amazonaws.com"
+            },
+            "Effect": "Allow",
+            "Sid": ""
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "policy_attach" {
+  role       = "${var.project_name}-lambda-execution-role"
 
   # managed by AWS so we can hard code it
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaRole"
+
+  depends_on = ["aws_iam_role.pac_lambda_execution_role"]
 }
 
 # DO NOT DELETE
