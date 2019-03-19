@@ -58,7 +58,7 @@ resource "aws_route53_record" "record" {
 
 resource "aws_s3_bucket" "integration" {
   bucket = "integration.${var.project_name}.${var.hosted_zone}"
-  acl    = "public"
+  acl    = "public-read"
 
   website {
     index_document = "index.html"
@@ -72,7 +72,7 @@ resource "aws_s3_bucket" "integration" {
 
 resource "aws_s3_bucket" "demo" {
   bucket = "demo.${var.project_name}.${var.hosted_zone}"
-  acl    = "public"
+  acl    = "public-read"
 
     website {
     index_document = "index.html"
