@@ -40,7 +40,7 @@ resource "aws_alb_target_group" "{{ .projectName }}_{{ .serviceName }}_target_gr
 # Provides the ability to register instances and containers with an Application Load Balancer (ALB) 
 # or Network Load Balancer (NLB) target group
 #
-resource "aws_lambda_permission" "{{ .projectName }}_with_lb" {
+resource "aws_lambda_permission" "{{ .projectName }}_{{ .serviceName }}_with_lb" {
   statement_id  = "AllowExecutionFromlb"
   action        = "lambda:InvokeFunction"
   function_name = "pac-{{ .projectName }}-i-{{ .serviceName }}"
@@ -50,10 +50,10 @@ resource "aws_lambda_permission" "{{ .projectName }}_with_lb" {
 }
 
 # register with load balancer target group 
-resource "aws_alb_target_group_attachment" "{{ .projectName }}_target_group_attachment" {
+resource "aws_alb_target_group_attachment" "{{ .projectName }}_{{ .serviceName }}_target_group_attachment" {
   target_group_arn = "${aws_alb_target_group.{{ .projectName }}_{{ .serviceName }}_target_group.id}"
   target_id        = "${aws_lambda_function.lambda_{{ .serviceName }}.arn}"
-  depends_on       = ["aws_lambda_permission.{{ .projectName }}_with_lb"]
+  depends_on       = ["aws_lambda_permission.{{ .projectName }}_{{ .serviceName }}_with_lb"]
 }
 
 #
