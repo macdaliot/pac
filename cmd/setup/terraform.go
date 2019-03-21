@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"time"
 
 	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/pac/config"
@@ -65,6 +66,7 @@ func TerraformCreate() {
 
 //TerraformApply applies tfplan
 func TerraformApply() {
+	defer timeTrack(time.Now(), "Terraform create")
 	cmd := exec.Command("terraform", "apply", "-input=false", "tfplan ")
 
 	out, err := cmd.CombinedOutput()
@@ -77,6 +79,8 @@ func TerraformApply() {
 
 //TerraformDestroy destroys all resources managed by Terraform
 func TerraformDestroy() {
+	defer timeTrack(time.Now(), "Terraform destroy")
+
 	destroyLambdas()
 	destroyVPCs()
 }
@@ -123,4 +127,9 @@ func destroyLambdas() {
 	}
 
 	logger.Info(string(out))
+}
+
+func timeTrack(start time.Time, name string) {
+	elapsed := time.Since(start)
+	log.Printf("%s took %s", name, elapsed)
 }

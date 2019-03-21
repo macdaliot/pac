@@ -1,6 +1,8 @@
 package cleanCloud
 
 import (
+	"time"
+
 	"github.com/PyramidSystemsInc/go/aws"
 	"github.com/PyramidSystemsInc/go/aws/cloudfront"
 	"github.com/PyramidSystemsInc/go/aws/resourcegroups"
@@ -13,6 +15,7 @@ import (
 )
 
 func DeleteAllResources() {
+	start := time.Now()
 	//destroy AWS resources managed by Terraform
 	setup.TerraformDestroy()
 	projectName := config.Get("projectName")
