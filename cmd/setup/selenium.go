@@ -20,6 +20,9 @@ func Selenium(projectName string) {
       Name: "pac-selenium-hub",
       ImageName: "pac-selenium-hub",
       Essential: true,
+      EnvironmentVars: map[string]string{
+        "SE_OPTS": "-port 4448",
+      },
     },
     {
       Name: "pac-selenium-node-chrome",
@@ -27,7 +30,7 @@ func Selenium(projectName string) {
       Essential: false,
       EnvironmentVars: map[string]string{
         "HUB_HOST": "localhost",
-        "HUB_PORT": "4444",
+        "HUB_PORT": "4448",
         "NODE_MAX_INSTANCES": "5",
         "NODE_MAX_SESSION": "5",
       },
