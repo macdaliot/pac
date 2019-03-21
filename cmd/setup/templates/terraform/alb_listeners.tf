@@ -15,11 +15,12 @@ resource "aws_lb_listener" "api" {
       port        = "80"
       protocol    = "HTTP"
       status_code = "HTTP_301"
-      path        = "/#{host}/api"
+      path        = "/api"
       query       = "#{query}"
     }
   }
 }
+#http://#{host}:80/api?#{query}
 #Redirect all traffic from the ALB to the target group
 resource "aws_alb_listener" "jenkins" {
   load_balancer_arn = "${aws_alb.main.id}"

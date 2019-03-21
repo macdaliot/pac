@@ -88,7 +88,7 @@ resource "aws_lb_listener_rule" "{{ .projectName }}_{{ .serviceName }}_rule_200"
 
   condition {
     field  = "path-pattern"
-    values = ["/api/{{ .serviceName }}"]
+    values = ["/api/{{ .serviceName }}/*"]
   }
 }
 
