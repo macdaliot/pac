@@ -76,7 +76,7 @@ resource "aws_s3_bucket" "integration" {
 }
 
 resource "aws_s3_bucket" "demo" {
-  bucket        = "integration.${var.project_name}.${var.hosted_zone}"
+  bucket        = "demo.${var.project_name}.${var.hosted_zone}"
   acl           = "public-read"
   force_destroy = true
 
