@@ -94,6 +94,29 @@ resource "aws_s3_bucket" "demo" {
   }
 }
 
+resource "aws_route53_record" "demo" {
+  zone_id = "${aws_route53_zone.main.zone_id}"
+  name    = "demo.${var.project_name}.${var.hosted_zone}"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_alb.main.dns_name}"
+    zone_id                = "${aws_alb.main.zone_id}"
+    evaluate_target_health = true
+  }
+}
+
+resource "aws_route53_record" "integration" {
+  zone_id = "${aws_route53_zone.main.zone_id}"
+  name    = "integration.${var.project_name}.${var.hosted_zone}"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_alb.main.dns_name}"
+    zone_id                = "${aws_alb.main.zone_id}"
+    evaluate_target_health = true
+  }
+}
 resource "aws_route_table" "application_vpc" {
   vpc_id = "${aws_vpc.application.id}"
 
