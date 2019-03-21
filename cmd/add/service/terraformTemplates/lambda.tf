@@ -3,7 +3,7 @@
 # lambda function
 #
 resource "aws_lambda_function" "lambda_{{ .serviceName }}" {
-  filename         = "function.zip"
+  filename         = "${path.cwd}/../{{ .serviceName }}/function.zip"
   function_name    = "pac-{{ .projectName }}-i-{{ .serviceName }}"
   role             = "${data.terraform_remote_state.pac.pac_lambda_execution_role_arn}"
   handler          = "lambda.handler"
