@@ -57,8 +57,13 @@ resource "aws_route53_record" "record" {
 }
 
 resource "aws_s3_bucket" "integration" {
-  bucket = "integration.${var.project_name}.${var.hosted_zone}"
-  acl    = "public-read"
+  bucket        = "integration.${var.project_name}.${var.hosted_zone}"
+  acl           = "public-read"
+  force_destroy = true
+
+  versioning {
+    enabled = false
+  }
 
   website {
     index_document = "index.html"
@@ -71,10 +76,15 @@ resource "aws_s3_bucket" "integration" {
 }
 
 resource "aws_s3_bucket" "demo" {
-  bucket = "demo.${var.project_name}.${var.hosted_zone}"
-  acl    = "public-read"
+  bucket        = "integration.${var.project_name}.${var.hosted_zone}"
+  acl           = "public-read"
+  force_destroy = true
 
-    website {
+  versioning {
+    enabled = false
+  }
+
+  website {
     index_document = "index.html"
     error_document = "index.html"
   }

@@ -6,8 +6,8 @@
 terraform {
   backend "s3" {
     bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
-    key    = "state/development/lambdas"
-    region = "us-east-2"
+    key    = "state/development"
+    region = "{{ .Region }}"
   }
 }
 
@@ -18,21 +18,21 @@ terraform {
 #
 provider "aws" {
   # not listed as require in documentation but will be asked for it if not set
-  region = "us-east-2"
+  region = "{{ .Region }}"
 
-  version = "1.60"
+  version = "{{ .AWSVersion }}"
 }
 
 provider "template" {
-  version = "2.1"
+  version = "{{ .TemplateVersion }}"
 }
 
-data "terraform_remote_data" "pac" {
-  backend = "s3"
-
+data "terraform_remote_state" "pac" {
+  backend = "s3" 
+  
   config {
     bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
     key    = "state/development/lambdas"
-    region = "us-east-2"
+    region = "{{ .Region }}"
   }
 }
