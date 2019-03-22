@@ -103,7 +103,7 @@ resource "aws_dynamodb_table" "{{ .projectName }}_dynamodb_table_{{ .serviceName
   write_capacity = 5
   hash_key       = "id"
   stream_view_type = "NEW_AND_OLD_IMAGES"
-  stream_enabled = true
+  stream_enabled = false
 
   attribute {
     name = "id"
