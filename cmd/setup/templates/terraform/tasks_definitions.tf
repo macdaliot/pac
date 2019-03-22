@@ -11,7 +11,7 @@ resource "aws_ecs_task_definition" "jenkins" {
 [
   {
     "image": "118104210923.dkr.ecr.us-east-2.amazonaws.com/pac-jenkins",
-    "name": "pac-jenkins",
+    "name": "pac-${var.project_name}-jenkins",
     "networkMode": "awsvpc",
     "portMappings": [
       {
@@ -46,7 +46,7 @@ resource "aws_ecs_task_definition" "sonarqube" {
     "cpu": 2048,
     "image": "118104210923.dkr.ecr.us-east-2.amazonaws.com/sonarqube",
     "memory": 4096,
-    "name": "sonarqube",
+    "name": "pac-${var.project_name}-sonarqube",
     "networkMode": "awsvpc",
     "portMappings": [
       {
@@ -105,7 +105,7 @@ resource "aws_ecs_task_definition" "selenium" {
     "cpu": 2048,
     "image": "118104210923.dkr.ecr.us-east-2.amazonaws.com/selenium",
     "memory": 4096,
-    "name": "selenium",
+    "name": "pac-${var.project_name}-selenium",
     "networkMode": "awsvpc",
     "portMappings": [
       {
