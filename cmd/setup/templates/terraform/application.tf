@@ -162,6 +162,45 @@ resource "aws_iam_role_policy_attachment" "policy_attach" {
   depends_on = ["aws_iam_role.pac_lambda_execution_role"]
 }
 
+
+resource "aws_iam_policy" "pac_lambda_dynamodb" {
+  name = "pac-lambda-dynamodb-policy"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+      {
+          "Sid": "VisualEditor0",
+          "Effect": "Allow",
+          "Action": [
+              "dynamodb:BatchGetItem",
+              "logs:CreateLogStream",
+              "dynamodb:BatchWriteItem",
+              "dynamodb:PutItem",
+              "dynamodb:GetItem",
+              "dynamodb:Scan",
+              "dynamodb:Query",
+              "dynamodb:UpdateItem",
+              "logs:PutLogEvents",
+              "logs:CreateLogGroup"
+          ],
+          "Resource": "*"
+      }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_dynamodb_policy_attach" {
+  role       = "${var.project_name}-lambda-execution-role"
+
+  # managed by AWS so we can hard code it
+  policy_arn = "${aws_iam_policy.pac_lambda_dynamodb.arn}"
+
+  depends_on = ["aws_iam_role.pac_lambda_execution_role"]
+}
+
+
 # DO NOT DELETE
 # disabled until needed due to long create and destroy cycles
 #
