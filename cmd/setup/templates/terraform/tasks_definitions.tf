@@ -11,7 +11,7 @@ resource "aws_ecs_task_definition" "jenkins" {
 [
   {
     "image": "118104210923.dkr.ecr.us-east-2.amazonaws.com/pac-jenkins",
-    "name": "pac-${var.project_name}-jenkins",
+    "name": "pac-jenkins",
     "networkMode": "awsvpc",
     "portMappings": [
       {
@@ -43,32 +43,38 @@ resource "aws_ecs_task_definition" "sonarqube" {
   container_definitions = <<DEFINITION
 [
   {
+    "secrets": [
+      {
+        "name": "sonar.jdbc.password",
+        "valueFrom": "arn:aws:ssm:us-east-2:118104210923:parameter/sonar_jdbc_password"
+      },
+      {
+        "name": "sonar.jdbc.url",
+        "valueFrom": "arn:aws:ssm:us-east-2:118104210923:parameter/sonar_jdbc_url"
+      },
+      {
+        "name": "sonar.jdbc.username",
+        "valueFrom": "arn:aws:ssm:us-east-2:118104210923:parameter/sonar_jdbc_username"
+      }
+    ],
     "cpu": 2048,
     "image": "118104210923.dkr.ecr.us-east-2.amazonaws.com/sonarqube",
     "memory": 4096,
-    "name": "pac-${var.project_name}-sonarqube",
+    "name": "sonarqube",
     "networkMode": "awsvpc",
     "portMappings": [
       {
         "containerPort": 9000
       }
-    ],
-    "environment": [
-      {
-        "name": "sonar.jdbc.password",
-        "value": "sonar"
-      },
-      {
-        "name": "sonar.jdbc.url",
-        "value": "jdbc:postgresql://localhost/sonar"
-      },
-      {
-        "name": "sonar.jdbc.username",
-        "value": "sonar"
-      }
     ]
   },
   {
+    "secrets": [
+      {
+        "name": "POSTGRES_PASSWORD",
+        "valueFrom": "arn:aws:ssm:us-east-2:118104210923:parameter/postgres_password"
+      }
+    ],
     "cpu": 2048,
     "image": "118104210923.dkr.ecr.us-east-2.amazonaws.com/pac-sonar-db",
     "memory": 4096,
@@ -77,12 +83,6 @@ resource "aws_ecs_task_definition" "sonarqube" {
     "portMappings": [
       {
         "containerPort": 5432
-      }
-    ],
-    "environment": [
-      {
-        "name": "POSTGRES_PASSWORD",
-        "value": "pyramid"
       }
     ]
   }
@@ -105,7 +105,7 @@ resource "aws_ecs_task_definition" "selenium" {
     "cpu": 2048,
     "image": "118104210923.dkr.ecr.us-east-2.amazonaws.com/selenium",
     "memory": 4096,
-    "name": "pac-${var.project_name}-selenium",
+    "name": "selenium",
     "networkMode": "awsvpc",
     "portMappings": [
       {
