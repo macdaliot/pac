@@ -2,6 +2,7 @@ def pipelineComponents
 withCredentials([string(credentialsId: 'PipelineComponents', variable: 'COMPONENTS')]) {
     pipelineComponents = env.COMPONENTS.split(",")
 }
+
 def builds = [:]
 def unitTests = [:]
 def integrationTests = [:]
@@ -72,59 +73,66 @@ for (x in pipelineComponents){
     }
 }
 node {
-    stage("SCM Checkout") {
-        checkout scm
-    }
-    stage("Build") {
-        parallel builds
-    }
-    stage("Unit Tests") {
-        parallel unitTests
-    }
-    stage("Deploy to Integration"){
-        parallel deployments
-    }
-    stage("Integration Tests") {
-        script {
-            sh 'cd integration-tests/gradle/wrapper; jar cf gradle-wrapper.jar *'
-            def exitCode = sh(script: 'cd integration-tests; chmod 755 gradlew; ./gradlew clean test aggregate', returnStatus: true)
-            publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'integration-tests/target/site/serenity', reportFiles: 'index.html', reportName: 'Serenity Report', reportTitles: ''])
-            if (exitCode > 0) {
-                sh 'commandthatdoesntexist'
-            }
+    try {
+        stage("SCM Checkout") {
+            checkout scm
         }
-    }
-    stage("Inspect") {
-        withCredentials([string(credentialsId: 'SONARLOGIN', variable: 'SONARLOGIN')]) {
+        stage("Build") {
+            parallel builds
+        }
+        stage("Unit Tests") {
+            parallel unitTests
+        }
+        stage("Deploy to Integration"){
+            parallel deployments
+        }
+        stage("Integration Tests") {
             script {
-                // scan services for test coverage
-                sh '(test -d svc && find svc -type d -maxdepth 1 -mindepth 1 -exec sh coverage.sh {} \\;) || true'
-                // scan app for test coverage
-                sh 'sh coverage.sh app'
-                // merge coverage
-                def script = 'rm -rf coverage ; mkdir coverage ; npx lcov-result-merger "**/lcov.info" coverage/all.info'
-                sh script:script, returnStatus:true
-                // clean up old test reports
-                sh 'rm -f test-report.xml'
-                // write header
-                sh 'echo "<testExecutions version=\\"1\\">" > test-report.xml'
-                // merge reports (safely, capturing error if none existed)
-                script = 'find . -mindepth 2 -maxdepth 3 -name test-report.xml | xargs cat | grep -v "<\\?xml" | grep -v testExecutions >> test-report.xml' 
-                sh script:script, returnStatus:true
-                // write footer
-                sh 'echo "</testExecutions>" >> test-report.xml'
-                // install typescript so sonar can run
-                sh 'npm i typescript'
-                // run sonar scan
-                sh 'cat test-report.xml'
-                sh 'sonar-scanner -Dsonar.login=$SONARLOGIN'
+                sh 'cd integration-tests/gradle/wrapper; jar cf gradle-wrapper.jar *'
+                def exitCode = sh(script: 'cd integration-tests; chmod 755 gradlew; ./gradlew clean test aggregate', returnStatus: true)
+                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'integration-tests/target/site/serenity', reportFiles: 'index.html', reportName: 'Serenity Report', reportTitles: ''])
+                if (exitCode > 0) {
+                    sh 'commandthatdoesntexist'
+                }
+            }
+        }
+        stage("Inspect") {
+            withCredentials([string(credentialsId: 'SONARLOGIN', variable: 'SONARLOGIN')]) {
+                script {
+                    // scan services for test coverage
+                    sh '(test -d svc && find svc -type d -maxdepth 1 -mindepth 1 -exec sh coverage.sh {} \\;) || true'
+                    // scan app for test coverage
+                    sh 'sh coverage.sh app'
+                    // merge coverage
+                    def script = 'rm -rf coverage ; mkdir coverage ; npx lcov-result-merger "**/lcov.info" coverage/all.info'
+                    sh script:script, returnStatus:true
+                    // clean up old test reports
+                    sh 'rm -f test-report.xml'
+                    // write header
+                    sh 'echo "<testExecutions version=\\"1\\">" > test-report.xml'
+                    // merge reports (safely, capturing error if none existed)
+                    script = 'find . -mindepth 2 -maxdepth 3 -name test-report.xml | xargs cat | grep -v "<\\?xml" | grep -v testExecutions >> test-report.xml' 
+                    sh script:script, returnStatus:true
+                    // write footer
+                    sh 'echo "</testExecutions>" >> test-report.xml'
+                    // install typescript so sonar can run
+                    sh 'npm i typescript'
+                    // run sonar scan
+                    sh 'cat test-report.xml'
+                    sh 'sonar-scanner -Dsonar.login=$SONARLOGIN'
+                }
+            }
+        }
+        stage("Deploy to Demo"){
+            script {
+                sh 'echo Run Demo Deploy here'
             }
         }
     }
-    stage("Deploy to Demo"){
-        script {
-            sh 'echo Run Demo Deploy here'
-        }
+    catch (e) {
+        throw e;
     }
-    parallel cleanups
+    finally {
+        parallel cleanups
+    }
 }
