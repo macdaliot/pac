@@ -71,6 +71,16 @@ for (x in pipelineComponents){
                 ]
     }
 }
+
+properties([
+  buildDiscarder(
+    logRotator(
+        daysToKeepStr: '1',
+        numToKeepStr: '5'
+    )
+  )
+])
+
 node {
     stage("SCM Checkout") {
         checkout scm
