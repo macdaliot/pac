@@ -170,7 +170,7 @@ resource "aws_iam_policy" "pac_lambda_dynamodb" {
   "Version": "2012-10-17",
   "Statement": [
       {
-          "Sid": "VisualEditor0",
+          "Sid": "",
           "Effect": "Allow",
           "Action": [
               "dynamodb:BatchGetItem",
