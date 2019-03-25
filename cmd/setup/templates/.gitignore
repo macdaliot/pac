@@ -7,6 +7,7 @@ svc/**/.env
 **/.DS_Store
 **/test-report.xml
 **/coverage/**
+integration-tests/bin
 integration-tests/build
 integration-tests/history
 integration-tests/out
