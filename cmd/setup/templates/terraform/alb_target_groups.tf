@@ -26,7 +26,7 @@ resource "aws_alb_target_group" "sonarqube" {
 
 resource "aws_alb_target_group" "selenium" {
   name        = "${var.project_name}-ecs-selenium"
-  port        = "4444"
+  port        = "4448"
   protocol    = "HTTP"
   vpc_id      = "${aws_vpc.application.id}"
   target_type = "ip"

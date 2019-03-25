@@ -46,7 +46,7 @@ resource "aws_alb_listener" "sonarqube" {
 
 resource "aws_alb_listener" "selenium" {
   load_balancer_arn = "${aws_alb.main.id}"
-  port              = "4445"
+  port              = "4448"
   protocol          = "HTTP"
 
   default_action {

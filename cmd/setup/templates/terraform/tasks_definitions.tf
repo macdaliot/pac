@@ -109,7 +109,7 @@ resource "aws_ecs_task_definition" "selenium" {
     "networkMode": "awsvpc",
     "portMappings": [
       {
-        "containerPort": 4444
+        "containerPort": 4448
       }
     ]
   }

@@ -29,8 +29,8 @@ resource "aws_security_group" "lb" {
 
   ingress {
     protocol    = "tcp"
-    from_port   = "4445"
-    to_port     = "4445"
+    from_port   = "4448"
+    to_port     = "4448"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -64,8 +64,8 @@ resource "aws_security_group" "ecs_tasks" {
 
   ingress {
     protocol    = "tcp"
-    from_port   = "4444"
-    to_port     = "4444"
+    from_port   = "4448"
+    to_port     = "4448"
     security_groups = ["${aws_security_group.lb.id}"]
   }
 
