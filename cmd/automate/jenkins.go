@@ -35,7 +35,17 @@ func createPipelineProvisionerXml(projectName string) {
   <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
-  <properties/>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>10</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
+  </properties>
   <scm class="hudson.plugins.git.GitSCM" plugin="git@4.0.0-rc">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
@@ -85,6 +95,14 @@ cat &lt;&lt;- EOF &gt; job.xml
   &lt;description&gt;&lt;/description&gt;
   &lt;keepDependencies&gt;false&lt;/keepDependencies&gt;
   &lt;properties&gt;
+    &lt;jenkins.model.BuildDiscarderProperty&gt;
+      &lt;strategy class=&quot;hudson.tasks.LogRotator&quot;&gt;
+        &lt;daysToKeep&gt;-1&lt;/daysToKeep&gt;
+        &lt;numToKeep&gt;10&lt;/numToKeep&gt;
+        &lt;artifactDaysToKeep&gt;-1&lt;/artifactDaysToKeep&gt;
+        &lt;artifactNumToKeep&gt;-1&lt;/artifactNumToKeep&gt;
+      &lt;/strategy&gt;
+    &lt;/jenkins.model.BuildDiscarderProperty&gt;
     &lt;com.coravy.hudson.plugins.github.GithubProjectProperty plugin=&quot;github@1.29.3&quot;&gt;
       &lt;projectUrl&gt;https://github.com/PyramidSystemsInc/$PROJECT_NAME/&lt;/projectUrl&gt;
       &lt;displayName&gt;&lt;/displayName&gt;
@@ -160,6 +178,15 @@ func createS3PipelineXml(projectName string) {
   <description/>
   <keepDependencies>false</keepDependencies>
   <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>10</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
     <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.3">
       <projectUrl>https://github.com/PyramidSystemsInc/{{.projectName}}/</projectUrl>
       <displayName/>
@@ -201,6 +228,15 @@ func createWholePipelineXml(projectName string) {
   <description/>
   <keepDependencies>false</keepDependencies>
   <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>10</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
     <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.3">
       <projectUrl>https://github.com/PyramidSystemsInc/{{.projectName}}/</projectUrl>
       <displayName/>
