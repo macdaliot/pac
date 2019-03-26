@@ -1,6 +1,7 @@
 package cmd
 
 import (
+  "github.com/PyramidSystemsInc/pac/cmd/add"
   "github.com/PyramidSystemsInc/pac/cmd/setup"
   "github.com/PyramidSystemsInc/go/errors"
   "github.com/PyramidSystemsInc/go/logger"
@@ -22,6 +23,7 @@ NodeJS/Express back-end, and DynamoDB database)`,
     frontEnd := getFrontEnd(cmd)
     backEnd := getBackEnd(cmd)
     database := getDatabase(cmd)
+    skipAuth := getSkipAuth(cmd)
     warnExtraArgumentsAreIgnored(args)
     setup.ValidateInputs(projectName, frontEnd, backEnd, database)
     setup.Templates(projectName, description, gitAuth)
@@ -34,6 +36,9 @@ NodeJS/Express back-end, and DynamoDB database)`,
     setup.HaProxy(projectName)
     setup.GitRepository(projectName)
     setup.GitHubWebhook()
+    if skipAuth == false {
+      add.AuthService()
+    }
   },
 }
 
@@ -42,10 +47,11 @@ func init() {
   setupCmd.PersistentFlags().StringVarP(&projectName, "name", "n", "", "project name (required)")
   setupCmd.MarkPersistentFlagRequired("name")
   setupCmd.PersistentFlags().StringVar(&description, "description", "Project created by PAC", "short description of the project")
-  setupCmd.PersistentFlags().StringVar(&hostedZone, "hostedZone", "pac.pyramidchallenges.com", "Existing AWS hosted zone FQDN (i.e. pac.pyramidchallenges.com)")
+  setupCmd.PersistentFlags().StringVar(&hostedZone, "hostedZone", "pac.pyramidchallenges.com", "existing AWS hosted zone FQDN (i.e. pac.pyramidchallenges.com)")
   setupCmd.PersistentFlags().StringVarP(&frontEnd, "front", "f", "ReactJS", "front-end framework/library")
   setupCmd.PersistentFlags().StringVarP(&backEnd, "back", "b", "Express", "back-end framework/library")
   setupCmd.PersistentFlags().StringVarP(&database, "database", "d", "DynamoDB", "database type")
+  setupCmd.PersistentFlags().BoolVar(&skipAuth, "skipAuth", false, "do not create an authentication microservice on setup")
 }
 
 func warnExtraArgumentsAreIgnored(args []string) {
@@ -104,4 +110,10 @@ func getDatabase(cmd *cobra.Command) string {
   return database
 }
 
-var path string
+var skipAuth bool
+
+func getSkipAuth(cmd *cobra.Command) bool {
+  skipAuth, err := cmd.Flags().GetBool("skipAuth")
+  errors.QuitIfError(err)
+  return skipAuth
+}
