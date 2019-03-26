@@ -39,7 +39,7 @@ resource "aws_alb" "main" {
 }
 
 variable "cnames" {
-  default = ["api", "jenkins", "selenium", "sonar"]
+  default = ["api", "jenkins", "selenium", "sonarqube"]
 }
 
 #
