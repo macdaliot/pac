@@ -12,8 +12,8 @@ resource "aws_lambda_function" "lambda_{{ .serviceName }}" {
 
   environment {
     variables = {
-      JWT_ISSUER = "urn:pacAuth"
-      JWT_SECRET = "4pWQUrx6RkgU6o2TC"
+      JWT_ISSUER = "${data.terraform_remote_state.pac.jwt_issuer}"
+      JWT_SECRET = "${data.terraform_remote_state.pac.jwt_secret}"
     }
   }
 
