@@ -47,5 +47,5 @@ func Selenium(projectName string) {
     seleniumUrl = seleniumFqdn
   }
   ecs.TagCluster(clusterName, tagKey, projectName, awsSession)
-  logger.Info(str.Concat("Selenium will start up in a minute or so running at ", seleniumUrl, ":4444"))
+  logger.Info(str.Concat("Selenium will start up in a minute or so running at ", seleniumUrl, ":4448"))
 }

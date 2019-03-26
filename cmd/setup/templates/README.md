@@ -23,7 +23,7 @@ The above workflow will set up your project and deploys it to AWS
 * [http://api.{{.projectName}}.pac.pyramidchallenges.com/api/<service-name>](http://api.{{.projectName}}.pac.pyramidchallenges.com/api/<service-name>)
 * [http://jenkins.{{.projectName}}.pac.pyramidchallenges.com:8080](http://jenkins.{{.projectName}}.pac.pyramidchallenges.com:8080)
 * [http://sonarqube.{{.projectName}}.pac.pyramidchallenges.com:9000](http://sonarqube.{{.projectName}}.pac.pyramidchallenges.com:9000)
-* [http://selenium.{{.projectName}}.pac.pyramidchallenges.com:4444](http://selenium.{{.projectName}}.pac.pyramidchallenges.com:4444)
+* [http://selenium.{{.projectName}}.pac.pyramidchallenges.com:4448](http://selenium.{{.projectName}}.pac.pyramidchallenges.com:4448)
 
 ### Description
 {{.description}}
