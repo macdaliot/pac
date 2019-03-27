@@ -66,27 +66,27 @@ resource "aws_ssm_parameter" "sonar_jdbc_username" {
   value = "${random_string.password.3.result}"
 }
 
-output "jwt_issuer" {
-  value = "${aws_ssm_parameter.jwt_issuer.value}"
-}
+# output "jwt_issuer" {
+#   value = "${aws_ssm_parameter.jwt_issuer.value}"
+# }
 
-output "jwt_secret" {
-  value = "${aws_ssm_parameter.jwt_secret.value}"
-}
+# output "jwt_secret" {
+#   value = "${aws_ssm_parameter.jwt_secret.value}"
+# }
 
-output "postgres_password" {
-  value = "${aws_ssm_parameter.postgres_password.value}"
-}
+# output "postgres_password" {
+#   value = "${aws_ssm_parameter.postgres_password.value}"
+# }
 
 
-output "sonar_jdbc_username" {
-  value = "${aws_ssm_parameter.sonar_jdbc_username.value}"
-}
+# output "sonar_jdbc_username" {
+#   value = "${aws_ssm_parameter.sonar_jdbc_username.value}"
+# }
 
-output "sonar_jdbc_password" {
-  value = "${aws_ssm_parameter.sonar_jdbc_password.value}"
-}
+# output "sonar_jdbc_password" {
+#   value = "${aws_ssm_parameter.sonar_jdbc_password.value}"
+# }
 
-output "sonar_jdbc_url" {
-  value = "${aws_ssm_parameter.sonar_jdbc_url.value}"
-}
+# output "sonar_jdbc_url" {
+#   value = "${aws_ssm_parameter.sonar_jdbc_url.value}"
+# }
