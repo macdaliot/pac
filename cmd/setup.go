@@ -39,17 +39,21 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		setup.SetTerraformEnv()
 		//setup S3 bucket where Terraform can store state
 		setup.S3Buckets(projectName)
-		//setup terraform provider to create infrastructure
-		setup.TerraformInitialize()
-		setup.TerraformCreate()
-		setup.TerraformApply()
-		config.Set("jenkinsUrl", "jenkins."+config.Get("projectFqdn")+":8080")
-		//local developent via docker
-		setup.HaProxy(projectName)
-		//create github repository
-		setup.GitRepository(projectName)
-		//creates webhook to talk to Jenkins in AWS
-		setup.GitHubWebhook()
+		//create encryption key
+		setup.CreateEncryptionKey()
+		//encrypt S3 bucket
+		setup.EncryptS3Bucket()
+		// //setup terraform provider to create infrastructure
+		// setup.TerraformInitialize()
+		// setup.TerraformCreate()
+		// setup.TerraformApply()
+		// config.Set("jenkinsUrl", "jenkins."+config.Get("projectFqdn")+":8080")
+		// //local developent via docker
+		// setup.HaProxy(projectName)
+		// //create github repository
+		// setup.GitRepository(projectName)
+		// //creates webhook to talk to Jenkins in AWS
+		// setup.GitHubWebhook()
 	},
 }
 
