@@ -49,7 +49,7 @@ resource "aws_ssm_parameter" "sonar_jdbc_password" {
   name  = "SONAR_JDBC_PASSWORD"
   description = "Sonar JDBC password"
   type  = "SecureString"
-  value = "${random_string.password.2.result}"
+  value = "sonar"
 }
 
 resource "aws_ssm_parameter" "sonar_jdbc_url" {

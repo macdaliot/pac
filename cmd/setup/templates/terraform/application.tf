@@ -1,25 +1,4 @@
 
-resource "aws_vpc" "application" {
-  cidr_block = "10.1.0.0/16"
-
-  tags {
-    name = "${var.project_name}-application-vpc"
-  }
-}
-
-# Create var.az_count public subnets, each in a different AZ
-resource "aws_subnet" "public" {
-  count                   = "${var.az_count}"
-  cidr_block              = "${cidrsubnet(aws_vpc.application.cidr_block, 8, var.az_count + count.index)}"
-  availability_zone       = "${data.aws_availability_zones.available.names[count.index]}"
-  vpc_id                  = "${aws_vpc.application.id}"
-  map_public_ip_on_launch = false
-
-  tags {
-    name = "${var.project_name}-public-${count.index}"
-  }
-}
-
 # IGW for the public subnet
 resource "aws_internet_gateway" "gw" {
   vpc_id = "${aws_vpc.application.id}"
@@ -45,6 +24,10 @@ variable "cnames" {
 #
 # https://www.terraform.io/docs/providers/aws/r/route53_record.html
 #
+#
+# These records are created in application VPC instead of the management VPC because they requie a load balancer which
+# is created in the application VPC per design requirements to speed up setup
+#
 resource "aws_route53_record" "record" {
   
 
@@ -56,6 +39,10 @@ resource "aws_route53_record" "record" {
   records = ["${aws_alb.main.dns_name}"]
 }
 
+
+resource "aws_ecs_cluster" "main" {
+  name = "${var.project_name}"
+}
 resource "aws_s3_bucket" "integration" {
   bucket        = "integration.${var.project_name}.${var.hosted_zone}"
   acl           = "public-read"
@@ -117,18 +104,7 @@ resource "aws_route53_record" "integration" {
     evaluate_target_health = true
   }
 }
-resource "aws_route_table" "application_vpc" {
-  vpc_id = "${aws_vpc.application.id}"
 
-  route {
-    cidr_block = "${aws_vpc.management.cidr_block}"
-    vpc_peering_connection_id = "${module.peer_vpcs.id}"
-  }
-
-  tags = {
-    Name = "${var.project_name} vpc peering route table"
-  }
-}
 
 # https://www.terraform.io/docs/providers/aws/r/iam_role.html
 # IAM role

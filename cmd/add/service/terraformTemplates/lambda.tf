@@ -28,9 +28,9 @@ resource "aws_lambda_function" "lambda_{{ .serviceName }}" {
 #
 resource "aws_alb_target_group" "{{ .projectName }}_{{ .serviceName }}_target_group" {
   name        = "pac-{{ .projectName }}-i-{{ .serviceName }}"
-  # port        = "${var.app_port}"
-  # protocol    = "${var.app_protocol}"
-  # vpc_id      = "${var.vpc_id}"
+  port        = "80"
+  protocol    = "http"
+  vpc_id      = "${aws_vpc.application.id}"
   target_type = "lambda"
 }
 

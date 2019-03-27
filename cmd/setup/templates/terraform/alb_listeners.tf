@@ -1,7 +1,7 @@
-
 #
 # https://www.terraform.io/docs/providers/aws/r/lb_listener.html
-# alb listener
+#
+# Redirect all traffic from the ALB to the target group
 #
 resource "aws_lb_listener" "api" {
   load_balancer_arn = "${aws_alb.main.arn}"
@@ -20,8 +20,6 @@ resource "aws_lb_listener" "api" {
     }
   }
 }
-#http://#{host}:80/api?#{query}
-#Redirect all traffic from the ALB to the target group
 resource "aws_alb_listener" "jenkins" {
   load_balancer_arn = "${aws_alb.main.id}"
   port              = "8080"

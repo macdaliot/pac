@@ -11,11 +11,21 @@ resource "aws_ecs_task_definition" "jenkins" {
 [
   {
     "image": "118104210923.dkr.ecr.us-east-2.amazonaws.com/pac-jenkins",
-    "name": "pac-${var.project_name}-jenkins",
+    "name": "pac-jenkins",
     "networkMode": "awsvpc",
     "portMappings": [
       {
         "containerPort": 8080
+      }
+    ],
+    "environment": [
+      {
+        "name": "jwt_issuer",
+        "value": "urn:pacAuth"
+      },
+      {
+        "name": "jwt_secret",
+        "value": "${random_string.password.0.result}"
       }
     ],
     "logConfiguration": { 
@@ -43,48 +53,66 @@ resource "aws_ecs_task_definition" "sonarqube" {
   container_definitions = <<DEFINITION
 [
   {
-    "secrets": [
+    "secrets" : [
       {
-        "name": "sonar.jdbc.password",
-        "valueFrom": "arn:aws:ssm:us-east-2:118104210923:parameter/sonar_jdbc_password"
-      },
-      {
-        "name": "sonar.jdbc.url",
-        "valueFrom": "arn:aws:ssm:us-east-2:118104210923:parameter/sonar_jdbc_url"
-      },
-      {
-        "name": "sonar.jdbc.username",
-        "valueFrom": "arn:aws:ssm:us-east-2:118104210923:parameter/sonar_jdbc_username"
+        "name" : "sonar.jdbc.password",
+        "valueFrom" : "SONAR_JDBC_PASSWORD"
       }
     ],
     "cpu": 2048,
     "image": "118104210923.dkr.ecr.us-east-2.amazonaws.com/sonarqube",
     "memory": 4096,
-    "name": "pac-${var.project_name}-sonarqube",
+    "name": "sonarqube",
     "networkMode": "awsvpc",
     "portMappings": [
       {
         "containerPort": 9000
       }
-    ]
-  },
-  {
-    "secrets": [
+    ],
+    "environment": [
       {
-        "name": "POSTGRES_PASSWORD",
-        "valueFrom": "arn:aws:ssm:us-east-2:118104210923:parameter/postgres_password"
+        "name": "sonar.jdbc.url",
+        "value": "jdbc:postgresql://localhost/sonar"
+      },
+      {
+        "name": "sonar.jdbc.username",
+        "value": "sonar"
       }
     ],
+    "logConfiguration": { 
+      "logDriver": "awslogs",
+      "options": { 
+          "awslogs-group" : "/ecs/${var.project_name}-log-group",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "ecs"
+      }
+    }
+  },
+  {
     "cpu": 2048,
     "image": "118104210923.dkr.ecr.us-east-2.amazonaws.com/pac-sonar-db",
     "memory": 4096,
-    "name": "pac-${var.project_name}-sonar-db",
+    "name": "pac-sonar-db",
     "networkMode": "awsvpc",
     "portMappings": [
       {
         "containerPort": 5432
       }
-    ]
+    ],
+    "environment": [
+      {
+        "name": "POSTGRES_PASSWORD",
+        "value": "pyramid"
+      }
+    ],
+    "logConfiguration": { 
+      "logDriver": "awslogs",
+      "options": { 
+          "awslogs-group" : "/ecs/${var.project_name}-log-group",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "ecs"
+      }
+    }
   }
 ]
 DEFINITION
@@ -96,22 +124,69 @@ resource "aws_ecs_task_definition" "selenium" {
   family                   = "pac-selenium"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "${var.fargate_cpu}"
-  memory                   = "${var.fargate_memory}"
+  cpu                      = "4096"
+  memory                   = "8192"
 
   container_definitions = <<DEFINITION
 [
   {
     "cpu": 2048,
-    "image": "118104210923.dkr.ecr.us-east-2.amazonaws.com/selenium",
+    "image": "118104210923.dkr.ecr.us-east-2.amazonaws.com/pac-selenium-hub",
     "memory": 4096,
-    "name": "pac-${var.project_name}-selenium",
+    "name": "pac-selenium-hub-${var.project_name}",
     "networkMode": "awsvpc",
     "portMappings": [
       {
         "containerPort": 4448
       }
-    ]
+    ],
+    "environment": [
+      {
+        "name": "SE_OPTS",
+        "value": "-port 4448"
+      }
+    ],
+    "logConfiguration": { 
+      "logDriver": "awslogs",
+      "options": { 
+          "awslogs-group" : "/ecs/${var.project_name}-log-group",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "ecs"
+      }
+    }
+  },
+  {
+    "cpu": 2048,
+    "image": "118104210923.dkr.ecr.us-east-2.amazonaws.com/pac-selenium-node-chrome",
+    "memory": 4096,
+    "name": "pac-selenium-node-chrome-${var.project_name}",
+    "networkMode": "awsvpc",
+    "environment": [
+      {
+        "name" : "HUB_HOST",
+        "value": "localhost"
+      },
+      {
+        "name" : "HUB_PORT",
+        "value": "4448"
+      },
+      {
+        "name" : "NODE_MAX_INSTANCES",
+        "value": "5"
+      },
+      {
+        "name" : "NODE_MAX_SESSION",
+        "value": "5"
+      }
+    ],
+    "logConfiguration": { 
+      "logDriver": "awslogs",
+      "options": { 
+          "awslogs-group" : "/ecs/${var.project_name}-log-group",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "ecs"
+      }
+    }
   }
 ]
 DEFINITION

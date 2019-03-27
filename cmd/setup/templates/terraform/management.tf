@@ -47,8 +47,25 @@ resource "aws_subnet" "private" {
   }
 }
 
-resource "aws_ecs_cluster" "main" {
-  name = "${var.project_name}"
+resource "aws_vpc" "application" {
+  cidr_block = "10.1.0.0/16"
+
+  tags {
+    name = "${var.project_name}-application-vpc"
+  }
+}
+
+# Create var.az_count public subnets, each in a different AZ
+resource "aws_subnet" "public" {
+  count                   = "${var.az_count}"
+  cidr_block              = "${cidrsubnet(aws_vpc.application.cidr_block, 8, var.az_count + count.index)}"
+  availability_zone       = "${data.aws_availability_zones.available.names[count.index]}"
+  vpc_id                  = "${aws_vpc.application.id}"
+  map_public_ip_on_launch = false
+
+  tags {
+    name = "${var.project_name}-public-${count.index}"
+  }
 }
 
 module "peer_vpcs" {
@@ -58,6 +75,7 @@ module "peer_vpcs" {
   vpc_id      = "${aws_vpc.application.id}"
 }
 
+# Add route from application vpc to management vpc using vpc peering connection
 resource "aws_route_table" "management_vpc" {
   vpc_id = "${aws_vpc.management.id}"
 
@@ -70,3 +88,18 @@ resource "aws_route_table" "management_vpc" {
     Name = "${var.project_name} vpc peering route table"
   }
 }
+
+# Add route from management vpc to application vpc using vpc peering connection
+resource "aws_route_table" "application_vpc" {
+  vpc_id = "${aws_vpc.application.id}"
+
+  route {
+    cidr_block = "${aws_vpc.management.cidr_block}"
+    vpc_peering_connection_id = "${module.peer_vpcs.id}"
+  }
+
+  tags = {
+    Name = "${var.project_name} vpc peering route table"
+  }
+}
+
