@@ -62,7 +62,7 @@ resource "aws_ecs_service" "selenium" {
 
   load_balancer {
     target_group_arn = "${aws_alb_target_group.selenium.id}"
-    container_name   = "selenium"
+    container_name   = "pac-selenium-hub-${var.project_name}"
     container_port   = "4448"
   }
 
