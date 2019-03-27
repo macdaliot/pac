@@ -3,23 +3,24 @@
 #
 # Redirect all traffic from the ALB to the target group
 #
-# resource "aws_lb_listener" "api" {
-#   load_balancer_arn = "${aws_alb.main.arn}"
-#   port              = "80"
-#   protocol          = "HTTP"
+resource "aws_lb_listener" "api" {
+  load_balancer_arn = "${aws_alb.main.arn}"
+  port              = "80"
+  protocol          = "HTTP"
 
-#   default_action {
-#     type             = "redirect"
+  default_action {
+    type             = "redirect"
 
-#     redirect {
-#       port        = "80"
-#       protocol    = "HTTP"
-#       status_code = "HTTP_301"
-#       path        = "/api"
-#       query       = "#{query}"
-#     }
-#   }
-# }
+    redirect {
+      port        = "80"
+      protocol    = "HTTP"
+      status_code = "HTTP_301"
+      path        = "/"
+      query       = "#{query}"
+    }
+  }
+}
+
 resource "aws_alb_listener" "jenkins" {
   load_balancer_arn = "${aws_alb.main.id}"
   port              = "8080"

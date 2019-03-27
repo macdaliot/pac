@@ -1,8 +1,9 @@
 #
 # https://www.terraform.io/docs/providers/aws/r/lb_listener_rule.html#condition
 #
+
 resource "aws_alb_listener_rule" "jenkins_host" {
-  listener_arn = "${aws_alb_listener.jenkins.arn}"
+  listener_arn = "${aws_alb_listener.api.arn}"
   priority     = 99
 
   action {
@@ -17,7 +18,7 @@ resource "aws_alb_listener_rule" "jenkins_host" {
 }
 
 resource "aws_alb_listener_rule" "sonarqube_host" {
-  listener_arn = "${aws_alb_listener.sonarqube.arn}"
+  listener_arn = "${aws_alb_listener.api.arn}"
   priority     = 98
 
   action {
@@ -32,7 +33,7 @@ resource "aws_alb_listener_rule" "sonarqube_host" {
 }
 
 resource "aws_alb_listener_rule" "selenium_host" {
-  listener_arn = "${aws_alb_listener.selenium.arn}"
+  listener_arn = "${aws_alb_listener.api.arn}"
   priority     = 97
 
   action {
