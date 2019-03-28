@@ -13,13 +13,13 @@ resource "aws_ecs_service" "jenkins" {
   }
 
   load_balancer {
-    target_group_arn = "${aws_alb_target_group.jenkins.id}"
+    target_group_arn = "${aws_lb_target_group.jenkins.id}"
     container_name   = "pac-jenkins"
     container_port   = "8080"
   }
 
   depends_on = [
-    "aws_alb_listener.jenkins"
+    "aws_lb_listener.jenkins"
   ]
 }
 
@@ -37,13 +37,13 @@ resource "aws_ecs_service" "sonarqube" {
   }
 
   load_balancer {
-    target_group_arn = "${aws_alb_target_group.sonarqube.id}"
+    target_group_arn = "${aws_lb_target_group.sonarqube.id}"
     container_name   = "sonarqube"
     container_port   = "9000"
   }
 
   depends_on = [
-    "aws_alb_listener.sonarqube"
+    "aws_lb_listener.sonarqube"
   ]
 }
 
@@ -61,12 +61,12 @@ resource "aws_ecs_service" "selenium" {
   }
 
   load_balancer {
-    target_group_arn = "${aws_alb_target_group.selenium.id}"
+    target_group_arn = "${aws_lb_target_group.selenium.id}"
     container_name   = "pac-selenium-hub-${var.project_name}"
     container_port   = "4448"
   }
 
   depends_on = [
-    "aws_alb_listener.selenium"
+    "aws_lb_listener.selenium"
   ]
 }

@@ -2,8 +2,8 @@
 #     value = "${aws_lb_listener.api.id}"
 # }
 
-output "aws_alb_target_group_jenkins" {
-    value = "${aws_alb_target_group.jenkins.id}"
+output "aws_lb_target_group_jenkins" {
+    value = "${aws_lb_target_group.jenkins.id}"
 }
 
 output "elasticsearch_created" {

@@ -1,4 +1,4 @@
-resource "aws_alb_target_group" "target_group" {
+resource "aws_lb_target_group" "target_group" {
   name        = "${var.project_name}-target-group"
   port        = "${var.app_port}"
   protocol    = "${var.app_protocol}"
@@ -6,7 +6,7 @@ resource "aws_alb_target_group" "target_group" {
   target_type = "${var.target_type}"
 }
 
-resource "aws_alb_listener" "alb_listener" {
+resource "aws_lb_listener" "alb_listener" {
   load_balancer_arn = "${var.alb_arn}"
   port              = "${var.alb_listener_port}"
   protocol          = "${var.alb_lister_protocol}"

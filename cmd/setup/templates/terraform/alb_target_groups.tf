@@ -1,4 +1,4 @@
-resource "aws_alb_target_group" "jenkins" {
+resource "aws_lb_target_group" "jenkins" {
   name        = "${var.project_name}-ecs-jenkins"
   port        = "8080"
   protocol    = "HTTP"
@@ -16,7 +16,7 @@ resource "aws_alb_target_group" "jenkins" {
   }
 }
 
-resource "aws_alb_target_group" "sonarqube" {
+resource "aws_lb_target_group" "sonarqube" {
   name        = "${var.project_name}-ecs-sonarqube"
   port        = "9000"
   protocol    = "HTTP"
@@ -24,7 +24,7 @@ resource "aws_alb_target_group" "sonarqube" {
   target_type = "ip"
 }
 
-resource "aws_alb_target_group" "selenium" {
+resource "aws_lb_target_group" "selenium" {
   name        = "${var.project_name}-ecs-selenium"
   port        = "4448"
   protocol    = "HTTP"

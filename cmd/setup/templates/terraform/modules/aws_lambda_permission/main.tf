@@ -9,6 +9,6 @@ resource "aws_lambda_permission" "with_lb" {
   action        = "lambda:InvokeFunction"
   function_name = "pac-${var.project_name}-i-${var.resource_name}"
   principal     = "elasticloadbalancing.amazonaws.com"
-  #source_arn    = "${aws_alb_target_group.pac_lambda_target_group.arn}"
+  #source_arn    = "${aws_lb_target_group.pac_lambda_target_group.arn}"
   source_arn    = "${var.source_arn}"
 }

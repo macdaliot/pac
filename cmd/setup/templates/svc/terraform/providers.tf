@@ -32,7 +32,7 @@ data "terraform_remote_data" "pac" {
 
   config {
     bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
-    key    = "state/development/lambdas"
+    key    = "state/development"
     region = "us-east-2"
   }
 }

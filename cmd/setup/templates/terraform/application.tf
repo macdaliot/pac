@@ -11,7 +11,7 @@ resource "aws_route" "internet_access" {
   gateway_id             = "${aws_internet_gateway.gw.id}"
 }
 
-resource "aws_alb" "main" {
+resource "aws_lb" "main" {
   name            = "${var.project_name}-load-balancer"
   subnets         = ["${aws_subnet.public.*.id}"]
   security_groups = ["${aws_security_group.lb.id}"]
@@ -36,7 +36,7 @@ resource "aws_route53_record" "record" {
   name    = "${element(var.cnames,count.index)}"
   type    = "CNAME"
   ttl     = "60"
-  records = ["${aws_alb.main.dns_name}"]
+  records = ["${aws_lb.main.dns_name}"]
 }
 
 resource "aws_s3_bucket" "integration" {
@@ -83,8 +83,8 @@ resource "aws_route53_record" "demo" {
   type    = "A"
 
   alias {
-    name                   = "${aws_alb.main.dns_name}"
-    zone_id                = "${aws_alb.main.zone_id}"
+    name                   = "${aws_lb.main.dns_name}"
+    zone_id                = "${aws_lb.main.zone_id}"
     evaluate_target_health = true
   }
 }
@@ -95,8 +95,8 @@ resource "aws_route53_record" "integration" {
   type    = "A"
 
   alias {
-    name                   = "${aws_alb.main.dns_name}"
-    zone_id                = "${aws_alb.main.zone_id}"
+    name                   = "${aws_lb.main.dns_name}"
+    zone_id                = "${aws_lb.main.zone_id}"
     evaluate_target_health = true
   }
 }
