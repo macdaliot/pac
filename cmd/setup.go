@@ -45,6 +45,9 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		setup.Templates(projectName, description, gitAuth, setupProvider, encryptionKeyID)
 		config.Set("projectFqdn", projectName+".pac.pyramidchallenges.com")
 
+		//McNairy doesn't know why encryptionKeyID isn't added to config when passed to setup.Templates
+		config.Set("encryptionKeyID", encryptionKeyID)
+
 		//check if Terraform is installed
 		setup.IsTerraformInstalled()
 
