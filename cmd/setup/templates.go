@@ -19,9 +19,9 @@ type Provider struct {
 }
 
 //Templates creates project directory, config files, and copies project files to project directory.
-func Templates(projectName string, description string, gitAuth string, provider Provider) {
+func Templates(projectName string, description string, gitAuth string, provider Provider, encryptionKeyID string) {
 	createRootProjectDirectory(projectName)
-	cfg := createConfig(projectName, description, gitAuth, provider)
+	cfg := createConfig(projectName, description, gitAuth, provider, encryptionKeyID)
 	createProjectFiles(cfg)
 	logger.Info("Created project structure")
 }
@@ -33,7 +33,7 @@ func createRootProjectDirectory(projectName string) {
 	os.Chdir(projectDirectory)
 }
 
-func createConfig(projectName string, description string, gitAuth string, provider Provider) map[string]string {
+func createConfig(projectName string, description string, gitAuth string, provider Provider, encryptionKeyID string) map[string]string {
 	cfg := make(map[string]string)
 	cfg["projectName"] = projectName
 	cfg["description"] = description
@@ -41,6 +41,7 @@ func createConfig(projectName string, description string, gitAuth string, provid
 	cfg["Region"] = provider.Region
 	cfg["AWSVersion"] = provider.AWSVersion
 	cfg["TemplateVersion"] = provider.TemplateVersion
+	cfg["encryptionKeyID"] = encryptionKeyID
 	return cfg
 }
 

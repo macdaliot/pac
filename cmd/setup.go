@@ -20,11 +20,13 @@ var setupCmd = &cobra.Command{
 NodeJS/Express back-end, and DynamoDB database)`,
 	Run: func(cmd *cobra.Command, args []string) {
 		logger.SetLogLevel("info")
+
 		projectName := getProjectName(cmd)
 		description := getDescription(cmd)
 		frontEnd := getFrontEnd(cmd)
 		backEnd := getBackEnd(cmd)
 		database := getDatabase(cmd)
+
 		warnExtraArgumentsAreIgnored(args)
 		setup.ValidateInputs(projectName, frontEnd, backEnd, database)
 		setupProvider := setup.Provider{
@@ -33,31 +35,40 @@ NodeJS/Express back-end, and DynamoDB database)`,
 			AWSVersion:      "1.60",
 			TemplateVersion: "2.1",
 		}
-		setup.Templates(projectName, description, gitAuth, setupProvider)
+
+		//create AWS session
+		awsSession := aws.CreateAwsSession("us-east-2")
+
+		//create encryption key
+		encryptionKeyID := kms.CreateEncryptionKey(awsSession, "pac-project", projectName)
+
+		setup.Templates(projectName, description, gitAuth, setupProvider, encryptionKeyID)
 		config.Set("projectFqdn", projectName+".pac.pyramidchallenges.com")
 
 		//check if Terraform is installed
 		setup.IsTerraformInstalled()
+
 		//set environment variables for Terraform automation
 		setup.SetTerraformEnv()
-		//create AWS session
-		awsSession := aws.CreateAwsSession("us-east-2")
+
 		//setup S3 bucket where Terraform can store state
 		setup.S3Buckets(projectName)
-		//create encryption key
-		encryptionKeyID := kms.CreateEncryptionKey(awsSession, "pac-project", projectName)
-		config.Set("encryptionKeyID", encryptionKeyID)
+
 		//encrypt S3 bucket
 		s3.EncryptBucket(config.Get("terraformS3Bucket"), config.Get("encryptionKeyID"))
+
 		//setup terraform provider to create infrastructure
 		setup.TerraformInitialize()
 		setup.TerraformCreate()
 		setup.TerraformApply()
 		config.Set("jenkinsUrl", "jenkins."+config.Get("projectFqdn")+":8080")
+
 		//local developent via docker
 		setup.HaProxy(projectName)
+
 		//create github repository
 		setup.GitRepository(projectName)
+
 		//creates webhook to talk to Jenkins in AWS
 		setup.GitHubWebhook()
 	},
