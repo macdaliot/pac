@@ -39,10 +39,6 @@ resource "aws_route53_record" "record" {
   records = ["${aws_alb.main.dns_name}"]
 }
 
-
-resource "aws_ecs_cluster" "main" {
-  name = "${var.project_name}"
-}
 resource "aws_s3_bucket" "integration" {
   bucket        = "integration.${var.project_name}.${var.hosted_zone}"
   acl           = "public-read"

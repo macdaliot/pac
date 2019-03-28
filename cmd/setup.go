@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"github.com/PyramidSystemsInc/go/aws"
+	"github.com/PyramidSystemsInc/go/aws/kms"
+	"github.com/PyramidSystemsInc/go/aws/s3"
 	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/pac/cmd/setup"
@@ -37,23 +40,26 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		setup.IsTerraformInstalled()
 		//set environment variables for Terraform automation
 		setup.SetTerraformEnv()
+		//create AWS session
+		awsSession := aws.CreateAwsSession("us-east-2")
 		//setup S3 bucket where Terraform can store state
 		setup.S3Buckets(projectName)
 		//create encryption key
-		setup.CreateEncryptionKey()
+		encryptionKeyID := kms.CreateEncryptionKey(awsSession, "pac-project", projectName)
+		config.Set("encryptionKeyID", encryptionKeyID)
 		//encrypt S3 bucket
-		setup.EncryptS3Bucket()
-		// //setup terraform provider to create infrastructure
-		// setup.TerraformInitialize()
-		// setup.TerraformCreate()
-		// setup.TerraformApply()
-		// config.Set("jenkinsUrl", "jenkins."+config.Get("projectFqdn")+":8080")
-		// //local developent via docker
-		// setup.HaProxy(projectName)
-		// //create github repository
-		// setup.GitRepository(projectName)
-		// //creates webhook to talk to Jenkins in AWS
-		// setup.GitHubWebhook()
+		s3.EncryptBucket(config.Get("terraformS3Bucket"), config.Get("encryptionKeyID"))
+		//setup terraform provider to create infrastructure
+		setup.TerraformInitialize()
+		setup.TerraformCreate()
+		setup.TerraformApply()
+		config.Set("jenkinsUrl", "jenkins."+config.Get("projectFqdn")+":8080")
+		//local developent via docker
+		setup.HaProxy(projectName)
+		//create github repository
+		setup.GitRepository(projectName)
+		//creates webhook to talk to Jenkins in AWS
+		setup.GitHubWebhook()
 	},
 }
 
@@ -74,7 +80,7 @@ func warnExtraArgumentsAreIgnored(args []string) {
 	}
 }
 
-var gitAuth string = "amRpZWRlcmlrc0Bwc2ktaXQuY29tOkRpZWRyZV4yMDE4"
+var gitAuth = "amRpZWRlcmlrc0Bwc2ktaXQuY29tOkRpZWRyZV4yMDE4"
 
 var projectName string
 

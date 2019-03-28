@@ -103,3 +103,6 @@ resource "aws_route_table" "application_vpc" {
   }
 }
 
+resource "aws_ecs_cluster" "main" {
+  name = "${var.project_name}"
+}
