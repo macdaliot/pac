@@ -10,22 +10,30 @@ resource "aws_ecs_task_definition" "jenkins" {
   container_definitions = <<DEFINITION
 [
   {
+    "secrets": [
+      {
+        "name": "JWT_ISSUER",
+        "valueFrom": "/pac/${var.project_name}/jwt_issuer"
+      },
+      {
+        "name": "JWT_SECRET",
+        "valueFrom": "/pac/${var.project_name}/jwt_secret"
+      },
+      {
+        "name": "USERNAME",
+        "valueFrom": "/pac/${var.project_name}/jenkins/username"
+      },
+      {
+        "name": "PASSWORD",
+        "valueFrom": "/pac/${var.project_name}/jenkins/password"
+      }
+    ],
     "image": "118104210923.dkr.ecr.us-east-2.amazonaws.com/pac-jenkins",
     "name": "pac-jenkins",
     "networkMode": "awsvpc",
     "portMappings": [
       {
         "containerPort": 8080
-      }
-    ],
-    "environment": [
-      {
-        "name": "jwt_issuer",
-        "value": "urn:pacAuth"
-      },
-      {
-        "name": "jwt_secret",
-        "value": "${random_string.password.0.result}"
       }
     ],
     "logConfiguration": { 
@@ -55,8 +63,16 @@ resource "aws_ecs_task_definition" "sonarqube" {
   {
     "secrets" : [
       {
+        "name" : "sonar.jdbc.username",
+        "valueFrom" : "/pac/${var.project_name}/sonar_jdbc_username"
+      },
+      {
         "name" : "sonar.jdbc.password",
-        "valueFrom" : "SONAR_JDBC_PASSWORD"
+        "valueFrom" : "/pac/${var.project_name}/sonar_jdbc_password"
+      },
+      {
+        "name": "sonar.jdbc.url",
+        "valueFrom": "/pac/${var.project_name}/sonar_jdbc_url"
       }
     ],
     "cpu": 2048,
@@ -69,16 +85,6 @@ resource "aws_ecs_task_definition" "sonarqube" {
         "containerPort": 9000
       }
     ],
-    "environment": [
-      {
-        "name": "sonar.jdbc.url",
-        "value": "jdbc:postgresql://localhost/sonar"
-      },
-      {
-        "name": "sonar.jdbc.username",
-        "value": "sonar"
-      }
-    ],
     "logConfiguration": { 
       "logDriver": "awslogs",
       "options": { 
@@ -89,6 +95,12 @@ resource "aws_ecs_task_definition" "sonarqube" {
     }
   },
   {
+    "secrets": [
+      {
+        "name": "POSTGRES_PASSWORD",
+        "valueFrom": "/pac/${var.project_name}/postgres/password" 
+      }
+    ],
     "cpu": 2048,
     "image": "118104210923.dkr.ecr.us-east-2.amazonaws.com/pac-sonar-db",
     "memory": 4096,
@@ -97,12 +109,6 @@ resource "aws_ecs_task_definition" "sonarqube" {
     "portMappings": [
       {
         "containerPort": 5432
-      }
-    ],
-    "environment": [
-      {
-        "name": "POSTGRES_PASSWORD",
-        "value": "pyramid"
       }
     ],
     "logConfiguration": { 

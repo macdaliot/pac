@@ -1,3 +1,3 @@
-data "aws_kms_key" "{{ .projectName }}_kms_key" {
+data "aws_kms_key" "project_key" {
   key_id = "{{ .encryptionKeyID }}"
 }
