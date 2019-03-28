@@ -66,13 +66,13 @@ resource "aws_ssm_parameter" "sonar_jdbc_username" {
   value = "${random_string.password.3.result}"
 }
 
-# output "jwt_issuer" {
-#   value = "${aws_ssm_parameter.jwt_issuer.value}"
-# }
+output "jwt_issuer" {
+  value = "${aws_ssm_parameter.jwt_issuer.value}"
+}
 
-# output "jwt_secret" {
-#   value = "${aws_ssm_parameter.jwt_secret.value}"
-# }
+output "jwt_secret" {
+  value = "${aws_ssm_parameter.jwt_secret.value}"
+}
 
 # output "postgres_password" {
 #   value = "${aws_ssm_parameter.postgres_password.value}"
