@@ -30,7 +30,7 @@ resource "aws_alb_target_group" "{{ .projectName }}_{{ .serviceName }}_target_gr
   name        = "pac-{{ .projectName }}-i-{{ .serviceName }}"
   port        = "80"
   protocol    = "http"
-  vpc_id      = "${aws_vpc.application.id}"
+  vpc_id      = "${data.terraform_remote_state.pac.application_vpc_id}"
   target_type = "lambda"
 }
 
