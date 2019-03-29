@@ -97,7 +97,7 @@ resource "aws_lb_listener_rule" "{{ .projectName }}_{{ .serviceName }}_rule_200"
 # dynamo_db
 #
 resource "aws_dynamodb_table" "{{ .projectName }}_dynamodb_table_{{ .serviceName }}" {
-  name           = "pac-{{ .projectName }}-{{ .serviceName }}"
+  name           = "pac-{{ .projectName }}-i-{{ .serviceName }}"
   billing_mode   = "PROVISIONED"
   read_capacity  = 5
   write_capacity = 5
