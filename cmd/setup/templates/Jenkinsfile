@@ -86,16 +86,6 @@ node {
         stage("Deploy to Integration"){
             parallel deployments
         }
-        stage("Integration Tests") {
-            script {
-                sh 'cd integration-tests/gradle/wrapper; jar cf gradle-wrapper.jar *'
-                def exitCode = sh(script: 'cd integration-tests; chmod 755 gradlew; ./gradlew clean test aggregate', returnStatus: true)
-                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'integration-tests/target/site/serenity', reportFiles: 'index.html', reportName: 'Serenity Report', reportTitles: ''])
-                if (exitCode > 0) {
-                    sh 'commandthatdoesntexist'
-                }
-            }
-        }
         stage("Inspect") {
             withCredentials([string(credentialsId: 'SONARLOGIN', variable: 'SONARLOGIN')]) {
                 script {
@@ -120,6 +110,16 @@ node {
                     // run sonar scan
                     sh 'cat test-report.xml'
                     sh 'sonar-scanner -Dsonar.login=$SONARLOGIN'
+                }
+            }
+        }
+        stage("Integration Tests") {
+            script {
+                sh 'cd integration-tests/gradle/wrapper; jar cf gradle-wrapper.jar *'
+                def exitCode = sh(script: 'cd integration-tests; chmod 755 gradlew; ./gradlew clean test aggregate', returnStatus: true)
+                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'integration-tests/target/site/serenity', reportFiles: 'index.html', reportName: 'Serenity Report', reportTitles: ''])
+                if (exitCode > 0) {
+                    sh 'commandthatdoesntexist'
                 }
             }
         }
