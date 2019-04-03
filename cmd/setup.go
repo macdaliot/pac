@@ -94,6 +94,7 @@ func warnExtraArgumentsAreIgnored(args []string) {
 	}
 }
 
+// TODO: pull from systems manager parameter store
 var gitAuth = "amRpZWRlcmlrc0Bwc2ktaXQuY29tOkRpZWRyZV4yMDE4"
 
 var projectName string
