@@ -99,13 +99,13 @@ resource "aws_ssm_parameter" "jenkins_password" {
   key_id = "${data.aws_kms_key.project_key.key_id}"
 }
 
-output "jwt_issuer" {
-  value = "${aws_ssm_parameter.jwt_issuer.value}"
-}
+# output "jwt_issuer" {
+#   value = "${aws_ssm_parameter.jwt_issuer.value}"
+# }
 
-output "jwt_secret" {
-  value = "${aws_ssm_parameter.jwt_secret.value}"
-}
+# output "jwt_secret" {
+#   value = "${aws_ssm_parameter.jwt_secret.value}"
+# }
 
 # output "postgres_password" {
 #   value = "${aws_ssm_parameter.postgres_password.value}"
@@ -124,6 +124,6 @@ output "jwt_secret" {
 #   value = "${aws_ssm_parameter.sonar_jdbc_url.value}"
 # }
 
-output "jenkins_password" {
-  value = "${aws_ssm_parameter.jenkins_password.value}"
-}
+# output "jenkins_password" {
+#   value = "${aws_ssm_parameter.jenkins_password.value}"
+# }
