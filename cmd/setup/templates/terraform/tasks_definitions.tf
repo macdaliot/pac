@@ -29,7 +29,7 @@ resource "aws_ecs_task_definition" "jenkins" {
       },
       {
         "name": "SONAR_SECRET",
-        "valueFrom": "/pac/${var.project_name}/sonar/secret"
+        "valueFrom": "/pac/sonar/secret"
       },
       {
         "name": "GITHUB_USERNAME",
