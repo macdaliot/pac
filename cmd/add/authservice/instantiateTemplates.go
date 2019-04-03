@@ -9,7 +9,7 @@ import (
 )
 
 func CreateAllTemplatedFiles(config map[string]string) {
-  targetDirectory := "svc/auth"
+  targetDirectory := "services/authentication"
 	box := packr.NewBox("./authServiceTemplates")
 	for _, templatePath := range box.List() {
 		logger.Info(templatePath)

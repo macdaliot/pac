@@ -9,7 +9,7 @@ properties([
   ])
 ])
 node {
-  homeDirectory = "svc/${env.JOB_NAME}"
+  homeDirectory = "services/${env.JOB_NAME}"
   // ensure that our "wrapper" directory exists
   sh "mkdir -p ${params.PARENTNAME}"
   // work in that wrapper directory

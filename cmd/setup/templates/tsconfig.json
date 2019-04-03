@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "noImplicitAny": false,
+    "sourceMap": false,
+    "allowJs": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "moduleResolution": "node",
+    "paths": {
+      "@pyramidlabs/components": ["../../components"],
+      "@pyramidlabs/core": ["../../core"]
+    }
+  },
+  "exclude": ["**/node_modules/*", "**/dist/*", "**/templates/*"]
+}

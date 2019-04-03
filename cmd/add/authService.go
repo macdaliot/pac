@@ -8,10 +8,10 @@ import (
 
 // Service adds a new service to the application
 func AuthService() {
-	serviceName := "auth"
+	serviceName := "authentication"
 	createServiceDirectory(serviceName)
 	config := createTemplateConfig(serviceName)
 	authservice.CreateAllTemplatedFiles(config)
-	commands.Run("npm i", path.Join("svc/", serviceName))
+	commands.Run("npm i", path.Join("services/", serviceName))
 	editHaProxyConfig(serviceName, config["projectName"])
 }

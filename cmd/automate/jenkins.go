@@ -75,8 +75,8 @@ func createPipelineProvisionerXml(projectName string) {
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>if [ -d ./svc ]; then
-  cd svc
+      <command>if [ -d ./services ]; then
+  cd services
   NEW_PIPELINES=&quot;&quot;
   for DIR in *; do
     if [ -d &quot;${DIR}&quot; ]; then
@@ -126,7 +126,7 @@ cat &lt;&lt;- EOF &gt; job.xml
       &lt;submoduleCfg class=&quot;list&quot;/&gt;
       &lt;extensions/&gt;
     &lt;/scm&gt;
-    &lt;scriptPath&gt;svc/${DIR}/Jenkinsfile&lt;/scriptPath&gt;
+    &lt;scriptPath&gt;services/${DIR}/Jenkinsfile&lt;/scriptPath&gt;
     &lt;lightweight&gt;true&lt;/lightweight&gt;
   &lt;/definition&gt;
   &lt;triggers/&gt;

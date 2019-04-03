@@ -18,6 +18,6 @@ func createDockerNetwork(projectName string) {
 }
 
 func runHaProxyContainer(projectName string) {
-	cmd := str.Concat("docker run --name pac-proxy-local --network pac-", projectName, " -p 3000:3000 -v ", directories.GetWorking(), "/", projectName, "/svc:/usr/local/etc/haproxy:ro -d haproxy")
+	cmd := str.Concat("docker run --name pac-proxy-local --network pac-", projectName, " -p 3000:3000 -v ", directories.GetWorking(), "/", projectName, "/services:/usr/local/etc/haproxy:ro -d haproxy")
 	commands.Run(cmd, "")
 }

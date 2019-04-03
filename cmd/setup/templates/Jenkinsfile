@@ -90,7 +90,7 @@ node {
             withCredentials([string(credentialsId: 'SONARLOGIN', variable: 'SONARLOGIN')]) {
                 script {
                     // scan services for test coverage
-                    sh '(test -d svc && find svc -type d -maxdepth 1 -mindepth 1 -exec sh coverage.sh {} \\;) || true'
+                    sh '(test -d services && find services -type d -maxdepth 1 -mindepth 1 -exec sh coverage.sh {} \\;) || true'
                     // scan app for test coverage
                     sh 'sh coverage.sh app'
                     // merge coverage

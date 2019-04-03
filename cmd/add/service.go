@@ -19,12 +19,12 @@ func Service(serviceName string) {
 	createServiceDirectory(serviceName)
 	cfg := createTemplateConfig(serviceName)
 	createServiceFiles(serviceName, cfg)
-	commands.Run("npm i", path.Join("svc/", serviceName))
+	commands.Run("npm i", path.Join("services/", serviceName))
 	editHaProxyConfig(serviceName, cfg["projectName"])
 }
 
 func createServiceDirectory(serviceName string) {
-	serviceDirectory := str.Concat("svc/", serviceName)
+	serviceDirectory := str.Concat("services/", serviceName)
 	directories.Create(serviceDirectory)
 }
 
@@ -38,7 +38,7 @@ func createTemplateConfig(serviceName string) map[string]string {
 
 func createServiceFiles(serviceName string, cfg map[string]string) {
 	os.Chdir(config.GetRootDirectory())
-	os.Chdir(path.Join("svc/", serviceName))
+	os.Chdir(path.Join("services/", serviceName))
 	service.CreateAllTemplatedFiles(cfg)
 	os.Chdir(config.GetRootDirectory())
 	service.CreateFrontEndClient(str.Concat(strings.Title(serviceName), ".ts"), cfg)
@@ -46,7 +46,7 @@ func createServiceFiles(serviceName string, cfg map[string]string) {
 }
 
 func editHaProxyConfig(serviceName string, projectName string) {
-	haProxyConfigPath := "svc/haproxy.cfg"
+	haProxyConfigPath := "services/haproxy.cfg"
 	serviceConfig := str.Concat(`backend backend_`, serviceName, `
     mode http
     server `, serviceName, ` pac-`, projectName, `-`, serviceName, `
