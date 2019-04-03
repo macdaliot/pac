@@ -15,7 +15,7 @@ func Jenkins() {
 	createPipelineProvisionerXml(projectName)
 	createS3PipelineXml(projectName)
 	createWholePipelineXml(projectName)
-	jenkinsCliCommandStart := str.Concat("java -jar jenkins-cli.jar -s http://", jenkinsUrl, " -auth pyramid:systems")
+	jenkinsCliCommandStart := str.Concat("java -jar jenkins-cli.jar -s http://", jenkinsUrl, " -auth $USERNAME:$PASSWORD")
 	createPipelineJobs(jenkinsUrl, projectName, jenkinsCliCommandStart)
 	createPipelineComponentsSecret(jenkinsUrl, jenkinsCliCommandStart)
 	cleanUp()
@@ -70,7 +70,7 @@ func createPipelineProvisionerXml(projectName string) {
   NEW_PIPELINES=&quot;&quot;
   for DIR in *; do
     if [[ -d &quot;${DIR}&quot; &amp;&amp; &quot;${DIR}&quot; != &quot;terraform&quot; ]]; then
-      if java -jar ~/jenkins-cli.jar -s http://localhost:8080 -auth pyramid:systems get-job &quot;${DIR}&quot;; then
+      if java -jar ~/jenkins-cli.jar -s http://localhost:8080 -auth $USERNAME:$PASSWORD get-job &quot;${DIR}&quot;; then
         echo &quot;${DIR} Jenkins Pipeline Exists. Skipping&quot;
       else
         PROJECT_NAME=$(sed -e &apos;s/.*\///g&apos; -e &apos;s/.git$//g&apos; &lt;&lt;&lt; $(echo &quot;$GIT_URL&quot;))
@@ -115,7 +115,7 @@ cat &lt;&lt;- EOF &gt; job.xml
   &lt;disabled&gt;false&lt;/disabled&gt;
 &lt;/flow-definition&gt;
 EOF
-        java -jar ~/jenkins-cli.jar -s http://localhost:8080 -auth pyramid:systems create-job &quot;${DIR}&quot; &lt; job.xml
+        java -jar ~/jenkins-cli.jar -s http://localhost:8080 -auth $USERNAME:$PASSWORD create-job &quot;${DIR}&quot; &lt; job.xml
       fi
     fi
   done
@@ -131,9 +131,9 @@ cat &lt;&lt;- EOF &gt; pipeline-components.xml
   &lt;secret&gt;$PipelineComponents,$NEW_PIPELINES&lt;/secret&gt;
 &lt;/org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl&gt;
 EOF
-  java -jar ~/jenkins-cli.jar -s http://localhost:8080 -auth pyramid:systems update-credentials-by-xml system::system::jenkins \(global\) PipelineComponents &lt; pipeline-components.xml
+  java -jar ~/jenkins-cli.jar -s http://localhost:8080 -auth $USERNAME:$PASSWORD update-credentials-by-xml system::system::jenkins \(global\) PipelineComponents &lt; pipeline-components.xml
 fi
-java -jar ~/jenkins-cli.jar -s http://localhost:8080 -auth pyramid:systems build {{.projectName}}</command>
+java -jar ~/jenkins-cli.jar -s http://localhost:8080 -auth $USERNAME:$PASSWORD build {{.projectName}}</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
