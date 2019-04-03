@@ -1,5 +1,5 @@
+import { errorHandler, generateRandomString } from '../src/utility/functions'
 import * as express from 'express';
-import { errorHandler, generateRandomString } from '../src/functions'
 
 describe("generic functions", () => {
   it("should generate random strings", () => {

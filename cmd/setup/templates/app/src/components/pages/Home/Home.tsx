@@ -39,7 +39,7 @@ export class HomeComponent extends React.Component<HomeProps> {
   }
 }
 
-const mapState = (state: AuthState): HomeProps => {
+export const mapState = (state: AuthState): HomeProps => {
   return {
     isAuthenticated: Boolean(state.user)
   };

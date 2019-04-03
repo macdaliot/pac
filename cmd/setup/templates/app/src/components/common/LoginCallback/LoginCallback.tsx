@@ -22,7 +22,7 @@ export class LoginCallbackComponent extends React.Component<LoginCallbackProps> 
 }
 
 const mapState = () => ({});
-const mapDispatch = (dispatch: Dispatch<JwtReceivedAction>) => ({
+export const mapDispatch = (dispatch: Dispatch<JwtReceivedAction>) => ({
   setToken: (token: string) => dispatch({ type: 'JWT_RECEIVED', token: token }) 
 });
 
