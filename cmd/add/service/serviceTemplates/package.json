@@ -4,6 +4,7 @@
   "description": "{{.serviceName}} service (created by PAC)",
   "main": "server.js",
   "scripts": {
+    "build": "npx tsc",
     "start": "nodemon",
     "test": "npx jest --coverage",
     "test-sonar": "npx jest --coverage --testResultsProcessor=jest-sonar-reporter",

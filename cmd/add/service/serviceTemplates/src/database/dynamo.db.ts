@@ -5,6 +5,7 @@ import * as uuidv4 from 'uuid/v4'
 import * as _ from 'lodash';
 import * as AWS from 'aws-sdk';
 
+type KeyValueDictionary = { [key: string]: any };
 const _tableName = `pac-${projectName}-i-${serviceName}`;
 export class DynamoDB implements Database {
     /* DocumentClient API: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html */
@@ -15,7 +16,7 @@ export class DynamoDB implements Database {
         this.dbInstance = new Dynamo.DocumentClient({ apiVersion: '2012-10-08' });
     }
 
-    query = async (params) => {
+    query = async (params: KeyValueDictionary) => {
         let whereClause;
         try {
             if (_.isEmpty(params)) {
@@ -27,38 +28,51 @@ export class DynamoDB implements Database {
             }
 
         } catch (err) {
+            console.log("error during query");
+            console.log(err);
             throw err;
         }
     }
 
-    update = async (params: any, object: any) => {
+    update = async (params: KeyValueDictionary, object: KeyValueDictionary) => {
         const whereClause = this.buildUpdateParams(params);
         try {
-            return await this.dbInstance.update(whereClause).promise();
+            let response = await this.dbInstance.update(whereClause).promise();
+            console.log(JSON.stringify(response));
+            return response;
         } catch (err) {
+            console.log("error during update");
+            console.log(err);
             throw err;
         }
     }
 
-    delete = async (query) => {
+    delete = async (query: KeyValueDictionary) => {
         const whereClause = this.buildDeleteParams(query);
         try {
-            return await this.dbInstance.delete(whereClause).promise();
+            let response = await this.dbInstance.delete(whereClause).promise();
+            console.log(JSON.stringify(response));
+            return response;
         } catch (err) {
+            console.log("error during delete");
+            console.log(err);
             throw err;
         }
     }
 
-    create = async (object: any): Promise<AWS.DynamoDB.DocumentClient.PutItemOutput> => {
-        const whereClause = this.buildCreateParams(object);
+    create = async (object: KeyValueDictionary): Promise<{}> => {
         try {
+            const whereClause = this.buildCreateParams(object);
             return await this.dbInstance.put(whereClause).promise();
-        } catch (err) {
+        }
+        catch (err){
+            console.log("error during create");
+            console.log(err);
             throw err;
         }
     }
 
-    buildGetParams = (query): AWS.DynamoDB.DocumentClient.GetItemInput => {
+    buildGetParams = (query: KeyValueDictionary): AWS.DynamoDB.DocumentClient.GetItemInput => {
         return {
             TableName: _tableName,
             Key: query
@@ -66,7 +80,7 @@ export class DynamoDB implements Database {
     }
 
     /* TODO: only support single level json */
-    buildQueryParams = (query): AWS.DynamoDB.DocumentClient.QueryInput => {
+    buildQueryParams = (query: KeyValueDictionary): AWS.DynamoDB.DocumentClient.QueryInput => {
         const queryInput: AWS.DynamoDB.DocumentClient.QueryInput = {
             TableName: _tableName
         }
@@ -75,21 +89,21 @@ export class DynamoDB implements Database {
         return queryInput;
     }
 
-    buildCreateParams = (body): AWS.DynamoDB.DocumentClient.PutItemInput => {
+    buildCreateParams = (body: KeyValueDictionary): AWS.DynamoDB.DocumentClient.PutItemInput => {
         return {
             TableName: _tableName,
             Item: body
         }
     }
 
-    buildDeleteParams = (query): AWS.DynamoDB.DocumentClient.DeleteItemInput => {
-        return {
+    buildDeleteParams = (query: KeyValueDictionary): AWS.DynamoDB.DocumentClient.DeleteItemInput => {
+        return ({
             TableName: _tableName,
             Key: query
-        }
+        });
     }
 
-    buildUpdateParams = (query): AWS.DynamoDB.DocumentClient.UpdateItemInput => {
+    buildUpdateParams = (query: KeyValueDictionary): AWS.DynamoDB.DocumentClient.UpdateItemInput => {
         const params: AWS.DynamoDB.DocumentClient.UpdateItemInput = {
             TableName: _tableName,
             Key: query,
@@ -102,11 +116,12 @@ export class DynamoDB implements Database {
         return params;
     }
 
-    private createKeyConditionExpression = query => Object.keys(query).map(key => `${key} = :_${key}`).join(' and ');
-    private createExpressionAttributeValues = query => Object.keys(query).reduce(
-        (accumulator, key) => {
-            accumulator[`:_${key}`] = query[key]
-            return accumulator;
-        }
-        , {});
+    createKeyConditionExpression =
+        (query: KeyValueDictionary) => Object.keys(query).map(key => `${key} = :_${key}`).join(' and ');
+    createExpressionAttributeValues =
+        (query: KeyValueDictionary) => Object.keys(query).reduce(
+            (accumulator, key) => {
+                accumulator[`:_${key}`] = query[key]
+                return accumulator;
+            }, {} as KeyValueDictionary);
 }
