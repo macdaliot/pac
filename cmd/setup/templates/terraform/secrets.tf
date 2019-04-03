@@ -94,7 +94,8 @@ resource "aws_ssm_parameter" "jenkins_password" {
   name  = "/pac/${var.project_name}/jenkins/password"
   description = "Jenkins default password"
   type  = "SecureString"
-  value = "${random_string.password.5.result}"
+  #value = "${random_string.password.5.result}"
+  value = "systems"
   key_id = "${data.aws_kms_key.project_key.key_id}"
 }
 
