@@ -23,7 +23,8 @@ node {
     dir(homeDirectory){
       stage('Build') {
         if (params.EXEC_BUILD){
-          sh 'sh .build.sh'
+          sh 'npm i'
+          sh 'npm run build'
         }
       }
       stage('Unit Tests') {
