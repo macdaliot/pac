@@ -154,7 +154,7 @@ resource "aws_iam_role_policy_attachment" "policy_attach" {
 
 
 resource "aws_iam_policy" "pac_lambda_dynamodb" {
-  name = "pac-lambda-dynamodb-policy"
+  name = "pac-${var.project_name}-lambda-dynamodb-policy"
   policy = <<EOF
 {
   "Version": "2012-10-17",
