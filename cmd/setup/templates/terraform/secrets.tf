@@ -71,7 +71,8 @@ resource "aws_ssm_parameter" "sonar_jdbc_username" {
   name  = "/pac/${var.project_name}/sonar/sonar_jdbc_username"
   description = "Sonar JDBC Username"
   type  = "SecureString"
-  value = "${random_string.password.3.result}"
+  # value = "${random_string.password.3.result}"
+  value = "sonar"
   key_id = "${data.aws_kms_key.project_key.key_id}"
 }
 
