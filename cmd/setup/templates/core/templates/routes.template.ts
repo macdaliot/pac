@@ -10,18 +10,20 @@ import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute } 
 import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute } from '../../../src';
 import { NextFunction } from 'connect';
 {{/if}}
-    {{#if iocModule}}
-    import { iocContainer } from '{{iocModule}}';
-    {{/if}}c
         {{#each controllers}}
         import { {{name}} } from '{{modulePath}}';
         {{/each}}
-            {{#if authenticationModule}}
-            import { expressAuthentication } from '{{authenticationModule}}';
+            
             import * as passport from 'passport';
             var passportOptions = { session: false };
-            import { intersection, isNullOrUndefined} from '@pyramidlabs/core';
-            {{/if}}
+            import {
+                intersection,
+                isNullOrUndefined,
+                HttpException,
+                authenticateMiddleware
+            } from '@pyramidlabs/core';
+            import { Container } from 'inversify';
+            import { IUser } from '@pyramidlabs/business-features';
 
                 import { Request, Response, NextFunction, Express } from 'express'
 
@@ -46,7 +48,7 @@ import { NextFunction } from 'connect';
                                         };
                                             const validationService = new ValidationService(models);
 
-                                            export function RegisterRoutes(app: Express) {
+                                            export function RegisterRoutes(app: Express, iocContainer: Container) {
                                                 {{#each controllers}}
                                                 {{#each actions}}
                                                 app.{{method}}('{{fullPath}}',
@@ -64,19 +66,19 @@ import { NextFunction } from 'connect';
                                                             try {
                                                                 validatedArgs = getValidatedArgs(args, request);
                                                             } catch (err) {
-                                                                return next(err);
+                                                                if(err instanceof ValidateError) {
+                                                                    return next(new HttpException(err.status, err.message));
+                                                                } else {
+                                                                    return next(err);
+                                                                }
                                                             }
 
-                                                            {{#if ../../iocModule}}
+                                                            
                                                             const controller = iocContainer.get<{{../name}}>({{../name}});
                                                 if (typeof controller['setStatus'] === 'function') {
                                                     (<any>controller).setStatus(undefined);
                                                 }
-                                                {{else}}
-                                                const controller = new {{../name}}();
-                                                    {{/if}}
-
-
+                                                
                                                         const promise = controller.{{name}}.apply(controller, validatedArgs as any);
                                                         promiseHandler(controller, promise, response, next);
                                                     });
@@ -86,9 +88,44 @@ import { NextFunction } from 'connect';
         {{#if useSecurity}}
         function authenticateMiddleware(security: TsoaRoute.Security[] = []) {
             return (request: Request, response: Response, next: NextFunction) => {
-                // req.user.groups
-                expressAuthentication(request, response, next, security);
-            }
+              for (const protectedWith of security) {
+                if (protectedWith.groups.length > 0) {
+                  passport.authenticate(
+                    'jwt',
+                    passportOptions,
+                    (err, user: IUser, info) => {
+                      if (err) {
+                        return next(err);
+                      } else if (info) {
+                        return next(info);
+                      } else {
+                        request.login(user, passportOptions, err => {
+                          if (err) {
+                            return next(err);
+                          }
+                          const groupsMatched = intersection(
+                            user.groups,
+                            protectedWith.groups
+                          );
+                          Logger.info(`${user.name} has the following groups matched: {groupsMatched}`);
+                          if (
+                            !isNullOrUndefined(groupsMatched) &&
+                            groupsMatched.length > 0
+                          ) {
+                            return next();
+                          }
+                          
+                          Logger.info(`${user.name} tried to access a protected resource ${request.path}`);
+                          response
+                            .status(401)
+                            .send({ message: 'You are not authorized to do this.' });
+                        });
+                      }
+                    }
+                  )(request, response, next);
+                }
+              }
+            };
         }
         {{/if}}
 

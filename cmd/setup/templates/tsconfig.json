@@ -8,7 +8,7 @@
     "emitDecoratorMetadata": true,
     "moduleResolution": "node",
     "paths": {
-      "@pyramidlabs/components": ["../../components"],
+      "@pyramidlabs/business-features": ["../../business-features"],
       "@pyramidlabs/core": ["../../core"]
     }
   },

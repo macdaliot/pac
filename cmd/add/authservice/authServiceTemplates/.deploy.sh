@@ -1,7 +1,7 @@
 #! /bin/bash
 # Perform setup
 SERVICE_NAME=$(sed -e 's/.*\///g' <<< $(pwd))
-FULL_SERVICE_NAME=pac-{{.projectName}}-i-"$SERVICE_NAME"
+FULL_SERVICE_NAME=pac-testa-i-"$SERVICE_NAME"
 # If AWS resources already exist...
 if aws elbv2 describe-target-groups --names $FULL_SERVICE_NAME --region us-east-2; then
   echo "It appears the Lambda function exists. Updating the code in case there are any changes"
@@ -22,7 +22,7 @@ else
   # Create Lambda Function
   LAMBDA_ARN=$(aws lambda create-function --function-name "$FULL_SERVICE_NAME" --runtime nodejs8.10 --role arn:aws:iam::118104210923:role/service-role/god --handler lambda.handler --zip-file fileb://function.zip --region us-east-2 | jq '.FunctionArn')
   LAMBDA_ARN=$(sed -e 's/^"//g' -e 's/"$//g' <<< $LAMBDA_ARN)
-  aws lambda tag-resource --resource $LAMBDA_ARN --tags pac-project-name={{.projectName}}
+  aws lambda tag-resource --resource $LAMBDA_ARN --tags pac-project-name=testa
   echo "INFO (2/5 Completed): Created Lambda Function"
 
   # Adjust Lambda permissions

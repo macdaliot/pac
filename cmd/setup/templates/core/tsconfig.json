@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "baseUrl": "./",
+    "outDir": "dist/",
+    "resolveJsonModule": true,
+    "paths": {
+      "@pyramidlabs/core": ["./"],
+      "@pyramidlabs/business-features": ["../business-features"]
+    }
+  }
+}

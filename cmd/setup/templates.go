@@ -38,7 +38,7 @@ func createProjectFiles(cfg map[string]string) {
 		logger.Info(templatePath)
 		files.EnsurePath(filepath.Dir(templatePath))
 		template, _ := box.FindString(templatePath)
-		if templatePath != "core/templates/routes-template.ts" {
+		if templatePath != "core/templates/routes.template.ts" {
 			files.CreateFromTemplate(templatePath, template, cfg)
 		} else {
 			files.Write(templatePath, []byte(template))

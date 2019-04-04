@@ -1,9 +1,11 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
     "baseUrl": "./",
     "target": "es6",
-    "types": ["node", "jest"],
+    "types": ["node", "jest", "reflect-metadata"],
     "outDir": "dist/",
     "resolveJsonModule": true
   }

@@ -1,46 +1,27 @@
-import * as dotenv from 'dotenv';
+require("module-alias/register");
+import * as dotenv from "dotenv";
 dotenv.load(); // must remain here before other imports
 
-import * as express from 'express';
-import bodyParser = require('body-parser');
-import * as passport from 'passport'
-import { Strategy as SamlStrategy} from 'passport-saml';
-import { authRouter } from './authRouter';
-import { generateRandomString } from './functions'
+import * as express from "express";
+import * as passport from "passport";
+import { samlStrategy, errorMiddleware, ILogger } from "@pyramidlabs/core";
+import * as swaggerUi from "swagger-ui-express";
+import * as swaggerDocument from "../docs/swagger.json";
+import { RegisterRoutes } from "./generated/routes.js";
+import { setupContainer } from "./container-setup.js";
 
-const port: number = 3000;
-const serviceName: string = 'auth';
-
-const signingCert = process.env.SAML_SIGNER ?
-  Buffer.from(process.env.SAML_SIGNER, 'base64').toString('ascii') :
-  generateRandomString();
-
-const app = express();
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
-
-var samlStrategy = new SamlStrategy(
-  {
-    callbackUrl: process.env.SAML_CALLBACK || `http://localhost/${generateRandomString()}`,
-    entryPoint: 
-      (process.env.AUTH0_CLIENT_ID && process.env.AUTH0_DOMAIN) ? 
-        `https://${process.env.AUTH0_DOMAIN}/samlp/${process.env.AUTH0_CLIENT_ID}` :
-        `https://localhost/samlp/${generateRandomString()}`,
-    issuer: 
-      (process.env.AUTH0_DOMAIN) ? 
-        'urn:' + process.env.AUTH0_DOMAIN + '-saml' :
-        `urn:${generateRandomString()}`,
-    cert: signingCert,
-    acceptedClockSkewMs: 60000
-  },
-  function (user, done) {
-      return done(null, user, null);
-  });
-
-
-app.use(passport.initialize());
 passport.use(samlStrategy);
+const app = express();
+const container = setupContainer(app);
+app
+    .use(passport.initialize())
+    .use(express.json())
+    .use(express.urlencoded({ extended: false }))
+    .use("/api/auth/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+    .use(passport.authenticate("saml", { session: false }));
 
-app.use('/api/auth', authRouter);
+RegisterRoutes(app, container);
+
+app.use(errorMiddleware);
 
 export default app;

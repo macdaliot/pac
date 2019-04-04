@@ -1,25 +1,10 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "module": "commonjs",
+    "baseUrl": "./",
     "target": "es6",
-    "noImplicitAny": false,
-    "sourceMap": false,
+    "types": ["node", "jest"],
     "outDir": "dist/",
-    "allowJs": true,
-    "types": [
-      "node",
-      "jest"
-    ],
-    "typeRoots": [
-      "../node_modules/@types"
-    ]
-  },
-  "include": [
-    "src",
-    "test"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+    "resolveJsonModule": true
+  }
 }

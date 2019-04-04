@@ -1,8 +1,6 @@
-import * as passport from "passport";
-import { Request, Response, NextFunction } from "express";
-import { isNullOrUndefined, generateRandomString } from "./utilities";
+import { Request } from "express";
+import { generateRandomString } from "./utilities";
 import { Strategy as SamlStrategy } from "passport-saml";
-import { TsoaRoute } from "tsoa";
 import * as jwt from "jsonwebtoken";
 import {
     Strategy as JwtStrategy,
@@ -10,36 +8,9 @@ import {
     ExtractJwt
 } from "passport-jwt";
 
-var passportOptions = { session: false };
 
 const jwtSecret = process.env.JWT_SECRET || generateRandomString();
 
-export const expressAuthentication = (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-    security: TsoaRoute.Security[] = []
-) => {
-    console.log(security);
-    // if(isNullOrUndefined(security)) {
-    //   throw new Error('Security for scopes are not yet implemented.');
-    // }
-    passport.authenticate("jwt", passportOptions, (err, user, info) => {
-        console.log("im at auth");
-        if (err) {
-            return next(err);
-        } else if (info) {
-            return next(info);
-        } else {
-            req.login(user, passportOptions, err => {
-                if (err) {
-                    return next(err);
-                }
-                return next();
-            });
-        }
-    })(req, res, next);
-};
 
 const opts: JwtStrategyOptions = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

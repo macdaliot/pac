@@ -41,7 +41,7 @@ if [ ! -z "$AWS_ACCESS_KEY_ID" ] || [ ! -z "$AWS_SECRET_ACCESS_KEY" ]; then
   fi
 
   # Delete current service's container, if it exists
-  SERVICE_CONTAINER_PID=$(docker ps -aqf Name=pac-$PROJECT_NAME-{{.serviceName}})
+  SERVICE_CONTAINER_PID=$(docker ps -aqf Name=pac-$PROJECT_NAME-authentication)
   if [ ! -z "$SERVICE_CONTAINER_PID" ]; then
     docker stop $SERVICE_CONTAINER_PID >> /dev/null
     docker rm $SERVICE_CONTAINER_PID >> /dev/null
