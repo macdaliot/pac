@@ -44,11 +44,12 @@ resource "aws_ssm_parameter" "jwt_secret" {
   key_id = "${data.aws_kms_key.project_key.key_id}"
 }
 resource "aws_ssm_parameter" "postgres_password" {
-  name  = "/pac/${var.project_name}/postgres/password"
+  name        = "/pac/${var.project_name}/postgres/password"
   description = "PostGRES password"
-  type  = "SecureString"
-  value = "${random_string.password.1.result}"
-  key_id = "${data.aws_kms_key.project_key.key_id}"
+  type        = "SecureString"
+  # value      = "${random_string.password.1.result}"
+  value       = "pyramid"
+  key_id      = "${data.aws_kms_key.project_key.key_id}"
 }
 resource "aws_ssm_parameter" "sonar_jdbc_password" {
   name  = "/pac/${var.project_name}/sonar/sonar_jdbc_password"
