@@ -22,6 +22,7 @@ resource "aws_lambda_function" "lambda_{{ .serviceName }}" {
   }
 }
 
+#
 # Create target group. Only one lambda can be registered per target group
 # https://docs.aws.amazon.com/elasticloadbalancing/latest/application/lambda-functions.html
 # https://www.terraform.io/docs/providers/aws/r/lb_target_group.html
@@ -63,8 +64,6 @@ resource "aws_alb_target_group_attachment" "{{ .projectName }}_{{ .serviceName }
 resource "aws_lb_listener_rule" "{{ .projectName }}_{{ .serviceName }}_rule_100" {
   listener_arn = "${data.terraform_remote_state.pac.aws_lb_listener_api_arn}"
 
-  priority = "100"
-
   action {
     type = "forward"
     target_group_arn = "${aws_alb_target_group.{{ .projectName }}_{{ .serviceName }}_target_group.arn}"
@@ -79,7 +78,6 @@ resource "aws_lb_listener_rule" "{{ .projectName }}_{{ .serviceName }}_rule_100"
 resource "aws_lb_listener_rule" "{{ .projectName }}_{{ .serviceName }}_rule_200" {
   listener_arn = "${data.terraform_remote_state.pac.aws_lb_listener_api_arn}"
 
-  priority = "200"
 
   action {
     type = "forward"
