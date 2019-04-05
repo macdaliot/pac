@@ -35,6 +35,6 @@ data "terraform_remote_data" "pac" {
     bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
     key    = "state/development"
     region = "us-east-2"
-    dynamodb_table = "pac-${var.project_name}-terraform-locking-table"
+    dynamodb_table = "pac-{{ .projectName }}-terraform-locking-table"
   }
 }
