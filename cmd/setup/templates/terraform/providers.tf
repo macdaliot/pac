@@ -9,6 +9,8 @@ terraform {
     key    = "state/development"
     region = "{{ .Region }}"
   }
+
+  dynamodb_table = "pac-${var.project_name}-terraform-locking-table"
 }
 
 #

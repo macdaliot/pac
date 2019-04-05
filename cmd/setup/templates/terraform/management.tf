@@ -106,3 +106,22 @@ resource "aws_route_table" "application_vpc" {
 resource "aws_ecs_cluster" "main" {
   name = "${var.project_name}"
 }
+
+resource "aws_dynamodb_table" "{{ .projectName }}_dynamodb_table_{{ .serviceName }}" {
+  name           = "pac-{{ .projectName }}-i-{{ .serviceName }}"
+  billing_mode   = "PROVISIONED"
+  read_capacity  = 5
+  write_capacity = 5
+  hash_key       = "id"
+  stream_view_type = "NEW_AND_OLD_IMAGES"
+  stream_enabled = true
+
+  attribute {
+    name = "id"
+    type = "S"
+  }
+
+  tags = {
+    Name        = "testferris-dynamodb-table-dolleyes"
+  }
+}
