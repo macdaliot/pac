@@ -1,7 +1,6 @@
 package starter.cucumberStep;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 
 import cucumber.api.java.After;
 import cucumber.api.java.en.And;
@@ -53,6 +52,11 @@ public class CucumberLoginSteps {
 	@Then("^the user will not be logged in$")
 	public void notLoggedIn() {
 		steps.notLoggedIn();
+	}
+	
+	@And("^there will be a (.+) error message$")
+	public void loginErrorMessage(String error) {
+		steps.loginErrorMessage(error);
 	}
 
 	@After

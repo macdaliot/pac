@@ -12,6 +12,11 @@ public class CucumberAPISteps {
 	
 	@Steps
 	SerenityAPISteps steps;
+	
+	@Then("^the (.+) will have a status of 200$")
+	public void initialGET(String endpoint) throws Throwable {
+		steps.initialGET(endpoint);
+	}
 
 	@Given("^I get a 200 status from GET (.+)$")
 	public void get200Status(String endpoint) throws Throwable {

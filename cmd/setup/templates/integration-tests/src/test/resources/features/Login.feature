@@ -1,11 +1,22 @@
 Feature: Login Test
 
-  Scenario: Check if application login is working
+  @Login
+  Scenario Outline: Check if application login is working - positive
     Given the user is on the application
-    And the user test@psi-it.com logs in with the password test
-    Then the user test will be logged in
+    And the user <username> logs in with the password test
+    Then the user <password> will be logged in
 
-  Scenario: Check if application login is working
+    Examples: 
+      | username        | password |
+      | test@acme.com | test     |
+
+  @Login
+  Scenario Outline: Check if application login is working - negative
     Given the user is on the application
-    And the user test@psi-it.com logs in with the password test2
+    And the user <username> logs in with the password <password>
     Then the user will not be logged in
+    And there will be a <errorMessage> error message 
+
+    Examples: 
+      | username        | password | errorMessage       |
+      | test@acme.com | test2    | wrongEmailPassword |

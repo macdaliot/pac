@@ -34,7 +34,7 @@ public class SerenityLoginSteps {
 	@Step
 	public void userLogin(String username, String password) {
 		page.clickInitialLoginButton();
-    page.typeUserNameInput(username);
+		page.typeUserNameInput(username);
 		page.typePasswordInput(password);
 		page.clickLogin();
 	}
@@ -52,6 +52,14 @@ public class SerenityLoginSteps {
 	@Step
 	public void notLoggedIn() {
 		assertTrue(page.getAuth0HeaderText());
+	}
+	
+	@Step 
+	public void loginErrorMessage(String error) {
+		if (error.equals("wrongEmailPassword")) {
+			System.out.println("the error is: " + page.getErrorMessage());
+			assertTrue(page.getErrorMessage().equalsIgnoreCase("WRONG EMAIL OR PASSWORD."));
+		}
 	}
 
 }
