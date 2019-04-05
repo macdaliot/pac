@@ -107,8 +107,8 @@ resource "aws_ecs_cluster" "main" {
   name = "${var.project_name}"
 }
 
-resource "aws_dynamodb_table" "{{ .projectName }}_dynamodb_table_{{ .serviceName }}" {
-  name           = "pac-{{ .projectName }}-i-{{ .serviceName }}"
+resource "aws_dynamodb_table" "{{ .projectName }}_dynamodb_table_" {
+  name           = "pac-{{ .projectName }}-terraform-locking-table"
   billing_mode   = "PROVISIONED"
   read_capacity  = 5
   write_capacity = 5
