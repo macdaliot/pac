@@ -21,7 +21,7 @@ func DeleteAllResources() {
 	awsSession := aws.CreateAwsSession(region)
 
 	go kms.ScheduleEncryptionKeyDeletion(config.Get("encryptionKeyID"), awsSession)
-	go dynamodb.DeleteTable(projectName+"-terraform-locking-table", awsSession)
+	go dynamodb.DeleteTable("pac-"+projectName+"-terraform-locking-table", awsSession)
 	resourcegroups.Create(projectName, "pac-project-name", projectName, awsSession)
 	resourcegroups.DeleteAllResources(projectName, awsSession)
 
