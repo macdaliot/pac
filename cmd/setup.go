@@ -60,6 +60,9 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		//encrypt S3 bucket
 		s3.EncryptBucket(config.Get("terraformS3Bucket"), config.Get("encryptionKeyID"))
 
+		//create locking table
+		setup.CreateLockingTable()
+
 		//setup terraform provider to create infrastructure
 		setup.TerraformInitialize()
 		setup.TerraformCreate()
