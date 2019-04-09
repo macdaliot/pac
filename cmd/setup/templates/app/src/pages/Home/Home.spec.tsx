@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { HomeComponent, mapState } from './Home';
-import { AuthState } from '../../../types';
+import { AuthState } from '../../types';
 
 describe('Home Page', () => {
   it('does not call renderNotLoggedIn() if authenticated', () => {

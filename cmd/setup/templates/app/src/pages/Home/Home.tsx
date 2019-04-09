@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { hot } from 'react-hot-loader/root';
 import { connect } from 'react-redux';
-import { AuthState } from '../../../types/AuthState';
+import { AuthState } from '../../types/AuthState';
 import { Alert, AlertType } from '@pyramidlabs/react-ui';
 import './home.scss';
 
