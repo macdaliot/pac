@@ -63,7 +63,8 @@ resource "aws_ecs_task_definition" "jenkins" {
           "awslogs-region": "us-east-2",
           "awslogs-stream-prefix": "ecs"
       }
-    }
+    },
+    "entryPoint": ["/runJenkins.sh"]
   }
 ]
 DEFINITION
