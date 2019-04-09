@@ -1,6 +1,6 @@
 import * as express from 'express';
 import { Route, Get, Post, Controller, Request, Query, Path, Put } from 'tsoa';
-import { Injectable } from '@pyramidlabs/core';
+import { Injectable } from '@pyramid-systems/core';
 
 @Injectable()
 @Route('{{.serviceName}}')

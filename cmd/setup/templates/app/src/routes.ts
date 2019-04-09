@@ -1,6 +1,6 @@
-import { Home } from './components/pages/Home';
-import { NotFound } from './components/pages/NotFound';
-import { LoginCallback } from './components/common/LoginCallback';
+import { Home } from './pages/Home';
+import { NotFound } from './pages/NotFound';
+import { LoginCallback } from './components/LoginCallback';
 
 export interface Route {
   path: string;

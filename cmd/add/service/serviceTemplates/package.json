@@ -62,7 +62,7 @@
     "typescript": "^3.2.2"
   },
   "_moduleAliases": {
-    "@pyramidlabs/core": "dist/core",
-    "@pyramidlabs/business-features": "dist/business-features"
+    "@pyramid-systems/core": "dist/core",
+    "@pyramid-systems/domain": "dist/domain"
   }
 }

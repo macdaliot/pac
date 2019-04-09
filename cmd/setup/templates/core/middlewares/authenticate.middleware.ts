@@ -1,8 +1,8 @@
 import { TsoaRoute } from 'tsoa';
 import { Response, NextFunction } from 'express';
 import * as passport from 'passport';
-import { IUser } from 'domain';
-import { intersection, isNullOrUndefined, Request } from '@pyramidlabs/core';
+import { IUser } from '@pyramid-systems/domain';
+import { intersection, isNullOrUndefined, Request } from '@pyramid-systems/core';
 
 const passportOptions = { session: false };
 export function authenticateMiddleware(security: TsoaRoute.Security[] = []) {

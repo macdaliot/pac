@@ -2,8 +2,8 @@ import * as React from 'react';
 import { hot } from 'react-hot-loader/root';
 import { connect } from 'react-redux';
 import { Button, ButtonPriority } from '@pyramidlabs/react-ui';
-import { UrlConfig } from '../../../config';
-import { User } from '../../../types';
+import { UrlConfig } from '../../config';
+import { User } from '../../types';
 import './header.scss';
 
 interface AuthState {

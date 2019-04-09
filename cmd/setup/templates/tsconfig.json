@@ -8,8 +8,8 @@
     "emitDecoratorMetadata": true,
     "moduleResolution": "node",
     "paths": {
-      "@pyramidlabs/business-features": ["../../business-features"],
-      "@pyramidlabs/core": ["../../core"]
+      "@pyramid-systems/domain": ["../../domain"],
+      "@pyramid-systems/core": ["../../core"]
     }
   },
   "exclude": ["**/node_modules/*", "**/dist/*", "**/templates/*", "**/*.js"]

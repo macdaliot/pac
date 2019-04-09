@@ -1,4 +1,4 @@
-import { iocContainer, ILogger, ServiceLogger } from "@pyramidlabs/core";
+import { iocContainer, ILogger, ServiceLogger } from "@pyramid-systems/core";
 import { AuthenticationController } from "./authentication-controller";
 import { interfaces, Container } from "inversify";
 import * as pino from "express-pino-logger";

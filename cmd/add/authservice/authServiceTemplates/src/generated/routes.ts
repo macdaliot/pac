@@ -17,8 +17,8 @@ import {
     expressAuthentication,
     authenticateMiddleware,
     Logger
-} from '@pyramidlabs/core';
-import { IUser } from '@pyramidlabs/domain';
+} from '@pyramid-systems/core';
+import { IUser } from '@pyramid-systems/domain';
 
 import { Request, Response, NextFunction, Express } from 'express'
 

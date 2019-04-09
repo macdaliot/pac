@@ -2,8 +2,8 @@
     "compilerOptions": {
       "baseUrl": "./",
       "paths": {
-        "@pyramidlabs/components": ["../components"],
-        "@pyramidlabs/core": ["../core"]
+        "@pyramid-systems/components": ["../components"],
+        "@pyramid-systems/core": ["../core"]
       }
     },
     "swagger": {

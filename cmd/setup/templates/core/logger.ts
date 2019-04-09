@@ -1,5 +1,5 @@
 import * as pino from "pino";
-import { Injectable, isNullOrUndefined } from "@pyramidlabs/core";
+import { Injectable, isNullOrUndefined } from "@pyramid-systems/core";
 
 const Logger: pino.Logger = pino();
 if (!isNullOrUndefined(process.env.LOG_LEVEL)) {

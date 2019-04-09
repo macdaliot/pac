@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { hot } from 'react-hot-loader/root';
 import { Link } from 'react-router-dom';
-import routes, { Route } from '../../../routes';
+import routes, { Route } from '../../routes';
 import './navigation-bar.scss';
 
 export class NavigationBarComponent extends React.Component {

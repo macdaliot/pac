@@ -10,7 +10,11 @@
         "resolveJsonModule": true,
         "types": [
             "jest"
-        ]
+        ],
+        "paths": {
+            "@pyramid-systems/domain": ["../domain"],
+            "@pyramid-systems/core": ["../core"]
+        }
     },
     "include": [
         "src"

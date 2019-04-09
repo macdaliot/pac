@@ -2,8 +2,8 @@ package setup
 
 import (
   "github.com/PyramidSystemsInc/go/aws"
-  "github.com/PyramidSystemsInc/go/aws/cloudfront"
-  "github.com/PyramidSystemsInc/go/aws/route53"
+  // "github.com/PyramidSystemsInc/go/aws/cloudfront"
+  // "github.com/PyramidSystemsInc/go/aws/route53"
   "github.com/PyramidSystemsInc/go/aws/s3"
   "github.com/PyramidSystemsInc/go/logger"
   "github.com/PyramidSystemsInc/go/str"
@@ -25,10 +25,10 @@ func createBucket(suiteName string, projectFqdn string, projectName string, regi
   s3.EnableWebsiteHosting(frontEndFqdn, awsSession)
   tagKey := "pac-project-name"
   s3.TagBucket(frontEndFqdn, tagKey, projectName, awsSession)
-  cloudfrontFqdn := cloudfront.CreateDistributionFromS3Bucket(frontEndFqdn, awsSession)
-  cloudfront.TagDistribution(cloudfrontFqdn, tagKey, projectName, awsSession)
-  var ttl int64 = 300
-  route53.ChangeRecord(projectFqdn, "CNAME", frontEndFqdn, []string{cloudfrontFqdn}, ttl, awsSession)
+  // cloudfrontFqdn := cloudfront.CreateDistributionFromS3Bucket(frontEndFqdn, awsSession)
+  // cloudfront.TagDistribution(cloudfrontFqdn, tagKey, projectName, awsSession)
+  // var ttl int64 = 300
+  // route53.ChangeRecord(projectFqdn, "CNAME", frontEndFqdn, []string{cloudfrontFqdn}, ttl, awsSession)
   bucketFqdn := str.Concat(frontEndFqdn, ".s3-website-", region, ".amazonaws.com")
   logger.Info(str.Concat("The ", suiteName, " suite will be available after running the front-end Jenkins job at ", bucketFqdn))
   logger.Info(str.Concat("The ", suiteName, " suite will be available in approx 15 minutes at ", frontEndFqdn))

@@ -10,121 +10,123 @@ import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute } 
 import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute } from '../../../src';
 import { NextFunction } from 'connect';
 {{/if}}
-        {{#each controllers}}
-        import { {{name}} } from '{{modulePath}}';
-        {{/each}}
-            
-            import * as passport from 'passport';
-            var passportOptions = { session: false };
-            import {
-                intersection,
-                isNullOrUndefined,
-                HttpException,
-                authenticateMiddleware
-            } from '@pyramidlabs/core';
-            import { Container } from 'inversify';
-            import { IUser } from 'domain';
+    {{#each controllers}}
+    import { {{name}} } from '{{modulePath}}';
+    {{/each}}
 
-                import { Request, Response, NextFunction, Express } from 'express'
+        import * as passport from 'passport';
+        var passportOptions = { session: false };
+        import {
+            intersection,
+            isNullOrUndefined,
+            HttpException,
+            authenticateMiddleware,
+            Request
+        } from '@pyramid-systems/core';
+        import { Container } from 'inversify';
+        import { IUser } from '@pyramid-systems/domain';
 
-                const models: TsoaRoute.Models = {
-                {{#each models}}
-                "{{@key}}": {
-                    {{#if enums}}
-                    "enums": {{{json enums}}},
-                    {{/if}}
-                        {{#if properties}}
-                        "properties": {
-                            {{#each properties}}
-                            "{{@key}}": {{{json this}}},
-                            {{/each}}
+        import { Response, NextFunction, Express } from 'express'
+
+        const models: TsoaRoute.Models = {
+        {{#each models}}
+        "{{@key}}": {
+            {{#if enums}}
+            "enums": {{{json enums}}},
+            {{/if}}
+                {{#if properties}}
+                "properties": {
+                    {{#each properties}}
+                    "{{@key}}": {{{json this}}},
+                    {{/each}}
+                    },
+                        {{/if}}
+                            {{#if additionalProperties}}
+                            "additionalProperties": {{{json additionalProperties}}},
+                            {{/if}}
                             },
-                                {{/if}}
-                                    {{#if additionalProperties}}
-                                    "additionalProperties": {{{json additionalProperties}}},
-                                    {{/if}}
-                                    },
-                                        {{/each}}
-                                        };
-                                            const validationService = new ValidationService(models);
+                                {{/each}}
+                                };
+                                    const validationService = new ValidationService(models);
 
-                                            export function RegisterRoutes(app: Express, iocContainer: Container) {
-                                                {{#each controllers}}
-                                                {{#each actions}}
-                                                app.{{method}}('{{fullPath}}',
-                                                    {{#if security.length}}
-                                                authenticateMiddleware({{json security}}),
-                                                {{/if}}
-                                                    function (request: Request, response: Response, next: NextFunction) {
-                                                        const args = {
-                                                        {{#each parameters}}
-                                                        {{@key}}: {{{json this}}},
-                                                        {{/each}}
-                                                        };
+                                    export function RegisterRoutes(app: Express, iocContainer: Container) {
+                                        {{#each controllers}}
+                                        {{#each actions}}
+                                        app.{{method}}('{{fullPath}}',
+                                            {{#if security.length}}
+                                        authenticateMiddleware({{json security}}),
+                                        {{/if}}
+                                            function (request: Request, response: Response, next: NextFunction) {
+                                                const args = {
+                                                {{#each parameters}}
+                                                {{@key}}: {{{json this}}},
+                                                {{/each}}
+                                                };
 
-                                                            let validatedArgs: any[] = [];
-                                                            try {
-                                                                validatedArgs = getValidatedArgs(args, request);
-                                                            } catch (err) {
-                                                                if(err instanceof ValidateError) {
-                                                                    return next(new HttpException(err.status, err.message));
-                                                                } else {
-                                                                    return next(err);
-                                                                }
-                                                            }
+                                                    let validatedArgs: any[] = [];
+                                                    try {
+                                                        validatedArgs = getValidatedArgs(args, request);
+                                                    } catch (err) {
+                                                        request.log.error(JSON.stringify(err));
+                                                        if(err instanceof ValidateError) {
+                                                            return next(new HttpException(err.status, err.message));
+                                                        } else {
+                                                            return next(err);
+                                                        }
+                                                    }
 
-                                                            
-                                                            const controller = iocContainer.get<{{../name}}>({{../name}});
-                                                if (typeof controller['setStatus'] === 'function') {
-                                                    (<any>controller).setStatus(undefined);
-                                                }
-                                                
-                                                        const promise = controller.{{name}}.apply(controller, validatedArgs as any);
-                                                        promiseHandler(controller, promise, response, next);
-                                                    });
+
+                                                    const controller = iocContainer.get<{{../name}}>({{../name}});
+                                        if (typeof controller['setStatus'] === 'function') {
+                                            (<any>controller).setStatus(undefined);
+                                        }
+
+                                        const promise = controller.{{name}}.apply(controller, validatedArgs as any);
+                                        promiseHandler(controller, promise, response, next);
+                                    });
 {{/each}}
     {{/each}}
 
         {{#if useSecurity}}
         function authenticateMiddleware(security: TsoaRoute.Security[] = []) {
             return (request: Request, response: Response, next: NextFunction) => {
-              for (const protectedWith of security) {
-                if (protectedWith.groups.length > 0) {
-                  passport.authenticate(
-                    'jwt',
-                    passportOptions,
-                    (err, user: IUser, info) => {
-                      if (err) {
-                        return next(err);
-                      } else if (info) {
-                        return next(info);
-                      } else {
-                        request.login(user, passportOptions, err => {
-                          if (err) {
-                            return next(err);
-                          }
-                          const groupsMatched = intersection(
-                            user.groups,
-                            protectedWith.groups
-                          );
-                          Logger.info(`${user.name} has the following groups matched: {groupsMatched}`);
-                          if (
-                            !isNullOrUndefined(groupsMatched) &&
-                            groupsMatched.length > 0
-                          ) {
-                            return next();
-                          }
-                          
-                          Logger.info(`${user.name} tried to access a protected resource ${request.path}`);
-                          response
-                            .status(401)
-                            .send({ message: 'You are not authorized to do this.' });
-                        });
-                      }
+                for (const protectedWith of security) {
+                    if (protectedWith.groups.length > 0) {
+                        passport.authenticate(
+                            'jwt',
+                            passportOptions,
+                            (err, user: IUser, info) => {
+                                if (err) {
+                                    return next(err);
+                                } else if (info) {
+                                    return next(info);
+                                } else {
+                                    request.login(user, passportOptions, err => {
+                                        if (err) {
+                                            return next(err);
+                                        }
+                                        const groupsMatched = intersection(
+                                            user.groups,
+                                            protectedWith.groups
+                                        );
+                                        Logger.info(`${user.name} has the following groups matched: {groupsMatched}`);
+                                        if (
+                                            !isNullOrUndefined(groupsMatched) &&
+                                            groupsMatched.length > 0
+                                        ) {
+                                            return next();
+                                        }
+
+                                        Logger.info(`${user.name} tried to access a protected resource ${request.path}`);
+                                        response
+                                            .status(401)
+                                            .send({ message: 'You are not authorized to do this.' });
+                                    });
+                                }
+                            }
+                        )(request, response, next);
                     }
-                  )(request, response, next);
                 }
-              }
             };
         }
         {{/if}}

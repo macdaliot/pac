@@ -1,8 +1,8 @@
-import { iocContainer, ILogger, ServiceLogger } from "@pyramidlabs/core";
+import { iocContainer, ILogger, ServiceLogger } from "@pyramid-systems/core";
 import { interfaces, Container } from "inversify";
 import * as pino from "express-pino-logger";
 import { Express } from "express";
-import { {{.serviceNamePascal}}Repository } from '@pyramidlabs/domain';
+import { {{.serviceNamePascal}}Repository } from '@pyramid-systems/domain';
 import { {{.serviceNamePascal}}Controller } from './{{.serviceName}}.controller';
 
 

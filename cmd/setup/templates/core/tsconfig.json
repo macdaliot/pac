@@ -7,8 +7,8 @@
     "outDir": "dist/",
     "resolveJsonModule": true,
     "paths": {
-      "@pyramidlabs/core": ["./"],
-      "@pyramidlabs/business-features": ["../business-features"]
+      "@pyramid-systems/core": ["./"],
+      "@pyramid-systems/domain": ["../domain"]
     }
   }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@pyramid/business-features",
+  "name": "@pyramid-systems/domain",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "paths": {
-    "@pyramidlabs/core": [
+    "@pyramid-systems/core": [
       "../core"
     ]
   },

@@ -1,6 +1,6 @@
 import * as express from 'express';
 import { Route, Get, Post, Controller, Request } from 'tsoa';
-import { Injectable, createJwt, ILogger } from '@pyramidlabs/core';
+import { Injectable, createJwt, ILogger } from '@pyramid-systems/core';
 
 @Injectable()
 @Route('auth')

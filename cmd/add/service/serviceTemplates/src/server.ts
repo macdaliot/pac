@@ -4,7 +4,7 @@ dotenv.load(); // must remain here before other imports
 
 import * as express from 'express';
 import * as passport from 'passport';
-import { jwtStrategy, errorMiddleware,  } from '@pyramidlabs/core';
+import { jwtStrategy, errorMiddleware,  } from '@pyramid-systems/core';
 import * as swaggerUi from 'swagger-ui-express';
 import * as swaggerDocument from '../docs/swagger.json';
 import { RegisterRoutes } from './generated/routes.js';
