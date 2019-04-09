@@ -1,7 +1,7 @@
 import { TsoaRoute } from 'tsoa';
 import { Response, NextFunction } from 'express';
 import * as passport from 'passport';
-import { IUser } from '@pyramidlabs/business-features';
+import { IUser } from 'domain';
 import { intersection, isNullOrUndefined, Request } from '@pyramidlabs/core';
 
 const passportOptions = { session: false };

@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@aws/dynamodb-data-mapper": "^0.7.3",
+    "@aws/dynamodb-data-mapper-annotations": "^0.7.3",
+    "aws-sdk": "^2.437.0",
     "express": "^4.16.4",
     "inversify": "^5.0.1",
     "jest": "^24.5.0",

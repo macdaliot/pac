@@ -1,19 +1,60 @@
 package service
 
 import (
+	"github.com/PyramidSystemsInc/go/directories"
+	"github.com/PyramidSystemsInc/go/str"
+	"github.com/PyramidSystemsInc/pac/config"
+	"os"
+	"path"
 	"path/filepath"
-
 	"github.com/PyramidSystemsInc/go/files"
 	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/gobuffalo/packr"
+	"strings"
 )
 
-func CreateAllTemplatedFiles(config map[string]string) {
+func CreateAllTemplatedFiles(cfg map[string]string) {
+	serviceName := cfg["serviceName"]
+
+	os.Chdir(config.GetRootDirectory())
+	os.Chdir(path.Join("services/", serviceName))
+
+	logger.Info("I'm currently at " + directories.GetWorking())
+
 	box := packr.NewBox("./serviceTemplates")
 	for _, templatePath := range box.List() {
 		logger.Info(templatePath)
 		files.EnsurePath(filepath.Dir(templatePath))
 		template, _ := box.FindString(templatePath)
-		files.CreateFromTemplate(templatePath, template, config)
+		if templatePath == "src/controller.ts" {
+			files.CreateFromTemplate(str.Concat("src/",serviceName,".controller.ts"), template, cfg)
+		} else {
+			files.CreateFromTemplate(templatePath, template, cfg)
+		}
 	}
+	os.Chdir(config.GetRootDirectory())
+	os.Chdir("domain")
+
+	logger.Info("Writing the domain templates")
+
+	box = packr.NewBox("./domainTemplates")
+	for _, templatePath := range box.List() {
+		logger.Info(templatePath)
+
+		template, _ := box.FindString(templatePath)
+
+		if strings.Contains(templatePath, "serviceNameFolder") {
+			templatePath = strings.Replace(templatePath, "serviceNameFolder",serviceName,-1)
+		}
+
+		files.EnsurePath(filepath.Dir(templatePath))
+
+		logger.Info("Replaced template path: " +templatePath)
+
+		files.CreateFromTemplate(templatePath, template, cfg)
+	}
+
+	os.Chdir(config.GetRootDirectory())
+
+
 }

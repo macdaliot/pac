@@ -1,1 +1,1 @@
-export * from './dynamo.db';
+export * from './repository';

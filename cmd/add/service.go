@@ -1,7 +1,6 @@
 package add
 
 import (
-	"os"
 	"path"
 	"strings"
 
@@ -19,6 +18,7 @@ func Service(serviceName string) {
 	createServiceDirectory(serviceName)
 	cfg := createTemplateConfig(serviceName)
 	createServiceFiles(serviceName, cfg)
+
 	commands.Run("npm i", path.Join("services/", serviceName))
 	editHaProxyConfig(serviceName, cfg["projectName"])
 }
@@ -33,14 +33,15 @@ func createTemplateConfig(serviceName string) map[string]string {
 	cfg["projectName"] = config.Get("projectName")
 	cfg["serviceUrl"] = config.Get("serviceUrl")
 	cfg["serviceName"] = serviceName
+	cfg["serviceNamePascal"] = strings.Title(serviceName)
 	return cfg
 }
 
+
+
 func createServiceFiles(serviceName string, cfg map[string]string) {
-	os.Chdir(config.GetRootDirectory())
-	os.Chdir(path.Join("services/", serviceName))
+	logger.Info("Create service files")
 	service.CreateAllTemplatedFiles(cfg)
-	os.Chdir(config.GetRootDirectory())
 	service.CreateFrontEndClient(str.Concat(strings.Title(serviceName), ".ts"), cfg)
 	logger.Info(str.Concat("Created ", serviceName, " Express microservice files"))
 }

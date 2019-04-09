@@ -1,2 +1,2 @@
-export * from './appInfo.config';
-export * from './awsSdkConfig';
+export * from './app.info.config';
+export * from './aws.sdk.config';

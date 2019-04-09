@@ -5,7 +5,7 @@ import * as pino from "express-pino-logger";
 import { Express } from "express";
 
 export const setupContainer = (app: Express): Container => {
-  const serviceLogger = new ServiceLogger("UserService");
+  const serviceLogger = new ServiceLogger("AuthenticationService");
   serviceLogger.info("Setting up container");
   iocContainer.bind(AuthenticationController).to(AuthenticationController);
   iocContainer.bind(ILogger).toDynamicValue((context: interfaces.Context) => {
@@ -13,10 +13,10 @@ export const setupContainer = (app: Express): Container => {
   });
   app.use(
       pino({
-        logger: serviceLogger.getPinoLogger()
+        logger: serviceLogger.getPinoLogger(),
+        level: process.env.LOG_LEVEL
       })
   );
-  console.log(iocContainer);
   serviceLogger.debug('Container Value:', iocContainer);
   app.set("logger", serviceLogger);
   return iocContainer;

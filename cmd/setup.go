@@ -27,6 +27,7 @@ NodeJS/Express back-end, and DynamoDB database)`,
     warnExtraArgumentsAreIgnored(args)
     setup.ValidateInputs(projectName, frontEnd, backEnd, database)
     setup.Templates(projectName, description, gitAuth)
+    setup.NpmInstall()
     setup.Route53HostedZone(projectName, hostedZone)
     setup.S3Buckets(projectName)
     setup.ElasticLoadBalancer(projectName)

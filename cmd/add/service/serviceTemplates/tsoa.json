@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@pyramidlabs/components": ["../components"],
+      "@pyramidlabs/core": ["../core"]
+    }
+  },
+  "swagger": {
+    "outputDirectory": "./docs",
+    "entryFile": "./src/local.ts",
+    "basePath": "/api",
+    "version": "1.0",
+    "name": "{{.serviceNamePascal}} Service",
+    "description": "A micro service for {{.serviceNamePascal}}",
+    "license": "ISC",
+    "securityDefinitions": {
+      "Bearer": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header",
+        "scopes": {
+          "createExam": "create exams",
+          "uploadFile": "upload things",
+          "downloadFile": "download files"
+        }
+      }
+    }
+  },
+  "routes": {
+    "basePath": "/api",
+    "entryFile": "./src/local.ts",
+    "routesDir": "./src/generated",
+    "middleware": "express",
+    "middlewareTemplate": "../../core/templates/routes.template.ts"
+  },
+  "ignore": ["**/node_modules/**"]
+}

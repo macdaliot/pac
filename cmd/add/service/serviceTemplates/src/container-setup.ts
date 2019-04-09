@@ -1,20 +1,28 @@
-import { iocContainer, ILogger, Logger } from "@pyramidlabs/core";
-import { UserController } from "./user-controller";
-import { BudgetRepository } from "@pyramidlabs/components";
-import { TestController } from "./test-controller";
-import { AuthenticationController } from "./authentication-controller";
-import { interfaces } from "inversify";
+import { iocContainer, ILogger, ServiceLogger } from "@pyramidlabs/core";
+import { interfaces, Container } from "inversify";
+import * as pino from "express-pino-logger";
+import { Express } from "express";
+import { {{.serviceNamePascal}}Repository } from '@pyramidlabs/domain';
+import { {{.serviceNamePascal}}Controller } from './{{.serviceName}}.controller';
 
-export class ContainerOrchestrator {
-    static initializeContainer = () => {
-        iocContainer.bind(BudgetRepository).to(BudgetRepository);
-        iocContainer.bind(TestController).to(TestController);
-        iocContainer.bind(AuthenticationController).to(AuthenticationController);
-        iocContainer
-            .bind(ILogger)
-            .toDynamicValue((context: interfaces.Context) => {
-                return new Logger("{{.serviceName}}"); // This will be in the template at least
-            });
-        console.log(iocContainer);
-    };
-}
+
+export const setupContainer = (app: Express): Container => {
+    const serviceLogger = new ServiceLogger("UserService");
+    serviceLogger.info("Setting up container");
+    iocContainer.bind({{.serviceNamePascal}}Repository).to({{.serviceNamePascal}}Repository);
+    iocContainer.bind({{.serviceNamePascal}}Controller).to({{.serviceNamePascal}}Controller);
+    iocContainer.bind(ILogger).toDynamicValue((context: interfaces.Context) => {
+        return serviceLogger;
+    });
+    app.use(
+        pino({
+            logger: serviceLogger.getPinoLogger(),
+            level: process.env.LOG_LEVEL
+        })
+    );
+    serviceLogger.debug('Container Value:', iocContainer);
+    app.set("logger", serviceLogger);
+    return iocContainer;
+};
+
+export const serviceContainer = iocContainer;

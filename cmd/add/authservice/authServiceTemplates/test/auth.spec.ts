@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { errorMiddleware, generateRandomString, HttpException } from '@pyramidlabs/core'
+import { errorMiddleware, generateRandomString, HttpException, Request } from '@pyramidlabs/core'
 
 describe("generic functions", () => {
   it("should generate random strings", () => {
@@ -16,8 +16,8 @@ describe("generic functions", () => {
     };
     let sendFunc: any = (output: Error) => { return output; }
     let error = new HttpException(500, "Things went wrong");
-    let request = { body: {} } as any as express.Request;
-    let response = { status: statusFunc, send: sendFunc } as any as express.Response;
+    let request = { body: {} } as any as Request;
+    let response = { status: statusFunc, send: sendFunc }  as express.Response;
     errorMiddleware(error, request, response, () => {});
     expect(statusResult).toBe(expectedStatus);
   });

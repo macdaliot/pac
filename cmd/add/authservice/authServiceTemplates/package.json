@@ -1,7 +1,7 @@
 {
   "name": "pac-auth-service",
   "version": "0.0.1",
-  "description": "auth service (created by PAC)",
+  "description": "authentication service (created by PAC)",
   "main": "server.js",
   "scripts": {
     "start": "npm run generate:templates && tsc && node dist/services/authentication/src/local",

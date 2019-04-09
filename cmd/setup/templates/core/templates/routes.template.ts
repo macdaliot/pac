@@ -23,7 +23,7 @@ import { NextFunction } from 'connect';
                 authenticateMiddleware
             } from '@pyramidlabs/core';
             import { Container } from 'inversify';
-            import { IUser } from '@pyramidlabs/business-features';
+            import { IUser } from 'domain';
 
                 import { Request, Response, NextFunction, Express } from 'express'
 

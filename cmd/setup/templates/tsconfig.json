@@ -12,5 +12,5 @@
       "@pyramidlabs/core": ["../../core"]
     }
   },
-  "exclude": ["**/node_modules/*", "**/dist/*", "**/templates/*"]
+  "exclude": ["**/node_modules/*", "**/dist/*", "**/templates/*", "**/*.js"]
 }
