@@ -8,7 +8,6 @@ terraform {
     bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
     key    = "state/development"
     region = "{{ .Region }}"
-    dynamodb_table = "pac-{{ .projectName }}-terraform-locking-table"
   }
 }
 

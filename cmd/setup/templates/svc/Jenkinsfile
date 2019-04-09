@@ -9,7 +9,7 @@ properties([
   ])
 ])
 node {
-  homeDirectory = "svc/${env.JOB_NAME}"
+  homeDirectory = "svc"
   // ensure that our "wrapper" directory exists
   sh "mkdir -p ${params.PARENTNAME}"
   // work in that wrapper directory
@@ -26,26 +26,14 @@ node {
           sh 'sh .build.sh'
         }
       }
-      stage('Unit Tests') {
+      stage('Unit Test') {
         if (params.EXEC_UNITTEST){
-          try {
-            withEnv(["JEST_JUNIT_OUTPUT=./jest-test-results.xml"]) {
-              sh 'npm run test-ci'
-            }
-          }
-          finally {
-            junit 'jest-test-results.xml'
-          }
+          sh 'sh .test.sh'
         }
       }
       stage('Deploy To Integration') {
         if (params.EXEC_DEPLOY){
           sh 'sh .deploy.sh'
-        }
-      }
-      stage('Integration Tests') {
-        if (params.EXEC_INTEGRATIONTEST){
-          echo "Integration Tests here"
         }
       }
     }

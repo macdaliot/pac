@@ -2,7 +2,6 @@ package cleanCloud
 
 import (
 	"github.com/PyramidSystemsInc/go/aws"
-	"github.com/PyramidSystemsInc/go/aws/dynamodb"
 	"github.com/PyramidSystemsInc/go/aws/kms"
 	"github.com/PyramidSystemsInc/go/aws/resourcegroups"
 	"github.com/PyramidSystemsInc/go/logger"
@@ -21,7 +20,6 @@ func DeleteAllResources() {
 	awsSession := aws.CreateAwsSession(region)
 
 	go kms.ScheduleEncryptionKeyDeletion(config.Get("encryptionKeyID"), awsSession)
-	go dynamodb.DeleteTable("pac-"+projectName+"-terraform-locking-table", awsSession)
 	resourcegroups.Create(projectName, "pac-project-name", projectName, awsSession)
 	resourcegroups.DeleteAllResources(projectName, awsSession)
 

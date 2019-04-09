@@ -1,13 +1,13 @@
 package setup
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"os/exec"
-	"path"
 	"time"
 
+	"github.com/PyramidSystemsInc/go/commands"
+	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/pac/config"
 )
@@ -16,14 +16,11 @@ import (
 //If Terraform is not installed or accessible the execution of the program is stopped.
 func IsTerraformInstalled() {
 	logger.Info("Checking if Terraform is installed...")
-	cmd := exec.Command("terraform", "version")
-
-	err := cmd.Run()
-	if err != nil {
-		log.Fatal("Terraform is not installed: ", err)
-	}
-
-	logger.Info("Terraform is installed.\n")
+  _, err := commands.Run("terraform version", "")
+  if err != nil {
+    errors.LogAndQuit("ERROR D")
+  }
+  logger.Info("Terraform is installed")
 }
 
 //SetTerraformEnv sets the environment variable for Terraform automation
@@ -37,44 +34,30 @@ func SetTerraformEnv() {
 //there will only be one *.tf file, which sets up the
 //S3 backend where infrastructure state will be stored
 func TerraformInitialize() {
-	//switch to terraform directory
-	path := path.Join(config.GetRootDirectory(), "terraform")
-	os.Chdir(path)
-
-	//initialize terraform
-	cmd := exec.Command("terraform", "init", "-input=false")
-
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Fatalf("cmd.Run() failed with %s\n", err)
-	}
-
-	fmt.Println(string(out))
+  output, err := commands.Run("terraform init -input=false", "terraform")
+  if err != nil {
+    errors.LogAndQuit("ERROR A")
+  }
+  logger.Info(output)
 }
 
 //TerraformCreate creates tfplan that will be applied by Terraform to create AWS infrastructure.
 func TerraformCreate() {
-	cmd := exec.Command("terraform", "plan", "-out=tfplan", "-input=false")
-
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Fatalf("cmd.Run() failed with %s\n", err)
-	}
-
-	fmt.Println(string(out))
+  output, err := commands.Run("terraform plan -out=tfplan -input=false", "terraform")
+  if err != nil {
+    errors.LogAndQuit("ERROR B")
+  }
+  logger.Info(output)
 }
 
 //TerraformApply applies tfplan
 func TerraformApply() {
 	defer timeTrack(time.Now(), "Terraform create")
-	cmd := exec.Command("terraform", "apply", "-input=false", "tfplan ")
-
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Fatalf("cmd.Run() failed with %s\n", err)
-	}
-
-	fmt.Println(string(out))
+  output, err := commands.Run("terraform apply -input=false tfplan", "terraform")
+  if err != nil {
+    errors.LogAndQuit("ERROR C")
+  }
+  logger.Info(output)
 }
 
 //TerraformDestroy destroys all resources managed by Terraform
