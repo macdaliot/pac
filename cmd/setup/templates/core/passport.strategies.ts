@@ -49,8 +49,6 @@ export const samlStrategy = new SamlStrategy(
 
 export const createJwt = (req: Request, callback: jwt.SignCallback): void => {
     let groups = [];
-    console.log('===user');
-    console.log
     let groupSource = req.user["http://schemas.xmlsoap.org/claims/Group"];
     if (groupSource && Array.isArray(groupSource)) {
         for (let groupname of groupSource) {

@@ -1,18 +1,22 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { HomeComponent, mapState } from './Home';
-import { AuthState } from '../../types';
+import { AuthState } from '@app/types';
 
 describe('Home Page', () => {
   it('does not call renderNotLoggedIn() if authenticated', () => {
-    const component = shallow<HomeComponent>(<HomeComponent isAuthenticated={true} />);
+    const component = shallow<HomeComponent>(
+        <HomeComponent isAuthenticated={true} />
+    );
     const instance = component.instance();
     instance.renderNotLoggedIn = jest.fn();
     instance.render();
     expect(instance.renderNotLoggedIn).toBeCalledTimes(0);
   });
   it('calls renderNotLoggedIn() if not authenticated', () => {
-    const component = shallow<HomeComponent>(<HomeComponent isAuthenticated={false} />);
+    const component = shallow<HomeComponent>(
+        <HomeComponent isAuthenticated={false} />
+    );
     const instance = component.instance();
     instance.renderNotLoggedIn = jest.fn();
     instance.render();

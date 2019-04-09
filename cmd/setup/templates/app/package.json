@@ -1,12 +1,12 @@
 {
-  "name": "{{.projectName}}",
+  "name": "mnmn",
   "version": "0.0.1",
-  "description": "{{.description}}",
+  "description": "Project created by PAC",
   "main": "src/Application.js",
   "scripts": {
     "build": "webpack --config webpack.config.js",
-    "dev-server": "webpack-dev-server --config webpack.dev.config.js --hot --history-api-fallback",
-    "test": "npx jest",
+    "dev-server": "webpack-dev-server --color --config webpack.dev.config.js --hot --history-api-fallback",
+    "test": "npx jest --colors",
     "test-watch": "npx jest --coverage --watch",
     "test-debug": "npx --node-arg --inspect-brk jest --runInBand",
     "test-sonar": "npx jest --coverage --testResultsProcessor=jest-sonar-reporter",
@@ -26,10 +26,13 @@
   },
   "jest": {
     "setupFilesAfterEnv": [
-      "<rootDir>/testSupport/setup.js"
+      "<rootDir>/test-setup/setup.js"
     ],
     "testURL": "http://localhost",
     "moduleNameMapper": {
+      "^@app(.*)$": "<rootDir>/src$1",
+      "^@pyramidlabs/core(.*)$": "<rootDir>/dist/core$1",
+      "^@pyramidlabs/domain(.*)$": "<rootDir>/dist/domain$1",
       "^.+\\.(scss|css|svg|png|sass)$": "identity-obj-proxy"
     }
   },

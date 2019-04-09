@@ -3,7 +3,7 @@ import { hot } from 'react-hot-loader/root';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { JwtReceivedAction } from '../../types';
+import { JwtReceivedAction } from '@app/types';
 
 interface LoginCallbackProps {
   setToken(token: string): void;
@@ -23,7 +23,7 @@ export class LoginCallbackComponent extends React.Component<LoginCallbackProps> 
 
 const mapState = () => ({});
 export const mapDispatch = (dispatch: Dispatch<JwtReceivedAction>) => ({
-  setToken: (token: string) => dispatch({ type: 'JWT_RECEIVED', token: token }) 
+  setToken: (token: string) => dispatch({ type: 'JWT_RECEIVED', token: token })
 });
 
 export default connect(mapState, mapDispatch)(hot(LoginCallbackComponent))

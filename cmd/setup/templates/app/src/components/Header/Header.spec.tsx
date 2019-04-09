@@ -4,16 +4,23 @@ import { mountWithState } from '../../../testSupport/redux';
 import { Button, ButtonPriority } from '@pyramidlabs/react-ui';
 import Header, { HeaderComponent, mapState } from './Header';
 import { Route } from '../../routes';
+import { IUser } from '@pyramid-systems/domain';
 
-jest.mock('../../../routes', () => Array<Route>());
+jest.mock('../../routes', () => Array<Route>());
 
 describe('header (unit/shallow)', () => {
   // if you've exported the class by itself, you can do quick unit tests like the following test
   // shallow() will not render child components
 
   it('should show a login link when not logged in', () => {
-    const hdr = shallow(<HeaderComponent />)
-    expect(hdr.contains(<a href="http://localhost:3000/api/auth/login"><Button text={'Login'} priority={ButtonPriority.Primary} /></a>)).toBe(true);
+    const hdr = shallow(<HeaderComponent />);
+    expect(
+        hdr.contains(
+            <a href="http://localhost:3000/api/auth/login">
+              <Button text={'Login'} priority={ButtonPriority.Primary} />
+            </a>
+        )
+    ).toBe(true);
   });
 
   it('should show user information while logged in', () => {
@@ -26,10 +33,13 @@ describe('header (unit/shallow)', () => {
   });
 
   it('should map state appropriately', () => {
+    const fakeUser: IUser = {
+      name: 'testUser',
+      groups: [],
+      sub: ''
+    };
     const inputState = {
-      user: {
-        name: 'testUser'
-      }
+      user: fakeUser
     };
     const expectedProps = {
       username: 'testUser',
@@ -45,7 +55,13 @@ describe('header (integration/mount)', () => {
 
   it('should show a login link when not logged in', () => {
     const hdr = mountWithState(<Header />, {});
-    expect(hdr.contains(<a href="http://localhost:3000/api/auth/login"><Button text={'Login'} priority={ButtonPriority.Primary} /></a>)).toBe(true);
+    expect(
+        hdr.contains(
+            <a href="http://localhost:3000/api/auth/login">
+              <Button text={'Login'} priority={ButtonPriority.Primary} />
+            </a>
+        )
+    ).toBe(true);
   });
 
   it('should show user information while logged in', () => {

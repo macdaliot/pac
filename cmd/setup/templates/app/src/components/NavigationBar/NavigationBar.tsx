@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { hot } from 'react-hot-loader/root';
 import { Link } from 'react-router-dom';
-import routes, { Route } from '../../routes';
+import routes, { Route } from '@app/routes';
 import './navigation-bar.scss';
 
 export class NavigationBarComponent extends React.Component {
   render = () => {
     return (
-      <div className="navigation-bar-component">
-        {
-          routes.map((route, key) => {
-            return ( this.renderRoute(route, key) );
-          })
-        }
-      </div>
+        <div className="navigation-bar-component">
+          {
+            routes.map((route, key) => {
+              return ( this.renderRoute(route, key) );
+            })
+          }
+        </div>
     );
   }
 
@@ -24,11 +24,11 @@ export class NavigationBarComponent extends React.Component {
         classNames += " active-route";
       }
       return (
-        <Link className={classNames} to={route.path} key={key}>
-          <div className="route-button-inner">
-            <span>{route.displayName}</span>
-          </div>
-        </Link>
+          <Link className={classNames} to={route.path} key={key}>
+            <div className="route-button-inner">
+              <span>{route.displayName}</span>
+            </div>
+          </Link>
       )
     }
   }

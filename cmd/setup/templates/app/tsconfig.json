@@ -1,5 +1,8 @@
 {
+    "extends": "../tsconfig.json",
+    "include": ["src"],
     "compilerOptions": {
+        "baseUrl": "./",
         "outDir": "./build/",
         "sourceMap": true,
         "noImplicitAny": true,
@@ -8,15 +11,12 @@
         "lib": ["es2015", "dom"],
         "jsx": "react",
         "resolveJsonModule": true,
-        "types": [
-            "jest"
-        ],
+        "types": ["jest"],
         "paths": {
+            "@app/*": ["src/*"],
+            "@app/test-setup": ["./test-setup"],
             "@pyramid-systems/domain": ["../domain"],
             "@pyramid-systems/core": ["../core"]
         }
-    },
-    "include": [
-        "src"
-    ]
+    }
 }
