@@ -19,7 +19,7 @@ func IsTerraformInstalled() {
 	logger.Info("Checking if Terraform is installed...")
   _, err := commands.Run("terraform version", "")
   if err != nil {
-    errors.LogAndQuit(str.Concat("ERROR: Checking the Terraform version failed with the following error: ", err))
+    errors.LogAndQuit(str.Concat("ERROR: Checking the Terraform version failed with the following error: ", err.Error()))
   }
   logger.Info("Terraform is installed")
 }
@@ -37,7 +37,7 @@ func SetTerraformEnv() {
 func TerraformInitialize() {
   output, err := commands.Run("terraform init -input=false", "terraform")
   if err != nil {
-    errors.LogAndQuit(str.Concat("ERROR: Initializing Terraform failed with the following error: ", err))
+    errors.LogAndQuit(str.Concat("ERROR: Initializing Terraform failed with the following error: ", err.Error()))
   }
   logger.Info(output)
 }
@@ -46,7 +46,7 @@ func TerraformInitialize() {
 func TerraformCreate() {
   output, err := commands.Run("terraform plan -out=tfplan -input=false", "terraform")
   if err != nil {
-    errors.LogAndQuit(str.Concat("ERROR: Planning with Terraform failed with the following error: ", err))
+    errors.LogAndQuit(str.Concat("ERROR: Planning with Terraform failed with the following error: ", err.Error()))
   }
   logger.Info(output)
 }
@@ -56,7 +56,7 @@ func TerraformApply() {
 	defer timeTrack(time.Now(), "Terraform create")
   output, err := commands.Run("terraform apply -input=false tfplan", "terraform")
   if err != nil {
-    errors.LogAndQuit(str.Concat("ERROR: Applying the Terraform plan failed with the following error: ", err))
+    errors.LogAndQuit(str.Concat("ERROR: Applying the Terraform plan failed with the following error: ", err.Error()))
   }
   logger.Info(output)
 }
