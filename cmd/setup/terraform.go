@@ -2,22 +2,21 @@ package setup
 
 import (
   "fmt"
-	"log"
-	"os"
-	"os/exec"
-	"time"
+  "os"
+  "time"
 
-	"github.com/PyramidSystemsInc/go/commands"
-	"github.com/PyramidSystemsInc/go/errors"
-	"github.com/PyramidSystemsInc/go/logger"
-	"github.com/PyramidSystemsInc/go/str"
-	"github.com/PyramidSystemsInc/pac/config"
+  "github.com/PyramidSystemsInc/go/commands"
+  "github.com/PyramidSystemsInc/go/errors"
+  "github.com/PyramidSystemsInc/go/files"
+  "github.com/PyramidSystemsInc/go/logger"
+  "github.com/PyramidSystemsInc/go/str"
+  "github.com/PyramidSystemsInc/pac/config"
 )
 
 //IsTerraformInstalled attempts to get the Terraform version to demonstrate Terraform is installed and accessible.
 //If Terraform is not installed or accessible the execution of the program is stopped.
 func IsTerraformInstalled() {
-	logger.Info("Checking if Terraform is installed...")
+  logger.Info("Checking if Terraform is installed...")
   _, err := commands.Run("terraform version", "")
   if err != nil {
     errors.LogAndQuit(str.Concat("ERROR: Checking the Terraform version failed with the following error: ", err.Error()))
@@ -27,8 +26,8 @@ func IsTerraformInstalled() {
 
 //SetTerraformEnv sets the environment variable for Terraform automation
 func SetTerraformEnv() {
-	os.Setenv("TF_IN_AUTOMATION", "NONEMPTYVALUE")
-	os.Setenv("TF_VAR_project_name", config.Get("projectName"))
+  os.Setenv("TF_IN_AUTOMATION", "NONEMPTYVALUE")
+  os.Setenv("TF_VAR_project_name", config.Get("projectName"))
 }
 
 //TerraformInitialize initializes the terraform directory
@@ -54,7 +53,7 @@ func TerraformCreate() {
 
 //TerraformApply applies tfplan
 func TerraformApply() {
-	defer timeTrack(time.Now(), "Terraform create")
+  defer timeTrack(time.Now(), "Terraform create")
   output, err := commands.Run("terraform apply -input=false tfplan", "terraform")
   if err != nil {
     errors.LogAndQuit(str.Concat("ERROR: Applying the Terraform plan failed with the following error: ", err.Error()))
@@ -64,57 +63,38 @@ func TerraformApply() {
 
 //TerraformDestroy destroys all resources managed by Terraform
 func TerraformDestroy() {
-	defer timeTrack(time.Now(), "Terraform destroy")
-
-	destroyLambdas()
-	destroyVPCs()
+  defer timeTrack(time.Now(), "Terraform destroy")
+  destroyLambdas()
+  destroyVPCs()
 }
 
 func destroyVPCs() {
-	logger.Info("Terraform is destroying VPCs...")
-	//navgiate to terraform directory
-	os.Chdir(config.GetRootDirectory())
-	os.Chdir("./terraform")
-
-	if _, err := os.Stat("./.terraform"); os.IsNotExist(err) {
-		//Terraform did not initialize, there is nothing to destroy
-		return
-	}
-
-	// destroy AWS resources managed by Terraform
-	cmd := exec.Command("terraform", "destroy", "-auto-approve")
-
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Fatalf("Terraform destroy failed with %s\n", err)
-	}
-
-	logger.Info(string(out))
+  if files.Exists("terraform/.terraform") {
+    logger.Info("Terraform is destroying VPCs...")
+    output, err := commands.Run("terraform destroy -auto-approve", "terraform")
+    if err != nil {
+      errors.LogAndQuit(str.Concat("ERROR: Terraform destroy failed with the following error: ", err.Error()))
+    }
+    logger.Info(output)
+  } else {
+    logger.Info("No VPCs were created through Terraform. No project infrastructure to clean")
+  }
 }
 
 func destroyLambdas() {
-	logger.Info("Terraform is destroying lambdas(services)...")
-	//Navigate to svc directory
-	os.Chdir(config.GetRootDirectory())
-	os.Chdir("./svc/terraform")
-
-	if _, err := os.Stat("./.terraform"); os.IsNotExist(err) {
-		//Terraform did not initialize, there is nothing to destroy
-		return
-	}
-
-	// destroy AWS resources managed by Terraform
-	cmd := exec.Command("terraform", "destroy", "-auto-approve")
-
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Fatalf("Terraform destroy failed with %s\n", err)
-	}
-
-	logger.Info(string(out))
+  if files.Exists("svc/terraform/.terraform") {
+    logger.Info("Terraform is destroying lambdas (services)...")
+    output, err := commands.Run("terraform destroy -auto-approve", "svc/terraform")
+    if err != nil {
+      errors.LogAndQuit(str.Concat("ERROR: Terraform destroy failed with the following error: ", err.Error()))
+    }
+    logger.Info(output)
+  } else {
+    logger.Info("No services were created through Terraform. No lambda functions to clean")
+  }
 }
 
 func timeTrack(start time.Time, name string) {
-	elapsed := time.Since(start)
-	fmt.Sprintf("%s took %s", name, elapsed)
+  elapsed := time.Since(start)
+  fmt.Sprintf("%s took %s", name, elapsed)
 }
