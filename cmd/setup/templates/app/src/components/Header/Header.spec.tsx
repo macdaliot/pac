@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { mountWithState } from '../../../testSupport/redux';
+import { mountWithState } from '../../../test-setup/redux';
 import { Button, ButtonPriority } from '@pyramidlabs/react-ui';
 import Header, { HeaderComponent, mapState } from './Header';
 import { Route } from '../../routes';

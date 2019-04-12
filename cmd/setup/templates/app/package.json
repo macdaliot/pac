@@ -1,5 +1,5 @@
 {
-  "name": "mnmn",
+  "name": "{{.projectName}}",
   "version": "0.0.1",
   "description": "Project created by PAC",
   "main": "src/Application.js",

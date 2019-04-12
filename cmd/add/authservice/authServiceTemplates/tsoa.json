@@ -2,7 +2,7 @@
     "compilerOptions": {
       "baseUrl": "./",
       "paths": {
-        "@pyramid-systems/components": ["../components"],
+        "@pyramid-systems/domain": ["../domain"],
         "@pyramid-systems/core": ["../core"]
       }
     },
