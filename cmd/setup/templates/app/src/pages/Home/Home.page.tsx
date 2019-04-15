@@ -3,7 +3,6 @@ import { hot } from 'react-hot-loader/root';
 import { connect } from 'react-redux';
 import { Alert, AlertType } from '@pyramidlabs/react-ui';
 import './home.scss';
-import Counter from '@app/components/Counter/Counter';
 import { ApplicationState } from '@app/redux/Reducers';
 import { Dispatch } from 'redux';
 
@@ -31,7 +30,6 @@ export class HomeComponent extends React.Component<HomeProps> {
           message="You are on the home page and logged in!"
           type={AlertType.Success}
         />
-        <Counter />
       </div>
     );
   };

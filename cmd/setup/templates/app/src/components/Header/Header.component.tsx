@@ -6,15 +6,20 @@ import { UrlConfig } from '../../config';
 import './header.scss';
 import { ApplicationState } from '@app/redux/Reducers';
 
-export const mapStateToProps = (state: ApplicationState) => ({
+export const mapStateToProps = (
+  state: ApplicationState
+): HeaderComponentState => ({
   userName: state.user ? state.user.name : null,
   isAuthenticated: Boolean(state.user)
 });
 export const mapDispatchToProps = () => ({});
 
+type HeaderComponentState = { userName?: string; isAuthenticated?: boolean };
 type ReduxStateToProps = ReturnType<typeof mapStateToProps>;
 type ReduxDispatchToProps = ReturnType<typeof mapDispatchToProps>;
-type HeaderProps = {} & ReduxDispatchToProps & ReduxStateToProps;
+type HeaderProps = HeaderComponentState &
+  ReduxDispatchToProps &
+  ReduxStateToProps;
 
 export class HeaderComponent extends React.Component<HeaderProps> {
   render = () => {

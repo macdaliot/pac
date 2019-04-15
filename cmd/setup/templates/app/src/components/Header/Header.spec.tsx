@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { mountWithState } from '../../../test-setup/redux';
 import { Button, ButtonPriority } from '@pyramidlabs/react-ui';
-import Header, { HeaderComponent, mapState } from './Header.component';
+import Header, { HeaderComponent, mapStateToProps } from './Header.component';
 import { Route } from '../../routes';
 import { IUser } from '@pyramid-systems/domain';
 
@@ -45,7 +45,7 @@ describe('header (unit/shallow)', () => {
       username: 'testUser',
       isAuthenticated: true
     };
-    expect(mapState(inputState)).toEqual(expectedProps);
+    expect(mapStateToProps(inputState)).toEqual(expectedProps);
   });
 });
 
