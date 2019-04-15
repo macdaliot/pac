@@ -8,7 +8,7 @@ export class NavigationBarComponent extends React.Component {
   render = () => {
     return (
       <div className="navigation-bar-component">
-        {routes.map((route, key) => this.renderRoute(route, key))})}
+        {routes.map((route, key) => this.renderRoute(route, key))}
       </div>
     );
   };
