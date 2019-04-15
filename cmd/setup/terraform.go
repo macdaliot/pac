@@ -42,9 +42,9 @@ func TerraformInitialize() {
   logger.Info(output)
 }
 
-//TerraformCreate creates tfplan that will be applied by Terraform to create AWS infrastructure.
-func TerraformCreate() {
-  output, err := commands.Run("terraform plan -out=tfplan -input=false", "terraform")
+//TerraformPlan creates tfplan that will be applied by Terraform to create AWS infrastructure.
+func TerraformPlan(freeVpcCidrBlocks []string) {
+  output, err := commands.Run("terraform plan -var management_cidr_block=" + freeVpcCidrBlocks[0] + " -var application_cidr_block=" + freeVpcCidrBlocks[1] + " -var region=us-east-2 -out tfplan", "terraform")
   if err != nil {
     errors.LogAndQuit(str.Concat("ERROR: Planning with Terraform failed with the following error: ", err.Error()))
   }

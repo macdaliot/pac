@@ -2,6 +2,7 @@ package setup
 
 import (
   "github.com/PyramidSystemsInc/go/commands"
+  "github.com/PyramidSystemsInc/go/errors"
   "github.com/PyramidSystemsInc/go/files"
   "github.com/PyramidSystemsInc/go/logger"
   "github.com/PyramidSystemsInc/go/str"
@@ -13,7 +14,7 @@ func AutomateJenkins() {
   time.Sleep(60 * time.Second)
   projectName := config.Get("projectName")
   jenkinsUrl := config.Get("jenkinsUrl")
-  downloadJenkinsCliJar(jenkinsUrl)
+  DownloadJenkinsCliJar(jenkinsUrl)
   createEntrypointJobXml(projectName)
   createMasterPipelineXml(projectName)
   createFrontEndPipelineXml(projectName)
@@ -24,8 +25,22 @@ func AutomateJenkins() {
   logger.Info("Jenkins should now be completely configured.")
 }
 
-func downloadJenkinsCliJar(jenkinsUrl string) {
-  files.Download(str.Concat("http://", jenkinsUrl, "/jnlpJars/jenkins-cli.jar"), "./jenkins-cli.jar")
+func DownloadJenkinsCliJar(jenkinsUrl string) {
+  corruptJenkinsCliError := "Error: Invalid or corrupt jarfile jenkins-cli.jar"
+  jenkinsCliPath := "./jenkins-cli.jar"
+  err := files.Download(str.Concat("http://", jenkinsUrl, "/jnlpJars/jenkins-cli.jar"), jenkinsCliPath)
+  if err != nil {
+    logger.Info("Made it in the if")
+    if err.Error() == corruptJenkinsCliError {
+      logger.Info("Made it in the nested if")
+      files.Delete(jenkinsCliPath)
+      logger.Info("Received a corrupt Jenkins CLI. Attempting another download")
+      time.Sleep(20 * time.Second)
+      DownloadJenkinsCliJar(jenkinsUrl)
+    } else {
+      errors.LogAndQuit(str.Concat("Downloading the Jenkins CLI failed with the following error: ", err.Error()))
+    }
+  }
 }
 
 func createEntrypointJobXml(projectName string) {

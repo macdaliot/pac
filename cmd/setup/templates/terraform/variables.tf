@@ -13,6 +13,14 @@ variable "az_count" {
     description = "number of availability zones to deploy to"
 }
 
+variable "management_cidr_block" {
+  default = "10.1.0.0/16"
+}
+
+variable "application_cidr_block" {
+  default = "10.2.0.0/16"
+}
+
 variable "app_count" {
     description = "number of containers to deploy"
 }

@@ -28,7 +28,7 @@ resource "aws_route53_record" "ns" {
 data "aws_availability_zones" "available" {}
 
 resource "aws_vpc" "management" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block = "${var.management_cidr_block}"
 
   tags {
     name = "${var.project_name}-management-vpc"
@@ -48,7 +48,7 @@ resource "aws_subnet" "private" {
 }
 
 resource "aws_vpc" "application" {
-  cidr_block = "10.1.0.0/16"
+  cidr_block = "${var.application_cidr_block}"
 
   tags {
     name = "${var.project_name}-application-vpc"
