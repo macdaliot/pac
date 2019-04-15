@@ -1,3 +1,3 @@
-import GovWebsiteBanner from './GovWebsiteBanner';
+import GovWebsiteBanner from './GovWebsiteBanner.component';
 
 export { GovWebsiteBanner };

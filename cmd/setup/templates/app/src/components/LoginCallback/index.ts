@@ -1,3 +1,3 @@
-import LoginCallback from './LoginCallback';
+import LoginCallback from './LoginCallback.component';
 
 export { LoginCallback };

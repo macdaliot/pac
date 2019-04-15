@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { HomeComponent, mapState } from './Home';
-import { AuthState } from '@app/types';
+import { HomeComponent, mapStateToProps } from './Home.page';
+import { ApplicationState } from '@app/redux/Reducers';
 
 describe('Home Page', () => {
   it('does not call renderNotLoggedIn() if authenticated', () => {
     const component = shallow<HomeComponent>(
-        <HomeComponent isAuthenticated={true} />
+      <HomeComponent isAuthenticated={true} />
     );
     const instance = component.instance();
     instance.renderNotLoggedIn = jest.fn();
@@ -15,7 +15,7 @@ describe('Home Page', () => {
   });
   it('calls renderNotLoggedIn() if not authenticated', () => {
     const component = shallow<HomeComponent>(
-        <HomeComponent isAuthenticated={false} />
+      <HomeComponent isAuthenticated={false} />
     );
     const instance = component.instance();
     instance.renderNotLoggedIn = jest.fn();
@@ -28,20 +28,20 @@ describe('Home Page', () => {
         name: 'testUser'
       },
       token: 'abcde.12345.abcde'
-    } as AuthState;
+    } as ApplicationState;
     const expectedProps = {
       isAuthenticated: true
     };
-    expect(mapState(inputState)).toEqual(expectedProps);
+    expect(mapStateToProps(inputState)).toEqual(expectedProps);
   });
   it('should map state appropriately', () => {
     const inputState = {
       user: undefined,
       token: undefined
-    } as AuthState;
+    } as ApplicationState;
     const expectedProps = {
       isAuthenticated: false
     };
-    expect(mapState(inputState)).toEqual(expectedProps);
+    expect(mapStateToProps(inputState)).toEqual(expectedProps);
   });
 });

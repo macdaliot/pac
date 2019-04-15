@@ -9,12 +9,12 @@ const sampleUser: string = 'thisPerson';
 
 describe('Application component (unit/shallow)', () => {
   it('should render', () => {
-    const component = shallow(<ApplicationComponent />)
+    const component = shallow(<ApplicationComponent />);
     expect(component.exists()).toBe(true);
   });
 
   it('should have a default "loggedIn" state of false', () => {
-    const component = shallow(<ApplicationComponent />)
+    const component = shallow(<ApplicationComponent />);
     expect(component.state('loggedIn')).toBe(false);
   });
 });

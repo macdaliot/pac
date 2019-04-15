@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { mountWithState } from '../../../test-setup/redux';
 import { Button, ButtonPriority } from '@pyramidlabs/react-ui';
-import Header, { HeaderComponent, mapState } from './Header';
+import Header, { HeaderComponent, mapState } from './Header.component';
 import { Route } from '../../routes';
 import { IUser } from '@pyramid-systems/domain';
 
@@ -15,11 +15,11 @@ describe('header (unit/shallow)', () => {
   it('should show a login link when not logged in', () => {
     const hdr = shallow(<HeaderComponent />);
     expect(
-        hdr.contains(
-            <a href="http://localhost:3000/api/auth/login">
-              <Button text={'Login'} priority={ButtonPriority.Primary} />
-            </a>
-        )
+      hdr.contains(
+        <a href="http://localhost:3000/api/auth/login">
+          <Button text={'Login'} priority={ButtonPriority.Primary} />
+        </a>
+      )
     ).toBe(true);
   });
 
@@ -56,11 +56,11 @@ describe('header (integration/mount)', () => {
   it('should show a login link when not logged in', () => {
     const hdr = mountWithState(<Header />, {});
     expect(
-        hdr.contains(
-            <a href="http://localhost:3000/api/auth/login">
-              <Button text={'Login'} priority={ButtonPriority.Primary} />
-            </a>
-        )
+      hdr.contains(
+        <a href="http://localhost:3000/api/auth/login">
+          <Button text={'Login'} priority={ButtonPriority.Primary} />
+        </a>
+      )
     ).toBe(true);
   });
 

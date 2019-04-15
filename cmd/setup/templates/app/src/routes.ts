@@ -2,15 +2,15 @@ import { Home } from './pages/Home';
 import { NotFound } from './pages/NotFound';
 import { LoginCallback } from './components/LoginCallback';
 
-export interface Route {
+export type Route = {
   path: string;
   displayName?: string;
   exact?: boolean;
   restricted?: boolean;
   component: any;
-}
+};
 
-const routes: Array<Route> = [
+const routes: Route[] = [
   {
     path: '/',
     displayName: 'Home',
@@ -27,6 +27,6 @@ const routes: Array<Route> = [
     restricted: false,
     component: NotFound
   }
-]
+];
 
 export default routes;

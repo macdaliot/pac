@@ -40,17 +40,17 @@ export class ApplicationComponent extends React.Component<{}, State> {
         </Router>
       </Provider>
     );
-  }
+  };
 
   handleLogin = () => {
     const loggedIn = appStore.getState().user != null;
     if (loggedIn) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${appStore.getState().token}`;
+      axios.defaults.headers.common[
+        'Authorization'
+      ] = `Bearer ${appStore.getState()}`;
     }
-    this.setState({
-      loggedIn: loggedIn
-    });
-  }
+    this.setState({ loggedIn });
+  };
 }
 
 export default hot(ApplicationComponent);
