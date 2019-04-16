@@ -5,7 +5,6 @@ import (
   "github.com/PyramidSystemsInc/go/logger"
   "github.com/PyramidSystemsInc/go/str"
   "github.com/PyramidSystemsInc/go/terraform"
-  "github.com/PyramidSystemsInc/pac/cmd/add"
   "github.com/PyramidSystemsInc/pac/cmd/setup"
   "github.com/PyramidSystemsInc/pac/config"
   "github.com/spf13/cobra"
@@ -26,7 +25,6 @@ NodeJS/Express back-end, and DynamoDB database)`,
     frontEnd := getFrontEnd(cmd)
     backEnd := getBackEnd(cmd)
     database := getDatabase(cmd)
-    skipAuth := getSkipAuth(cmd)
     warnExtraArgumentsAreIgnored(args)
     setup.ValidateInputs(projectName, frontEnd, backEnd, database)
 
@@ -50,10 +48,6 @@ NodeJS/Express back-end, and DynamoDB database)`,
     setup.GitRepository(projectName)
     setup.GitHubWebhook(projectName, gitAuth, jenkinsUrl)
 
-    if skipAuth == false {
-      add.AuthService()
-    }
-
     // Set configuration values in the .pac file in the new project directory
     config.Set("encryptionKeyID", encryptionKeyID)
     config.Set("jenkinsUrl", jenkinsUrl)
@@ -73,7 +67,6 @@ func init() {
   setupCmd.PersistentFlags().StringVarP(&frontEnd, "front", "f", "ReactJS", "front-end framework/library")
   setupCmd.PersistentFlags().StringVarP(&backEnd, "back", "b", "Express", "back-end framework/library")
   setupCmd.PersistentFlags().StringVarP(&database, "database", "d", "DynamoDB", "database type")
-  setupCmd.PersistentFlags().BoolVar(&skipAuth, "skipAuth", false, "do not create an authentication microservice on setup")
 }
 
 func warnExtraArgumentsAreIgnored(args []string) {
@@ -131,12 +124,4 @@ func getDatabase(cmd *cobra.Command) string {
   database, err := cmd.Flags().GetString("database")
   errors.QuitIfError(err)
   return database
-}
-
-var skipAuth bool
-
-func getSkipAuth(cmd *cobra.Command) bool {
-  skipAuth, err := cmd.Flags().GetBool("skipAuth")
-  errors.QuitIfError(err)
-  return skipAuth
 }

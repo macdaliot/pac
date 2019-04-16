@@ -1,6 +1,8 @@
 package cleanCloud
 
 import (
+  "os"
+
 	"github.com/PyramidSystemsInc/go/aws"
 	"github.com/PyramidSystemsInc/go/aws/kms"
 	"github.com/PyramidSystemsInc/go/aws/resourcegroups"
@@ -12,9 +14,16 @@ import (
 
 // DeleteAllResources deletes the AWS resourced created by this application.
 func DeleteAllResources() {
+  os.Chdir(config.GetRootDirectory())
+
 	// Destroy AWS resources managed by Terraform
-  terraform.Destroy("svc/terraform")
-  terraform.Destroy("terraform")
+  logger.Info("Terraform is destroying all AWS resources...")
+   output := terraform.Destroy("svc/terraform")
+   logger.Info(output)
+
+  output = terraform.Destroy("terraform")
+  logger.Info(output)
+  logger.Info("Terraform is finished destroying AWS resources")
 
 	projectName := config.Get("projectName")
 	region := "us-east-2"

@@ -23,10 +23,7 @@ node {
     dir(homeDirectory){
       stage('Build') {
         if (params.EXEC_BUILD){
-          sh 'npm i'
-          sh 'rm -rf dist function.zip'
-          sh 'npx tsc -p tsconfig-build.json'
-          sh 'zip -qr function dist/* lambda.js node_modules'
+          sh 'sh .build.sh'
         }
       }
       stage('Unit Test') {

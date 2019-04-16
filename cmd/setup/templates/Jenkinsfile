@@ -11,61 +11,61 @@ for (x in pipelineComponents){
   builds[jobName] = {
     build job: jobName,
       parameters: [
-          booleanParam(name: 'EXEC_BUILD', value: true),
-          booleanParam(name: 'EXEC_UNITTEST', value: false),
-          booleanParam(name: 'EXEC_DEPLOY', value: false),
-          booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
-          booleanParam(name: 'EXEC_CLEANUP', value: false),
-          stringParam(name: 'PARENTNAME', value: env.BUILD_TAG)
-        ]
+        booleanParam(name: 'EXEC_BUILD', value: true),
+        booleanParam(name: 'EXEC_UNITTEST', value: false),
+        booleanParam(name: 'EXEC_DEPLOY', value: false),
+        booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
+        booleanParam(name: 'EXEC_CLEANUP', value: false),
+        stringParam(name: 'PARENTNAME', value: env.BUILD_TAG)
+      ]
   }
   // create unit test runs
   unitTests[jobName] = {
     build job: jobName,
       parameters: [
-          booleanParam(name: 'EXEC_BUILD', value: false),
-          booleanParam(name: 'EXEC_UNITTEST', value: true),
-          booleanParam(name: 'EXEC_DEPLOY', value: false),
-          booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
-          booleanParam(name: 'EXEC_CLEANUP', value: false),
-          stringParam(name: 'PARENTNAME', value: env.BUILD_TAG)
-        ]
+        booleanParam(name: 'EXEC_BUILD', value: false),
+        booleanParam(name: 'EXEC_UNITTEST', value: true),
+        booleanParam(name: 'EXEC_DEPLOY', value: false),
+        booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
+        booleanParam(name: 'EXEC_CLEANUP', value: false),
+        stringParam(name: 'PARENTNAME', value: env.BUILD_TAG)
+      ]
   }
   // create integration test runs
   integrationTests[jobName] = {
     build job: jobName,
       parameters: [
-          booleanParam(name: 'EXEC_BUILD', value: false),
-          booleanParam(name: 'EXEC_UNITTEST', value: false),
-          booleanParam(name: 'EXEC_DEPLOY', value: false),
-          booleanParam(name: 'EXEC_INTEGRATIONTEST', value: true),
-          booleanParam(name: 'EXEC_CLEANUP', value: false),
-          stringParam(name: 'PARENTNAME', value: env.BUILD_TAG)
-        ]
+        booleanParam(name: 'EXEC_BUILD', value: false),
+        booleanParam(name: 'EXEC_UNITTEST', value: false),
+        booleanParam(name: 'EXEC_DEPLOY', value: false),
+        booleanParam(name: 'EXEC_INTEGRATIONTEST', value: true),
+        booleanParam(name: 'EXEC_CLEANUP', value: false),
+        stringParam(name: 'PARENTNAME', value: env.BUILD_TAG)
+      ]
   }
   // create deployments
   deployments[jobName] = {
     build job: jobName,
       parameters: [
-          booleanParam(name: 'EXEC_BUILD', value: false),
-          booleanParam(name: 'EXEC_UNITTEST', value: false),
-          booleanParam(name: 'EXEC_DEPLOY', value: true),
-          booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
-          booleanParam(name: 'EXEC_CLEANUP', value: false),
-          stringParam(name: 'PARENTNAME', value: env.BUILD_TAG)
-        ]
+        booleanParam(name: 'EXEC_BUILD', value: false),
+        booleanParam(name: 'EXEC_UNITTEST', value: false),
+        booleanParam(name: 'EXEC_DEPLOY', value: true),
+        booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
+        booleanParam(name: 'EXEC_CLEANUP', value: false),
+        stringParam(name: 'PARENTNAME', value: env.BUILD_TAG)
+      ]
   }
   // create cleanups
   cleanups[jobName] = {
     build job: jobName,
       parameters: [
-          booleanParam(name: 'EXEC_BUILD', value: false),
-          booleanParam(name: 'EXEC_UNITTEST', value: false),
-          booleanParam(name: 'EXEC_DEPLOY', value: false),
-          booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
-          booleanParam(name: 'EXEC_CLEANUP', value: true),
-          stringParam(name: 'PARENTNAME', value: env.BUILD_TAG)
-        ]
+        booleanParam(name: 'EXEC_BUILD', value: false),
+        booleanParam(name: 'EXEC_UNITTEST', value: false),
+        booleanParam(name: 'EXEC_DEPLOY', value: false),
+        booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
+        booleanParam(name: 'EXEC_CLEANUP', value: true),
+        stringParam(name: 'PARENTNAME', value: env.BUILD_TAG)
+      ]
   }
 }
 
