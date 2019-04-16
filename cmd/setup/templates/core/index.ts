@@ -5,3 +5,4 @@ export * from './passport.strategies';
 export * from './middlewares';
 export * from './exceptions';
 export * from './express';
+export * from './database-connectors';

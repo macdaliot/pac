@@ -1,4 +1,4 @@
-require('module-alias/register');
+import 'module-alias/register'';
 import * as dotenv from 'dotenv';
 dotenv.load(); // must remain here before other imports
 
@@ -17,7 +17,7 @@ app
     .use(passport.initialize())
     .use(express.json())
     .use(express.urlencoded({ extended: false }))
-    .use('/api/auth/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+    .use('/api/{{.serviceName}}/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 RegisterRoutes(app, container);
 

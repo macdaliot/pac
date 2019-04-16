@@ -8,9 +8,9 @@ export function errorMiddleware(
     response: Response,
     next: NextFunction
 ) {
-  request.log.error(JSON.stringify(error));
   const status = error.status || 500;
   const message = error.message || 'Something went wrong';
+  request.log.error(message);
   response.status(status).send({
     status,
     message

@@ -1,5 +1,5 @@
-require("module-alias/register");
-import * as dotenv from "dotenv";
+import 'module-alias/register';
+import * as dotenv from 'dotenv';
 dotenv.load(); // must remain here before other imports
 
 import * as express from "express";

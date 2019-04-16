@@ -12,5 +12,9 @@
     ]
   },
   "author": "Pyramid Systems, Inc.",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@aws/dynamodb-data-mapper-annotations": "^0.7.3",
+    "aws-sdk": "^2.437.0"
+  }
 }

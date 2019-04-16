@@ -4,8 +4,8 @@
   "description": "{{.serviceName}} service (created by PAC)",
   "main": "server.js",
   "scripts": {
-    "build": "npx tsc",
-    "start": "nodemon",
+    "start": "npm run generate:templates && tsc && node dist/services/{{.serviceName}}/src/local",
+    "start:dev": "npm run start | pino-pretty -c -t -l",
     "generate:routes": "npx tsoa routes -c tsoa.json",
     "generate:swagger": "npx tsoa swagger -c tsoa.json",
     "generate:templates": "npx tsoa routes -c tsoa.json && npx tsoa swagger -c tsoa.json",
@@ -16,6 +16,9 @@
   "author": "Pyramid Systems, Inc.",
   "license": "ISC",
   "dependencies": {
+    "@aws/dynamodb-data-mapper": "^0.7.3",
+    "@aws/dynamodb-data-mapper-annotations": "^0.7.3",
+    "aws-sdk": "^2.437.0",
     "aws-serverless-express": "^3.3.5",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
@@ -54,6 +57,7 @@
     "jest-sonar-reporter": "^2.0.0",
     "mocha": "^5.2.0",
     "module-alias": "^2.2.0",
+    "pino-pretty": "^2.6.0",
     "reflect-metadata": "^0.1.13",
     "swagger-ui-express": "^4.0.2",
     "ts-jest": "^23.10.5",

@@ -1,7 +1,9 @@
 import { DynamoDB } from 'aws-sdk';
 import { Repository } from '../../core/database-connectors/amazon-dynamodb/repository';
 import { {{.serviceNamePascal}} } from './{{.serviceName}}';
+import { Injectable } from '@pyramid-systems/core';
 
+@Injectable()
 export class {{.serviceNamePascal}}Repository extends Repository<{{.serviceNamePascal}}> {
     constructor(protected dynamoDb: DynamoDB) {
         super(dynamoDb);
@@ -12,16 +14,20 @@ export class {{.serviceNamePascal}}Repository extends Repository<{{.serviceNameP
     }
 
     async getAll(): Promise<{{.serviceNamePascal}}[]> {
-        const partners: Partner[] = [];
-        const iterator = await this.scan(Partner);
+        const partners:  {{.serviceNamePascal}}[] = [];
+        const iterator = await this.scan({{.serviceNamePascal}});
         for await (const record of iterator) {
             partners.push(record);
         }
         return partners;
     }
 
-    async update(partnerUpdate: {{.serviceNamePascal}}) {
-        return await this.put(partnerUpdate);
+    async add({{.serviceName}}: {{.serviceNamePascal}}) {
+        return await this.post({{.serviceName}}, {{.serviceNamePascal}});
+    }
+
+    async update(idToUpdate: string, {{.serviceName}}: {{.serviceNamePascal}}) {
+        return await this.put(idToUpdate, {{.serviceName}}, {{.serviceNamePascal}});
     }
 
     async deleteById(idToDelete: string) {

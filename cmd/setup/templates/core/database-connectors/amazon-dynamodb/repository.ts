@@ -6,23 +6,21 @@ import {
     DeleteOptions,
     GetOptions
 } from '@aws/dynamodb-data-mapper';
-import { config, DynamoDB } from 'aws-sdk';
-import { awsConfig } from './config';
+import { DynamoDB } from 'aws-sdk';
+import { Injectable } from '@pyramid-systems/core';
 
-export type Newable<T> = { new (...args: any[]): T };
+export type Newable<T> = { new(...args: any[]): T };
 
 export interface IEntity {
     id: string;
 }
 
+@Injectable()
 export class Repository<TModel extends IEntity> {
     mapper: DataMapper;
     constructor(protected dynamoDb: DynamoDB) {
-        // TODO: Create a type for environment variables
-        let env = process.env.ENVIRONMENT || 'cloud';
-        config.update(awsConfig[env]);
         this.mapper = new DataMapper({
-            client: new DynamoDB() // the SDK client used to execute operations
+            client: dynamoDb // the SDK client used to execute operations
             // tableNamePrefix: 'dev_' // optionally, you can provide a table prefix to keep your dev and prod tables separate
         });
     }
@@ -47,8 +45,14 @@ export class Repository<TModel extends IEntity> {
         return await this.mapper.scan<TModel>(value, options);
     }
 
-    protected async put(value: TModel, options?: PutOptions) {
-        return await this.mapper.put<TModel>(value, options);
+    protected async put(id: string, value: TModel, model: Newable<TModel>, options?: PutOptions) {
+        const toUpdate = Object.assign(new model, value, { id });
+        return await this.mapper.put<TModel>(toUpdate, options);
+    }
+
+    protected async post(value: TModel, model: Newable<TModel>, options?: PutOptions) {
+        const toUpdate = Object.assign(new model, value);
+        return await this.mapper.put<TModel>(toUpdate, options);
     }
 
     protected async delete(
@@ -56,8 +60,7 @@ export class Repository<TModel extends IEntity> {
         model: Newable<TModel>,
         options?: DeleteOptions
     ) {
-        const deleteRequest = new model();
-        deleteRequest.id = id;
-        return await this.mapper.delete<TModel>(deleteRequest, options);
+        const toDelete = Object.assign(new model, { id });
+        return await this.mapper.delete<TModel>(toDelete, options);
     }
 }

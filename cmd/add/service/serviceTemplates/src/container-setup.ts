@@ -7,7 +7,7 @@ import { {{.serviceNamePascal}}Controller } from './{{.serviceName}}.controller'
 
 
 export const setupContainer = (app: Express): Container => {
-    const serviceLogger = new ServiceLogger("UserService");
+    const serviceLogger = new ServiceLogger("{{.serviceNamePascal}}");
     serviceLogger.info("Setting up container");
     iocContainer.bind({{.serviceNamePascal}}Repository).to({{.serviceNamePascal}}Repository);
     iocContainer.bind({{.serviceNamePascal}}Controller).to({{.serviceNamePascal}}Controller);

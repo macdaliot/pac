@@ -109,15 +109,15 @@ import { NextFunction } from 'connect';
                                             user.groups,
                                             protectedWith.groups
                                         );
-                                        Logger.info(`${user.name} has the following groups matched: {groupsMatched}`);
+                                        request.log.info(`${user.name} has the following groups matched: {groupsMatched}`);
                                         if (
                                             !isNullOrUndefined(groupsMatched) &&
                                             groupsMatched.length > 0
-                                        ) {
+                                        ) {z
                                             return next();
                                         }
 
-                                        Logger.info(`${user.name} tried to access a protected resource ${request.path}`);
+                                        request.log.info(`${user.name} tried to access a protected resource ${request.path}`);
                                         response
                                             .status(401)
                                             .send({ message: 'You are not authorized to do this.' });

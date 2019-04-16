@@ -5,23 +5,33 @@ import { Injectable } from '@pyramid-systems/core';
 @Injectable()
 @Route('{{.serviceName}}')
 export class {{.serviceNamePascal}}Controller extends Controller {
+
+    constructor(private {{.serviceName}}Repository: {{.serviceNamePascal}}Repository) {
+        super();
+    }
+
     @Get('{id}')
     getById(@Path('id') id: string) {
-        throw new Error('Not yet implemented');
+        return this.{{.serviceName}}Repository.getById(id);
     }
 
     @Get()
     getAll() {
-        throw new Error('Not yet implemented');
+        return this.{{.serviceName}}Repository.getAll();
     }
 
     @Post()
-    post(@Request() request: express.Request) {
-        throw new Error('Not yet implemented');
+    post(@Body() newItem: {{.serviceNamePascal}}) {
+        return this.{{.serviceName}}Repository.add(newItem);
     }
 
-    @Put()
-    put() {
-        throw new Error('Not yet implemented');
+    @Put('{id}')
+    put(@Path('id') idToUpdate: string, @Body() itemWithUpdatedValues: {{.serviceNamePascal}}) {
+        return this.{{.serviceName}}Repository.update(idToUpdate, itemWithUpdatedValues);
+    }
+
+    @Delete('{id}')
+    deleteById(@Path('id') idToDelete: string) {
+        return this.{{.serviceName}}Repository.deleteById(idToDelete);
     }
 }

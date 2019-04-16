@@ -2,8 +2,8 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@pyramid-systems/domain": ["../domain"],
-      "@pyramid-systems/core": ["../core"]
+      "@pyramid-systems/domain": ["../../domain"],
+      "@pyramid-systems/core": ["../../core"]
     }
   },
   "swagger": {
