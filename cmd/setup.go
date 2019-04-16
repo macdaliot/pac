@@ -34,29 +34,23 @@ NodeJS/Express back-end, and DynamoDB database)`,
     // Set environment variables
     setup.SetEnvironmentVariables(projectName)
 
-    setupProvider := setup.Provider{
-      ProjectName:     projectName,
-      Region:          awsRegion,
-      AWSVersion:      "1.60",
-      TemplateVersion: "2.1",
-    }
-
     // Create an encrypted S3 bucket where Terraform can store state
-    encryptionKeyID, projectFqdn := setup.TerraformS3Bucket(projectName)
+    projectFqdn, encryptionKeyID := setup.TerraformS3Bucket(projectName)
 
     // Copy template files from ./cmd/setup/templates over to the new project's directory
-    setup.Templates(projectName, description, gitAuth, setupProvider, encryptionKeyID)
+    setup.Templates(projectName, description, gitAuth, awsRegion, encryptionKeyID)
 
     // Call on Terraform to create the AWS infrastructure
     setup.Infrastructure()
 
     // Creates a GitHub repository and sets up a webhook to queue a Jenkins build every time a push is made to GitHub
+    jenkinsUrl := str.Concat("jenkins.", projectFqdn, ":8080")
     setup.GitRepository(projectName)
-    setup.GitHubWebhook()
+    setup.GitHubWebhook(projectName, gitAuth, jenkinsUrl)
 
     // Set configuration values in the .pac file in the new project directory
     config.Set("encryptionKeyID", encryptionKeyID)
-    config.Set("jenkinsUrl", str.Concat("jenkins.", projectFqdn, ":8080"))
+    config.Set("jenkinsUrl", jenkinsUrl)
     config.Set("projectFqdn", projectFqdn)
 
     // TODO: Add as a setup step

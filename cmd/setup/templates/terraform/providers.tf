@@ -7,7 +7,7 @@ terraform {
   backend "s3" {
     bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
     key    = "state/development"
-    region = "{{ .Region }}"
+    region = "{{ .region }}"
   }
 }
 
@@ -18,11 +18,11 @@ terraform {
 #
 provider "aws" {
   # not listed as require in documentation but will be asked for it if not set
-  region = "{{ .Region }}"
+  region = "{{ .region }}"
 
-  version = "{{ .AWSVersion }}"
+  version = "{{ .terraformAWSVersion }}"
 }
 
 provider "template" {
-  version = "{{ .TemplateVersion }}"
+  version = "{{ .terraformTemplateVersion }}"
 }

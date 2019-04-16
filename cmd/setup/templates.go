@@ -7,21 +7,14 @@ import (
 	"github.com/PyramidSystemsInc/go/directories"
 	"github.com/PyramidSystemsInc/go/files"
 	"github.com/PyramidSystemsInc/go/logger"
+  "github.com/PyramidSystemsInc/go/terraform"
 	"github.com/gobuffalo/packr"
 )
 
-//Provider struct hold values used to create Terraform AWS Provider
-type Provider struct {
-	ProjectName     string
-	Region          string
-	AWSVersion      string
-	TemplateVersion string
-}
-
 //Templates creates project directory, config files, and copies project files to project directory.
-func Templates(projectName string, description string, gitAuth string, provider Provider, encryptionKeyID string) {
+func Templates(projectName string, description string, gitAuth string, awsRegion string, encryptionKeyID string) {
 	createRootProjectDirectory(projectName)
-	cfg := createConfig(projectName, description, gitAuth, provider, encryptionKeyID)
+	cfg := createConfig(projectName, description, gitAuth, awsRegion, encryptionKeyID)
 	createProjectFiles(cfg)
 	logger.Info("Created project structure")
 }
@@ -33,14 +26,14 @@ func createRootProjectDirectory(projectName string) {
 	os.Chdir(projectDirectory)
 }
 
-func createConfig(projectName string, description string, gitAuth string, provider Provider, encryptionKeyID string) map[string]string {
+func createConfig(projectName string, description string, gitAuth string, awsRegion string, encryptionKeyID string) map[string]string {
 	cfg := make(map[string]string)
 	cfg["projectName"] = projectName
 	cfg["description"] = description
 	cfg["gitAuth"] = gitAuth
-	cfg["Region"] = provider.Region
-	cfg["AWSVersion"] = provider.AWSVersion
-	cfg["TemplateVersion"] = provider.TemplateVersion
+	cfg["region"] = awsRegion
+	cfg["terraformAWSVersion"] = terraform.AWSVersion
+	cfg["terraformTemplateVersion"] = terraform.TemplateVersion
 	cfg["encryptionKeyID"] = encryptionKeyID
 	return cfg
 }
