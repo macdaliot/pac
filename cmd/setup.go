@@ -1,104 +1,84 @@
 package cmd
 
 import (
-	"github.com/PyramidSystemsInc/go/aws"
-	"github.com/PyramidSystemsInc/go/aws/kms"
-	"github.com/PyramidSystemsInc/go/aws/s3"
-	"github.com/PyramidSystemsInc/go/aws/ec2"
-	"github.com/PyramidSystemsInc/go/errors"
-	"github.com/PyramidSystemsInc/go/logger"
-	"github.com/PyramidSystemsInc/pac/cmd/setup"
-	"github.com/PyramidSystemsInc/pac/config"
-	"github.com/spf13/cobra"
-  "strconv"
+  "github.com/PyramidSystemsInc/go/errors"
+  "github.com/PyramidSystemsInc/go/logger"
+  "github.com/PyramidSystemsInc/go/str"
+  "github.com/PyramidSystemsInc/go/terraform"
+  "github.com/PyramidSystemsInc/pac/cmd/setup"
+  "github.com/PyramidSystemsInc/pac/config"
+  "github.com/spf13/cobra"
 )
 
-var projectDirectory string
-
 var setupCmd = &cobra.Command{
-	Use:   "setup",
-	Short: "Setup a new project",
-	Long: `Generate a new project with PAC (The default stack is a ReactJS front-end,
+  Use:   "setup",
+  Short: "Setup a new project",
+  Long: `Generate a new project with PAC (The default stack is a ReactJS front-end,
 NodeJS/Express back-end, and DynamoDB database)`,
-	Run: func(cmd *cobra.Command, args []string) {
-		logger.SetLogLevel("info")
+  Run: func(cmd *cobra.Command, args []string) {
+    logger.SetLogLevel("info")
+    awsRegion := "us-east-2"
 
-		projectName := getProjectName(cmd)
-		description := getDescription(cmd)
-		frontEnd := getFrontEnd(cmd)
-		backEnd := getBackEnd(cmd)
-		database := getDatabase(cmd)
+    // Get the values provided by command line flags -OR- the default values if not provided
+    projectName := getProjectName(cmd)
+    description := getDescription(cmd)
+    frontEnd := getFrontEnd(cmd)
+    backEnd := getBackEnd(cmd)
+    database := getDatabase(cmd)
+    warnExtraArgumentsAreIgnored(args)
+    setup.ValidateInputs(projectName, frontEnd, backEnd, database)
 
-		warnExtraArgumentsAreIgnored(args)
-		setup.ValidateInputs(projectName, frontEnd, backEnd, database)
-		setupProvider := setup.Provider{
-			ProjectName:     projectName,
-			Region:          "us-east-2",
-			AWSVersion:      "1.60",
-			TemplateVersion: "2.1",
-		}
+    // Perform various checks to ensure we should proceed
+    terraform.VerifyInstallation()
 
-		//create AWS session
-		awsSession := aws.CreateAwsSession("us-east-2")
-    usedVpcCidrBlocks := ec2.GetAllVpcCidrBlocks(awsSession)
-    freeVpcCidrBlocks := findFirstAvailableVpcCidrBlocks(usedVpcCidrBlocks, 2)
+    // Set environment variables
+    setup.SetEnvironmentVariables(projectName)
 
-		//create encryption key
-		encryptionKeyID := kms.CreateEncryptionKey(awsSession, "pac-project", projectName)
+    setupProvider := setup.Provider{
+      ProjectName:     projectName,
+      Region:          awsRegion,
+      AWSVersion:      "1.60",
+      TemplateVersion: "2.1",
+    }
 
-		setup.Templates(projectName, description, gitAuth, setupProvider, encryptionKeyID)
-		config.Set("projectFqdn", projectName+".pac.pyramidchallenges.com")
+    // Create an encrypted S3 bucket where Terraform can store state
+    encryptionKeyID, projectFqdn := setup.TerraformS3Bucket(projectName)
 
-		//McNairy doesn't know why encryptionKeyID isn't added to config when passed to setup.Templates
-		config.Set("encryptionKeyID", encryptionKeyID)
+    // Copy template files from ./cmd/setup/templates over to the new project's directory
+    setup.Templates(projectName, description, gitAuth, setupProvider, encryptionKeyID)
 
-		//check if Terraform is installed
-		setup.IsTerraformInstalled()
+    // Call on Terraform to create the AWS infrastructure
+    setup.Infrastructure()
 
-		//set environment variables for Terraform automation
-		setup.SetTerraformEnv()
+    // Creates a GitHub repository and sets up a webhook to queue a Jenkins build every time a push is made to GitHub
+    setup.GitRepository(projectName)
+    setup.GitHubWebhook()
 
-		//setup S3 bucket where Terraform can store state
-		setup.S3Buckets(projectName)
+    // Set configuration values in the .pac file in the new project directory
+    config.Set("encryptionKeyID", encryptionKeyID)
+    config.Set("jenkinsUrl", str.Concat("jenkins.", projectFqdn, ":8080"))
+    config.Set("projectFqdn", projectFqdn)
 
-		//encrypt S3 bucket
-		s3.EncryptBucket(config.Get("terraformS3Bucket"), config.Get("encryptionKeyID"))
-
-		//setup terraform provider to create infrastructure
-		setup.TerraformInitialize()
-		setup.TerraformPlan(freeVpcCidrBlocks)
-		setup.TerraformApply()
-		config.Set("jenkinsUrl", "jenkins."+config.Get("projectFqdn")+":8080")
-
-		//local developent via docker
-		setup.HaProxy(projectName)
-
-		//create github repository
-		setup.GitRepository(projectName)
-
-		//creates webhook to talk to Jenkins in AWS
-		setup.GitHubWebhook()
-
-		//adds pipelines to Jenkins
-		//setup.AutomateJenkins()
-	},
+    // TODO: Add as a setup step
+    // setup.AutomateJenkins()
+  },
 }
 
 func init() {
-	RootCmd.AddCommand(setupCmd)
-	setupCmd.PersistentFlags().StringVarP(&projectName, "name", "n", "", "project name (required)")
-	setupCmd.MarkPersistentFlagRequired("name")
-	setupCmd.PersistentFlags().StringVar(&description, "description", "Project created by PAC", "short description of the project")
-	setupCmd.PersistentFlags().StringVar(&hostedZone, "hostedZone", "pac.pyramidchallenges.com", "Existing AWS hosted zone FQDN (i.e. pac.pyramidchallenges.com)")
-	setupCmd.PersistentFlags().StringVarP(&frontEnd, "front", "f", "ReactJS", "front-end framework/library")
-	setupCmd.PersistentFlags().StringVarP(&backEnd, "back", "b", "Express", "back-end framework/library")
-	setupCmd.PersistentFlags().StringVarP(&database, "database", "d", "DynamoDB", "database type")
+  RootCmd.AddCommand(setupCmd)
+  setupCmd.PersistentFlags().StringVarP(&projectName, "name", "n", "", "project name (required)")
+  setupCmd.MarkPersistentFlagRequired("name")
+  setupCmd.PersistentFlags().StringVar(&description, "description", "Project created by PAC", "short description of the project")
+  setupCmd.PersistentFlags().StringVar(&hostedZone, "hostedZone", "pac.pyramidchallenges.com", "Existing AWS hosted zone FQDN (i.e. pac.pyramidchallenges.com)")
+  setupCmd.PersistentFlags().StringVarP(&frontEnd, "front", "f", "ReactJS", "front-end framework/library")
+  setupCmd.PersistentFlags().StringVarP(&backEnd, "back", "b", "Express", "back-end framework/library")
+  setupCmd.PersistentFlags().StringVarP(&database, "database", "d", "DynamoDB", "database type")
 }
 
 func warnExtraArgumentsAreIgnored(args []string) {
-	if len(args) > 0 {
-		logger.Warn("Arguments were provided, but all arguments after 'setup' and before the flags are ignored")
-	}
+  if len(args) > 0 {
+    logger.Warn("Arguments were provided, but all arguments after 'setup' and before the flags are ignored")
+  }
 }
 
 // TODO: pull from systems manager parameter store
@@ -107,84 +87,47 @@ var gitAuth = "amRpZWRlcmlrc0Bwc2ktaXQuY29tOkRpZWRyZV4yMDE4"
 var projectName string
 
 func getProjectName(cmd *cobra.Command) string {
-	projectName, err := cmd.Flags().GetString("name")
-	errors.QuitIfError(err)
-	return projectName
+  projectName, err := cmd.Flags().GetString("name")
+  errors.QuitIfError(err)
+  return projectName
 }
 
 var description string
 
 func getDescription(cmd *cobra.Command) string {
-	description, err := cmd.Flags().GetString("description")
-	errors.QuitIfError(err)
-	return description
+  description, err := cmd.Flags().GetString("description")
+  errors.QuitIfError(err)
+  return description
 }
 
 var hostedZone string
 
 func getHostedZone(cmd *cobra.Command) string {
-	hostedZone, err := cmd.Flags().GetString("hostedZone")
-	errors.QuitIfError(err)
-	return hostedZone
+  hostedZone, err := cmd.Flags().GetString("hostedZone")
+  errors.QuitIfError(err)
+  return hostedZone
 }
 
 var frontEnd string
 
 func getFrontEnd(cmd *cobra.Command) string {
-	frontEnd, err := cmd.Flags().GetString("front")
-	errors.QuitIfError(err)
-	return frontEnd
+  frontEnd, err := cmd.Flags().GetString("front")
+  errors.QuitIfError(err)
+  return frontEnd
 }
 
 var backEnd string
 
 func getBackEnd(cmd *cobra.Command) string {
-	backEnd, err := cmd.Flags().GetString("back")
-	errors.QuitIfError(err)
-	return backEnd
+  backEnd, err := cmd.Flags().GetString("back")
+  errors.QuitIfError(err)
+  return backEnd
 }
 
 var database string
 
 func getDatabase(cmd *cobra.Command) string {
-	database, err := cmd.Flags().GetString("database")
-	errors.QuitIfError(err)
-	return database
-}
-
-var path string
-
-func findFirstAvailableVpcCidrBlocks(usedCidrBlocks []string, numberToFind int) []string {
-  var freeVpcCidrBlocks []string
-  var secondPartDigits []string
-  for i := 0; i < numberToFind; i++ {
-    if i == 0 {
-      secondPartDigits = append(secondPartDigits, "1")
-    } else {
-      lastValue, err := strconv.Atoi(secondPartDigits[i - 1])
-      if err != nil {
-        errors.LogAndQuit("The following error occurred while attempting to find a free CIDR block for a VPC: " + err.Error())
-      }
-      secondPartDigits = append(secondPartDigits, strconv.Itoa(lastValue + 1))
-    }
-    digitFound := true
-    for digitFound {
-      digitFound = false
-      out: for _, usedCidrBlock := range usedCidrBlocks {
-        testCidrBlock := "10."+secondPartDigits[i]+".0.0/16"
-        if usedCidrBlock == testCidrBlock {
-          numberDigit, err := strconv.Atoi(secondPartDigits[i])
-          if err != nil {
-            errors.LogAndQuit("The following error occurred while attempting to find a free CIDR block for a VPC: " + err.Error())
-          }
-          numberDigit++
-          secondPartDigits[i] = strconv.Itoa(numberDigit)
-          digitFound = true
-          break out
-        }
-      }
-    }
-    freeVpcCidrBlocks = append(freeVpcCidrBlocks, "10."+secondPartDigits[i]+".0.0/16")
-  }
-  return freeVpcCidrBlocks
+  database, err := cmd.Flags().GetString("database")
+  errors.QuitIfError(err)
+  return database
 }

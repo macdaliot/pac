@@ -2,7 +2,6 @@ package setup
 
 import (
   "fmt"
-  "os"
   "time"
 
   "github.com/PyramidSystemsInc/go/commands"
@@ -10,7 +9,6 @@ import (
   "github.com/PyramidSystemsInc/go/files"
   "github.com/PyramidSystemsInc/go/logger"
   "github.com/PyramidSystemsInc/go/str"
-  "github.com/PyramidSystemsInc/pac/config"
 )
 
 //IsTerraformInstalled attempts to get the Terraform version to demonstrate Terraform is installed and accessible.
@@ -22,12 +20,6 @@ func IsTerraformInstalled() {
     errors.LogAndQuit(str.Concat("ERROR: Checking the Terraform version failed with the following error: ", err.Error()))
   }
   logger.Info("Terraform is installed")
-}
-
-//SetTerraformEnv sets the environment variable for Terraform automation
-func SetTerraformEnv() {
-  os.Setenv("TF_IN_AUTOMATION", "NONEMPTYVALUE")
-  os.Setenv("TF_VAR_project_name", config.Get("projectName"))
 }
 
 //TerraformInitialize initializes the terraform directory
