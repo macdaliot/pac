@@ -33,39 +33,27 @@ import net.thucydides.core.util.SystemEnvironmentVariables;
 
 import static org.hamcrest.Matchers.equalTo;
 
-public class SerenityAPISteps {
+public class SerenityFrontEndSteps {
 
-	private ObjectMapper objectMapper = new ObjectMapper();
-	private EnvironmentVariables variables = SystemEnvironmentVariables.createEnvironmentVariables();
-	private String baseFrontEndUri = variables.getProperty("baseFrontEndUri");
-	private String baseApiUri = variables.getProperty("baseApiUri");
-	private String token = variables.getProperty("token");
-	private Properties serenityProperties;
-	private static RequestSpecification requestSpecification;
+    private ObjectMapper objectMapper = new ObjectMapper();
+    private EnvironmentVariables variables = SystemEnvironmentVariables.createEnvironmentVariables();
+    private String baseFrontEndUri = variables.getProperty("baseFrontEndUri");
+    private Properties serenityProperties;
+    private static RequestSpecification requestSpecification;
 
-	@Managed
-	WebDriver driver;
+    @Managed
+    WebDriver driver;
 
-	@Step
-	public void GETApiTest(String endpoint, int expectedStatusCode, boolean withToken) throws IOException {
+    @Step
+    public void checkFrontEndStatus() throws IOException {
 
-			if (withToken) {
-				SerenityRest
-						.given()
-						.header("Authorization", "Bearer " + token)
-        .baseUri(baseFrontEndUri)
-						.when()
-						.get(endpoint)
-						.then()
-						.assertThat().statusCode(expectedStatusCode);
-			} else {
-				SerenityRest
-						.given()
-						.baseUri(baseApiUri)
-						.when()
-						.get(endpoint)
-						.then()
-						.assertThat().statusCode(expectedStatusCode);
-			}
-		}
+            SerenityRest
+                    .given()
+                    .baseUri(baseFrontEndUri)
+                    .when()
+                    .get()
+                    .then()
+                    .assertThat().statusCode(200);
+
+    }
 }
