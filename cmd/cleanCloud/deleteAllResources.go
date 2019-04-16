@@ -6,14 +6,15 @@ import (
 	"github.com/PyramidSystemsInc/go/aws/resourcegroups"
 	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/go/str"
-	"github.com/PyramidSystemsInc/pac/cmd/setup"
+	"github.com/PyramidSystemsInc/go/terraform"
 	"github.com/PyramidSystemsInc/pac/config"
 )
 
 // DeleteAllResources deletes the AWS resourced created by this application.
 func DeleteAllResources() {
-	//destroy AWS resources managed by Terraform
-	setup.TerraformDestroy()
+	// Destroy AWS resources managed by Terraform
+  terraform.Destroy("svc/terraform")
+  terraform.Destroy("terraform")
 
 	projectName := config.Get("projectName")
 	region := "us-east-2"
