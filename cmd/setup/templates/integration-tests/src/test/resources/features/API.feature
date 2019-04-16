@@ -17,4 +17,4 @@ Feature: PAC API Features
     Given I get a 200 status from POST <endpoint>
 
     Examples: 
-      | endpoint |
+      | endpoint  |

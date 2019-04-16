@@ -21,7 +21,7 @@ func Service(serviceName string) {
 	createServiceFiles(serviceName, cfg)
 	commands.Run("npm i", path.Join("svc/", serviceName))
 	editHaProxyConfig(serviceName, cfg["projectName"])
-
+  editIntegrationTestApiFeatures(serviceName)
 	commands.Run("terraform init -input=false", path.Join("svc/", "terraform"))
 }
 
@@ -66,4 +66,20 @@ func editHaProxyConfig(serviceName string, projectName string) {
 	files.Prepend(haProxyConfigPath, []byte(serviceConfig))
 	files.Append(haProxyConfigPath, []byte(proxyAcl))
 	logger.Info("Updated the local microservice proxy configuration")
+}
+
+func editIntegrationTestApiFeatures(serviceName string) {
+  filePath := "integration-tests/src/test/resources/features/API.feature"
+  lineToMatch := "      | endpoint  | status | token |"
+  lineLength := 10
+  serviceNameWithTrailingSpaces := serviceName
+  for i := 0; i < lineLength - len(serviceName); i++ {
+    serviceNameWithTrailingSpaces += " "
+  }
+  newLine := str.Concat("      | ", serviceNameWithTrailingSpaces, "| 200    | false |")
+  files.AppendBelow(filePath, lineToMatch, newLine)
+
+  lineToMatch = "      | endpoint  |"
+  files.AppendBelow(filePath, lineToMatch, `      | ` + serviceNameWithTrailingSpaces + `|`)
+  logger.Info(str.Concat("Edited the integration tests to test the new ", serviceName, " endpoints"))
 }
