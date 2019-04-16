@@ -21,6 +21,8 @@ func Service(serviceName string) {
 	createServiceFiles(serviceName, cfg)
 	commands.Run("npm i", path.Join("svc/", serviceName))
 	editHaProxyConfig(serviceName, cfg["projectName"])
+
+	commands.Run("terraform init -input=false", path.Join("svc/", "terraform"))
 }
 
 func createServiceDirectory(serviceName string) {
@@ -31,7 +33,7 @@ func createServiceDirectory(serviceName string) {
 func createTemplateConfig(serviceName string) map[string]string {
 	cfg := make(map[string]string)
 	cfg["projectName"] = config.Get("projectName")
-	cfg["serviceUrl"] = config.Get("serviceUrl")
+	//cfg["serviceUrl"] = config.Get("serviceUrl")
 	cfg["serviceName"] = serviceName
 	return cfg
 }

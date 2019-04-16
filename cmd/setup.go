@@ -1,14 +1,15 @@
 package cmd
 
 import (
-  "github.com/PyramidSystemsInc/pac/cmd/add"
-  "github.com/PyramidSystemsInc/pac/cmd/setup"
   "github.com/PyramidSystemsInc/go/errors"
   "github.com/PyramidSystemsInc/go/logger"
+  "github.com/PyramidSystemsInc/go/str"
+  "github.com/PyramidSystemsInc/go/terraform"
+  "github.com/PyramidSystemsInc/pac/cmd/add"
+  "github.com/PyramidSystemsInc/pac/cmd/setup"
+  "github.com/PyramidSystemsInc/pac/config"
   "github.com/spf13/cobra"
 )
-
-var projectDirectory string
 
 var setupCmd = &cobra.Command{
   Use:   "setup",
@@ -17,28 +18,49 @@ var setupCmd = &cobra.Command{
 NodeJS/Express back-end, and DynamoDB database)`,
   Run: func(cmd *cobra.Command, args []string) {
     logger.SetLogLevel("info")
+    awsRegion := "us-east-2"
+
+    // Get the values provided by command line flags -OR- the default values if not provided
     projectName := getProjectName(cmd)
     description := getDescription(cmd)
-    hostedZone := getHostedZone(cmd)
     frontEnd := getFrontEnd(cmd)
     backEnd := getBackEnd(cmd)
     database := getDatabase(cmd)
     skipAuth := getSkipAuth(cmd)
     warnExtraArgumentsAreIgnored(args)
     setup.ValidateInputs(projectName, frontEnd, backEnd, database)
-    setup.Templates(projectName, description, gitAuth)
-    setup.Route53HostedZone(projectName, hostedZone)
-    setup.S3Buckets(projectName)
-    setup.ElasticLoadBalancer(projectName)
-    setup.Jenkins(projectName)
-    setup.SonarQube(projectName)
-    setup.Selenium(projectName)
-    setup.HaProxy(projectName)
+
+    // Perform various checks to ensure we should proceed
+    terraform.VerifyInstallation()
+
+    // Set environment variables
+    setup.EnvironmentVariables(projectName)
+
+    // Create an encrypted S3 bucket where Terraform can store state
+    projectFqdn, encryptionKeyID := setup.TerraformS3Bucket(projectName)
+
+    // Copy template files from ./cmd/setup/templates over to the new project's directory
+    setup.Templates(projectName, description, gitAuth, awsRegion, encryptionKeyID)
+
+    // Call on Terraform to create the AWS infrastructure
+    setup.Infrastructure()
+
+    // Creates a GitHub repository and sets up a webhook to queue a Jenkins build every time a push is made to GitHub
+    jenkinsUrl := str.Concat("jenkins.", projectFqdn, ":8080")
     setup.GitRepository(projectName)
-    setup.GitHubWebhook()
+    setup.GitHubWebhook(projectName, gitAuth, jenkinsUrl)
+
     if skipAuth == false {
       add.AuthService()
     }
+
+    // Set configuration values in the .pac file in the new project directory
+    config.Set("encryptionKeyID", encryptionKeyID)
+    config.Set("jenkinsUrl", jenkinsUrl)
+    config.Set("projectFqdn", projectFqdn)
+
+    // TODO: Add as a setup step
+    // setup.AutomateJenkins()
   },
 }
 
@@ -60,7 +82,8 @@ func warnExtraArgumentsAreIgnored(args []string) {
   }
 }
 
-var gitAuth string = "amRpZWRlcmlrc0Bwc2ktaXQuY29tOkRpZWRyZV4yMDE4"
+// TODO: pull from systems manager parameter store
+var gitAuth = "amRpZWRlcmlrc0Bwc2ktaXQuY29tOkRpZWRyZV4yMDE4"
 
 var projectName string
 
