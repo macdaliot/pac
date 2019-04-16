@@ -53,7 +53,7 @@ public class SerenityAPISteps {
 				SerenityRest
 						.given()
 						.header("Authorization", "Bearer " + token)
-        .baseUri(baseFrontEndUri)
+        .baseUri(baseApiUri)
 						.when()
 						.get(endpoint)
 						.then()
