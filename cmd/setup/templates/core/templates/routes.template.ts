@@ -21,7 +21,8 @@ import { NextFunction } from 'connect';
             isNullOrUndefined,
             HttpException,
             authenticateMiddleware,
-            Request
+            Request,
+            ILogger
         } from '@pyramid-systems/core';
         import { Container } from 'inversify';
         import { IUser } from '@pyramid-systems/domain';
@@ -50,6 +51,7 @@ import { NextFunction } from 'connect';
                                     const validationService = new ValidationService(models);
 
                                     export function RegisterRoutes(app: Express, iocContainer: Container) {
+                                        const logger = iocContainer.get<ILogger>(ILogger);
                                         {{#each controllers}}
                                         {{#each actions}}
                                         app.{{method}}('{{fullPath}}',
@@ -91,6 +93,9 @@ import { NextFunction } from 'connect';
         function authenticateMiddleware(security: TsoaRoute.Security[] = []) {
             return (request: Request, response: Response, next: NextFunction) => {
                 for (const protectedWith of security) {
+                    if(isNullOrUndefined(protectedWith.groups)) {
+                        throw new Error(`No security groups defined in your controller route. Did you do @Security('groups', ['{scope-names}']) above the controller class?`);
+                    }
                     if (protectedWith.groups.length > 0) {
                         passport.authenticate(
                             'jwt',
@@ -109,15 +114,15 @@ import { NextFunction } from 'connect';
                                             user.groups,
                                             protectedWith.groups
                                         );
-                                        request.log.info(`${user.name} has the following groups matched: {groupsMatched}`);
+                                        logger.info(`${user.name} has the following groups matched: ${groupsMatched}`);
                                         if (
                                             !isNullOrUndefined(groupsMatched) &&
                                             groupsMatched.length > 0
-                                        ) {z
+                                        ) {
                                             return next();
                                         }
 
-                                        request.log.info(`${user.name} tried to access a protected resource ${request.path}`);
+                                        logger.info(`${user.name} tried to access a protected resource ${request.path}`);
                                         response
                                             .status(401)
                                             .send({ message: 'You are not authorized to do this.' });

@@ -16,6 +16,8 @@
   "author": "Pyramid Systems, Inc.",
   "license": "ISC",
   "dependencies": {
+    "@aws/dynamodb-data-mapper": "^0.7.3",
+    "@aws/dynamodb-data-mapper-annotations": "^0.7.3",
     "aws-serverless-express": "^3.3.5",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
