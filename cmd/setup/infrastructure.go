@@ -10,18 +10,38 @@ import (
   "github.com/PyramidSystemsInc/go/terraform"
 )
 
+// Calls on Terraform to create the AWS infrastructure
 func Infrastructure() {
+  // The directory Terraform should run in relative to the current directory (project directory)
+  terraformDirectory := "terraform"
+
+  // Run `terraform init`
+  output := terraform.Initialize(terraformDirectory)
+  logger.Info(output)
+
+  // Run `terraform plan`
+  cfg := createTfPlanVariablesConfig()
+  output = terraform.Plan(terraformDirectory, cfg)
+  logger.Info(output)
+
+  // Run `terraform apply`
+  output = terraform.Apply(terraformDirectory)
+  logger.Info(output)
+}
+
+func createTfPlanVariablesConfig() map[string]string {
   awsRegion := "us-east-2"
   awsSession := aws.CreateAwsSession(awsRegion)
   usedVpcCidrBlocks := ec2.GetAllVpcCidrBlocks(awsSession)
   freeVpcCidrBlocks := findFirstAvailableVpcCidrBlocks(usedVpcCidrBlocks, 2)
-  terraformDirectory := "terraform"
-  initOutput := terraform.Initialize(terraformDirectory)
-  logger.Info(initOutput)
-  TerraformPlan(freeVpcCidrBlocks)
-  TerraformApply()
+	cfg := make(map[string]string)
+  cfg["region"] = awsRegion
+	cfg["management_cidr_block"] = freeVpcCidrBlocks[0]
+  cfg["application_cidr_block"] = freeVpcCidrBlocks[1]
+  return cfg
 }
 
+// TODO: Clean up
 func findFirstAvailableVpcCidrBlocks(usedCidrBlocks []string, numberToFind int) []string {
   var freeVpcCidrBlocks []string
   var secondPartDigits []string

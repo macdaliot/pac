@@ -32,7 +32,7 @@ NodeJS/Express back-end, and DynamoDB database)`,
     terraform.VerifyInstallation()
 
     // Set environment variables
-    setup.SetEnvironmentVariables(projectName)
+    setup.EnvironmentVariables(projectName)
 
     // Create an encrypted S3 bucket where Terraform can store state
     projectFqdn, encryptionKeyID := setup.TerraformS3Bucket(projectName)
