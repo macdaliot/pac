@@ -1,6 +1,7 @@
 import * as express from 'express';
-import { Route, Get, Post, Controller, Request, Query, Path, Put } from 'tsoa';
+import { Route, Get, Post, Controller, Request, Query, Path, Put, Body, Delete } from 'tsoa';
 import { Injectable } from '@pyramid-systems/core';
+import { {{.serviceNamePascal}}, {{.serviceNamePascal}}Repository } from '@pyramid-systems/domain';
 
 @Injectable()
 @Route('{{.serviceName}}')

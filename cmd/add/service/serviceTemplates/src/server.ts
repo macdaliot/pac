@@ -1,4 +1,4 @@
-import 'module-alias/register'';
+import 'module-alias/register';
 import * as dotenv from 'dotenv';
 dotenv.load(); // must remain here before other imports
 
