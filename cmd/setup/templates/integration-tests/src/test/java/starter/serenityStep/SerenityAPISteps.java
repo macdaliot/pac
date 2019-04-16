@@ -68,4 +68,18 @@ public class SerenityAPISteps {
 						.assertThat().statusCode(expectedStatusCode);
 			}
 		}
+
+	@Step
+	public void post200Status(String endpoint) throws IOException {
+
+
+		SerenityRest
+				.given()
+				.baseUri(baseApiUri)
+				.when()
+				.post(endpoint)
+				.then()
+				.assertThat().statusCode(200);
+		// May need to add token component in the future
+	}
 }

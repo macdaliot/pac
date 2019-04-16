@@ -20,7 +20,7 @@ public class CucumberAPISteps {
 	
 	@Given("^I get a 200 status from POST (.+)$")
 	public void post200Status(String endpoint) throws Throwable {
-		//steps.post200Status(endpoint);
+		steps.post200Status(endpoint);
 	}
 	
 	@Given("^I deserialize and store object from GET (.+)$") 
