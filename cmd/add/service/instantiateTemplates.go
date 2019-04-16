@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"github.com/PyramidSystemsInc/go/directories"
 	"github.com/PyramidSystemsInc/go/str"
 	"github.com/PyramidSystemsInc/pac/config"
@@ -56,5 +57,10 @@ func CreateAllTemplatedFiles(cfg map[string]string) {
 
 	os.Chdir(config.GetRootDirectory())
 
+	logger.Info("Updating the index.ts for domain")
+
+	files.EnsurePath(filepath.Dir("domain"))
+	exportTemplate := fmt.Sprintf("\nexport * from './%s';", serviceName);
+	files.Append("./domain/index.ts", []byte(exportTemplate))
 
 }
