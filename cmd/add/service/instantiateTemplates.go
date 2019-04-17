@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"github.com/PyramidSystemsInc/go/directories"
 	"github.com/PyramidSystemsInc/go/str"
-	"github.com/PyramidSystemsInc/pac/config"
 	"os"
 	"path"
 	"path/filepath"
 	"github.com/PyramidSystemsInc/go/files"
 	"github.com/PyramidSystemsInc/go/logger"
+	"github.com/PyramidSystemsInc/pac/config"
 	"github.com/gobuffalo/packr"
 	"strings"
 )
@@ -63,4 +63,17 @@ func CreateAllTemplatedFiles(cfg map[string]string) {
 	exportTemplate := fmt.Sprintf("\nexport * from './%s';", serviceName);
 	files.Append("./domain/index.ts", []byte(exportTemplate))
 
+
+	os.Chdir(config.GetRootDirectory())
+	os.Chdir("./services/terraform")
+
+	box = packr.NewBox("./terraformTemplates")
+	for _, templatePath := range box.List() {
+		logger.Info(templatePath)
+		files.EnsurePath(filepath.Dir(templatePath))
+		template, _ := box.FindString(templatePath)
+		files.CreateFromTemplate(templatePath, template, cfg)
+	}
+
+	os.Rename("./lambda.tf", "./lambda_"+serviceName+".tf")
 }

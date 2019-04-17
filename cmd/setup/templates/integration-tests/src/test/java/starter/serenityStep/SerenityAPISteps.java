@@ -1,105 +1,85 @@
 package starter.serenityStep;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
+import java.util.Properties;
 
+import com.jayway.restassured.http.ContentType;
+import org.apache.oltu.oauth2.client.OAuthClient;
+import org.apache.oltu.oauth2.client.URLConnectionClient;
+import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
+import org.apache.oltu.oauth2.client.response.OAuthJSONAccessTokenResponse;
+import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.junit.Assert;
+import org.openqa.selenium.WebDriver;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.restassured.response.Response;
-import model.Employee;
+import io.restassured.specification.RequestSpecification;
 import net.serenitybdd.core.Serenity;
 import net.serenitybdd.rest.SerenityRest;
+import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.SystemEnvironmentVariables;
+
+import static org.hamcrest.Matchers.equalTo;
 
 public class SerenityAPISteps {
 
 	private ObjectMapper objectMapper = new ObjectMapper();
 	private EnvironmentVariables variables = SystemEnvironmentVariables.createEnvironmentVariables();
-	private String baseUri = variables.getProperty("baseUri");
-	private String baseUrl = variables.getProperty("baseUrl");
+	private String baseFrontEndUri = variables.getProperty("baseFrontEndUri");
+	private String baseApiUri = variables.getProperty("baseApiUri");
 	private String token = variables.getProperty("token");
+	private Properties serenityProperties;
+	private static RequestSpecification requestSpecification;
 
-  @Step
-	public void get200Status(String endpoint) throws Throwable {
-		Response response = SerenityRest
+	@Managed
+	WebDriver driver;
+
+	@Step
+	public void GETApiTest(String endpoint, int expectedStatusCode, boolean withToken) throws IOException {
+
+			if (withToken) {
+				SerenityRest
+						.given()
+						.header("Authorization", "Bearer " + token)
+        .baseUri(baseApiUri)
+						.when()
+						.get(endpoint)
+						.then()
+						.assertThat().statusCode(expectedStatusCode);
+			} else {
+				SerenityRest
+						.given()
+						.baseUri(baseApiUri)
+						.when()
+						.get(endpoint)
+						.then()
+						.assertThat().statusCode(expectedStatusCode);
+			}
+		}
+
+	@Step
+	public void post200Status(String endpoint) throws IOException {
+
+
+		SerenityRest
 				.given()
-				.header("Authorization",token)
-				.baseUri(baseUri)
-				.get(endpoint);
-		Assert.assertTrue(response.getStatusCode() == 200);
+				.baseUri(baseApiUri)
+				.when()
+				.post(endpoint)
+				.then()
+				.assertThat().statusCode(200);
+		// May need to add token component in the future
 	}
-
-  @Step
-	public void post200Status(String endpoint) throws Throwable {
-		// Create an object for serialization
-		Employee employee = Employee.API_TEST_USER;
-		// Serialize the object
-		String json = objectMapper.writeValueAsString(employee);
-		// POST
-		Response response = SerenityRest
-				.given()
-				.header("Authorization",token)
-				.baseUri(baseUri)
-				.body(json)
-				.post(endpoint);
-		
-
-		Assert.assertTrue(response.getStatusCode() == 200);
-	}
-
-	
-  @Step
-	public void deserializeGETObject(String endpoint) throws Throwable {
-		// GET response
-		Response response = SerenityRest
-				.given()
-				.header("Authorization",token)
-				.baseUri(baseUri)
-				.get(endpoint);
-
-		// Deserialize the response body
-		// If single object use...
-		// EmployeeModel employee = objectMapper.readValue(response.asString(),EmployeeModel.class);
-		// If list of objects use...
-		List<Employee> employees = objectMapper.readValue(response.asString(), new TypeReference<List<Employee>>(){});
-
-		// Store the deserialized object(s) as a Serenity session variable.
-		Serenity.setSessionVariable("employees").to(employees);
-
-		//This can be called elsewhere in the scenario with
-		// List<EmployeeModel> employees = Serenity.sessionVariableCalled("employees");
-	}
-	
-  @Step
-  public void navigateToInvalidPage() throws JsonProcessingException {
-		// Create an object for serialization
-    	String endpoint = "null";
-		Employee employee = Employee.API_TEST_USER;
-		// Serialize the object
-		String json = objectMapper.writeValueAsString(employee);
-		// POST
-		// GET response
-		
-		 Response response = SerenityRest .given() .header("Authorization",token)
-		 .baseUri(baseUri + "/null") .get(endpoint);
-		
-		/*
-		 * SerenityRest. given(). auth(). preemptive(). basic("test@psi-it.com","test").
-		 * when().
-		 * get("http://integration.peachfive.pac.pyramidchallenges.com/invalid").
-		 * then(). assertThat(). body("authentication_result",equalTo("Success"));
-		 */
-  }
-    
-  @Step
-  public void invalidPageError() {
-    SerenityRest.
-      when().get("http://integration.peachfive.pac.pyramidchallenges.com/invalid").
-      then().assertThat().statusCode(200);
-  }
 }

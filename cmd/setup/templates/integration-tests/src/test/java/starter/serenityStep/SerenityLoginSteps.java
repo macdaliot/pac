@@ -11,7 +11,7 @@ public class SerenityLoginSteps {
 
 	LoginPage page;
 	EnvironmentVariables variables = SystemEnvironmentVariables.createEnvironmentVariables();
-	String baseUri = variables.getProperty("baseUri");
+	String baseFrontEndUri = variables.getProperty("baseFrontEndUri");
 	String token = variables.getProperty("token");
 
 	/**
@@ -21,7 +21,7 @@ public class SerenityLoginSteps {
 	 */
 	@Step
 	public void openApplication() {
-		page.openAt(baseUri);
+		page.openAt(baseFrontEndUri);
 	}
 
 	/**
@@ -34,7 +34,7 @@ public class SerenityLoginSteps {
 	@Step
 	public void userLogin(String username, String password) {
 		page.clickInitialLoginButton();
-    page.typeUserNameInput(username);
+		page.typeUserNameInput(username);
 		page.typePasswordInput(password);
 		page.clickLogin();
 	}
@@ -45,13 +45,21 @@ public class SerenityLoginSteps {
 	 * @param username
 	 */
 	@Step
-	public void loggedIn(String username) {
-		assertTrue(page.getUserNameHeader().equals(username));
+	public void loggedIn(String username, String displayName) {
+		assertTrue(page.getUserNameHeader().equals(displayName));
 	}
 
 	@Step
 	public void notLoggedIn() {
 		assertTrue(page.getAuth0HeaderText());
+	}
+	
+	@Step 
+	public void loginErrorMessage(String error) {
+		if (error.equals("wrongEmailPassword")) {
+			System.out.println("the error is: " + page.getErrorMessage());
+			assertTrue(page.getErrorMessage().equalsIgnoreCase("WRONG EMAIL OR PASSWORD."));
+		}
 	}
 
 }

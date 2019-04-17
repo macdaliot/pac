@@ -32,6 +32,8 @@ public class LoginPage extends PageObject {
 	private WebElementFacade usernameHeader;
 	@FindBy(className = "auth0-lock-name")
 	private WebElementFacade auth0Header;
+	@FindBy(xpath = "//*[@id=\"auth0-lock-container-1\"]/div/div[2]/form/div/div/div[2]/div/div/span/span")
+	private WebElementFacade errorMessage;
 	// success messages
 	private static final String loginSuccessMessage = "success";
 	private static final String loginPasswordFailMessage = "Can't be blank";
@@ -43,6 +45,9 @@ public class LoginPage extends PageObject {
 	private static final String userNameInputCSS = "input[name='email']";
 	//application header 
 
+	public String getErrorMessage() {
+		return errorMessage.getText();
+	}
 	
 	public String getUserNameInputCSS() {
 		return userNameInputCSS;

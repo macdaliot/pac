@@ -1,0 +1,44 @@
+properties([
+  parameters([
+    booleanParam(name: 'EXEC_BUILD', defaultValue: true, description: 'Should execute build'),
+    booleanParam(name: 'EXEC_DEPLOY', defaultValue: true, description: 'Should execute deploy'),
+    booleanParam(name: 'EXEC_INTEGRATIONTEST', defaultValue: true, description: 'Should execute integration tests'),
+    booleanParam(name: 'EXEC_UNITTEST', defaultValue: true, description: 'Should execute unit tests'),
+    booleanParam(name: 'EXEC_CLEANUP', defaultValue: true, description: 'Should execute workspace cleanup'),
+    stringParam(name: 'PARENTNAME', defaultValue: 'none', description: 'Supplied by parent pipeline')
+  ])
+])
+node {
+  homeDirectory = "services"
+  // ensure that our "wrapper" directory exists
+  sh "mkdir -p ${params.PARENTNAME}"
+  // work in that wrapper directory
+  dir(params.PARENTNAME){
+    // if we're doing a build, do checkout
+    // if we're not doing a build, rely on the SCM checkout already having been done
+    if (params.EXEC_BUILD){
+      checkout scm
+    }
+    // then enter our in-repo "home"
+    dir(homeDirectory){
+      stage('Build') {
+        if (params.EXEC_BUILD){
+          sh 'sh .build.sh'
+        }
+      }
+      stage('Unit Test') {
+        if (params.EXEC_UNITTEST){
+          sh 'sh .test.sh'
+        }
+      }
+      stage('Deploy To Integration') {
+        if (params.EXEC_DEPLOY){
+          sh 'sh .deploy.sh'
+        }
+      }
+    }
+    if (params.EXEC_CLEANUP){
+      deleteDir()
+    }
+  }
+}

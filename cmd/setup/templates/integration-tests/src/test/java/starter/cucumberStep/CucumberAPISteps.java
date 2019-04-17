@@ -12,10 +12,10 @@ public class CucumberAPISteps {
 	
 	@Steps
 	SerenityAPISteps steps;
-
-	@Given("^I get a 200 status from GET (.+)$")
-	public void get200Status(String endpoint) throws Throwable {
-		steps.get200Status(endpoint);
+	
+	@Then("^the (.+) will have a status of (.+) with token: (.+)$")
+	public void GETApiTest(String endpoint, int expectedStatusCode, boolean withToken) throws Throwable {
+		steps.GETApiTest(endpoint, expectedStatusCode, withToken);
 	}
 	
 	@Given("^I get a 200 status from POST (.+)$")
@@ -26,17 +26,17 @@ public class CucumberAPISteps {
 	@Given("^I deserialize and store object from GET (.+)$") 
 	public void deserializeGETObject(String endpoint) throws Throwable {
 		System.out.println("The endpoint is: " + endpoint);
-		steps.deserializeGETObject(endpoint);
+		//steps.deserializeGETObject(endpoint);
 	}
 	
     @Given("^I am on an invalid page$")
     public void navigateToInvalidPage() throws JsonProcessingException {
-    	steps.navigateToInvalidPage();
+    	//steps.navigateToInvalidPage();
     }
-    
+
     @Then("^the status is 200 and there is a page error message$")
     public void invalidPageError() {
-    	steps.invalidPageError();
+    	//steps.invalidPageError();
     }
 
 }
