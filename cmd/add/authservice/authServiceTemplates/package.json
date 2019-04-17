@@ -9,6 +9,7 @@
     "generate:routes": "npx tsoa routes -c tsoa.json",
     "generate:swagger": "npx tsoa swagger -c tsoa.json",
     "generate:templates": "npx tsoa routes -c tsoa.json && npx tsoa swagger -c tsoa.json",
+    "generate:client": "npx autorest --typescript --input-file=./docs/swagger.json --output-folder=../../app/src --add-credentials=true",
     "test": "npx jest --coverage",
     "test-sonar": "npx jest --coverage --testResultsProcessor=jest-sonar-reporter",
     "test-ci": "npx jest --ci --reporters=default --reporters=jest-junit"
@@ -18,6 +19,7 @@
   "dependencies": {
     "@aws/dynamodb-data-mapper": "^0.7.3",
     "@aws/dynamodb-data-mapper-annotations": "^0.7.3",
+    "aws-sdk": "^2.437.0",
     "aws-serverless-express": "^3.3.5",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
@@ -48,6 +50,7 @@
     "@types/pino": "^5.8.6",
     "@types/swagger-ui-express": "^3.0.0",
     "@types/uuid": "^3.4.4",
+    "autorest": "^2.0.4283",
     "chai": "^4.2.0",
     "express-pino-logger": "^4.0.0",
     "inversify": "^5.0.1",

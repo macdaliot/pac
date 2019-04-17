@@ -10,6 +10,7 @@
     "outputDirectory": "./docs",
     "entryFile": "./src/local.ts",
     "basePath": "/api",
+    "host": "localhost:3000",
     "version": "1.0",
     "name": "{{.serviceNamePascal}} Service",
     "description": "A micro service for {{.serviceNamePascal}}",

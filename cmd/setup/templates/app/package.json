@@ -44,6 +44,7 @@
   "author": "Pyramid Systems, Inc.",
   "license": "ISC",
   "dependencies": {
+    "@azure/ms-rest-js": "^1.8.1",
     "@pyramidlabs/react-ui": ">=0.0.45",
     "autoprefixer": "9.4.8",
     "aws-sdk": "2.408.0",

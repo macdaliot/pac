@@ -25,7 +25,7 @@ describe('header (unit/shallow)', () => {
 
   it('should show user information while logged in', () => {
     const props = {
-      username: 'testUser',
+      userName: 'testUser',
       isAuthenticated: true
     };
     const hdr = shallow(<HeaderComponent {...props} />);
@@ -42,7 +42,7 @@ describe('header (unit/shallow)', () => {
       user: fakeUser
     };
     const expectedProps = {
-      username: 'testUser',
+      userName: 'testUser',
       isAuthenticated: true
     };
     expect(mapStateToProps(inputState)).toEqual(expectedProps);

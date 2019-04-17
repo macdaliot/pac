@@ -9,6 +9,7 @@
     "generate:routes": "npx tsoa routes -c tsoa.json",
     "generate:swagger": "npx tsoa swagger -c tsoa.json",
     "generate:templates": "npx tsoa routes -c tsoa.json && npx tsoa swagger -c tsoa.json",
+    "generate:client": "npx autorest --typescript --input-file=./docs/swagger.json --output-folder=../../app/src --add-credentials=true",
     "test": "npx jest --coverage",
     "test-sonar": "npx jest --coverage --testResultsProcessor=jest-sonar-reporter",
     "test-ci": "npx jest --ci --reporters=default --reporters=jest-junit"
@@ -49,6 +50,7 @@
     "@types/pino": "^5.8.6",
     "@types/swagger-ui-express": "^3.0.0",
     "@types/uuid": "^3.4.4",
+    "autorest": "^2.0.4283",
     "chai": "^4.2.0",
     "express-pino-logger": "^4.0.0",
     "inversify": "^5.0.1",
