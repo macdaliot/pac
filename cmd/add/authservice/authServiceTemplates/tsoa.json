@@ -19,12 +19,7 @@
         "Bearer": {
           "type": "apiKey",
           "name": "Authorization",
-          "in": "header",
-          "scopes": {
-            "createExam": "create exams",
-            "uploadFile": "upload things",
-            "downloadFile": "download files"
-          }
+          "in": "header"
         }
       }
     },
