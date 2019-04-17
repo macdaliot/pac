@@ -43,7 +43,6 @@ func createTemplateConfig(serviceName string) map[string]string {
 func createServiceFiles(serviceName string, cfg map[string]string) {
 	logger.Info("Create service files")
 	service.CreateAllTemplatedFiles(cfg)
-	service.CreateFrontEndClient(str.Concat(strings.Title(serviceName), ".ts"), cfg)
 	logger.Info(str.Concat("Created ", serviceName, " Express microservice files"))
 }
 

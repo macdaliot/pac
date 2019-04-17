@@ -9,7 +9,7 @@
     "generate:routes": "npx tsoa routes -c tsoa.json",
     "generate:swagger": "npx tsoa swagger -c tsoa.json",
     "generate:templates": "npx tsoa routes -c tsoa.json && npx tsoa swagger -c tsoa.json",
-    "generate:client": "npx autorest --typescript --input-file=./docs/swagger.json --output-folder=../../app/src --add-credentials=true",
+    "generate:client": "npx autorest --typescript --input-file=./docs/swagger.json --output-folder=../../app/src/services/authentication --add-credentials=true",
     "test": "npx jest --coverage",
     "test-sonar": "npx jest --coverage --testResultsProcessor=jest-sonar-reporter",
     "test-ci": "npx jest --ci --reporters=default --reporters=jest-junit"
