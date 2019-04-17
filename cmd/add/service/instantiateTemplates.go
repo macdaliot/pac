@@ -76,4 +76,6 @@ func CreateAllTemplatedFiles(cfg map[string]string) {
 	}
 
 	os.Rename("./lambda.tf", "./lambda_"+serviceName+".tf")
+
+	os.Chdir(config.GetRootDirectory())
 }
