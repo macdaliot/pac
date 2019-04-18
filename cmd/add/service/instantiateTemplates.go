@@ -61,7 +61,9 @@ func CreateAllTemplatedFiles(cfg map[string]string) {
 
 	files.EnsurePath(filepath.Dir("domain"))
 	exportTemplate := fmt.Sprintf("\nexport * from './%s';", serviceName);
+	exportModelTemplate := fmt.Sprintf("\nexport * from './%s/%s';", serviceName);
 	files.Append("./domain/index.ts", []byte(exportTemplate))
+	files.Append("./domain/models.ts", []byte(exportModelTemplate))
 
 
 	os.Chdir(config.GetRootDirectory())

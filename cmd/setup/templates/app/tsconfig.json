@@ -15,8 +15,7 @@
         "paths": {
             "@app/*": ["src/*"],
             "@app/test-setup": ["./test-setup"],
-            "@pyramid-systems/domain": ["../domain"],
-            "@pyramid-systems/core": ["../core"]
+            "@pyramid-systems/domain": ["../domain/models"]
         }
     }
 }
