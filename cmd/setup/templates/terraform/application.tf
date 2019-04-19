@@ -1,4 +1,3 @@
-
 # IGW for the public subnet
 resource "aws_internet_gateway" "gw" {
   vpc_id = "${aws_vpc.application.id}"
@@ -123,8 +122,9 @@ resource "aws_route53_record" "integration" {
 # https://www.terraform.io/docs/providers/aws/r/iam_role.html
 # IAM role
 #
-resource "aws_iam_role" "pac_lambda_execution_role" {
+resource "aws_iam_role" "{{ .projectName }}_lambda_execution_role" {
   name = "${var.project_name}-lambda-execution-role"
+  force_detach_policies = true
 
   assume_role_policy = <<EOF
 {
@@ -149,11 +149,11 @@ resource "aws_iam_role_policy_attachment" "policy_attach" {
   # managed by AWS so we can hard code it
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaRole"
 
-  depends_on = ["aws_iam_role.pac_lambda_execution_role"]
+  depends_on = ["aws_iam_role.{{ .projectName }}_lambda_execution_role"]
 }
 
 
-resource "aws_iam_policy" "pac_lambda_dynamodb" {
+resource "aws_iam_policy" "{{ .projectName }}_lambda_dynamodb" {
   name = "pac-${var.project_name}-lambda-dynamodb-policy"
   policy = <<EOF
 {
@@ -185,9 +185,9 @@ resource "aws_iam_role_policy_attachment" "lambda_dynamodb_policy_attach" {
   role       = "${var.project_name}-lambda-execution-role"
 
   # managed by AWS so we can hard code it
-  policy_arn = "${aws_iam_policy.pac_lambda_dynamodb.arn}"
+  policy_arn = "${aws_iam_policy.{{ .projectName }}_lambda_dynamodb.arn}"
 
-  depends_on = ["aws_iam_role.pac_lambda_execution_role"]
+  depends_on = ["aws_iam_role.{{ .projectName }}_lambda_execution_role"]
 }
 
 

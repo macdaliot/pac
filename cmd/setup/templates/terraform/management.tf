@@ -31,7 +31,7 @@ resource "aws_vpc" "management" {
   cidr_block = "${var.management_cidr_block}"
 
   tags {
-    name = "${var.project_name}-management-vpc"
+    Name = "${var.project_name}-management-vpc"
   }
 }
 
@@ -43,7 +43,7 @@ resource "aws_subnet" "private" {
   vpc_id            = "${aws_vpc.management.id}"
 
   tags {
-    name = "${var.project_name}-private-${count.index}"
+    Name = "${var.project_name}-private-${count.index}"
   }
 }
 
@@ -51,7 +51,7 @@ resource "aws_vpc" "application" {
   cidr_block = "${var.application_cidr_block}"
 
   tags {
-    name = "${var.project_name}-application-vpc"
+    Name = "${var.project_name}-application-vpc"
   }
 }
 
@@ -64,7 +64,7 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = false
 
   tags {
-    name = "${var.project_name}-public-${count.index}"
+    Name = "${var.project_name}-public-${count.index}"
   }
 }
 
