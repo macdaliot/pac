@@ -11,17 +11,23 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 )
 
+// TerraformS3Bucket - Creates a Terraform S3 bucket
 func TerraformS3Bucket(projectName string) (string, string) {
 	region := "us-east-2"
 	awsSession := aws.CreateAwsSession(region)
+
 	projectFqdn := str.Concat(projectName, ".pac.pyramidchallenges.com")
 	terraformS3Bucket := str.Concat("terraform.", projectFqdn)
 	createBucket("terraform", "private", projectFqdn, projectName, region, awsSession)
+
 	encryptionKeyID := kms.CreateEncryptionKey(awsSession, "pac-project", projectName)
+
 	s3.EncryptBucket(terraformS3Bucket, encryptionKeyID)
 	logger.Info("The S3 bucket for Terraform state has been created and encrypted")
-	s3.EnableVersioning(projectFqdn)
+
+	s3.EnableVersioning(terraformS3Bucket)
 	logger.Info("Versioning has been enabled on the S3 bucket")
+
 	return projectFqdn, encryptionKeyID
 }
 
