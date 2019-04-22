@@ -8,7 +8,7 @@ resource "aws_cloudwatch_log_group" "{{ .projectName }}_log_group" {
   }
 }
 
-resource "aws_cloudwatch_log_stream" "{{ .projectName }_log_stream" {
+resource "aws_cloudwatch_log_stream" "{{ .projectName }}_log_stream" {
   name           = "${var.project_name}-log-stream"
-  log_group_name = "${aws_cloudwatch_log_group.{{ .projectName }_log_group.name}"
+  log_group_name = "${aws_cloudwatch_log_group.{{ .projectName }}_log_group.name}"
 }
