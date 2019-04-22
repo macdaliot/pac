@@ -129,11 +129,6 @@ node {
         }
       }
     }
-    stage("Deploy to Demo"){
-      script {
-        sh 'echo Run Demo Deploy here'
-      }
-    }
   }
   catch (e) {
     throw e;
