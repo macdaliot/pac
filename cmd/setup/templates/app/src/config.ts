@@ -11,9 +11,9 @@ if (window.location.host.startsWith('localhost')) {
   };
 } else {
   UrlConfig = {
-    apiUrl: 'http://api.hrig.pac.pyramidchallenges.com/api/',
+    apiUrl: 'http://api.{{.projectName}}.pac.pyramidchallenges.com/api/',
     siteUrl:
-      'http://integration.hrig.pac.pyramidchallenges.com.s3-website.us-east-2.amazonaws.com'
+      'http://integration.{{.projectName}}.pac.pyramidchallenges.com.s3-website.us-east-2.amazonaws.com'
   };
 }
 
