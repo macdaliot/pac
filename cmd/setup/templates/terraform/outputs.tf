@@ -13,6 +13,6 @@ output "elasticsearch_created" {
   value = "${var.create_elasticsearch == "true" ? "Elasticsearch created" : "Elasticsearch not created" }"
 }
 
-output "pac_lambda_execution_role_arn" {
-  value = "${aws_iam_role.pac_lambda_execution_role.arn}"
+output "{{ .projectName }}_lambda_execution_role_arn" {
+  value = "aws_iam_role.{{ .projectName }}_lambda_execution_role"
 }
