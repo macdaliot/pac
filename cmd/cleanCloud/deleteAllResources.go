@@ -38,7 +38,7 @@ func DeleteAllResources() {
 	resourcegroups.DeleteAllResources(projectName, awsSession)
 
 	// delete last so things encrypted with it are deleted first so nothing is orphaned and inaccessible
-	go kms.ScheduleEncryptionKeyDeletion(config.Get("encryptionKeyID"), awsSession)
+	kms.ScheduleEncryptionKeyDeletion(config.Get("encryptionKeyID"), awsSession)
 
 	logger.Info(str.Concat("Finished deleting all AWS resources tagged as part of PAC project ", projectName))
 }
