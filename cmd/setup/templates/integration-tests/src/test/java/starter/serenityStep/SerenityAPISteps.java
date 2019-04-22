@@ -35,51 +35,57 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class SerenityAPISteps {
 
-	private ObjectMapper objectMapper = new ObjectMapper();
-	private EnvironmentVariables variables = SystemEnvironmentVariables.createEnvironmentVariables();
-	private String baseFrontEndUri = variables.getProperty("baseFrontEndUri");
-	private String baseApiUri = variables.getProperty("baseApiUri");
-	private String token = variables.getProperty("token");
-	private Properties serenityProperties;
-	private static RequestSpecification requestSpecification;
+  private ObjectMapper objectMapper = new ObjectMapper();
+  private EnvironmentVariables variables = SystemEnvironmentVariables.createEnvironmentVariables();
+  private String baseFrontEndUri = variables.getProperty("baseFrontEndUri");
+  private String baseApiUri = variables.getProperty("baseApiUri");
+  private String token = variables.getProperty("token");
+  private Properties serenityProperties;
+  private static RequestSpecification requestSpecification;
 
-	@Managed
-	WebDriver driver;
+  @Managed
+  WebDriver driver;
 
-	@Step
-	public void GETApiTest(String endpoint, int expectedStatusCode, boolean withToken) throws IOException {
+  @Step
+  public void GETApiTest(String endpoint, int expectedStatusCode, boolean withToken) throws IOException {
 
-			if (withToken) {
-				SerenityRest
-						.given()
-						.header("Authorization", "Bearer " + token)
+      if (withToken) {
+        SerenityRest
+            .given()
+            .header("Accept", "application/json")
+            .header("Authorization", "Bearer " + token)
+            .header("Content-Type", "application/json")
+            .baseUri(baseApiUri)
+            .when()
+            .get(endpoint)
+            .then()
+            .assertThat().statusCode(expectedStatusCode);
+      } else {
+        SerenityRest
+            .given()
+            .header("Accept", "application/json")
+            .header("Content-Type", "application/json")
+            .baseUri(baseApiUri)
+            .when()
+            .get(endpoint)
+            .then()
+            .assertThat().statusCode(expectedStatusCode);
+      }
+    }
+
+  @Step
+  public void post200Status(String endpoint) throws IOException {
+
+
+    SerenityRest
+        .given()
+        .header("Accept", "application/json")
+        .header("Content-Type", "application/json")
         .baseUri(baseApiUri)
-						.when()
-						.get(endpoint)
-						.then()
-						.assertThat().statusCode(expectedStatusCode);
-			} else {
-				SerenityRest
-						.given()
-						.baseUri(baseApiUri)
-						.when()
-						.get(endpoint)
-						.then()
-						.assertThat().statusCode(expectedStatusCode);
-			}
-		}
-
-	@Step
-	public void post200Status(String endpoint) throws IOException {
-
-
-		SerenityRest
-				.given()
-				.baseUri(baseApiUri)
-				.when()
-				.post(endpoint)
-				.then()
-				.assertThat().statusCode(200);
-		// May need to add token component in the future
-	}
+        .when()
+        .post(endpoint)
+        .then()
+        .assertThat().statusCode(200);
+    // May need to add token component in the future
+  }
 }
