@@ -39,13 +39,15 @@ NodeJS/Express back-end, and DynamoDB database)`,
 
     // Copy template files from ./cmd/setup/templates over to the new project's directory
     setup.Templates(projectName, description, gitAuth, awsRegion, encryptionKeyID)
-
+    logger.Info("Installing node modules")
+    setup.NpmInstall()
+    logger.Info("Finished installing node modules")
     // Call on Terraform to create the AWS infrastructure
     setup.Infrastructure()
 
     // Creates a GitHub repository and sets up a webhook to queue a Jenkins build every time a push is made to GitHub
     jenkinsUrl := str.Concat("jenkins.", projectFqdn, ":8080")
-    setup.NpmInstall()
+
     setup.GitRepository(projectName)
     setup.GitHubWebhook(projectName, gitAuth, jenkinsUrl)
 
