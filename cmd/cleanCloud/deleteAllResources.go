@@ -17,11 +17,14 @@ import (
 func DeleteAllResources() {
 	os.Chdir(config.GetRootDirectory())
 
+
 	// Destroy AWS resources managed by Terraform
 	logger.Info("Terraform is destroying all AWS resources...")
+  terraform.Initialize("svc/terraform")
 	output := terraform.Destroy("svc/terraform")
 	logger.Info(output)
 
+  terraform.Initialize("terraform")
 	output = terraform.Destroy("terraform")
 	logger.Info(output)
 	logger.Info("Terraform is finished destroying AWS resources")
