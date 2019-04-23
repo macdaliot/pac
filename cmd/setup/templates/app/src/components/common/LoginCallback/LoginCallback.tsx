@@ -3,6 +3,7 @@ import { hot } from 'react-hot-loader/root';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
+import { webStorage } from '../../../config';
 import { JwtReceivedAction } from '../../../types';
 
 interface LoginCallbackProps {
@@ -13,6 +14,10 @@ interface LoginCallbackProps {
 export class LoginCallbackComponent extends React.Component<LoginCallbackProps> {
   componentDidMount = () => {
     let token = this.props.location.search.slice(1);
+    if (webStorage.isSupported()) {
+      const tokenName = "pac-kcharlie-token";
+      webStorage.setItem(tokenName, token.toString());
+    }
     this.props.setToken(token);
   }
 

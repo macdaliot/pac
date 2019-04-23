@@ -1,17 +1,33 @@
 import { JWT_RECEIVED } from './Actions'
 import { createStore } from 'redux';
 import { Buffer } from 'buffer';
+import { webStorage } from '../config';
 import { AuthState, JwtReceivedAction, User } from '../types';
 
-const reducer = (state = { user: null, token: null } as AuthState, action: JwtReceivedAction) => {
+let initialState: AuthState = {
+  token: null,
+  user: null,
+};
+
+const getUser = (token: string): User => {
+  let payload = token.split('.')[1]; // lop off header and signature
+  let json = Buffer.from(payload, 'base64').toString('ascii');
+  return JSON.parse(json);
+}
+
+const tokenName = "pac-{{.projectName}}-token";
+if (webStorage.isSupported() && webStorage.hasItem(tokenName)) {
+  const token = webStorage.getItem(tokenName);
+  initialState.token = token;
+  initialState.user = getUser(token);
+}
+
+const reducer = (state = initialState, action: JwtReceivedAction) => {
   if (action.type === JWT_RECEIVED) { // this action occurs when a user logs in (posted back from auth0)
     try {
-      let payload = action.token.split('.')[1]; // lop off header and signature
-      let json = Buffer.from(payload, 'base64').toString('ascii')
-      let jwt = JSON.parse(json);
       return {
-        user: jwt,
-        token: action.token
+        token: action.token,
+        user: getUser(action.token)
       };
     }
     catch (err) {
