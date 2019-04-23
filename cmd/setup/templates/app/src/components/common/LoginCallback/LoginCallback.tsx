@@ -15,7 +15,7 @@ export class LoginCallbackComponent extends React.Component<LoginCallbackProps> 
   componentDidMount = () => {
     let token = this.props.location.search.slice(1);
     if (webStorage.isSupported()) {
-      const tokenName = "pac-kcharlie-token";
+      const tokenName = "pac-{{.projectName}}-token";
       webStorage.setItem(tokenName, token.toString());
     }
     this.props.setToken(token);
