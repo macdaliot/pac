@@ -109,6 +109,6 @@ resource "aws_dynamodb_table" "{{ .projectName }}_dynamodb_table_{{ .serviceName
   }
 
   tags = {
-    Name        = "{{ .projectName }}-dynamodb-table-{{ .serviceName }}"
+    Name = "{{ .projectName }}-dynamodb-table-{{ .serviceName }}"
   }
 }
