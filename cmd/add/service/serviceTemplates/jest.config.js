@@ -2,7 +2,9 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   moduleNameMapper: {
-    "^@pyramid-systems/core(.*)$": "<rootDir>/dist/core$1"
+    "^@pyramid-systems/core(.*)$": "<rootDir>/../../core$1",
+    '^@pyramid-systems/domain(.*)$': '<rootDir>/../../domain$1'
   },
-  modulePathIgnorePatterns: ["docs"]
+  modulePathIgnorePatterns: ['docs', 'dist'],
+  coveragePathIgnorePatterns: ['dist']
 };

@@ -1,4 +1,4 @@
-import * as express from 'types';
+import * as express from 'express';
 import { Route, Get, Post, Controller, Request, Query, Path, Put, Body, Delete, Security } from 'tsoa';
 import { Injectable } from '@pyramid-systems/core';
 import { {{.serviceNamePascal}}, {{.serviceNamePascal}}Repository } from '@pyramid-systems/domain';

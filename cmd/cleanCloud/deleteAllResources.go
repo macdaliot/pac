@@ -19,7 +19,7 @@ func DeleteAllResources() {
 
   // Initialize all Terraform template directories
   terraform.Initialize("terraform")
-  terraform.Initialize("svc/terraform")
+  terraform.Initialize("services/terraform")
 
 	// Destroy AWS resources managed by Terraform
    logger.Info("Terraform is destroying all AWS resources...")

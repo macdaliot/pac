@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 import { createAction, ActionsUnion } from '@app/core/action';
-import { webStorage } from '@app/core/config';
+import { webStorage } from '@app/config';
 import { JWT_RECEIVED } from '@app/redux/Actions';
 
 const actions = {
@@ -14,7 +14,7 @@ export type LoginCallbackActions = ActionsUnion<typeof actions>;
 
 export const mapStateToProps = () => ({});
 export const mapDispatchToProps = (dispatch: Dispatch) =>
-  bindActionCreators(actions, dispatch);
+    bindActionCreators(actions, dispatch);
 
 type Location = {
   location: { search: string };
@@ -24,12 +24,12 @@ type ReduxDispatchToProps = ReturnType<typeof mapDispatchToProps>;
 type LoginCallbackProps = Location & ReduxDispatchToProps & ReduxStateToProps;
 
 export class LoginCallbackComponent extends React.Component<
-  LoginCallbackProps
-> {
+    LoginCallbackProps
+    > {
   componentDidMount = () => {
-    let token = this.props.location.search.slice(1);
+    const token = this.props.location.search.slice(1);
     if (webStorage.isSupported()) {
-      const tokenName = "pac-{{.projectName}}-token";
+      const tokenName = "pac-wwedone-token";
       webStorage.setItem(tokenName, token.toString());
     }
     this.props.setToken(token);
@@ -41,6 +41,6 @@ export class LoginCallbackComponent extends React.Component<
 }
 
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(hot(LoginCallbackComponent));

@@ -3,9 +3,9 @@ import axios from 'axios';
 import { shallow } from 'enzyme';
 import { ApplicationComponent } from './Application';
 import { appStore } from './redux/Store';
-import { User } from './types';
- 
-const sampleUser: User = {
+import { IUser } from '@pyramid-systems/domain';
+
+const sampleUser: IUser = {
   exp: 1556083479,
   groups: [],
   iat: 1556047479,
