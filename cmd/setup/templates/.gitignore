@@ -16,6 +16,7 @@ services/**/.env
 example.tf
 terraform.tfplan
 terraform.tfstate
+**/tfplan
 bin/
 modules-dev/
 /pkg/
@@ -47,3 +48,5 @@ integration-tests/history
 integration-tests/out
 integration-tests/target
 integration-tests/gradle/wrapper/gradle-wrapper.jar
+integration-tests/.classpath
+integration-tests/.project

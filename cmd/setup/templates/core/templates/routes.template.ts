@@ -56,7 +56,7 @@ import { NextFunction } from 'connect';
                                         {{#each actions}}
                                         app.{{method}}('{{fullPath}}',
                                             {{#if security.length}}
-                                        authenticateMiddleware({{json security}}),
+                                        authenticateMiddleware({{json security}}, logger),
                                         {{/if}}
                                             function (request: Request, response: Response, next: NextFunction) {
                                                 const args = {
@@ -89,101 +89,54 @@ import { NextFunction } from 'connect';
 {{/each}}
     {{/each}}
 
-        {{#if useSecurity}}
-        function authenticateMiddleware(security: TsoaRoute.Security[] = []) {
-            return (request: Request, response: Response, next: NextFunction) => {
-                for (const protectedWith of security) {
-                    if(isNullOrUndefined(protectedWith.groups)) {
-                        throw new Error(`No security groups defined in your controller route. Did you do @Security('groups', ['{scope-names}']) above the controller class?`);
-                    }
-                    if (protectedWith.groups.length > 0) {
-                        passport.authenticate(
-                            'jwt',
-                            passportOptions,
-                            (err, user: IUser, info) => {
-                                if (err) {
-                                    return next(err);
-                                } else if (info) {
-                                    return next(info);
-                                } else {
-                                    request.login(user, passportOptions, err => {
-                                        if (err) {
-                                            return next(err);
-                                        }
-                                        const groupsMatched = intersection(
-                                            user.groups,
-                                            protectedWith.groups
-                                        );
-                                        logger.info(`${user.name} has the following groups matched: ${groupsMatched}`);
-                                        if (
-                                            !isNullOrUndefined(groupsMatched) &&
-                                            groupsMatched.length > 0
-                                        ) {
-                                            return next();
-                                        }
-
-                                        logger.info(`${user.name} tried to access a protected resource ${request.path}`);
-                                        response
-                                            .status(401)
-                                            .send({ message: 'You are not authorized to do this.' });
-                                    });
-                                }
-                            }
-                        )(request, response, next);
-                    }
-                }
-            };
+        function isController(object: any): object is Controller {
+            return 'getHeaders' in object && 'getStatus' in object && 'setStatus' in object;
         }
-        {{/if}}
 
-            function isController(object: any): object is Controller {
-                return 'getHeaders' in object && 'getStatus' in object && 'setStatus' in object;
-            }
+        function promiseHandler(controllerObj: any, promise: any, response: Response, next: NextFunction) {
+            return Promise.resolve(promise)
+                .then((data: any) => {
+                    let statusCode;
+                    if (isController(controllerObj)) {
+                        const headers = controllerObj.getHeaders();
+                        Object.keys(headers).forEach((name: string) => {
+                            response.set(name, headers[name]);
+                        });
 
-            function promiseHandler(controllerObj: any, promise: any, response: Response, next: NextFunction) {
-                return Promise.resolve(promise)
-                    .then((data: any) => {
-                        let statusCode;
-                        if (isController(controllerObj)) {
-                            const headers = controllerObj.getHeaders();
-                            Object.keys(headers).forEach((name: string) => {
-                                response.set(name, headers[name]);
-                            });
-
-                            statusCode = controllerObj.getStatus();
-                        }
-
-                        if (data || data === false) { // === false allows boolean result
-                            response.status(statusCode || 200).json(data);
-                        } else {
-                            response.status(statusCode || 204).end();
-                        }
-                    })
-                    .catch((error: any) => next(error));
-            }
-
-            function getValidatedArgs(args: any, request: any): any[] {
-                const fieldErrors: FieldErrors  = {};
-                const values = Object.keys(args).map((key) => {
-                    const name = args[key].name;
-                    switch (args[key].in) {
-                        case 'request':
-                            return request;
-                        case 'query':
-                            return validationService.ValidateParam(args[key], request.query[name], name, fieldErrors);
-                        case 'path':
-                            return validationService.ValidateParam(args[key], request.params[name], name, fieldErrors);
-                        case 'header':
-                            return validationService.ValidateParam(args[key], request.header(name), name, fieldErrors);
-                        case 'body':
-                            return validationService.ValidateParam(args[key], request.body, name, fieldErrors, name + '.');
-                        case 'body-prop':
-                            return validationService.ValidateParam(args[key], request.body[name], name, fieldErrors, 'body.');
+                        statusCode = controllerObj.getStatus();
                     }
-                });
-                if (Object.keys(fieldErrors).length > 0) {
-                    throw new ValidateError(fieldErrors, '');
-                }
-                return values;
-            }
+
+                    if (data || data === false) { // === false allows boolean result
+                        response.status(statusCode || 200).json(data);
+                    } else {
+                        response.status(statusCode || 204).end();
+                    }
+                })
+                .catch((error: any) => next(error));
         }
+
+        function getValidatedArgs(args: any, request: any): any[] {
+            const fieldErrors: FieldErrors  = {};
+            const values = Object.keys(args).map((key) => {
+                const name = args[key].name;
+                switch (args[key].in) {
+                    case 'request':
+                        return request;
+                    case 'query':
+                        return validationService.ValidateParam(args[key], request.query[name], name, fieldErrors);
+                    case 'path':
+                        return validationService.ValidateParam(args[key], request.params[name], name, fieldErrors);
+                    case 'header':
+                        return validationService.ValidateParam(args[key], request.header(name), name, fieldErrors);
+                    case 'body':
+                        return validationService.ValidateParam(args[key], request.body, name, fieldErrors, name + '.');
+                    case 'body-prop':
+                        return validationService.ValidateParam(args[key], request.body[name], name, fieldErrors, 'body.');
+                }
+            });
+            if (Object.keys(fieldErrors).length > 0) {
+                throw new ValidateError(fieldErrors, '');
+            }
+            return values;
+        }
+    }

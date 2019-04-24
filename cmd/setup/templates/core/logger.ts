@@ -1,6 +1,5 @@
-import * as pino from "pino";
-import { Injectable, isNullOrUndefined } from "@pyramid-systems/core";
-
+import * as pino from 'pino';
+import { Injectable, isNullOrUndefined } from '@pyramid-systems/core';
 const Logger: pino.Logger = pino();
 if (!isNullOrUndefined(process.env.LOG_LEVEL)) {
     Logger.level = process.env.LOG_LEVEL;
@@ -15,8 +14,7 @@ export abstract class ILogger {
     abstract getPinoLogger(): pino.Logger;
 }
 
-
-const normalizeLogMessage = (msg: any) => {
+export const normalizeLogMessage = (msg: any) => {
     return typeof msg === "string" ? '' : msg;
 }
 @Injectable()

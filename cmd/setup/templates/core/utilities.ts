@@ -8,5 +8,6 @@ export const isNullOrUndefined = (value: any): boolean => {
     return value === undefined || value === null;
 };
 
-export const intersection = (arr1: any[], arr2: any[]) =>
-    arr1.filter(el => arr2.includes(el));
+export const intersection = (firstArray: (string | number | boolean)[], secondArray: (string | number | boolean)[]) => {
+    return firstArray.filter(Set.prototype.has, new Set(secondArray));
+}

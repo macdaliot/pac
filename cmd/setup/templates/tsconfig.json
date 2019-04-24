@@ -6,11 +6,7 @@
     "allowJs": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "moduleResolution": "node",
-    "paths": {
-      "@pyramid-systems/domain": ["../../domain"],
-      "@pyramid-systems/core": ["../../core"]
-    }
+    "moduleResolution": "node"
   },
   "exclude": ["**/node_modules/*", "**/dist/*", "**/templates/*", "**/*.js"]
 }

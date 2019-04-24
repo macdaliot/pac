@@ -29,6 +29,8 @@ func CreateAllTemplatedFiles(cfg map[string]string) {
 		template, _ := box.FindString(templatePath)
 		if templatePath == "src/controller.ts" {
 			files.CreateFromTemplate(str.Concat("src/",serviceName,".controller.ts"), template, cfg)
+		} else if templatePath == "src/controller.spec.ts" {
+			files.CreateFromTemplate(str.Concat("src/",serviceName,".controller.spec.ts"), template, cfg)
 		} else {
 			files.CreateFromTemplate(templatePath, template, cfg)
 		}

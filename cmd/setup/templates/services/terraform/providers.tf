@@ -27,7 +27,7 @@ provider "template" {
   version = "2.1"
 }
 
-data "terraform_remote_data" "pac" {
+data "terraform_remote_state" "pac" {
   backend = "s3"
 
   config {

@@ -1,11 +1,18 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
-import { appStore } from './redux/Store';
 import axios from 'axios';
+import { shallow } from 'enzyme';
 import { ApplicationComponent } from './Application';
-
-// TODO: Create a mock for appStore and axios
-const sampleUser: string = 'thisPerson';
+import { appStore } from './redux/Store';
+import { User } from './types';
+ 
+const sampleUser: User = {
+  exp: 1556083479,
+  groups: [],
+  iat: 1556047479,
+  iss: "urn:pacAuth",
+  name: "Sample",
+  sub: "sample@pyramidsystems.com"
+};
 
 describe('Application component (unit/shallow)', () => {
   it('should render', () => {

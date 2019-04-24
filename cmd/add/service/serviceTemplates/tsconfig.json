@@ -7,6 +7,10 @@
     "target": "es6",
     "types": ["node", "jest", "reflect-metadata"],
     "outDir": "dist/",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "@pyramid-systems/domain": ["../../domain"],
+      "@pyramid-systems/core": ["../../core"]
+    }
   }
 }

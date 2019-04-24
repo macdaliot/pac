@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 import { createAction, ActionsUnion } from '@app/core/action';
+import { webStorage } from '@app/core/config';
 import { JWT_RECEIVED } from '@app/redux/Actions';
 
 const actions = {
@@ -26,7 +27,11 @@ export class LoginCallbackComponent extends React.Component<
   LoginCallbackProps
 > {
   componentDidMount = () => {
-    const token = this.props.location.search.slice(1);
+    let token = this.props.location.search.slice(1);
+    if (webStorage.isSupported()) {
+      const tokenName = "pac-{{.projectName}}-token";
+      webStorage.setItem(tokenName, token.toString());
+    }
     this.props.setToken(token);
   };
 

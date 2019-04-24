@@ -49,14 +49,16 @@ if [ ! -z "$AWS_ACCESS_KEY_ID" ] || [ ! -z "$AWS_SECRET_ACCESS_KEY" ]; then
   fi
 
   # Ensure all microservices are launched
-  SERVICE_DIR=$(echo $(sed -e 's/\(.*\)\/.*/\1/' <<< $(pwd)))
-  for DIR in ../*; do
-    if [ ! $DIR == "../haproxy.cfg" ]; then
-      SERVICE_NAME=$(echo $(sed -e 's/..\///g' <<< $DIR))
+  cd ..
+  DIRECTORIES_TO_IGNORE=("." "./terraform")
+  DIRECTORIES=$(find . -maxdepth 1 -type d)
+  for DIRECTORY in ${DIRECTORIES}; do
+    if [[ ! "${DIRECTORIES_TO_IGNORE[@]}" =~ "${DIRECTORY}" ]]; then
+      SERVICE_NAME=$(echo $(sed -e 's/\.\///g' <<< $DIRECTORY))
       if docker port pac-$PROJECT_NAME-$SERVICE_NAME >>/dev/null 2>/dev/null; then
         echo "$SERVICE_NAME microservice already launched locally"
       else
-        pushd $DIR >>/dev/null
+        pushd $DIRECTORY >>/dev/null
         # NPM install if no node_modules folder
         if [ ! -d node_modules/ ]; then
           echo "Installing NPM modules for the $SERVICE_NAME microservice..."
@@ -99,8 +101,7 @@ if [ ! -z "$AWS_ACCESS_KEY_ID" ] || [ ! -z "$AWS_SECRET_ACCESS_KEY" ]; then
       exit 2
     fi
   else
-    HAPROXY_CONFIG_PATH=$(echo $(pwd) | sed -e 's/\(.*\)\/.*/\1/')
-    HAPROXY_CONFIG_PATH=$(sed -e 's/^\/c/C:/g' <<< $HAPROXY_CONFIG_PATH)
+    HAPROXY_CONFIG_PATH=$(echo $(pwd) | sed -e 's/^\/c/C:/g')
     docker run --name pac-proxy-local --network pac-$PROJECT_NAME -p $HAPROXY_PORT:$HAPROXY_PORT -v $HAPROXY_CONFIG_PATH:/usr/local/etc/haproxy:ro -d haproxy >>/dev/null
     if [ $(echo $?) -eq 0 ]; then
       echo "Launched local microservice proxy running on port $HAPROXY_PORT"

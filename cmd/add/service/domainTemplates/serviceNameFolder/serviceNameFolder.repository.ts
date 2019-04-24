@@ -5,9 +5,6 @@ import { Injectable } from '@pyramid-systems/core';
 
 @Injectable()
 export class {{.serviceNamePascal}}Repository extends Repository<{{.serviceNamePascal}}> {
-    constructor(protected dynamoDb: DynamoDB) {
-        super(dynamoDb);
-    }
 
     async getById(id: string) {
         return await this.get(id, {{.serviceNamePascal}});
