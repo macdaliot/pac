@@ -59,8 +59,8 @@ resource "aws_ecs_task_definition" "jenkins" {
     "logConfiguration": { 
       "logDriver": "awslogs",
       "options": { 
-          "awslogs-group" : "/ecs/${var.project_name}-log-group",
-          "awslogs-region": "us-east-2",
+          "awslogs-group" : "${aws_cloudwatch_log_group.testdns_log_group.name}",
+          "awslogs-region": "${var.region}",
           "awslogs-stream-prefix": "ecs"
       }
     },
@@ -109,8 +109,8 @@ resource "aws_ecs_task_definition" "sonarqube" {
     "logConfiguration": { 
       "logDriver": "awslogs",
       "options": { 
-          "awslogs-group" : "/ecs/${var.project_name}-log-group",
-          "awslogs-region": "us-east-2",
+          "awslogs-group" : "${aws_cloudwatch_log_group.testdns_log_group.name}",
+          "awslogs-region": "${var.region}",
           "awslogs-stream-prefix": "ecs"
       }
     }
@@ -135,8 +135,8 @@ resource "aws_ecs_task_definition" "sonarqube" {
     "logConfiguration": { 
       "logDriver": "awslogs",
       "options": { 
-          "awslogs-group" : "/ecs/${var.project_name}-log-group",
-          "awslogs-region": "us-east-2",
+          "awslogs-group" : "${aws_cloudwatch_log_group.testdns_log_group.name}",
+          "awslogs-region": "${var.region}",
           "awslogs-stream-prefix": "ecs"
       }
     }
@@ -176,8 +176,8 @@ resource "aws_ecs_task_definition" "selenium" {
     "logConfiguration": { 
       "logDriver": "awslogs",
       "options": { 
-          "awslogs-group" : "/ecs/${var.project_name}-log-group",
-          "awslogs-region": "us-east-2",
+          "awslogs-group" : "${aws_cloudwatch_log_group.testdns_log_group.name}",
+          "awslogs-region": "${var.region}",
           "awslogs-stream-prefix": "ecs"
       }
     }
@@ -209,8 +209,8 @@ resource "aws_ecs_task_definition" "selenium" {
     "logConfiguration": { 
       "logDriver": "awslogs",
       "options": { 
-          "awslogs-group" : "/ecs/${var.project_name}-log-group",
-          "awslogs-region": "us-east-2",
+          "awslogs-group" : "${aws_cloudwatch_log_group.testdns_log_group.name}",
+          "awslogs-region": "${var.region}",
           "awslogs-stream-prefix": "ecs"
       }
     }

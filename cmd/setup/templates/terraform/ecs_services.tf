@@ -4,7 +4,7 @@ resource "aws_ecs_service" "jenkins" {
   task_definition = "${aws_ecs_task_definition.jenkins.arn}"
   desired_count   = "${var.app_count}"
   launch_type     = "FARGATE"
-  health_check_grace_period_seconds = 300
+  health_check_grace_period_seconds = 30
 
   network_configuration {
     security_groups  = ["${aws_security_group.ecs_tasks.id}"]
@@ -19,7 +19,7 @@ resource "aws_ecs_service" "jenkins" {
   }
 
   depends_on = [
-    "aws_lb_listener.jenkins"
+    "aws_lb_listener.api"
   ]
 }
 
@@ -29,6 +29,7 @@ resource "aws_ecs_service" "sonarqube" {
   task_definition = "${aws_ecs_task_definition.sonarqube.arn}"
   desired_count   = "${var.app_count}"
   launch_type     = "FARGATE"
+  health_check_grace_period_seconds = 30
 
   network_configuration {
     security_groups  = ["${aws_security_group.ecs_tasks.id}"]
@@ -43,7 +44,7 @@ resource "aws_ecs_service" "sonarqube" {
   }
 
   depends_on = [
-    "aws_lb_listener.sonarqube"
+    "aws_lb_listener.api"
   ]
 }
 
@@ -53,6 +54,7 @@ resource "aws_ecs_service" "selenium" {
   task_definition = "${aws_ecs_task_definition.selenium.arn}"
   desired_count   = "${var.app_count}"
   launch_type     = "FARGATE"
+  health_check_grace_period_seconds = 30
 
   network_configuration {
     security_groups  = ["${aws_security_group.ecs_tasks.id}"]
@@ -67,6 +69,6 @@ resource "aws_ecs_service" "selenium" {
   }
 
   depends_on = [
-    "aws_lb_listener.selenium"
+    "aws_lb_listener.api"
   ]
 }

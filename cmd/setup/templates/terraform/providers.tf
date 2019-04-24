@@ -1,15 +1,15 @@
-#
-# https://www.terraform.io/docs/backends/config.html
-#
-# S3 bucket to store infrastructure state
-#
-terraform {
-  backend "s3" {
-    bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
-    key    = "state/development"
-    region = "{{ .region }}"
-  }
-}
+# #
+# # https://www.terraform.io/docs/backends/config.html
+# #
+# # S3 bucket to store infrastructure state
+# #
+# terraform {
+#   backend "s3" {
+#     bucket = "terraform.testdns.pac.pyramidchallenges.com"
+#     key    = "state/development"
+#     region = "us-east-2"
+#   }
+# }
 
 #
 # https://www.terraform.io/docs/providers/aws/index.html
@@ -18,11 +18,18 @@ terraform {
 #
 provider "aws" {
   # not listed as require in documentation but will be asked for it if not set
-  region = "{{ .region }}"
+  region = "us-east-2"
 
-  version = "{{ .terraformAWSVersion }}"
+  version = "1.60"
 }
 
 provider "template" {
-  version = "{{ .terraformTemplateVersion }}"
+  version = "2.1"
+}
+
+#
+# https://www.terraform.io/docs/providers/random/index.html
+#
+provider "random" {
+  version = "2.1"
 }
