@@ -1,4 +1,5 @@
 import { {{.serviceNamePascal}} } from './{{.serviceName}}';
+import { {{.serviceNamePascal}}Repository } from './{{.serviceName}}.repository';
 import {
   GetOptions,
   ScanOptions,
@@ -101,7 +102,7 @@ describe('{{.serviceNamePascal}} Repository', () => {
   });
 
   it('Should call the repository add once on post', async () => {
-    const temp = new Giraffe();
+    const temp = new {{.serviceNamePascal}}();
     const classToTest = new {{.serviceNamePascal}}Repository(mockObject);
 
     const returnValue = await classToTest.add(temp);
@@ -110,7 +111,7 @@ describe('{{.serviceNamePascal}} Repository', () => {
     expect(mockObject.put).toBeCalledTimes(1);
   });
   it('Should call the repository put twice on update', async () => {
-    const temp = new Giraffe();
+    const temp = new {{.serviceNamePascal}}();
     const classToTest = new {{.serviceNamePascal}}Repository(mockObject);
 
     const returnValue = await classToTest.update(temp.id, temp);
