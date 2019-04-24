@@ -1,1 +1,1 @@
-project_name = "testdns"
+project_name = "{{ .projectName }}"
