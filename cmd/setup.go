@@ -25,8 +25,9 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		frontEnd := getFrontEnd(cmd)
 		backEnd := getBackEnd(cmd)
 		database := getDatabase(cmd)
+		env := getEnv(cmd)
 		warnExtraArgumentsAreIgnored(args)
-		setup.ValidateInputs(projectName, frontEnd, backEnd, database)
+		setup.ValidateInputs(projectName, frontEnd, backEnd, database, env)
 
 		// Perform various checks to ensure we should proceed
 		terraform.VerifyInstallation()
@@ -35,24 +36,25 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		setup.EnvironmentVariables(projectName)
 
 		// Create an encrypted S3 bucket where Terraform can store state
-		projectFqdn, encryptionKeyID := setup.TerraformS3Bucket(projectName)
+		projectFQDN, encryptionKeyID := setup.TerraformS3Bucket(projectName)
 
 		// Copy template files from ./cmd/setup/templates over to the new project's directory
-		setup.Templates(projectName, description, gitAuth, awsRegion, encryptionKeyID)
+		setup.Templates(projectName, description, gitAuth, awsRegion, encryptionKeyID, env)
 
 		// Call on Terraform to create the AWS infrastructure
 		setup.Infrastructure()
 
 		// Creates a GitHub repository and sets up a webhook to queue a Jenkins build every time a push is made to GitHub
-		jenkinsUrl := str.Concat("jenkins.", projectFqdn, ":8080")
+		jenkinsURL := str.Concat("jenkins.", projectFQDN, ":8080")
 		setup.GitRepository(projectName)
-		setup.GitHubWebhook(projectName, gitAuth, jenkinsUrl)
+		setup.GitHubWebhook(projectName, gitAuth, jenkinsURL)
 
 		// Set configuration values in the .pac file in the new project directory
 		config.Set("encryptionKeyID", encryptionKeyID)
-		config.Set("jenkinsUrl", jenkinsUrl)
-		config.Set("projectFqdn", projectFqdn)
-		config.Set("terraformS3Bucket", "terraform."+projectFqdn)
+		config.Set("jenkinsURL", jenkinsURL)
+		config.Set("projectFQDN", projectFQDN)
+		config.Set("terraformS3Bucket", "terraform."+projectFQDN)
+		config.Set("env", env)
 
 		// TODO: Add as a setup step
 		// setup.AutomateJenkins()
@@ -68,6 +70,7 @@ func init() {
 	setupCmd.PersistentFlags().StringVarP(&frontEnd, "front", "f", "ReactJS", "front-end framework/library")
 	setupCmd.PersistentFlags().StringVarP(&backEnd, "back", "b", "Express", "back-end framework/library")
 	setupCmd.PersistentFlags().StringVarP(&database, "database", "d", "DynamoDB", "database type")
+	setupCmd.PersistentFlags().StringVar(&env, "env", "dev", "environment")
 }
 
 func warnExtraArgumentsAreIgnored(args []string) {
@@ -78,6 +81,14 @@ func warnExtraArgumentsAreIgnored(args []string) {
 
 // TODO: pull from systems manager parameter store
 var gitAuth = "amRpZWRlcmlrc0Bwc2ktaXQuY29tOkRpZWRyZV4yMDE4"
+
+var env string
+
+func getEnv(cmd *cobra.Command) string {
+	env, err := cmd.Flags().GetString("env")
+	errors.QuitIfError(err)
+	return env
+}
 
 var projectName string
 
