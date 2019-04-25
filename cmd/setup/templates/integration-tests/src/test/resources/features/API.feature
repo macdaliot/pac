@@ -12,7 +12,7 @@ Feature: PAC API Features
     Given I am on an invalid page
     Then the status is 200 and there is a page error message
 
-  @API
+  @APINOTYETREADY
   Scenario Outline: POST
     Given I get a 200 status from POST <endpoint>
 

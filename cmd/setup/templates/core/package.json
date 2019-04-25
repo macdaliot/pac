@@ -33,6 +33,7 @@
   },
   "scripts": {
     "test": "tsc && npx jest --coverage",
+    "test-sonar": "npx jest --coverage --testResultsProcessor=jest-sonar-reporter",
     "test-watch": "concurrently -n typescript,jest -kill-others \"npx tsc --watch\" \"npx jest --watch --color\""
   },
   "jest": {
