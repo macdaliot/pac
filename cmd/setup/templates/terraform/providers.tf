@@ -1,15 +1,15 @@
-# #
-# # https://www.terraform.io/docs/backends/config.html
-# #
-# # S3 bucket to store infrastructure state
-# #
-# terraform {
-#   backend "s3" {
-#     bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
-#     key    = "state/development"
-#     region = "us-east-2"
-#   }
-# }
+#
+# https://www.terraform.io/docs/backends/config.html
+#
+# S3 bucket to store infrastructure state
+#
+terraform {
+  backend "s3" {
+    bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
+    key    = "state/development"
+    region = "us-east-2"
+  }
+}
 
 #
 # https://www.terraform.io/docs/providers/aws/index.html
