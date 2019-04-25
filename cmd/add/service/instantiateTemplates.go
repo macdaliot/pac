@@ -20,8 +20,6 @@ func CreateAllTemplatedFiles(cfg map[string]string) {
 	os.Chdir(config.GetRootDirectory())
 	os.Chdir(path.Join("services/", serviceName))
 
-	logger.Info("I'm currently at " + directories.GetWorking())
-
 	box := packr.NewBox("./serviceTemplates")
 	for _, templatePath := range box.List() {
 		logger.Info(templatePath)

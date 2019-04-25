@@ -14,7 +14,7 @@ for DIRECTORY in ${DIRECTORIES}; do
       npm run generate:routes
       npm run generate:swagger
       npx tsc -p tsconfig-build.json || return 2
-      zip -r function dist/* lambda.js node_modules >> /dev/null
+      zip -r function dist/* lambda.js package.json node_modules >> /dev/null
       rm -Rf core dist docs domain
     popd
   fi
