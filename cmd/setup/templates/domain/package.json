@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npx tsc && npx jest --coverage",
-    "test-sonar": "npx jest --coverage --testResultsProcessor=jest-sonar-reporter",
+    "test-sonar": "npx jest --coverage --passWithNoTests --testResultsProcessor=jest-sonar-reporter",
     "test-watch": "concurrently -n typescript,jest -kill-others \"npx tsc --watch\" \"npx jest --watch --color\""
   },
   "author": "Pyramid Systems, Inc.",
