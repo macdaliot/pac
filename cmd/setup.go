@@ -45,7 +45,7 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		setup.Infrastructure()
 
 		// Creates a GitHub repository and sets up a webhook to queue a Jenkins build every time a push is made to GitHub
-		jenkinsURL := str.Concat("jenkins.", projectFQDN, ":8080")
+		jenkinsURL := str.Concat("jenkins.", projectFQDN)
 		setup.GitRepository(projectName)
 		setup.GitHubWebhook(projectName, gitAuth, jenkinsURL)
 
