@@ -5,7 +5,7 @@
 resource "aws_lambda_function" "lambda_{{ .serviceName }}" {
   filename         = "${path.cwd}/../{{ .serviceName }}/function.zip"
   function_name    = "pac-{{ .projectName }}-i-{{ .serviceName }}"
-  role             = "${data.terraform_remote_state.pac.pac_lambda_execution_role_arn}"
+  role             = "${data.terraform_remote_state.pac.{{ .projectName }}_{{ .env }}_lambda_execution_role_arn}"
   handler          = "lambda.handler"
   # source_code_hash = "${base64sha256(file(var.lambda_function_payload))}"
   runtime          = "nodejs8.10"

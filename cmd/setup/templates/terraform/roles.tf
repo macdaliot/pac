@@ -150,7 +150,7 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_task_ec2_container
 }
 
 #----------------------------------------------------------------------------------------------------------------------
-# {{ .projectName }}-{{ .env }}-labmda-execution ROLE
+# {{ .projectName }}-{{ .env }}-lambda-execution ROLE
 #----------------------------------------------------------------------------------------------------------------------
 
 resource "aws_iam_role" "{{ .projectName }}_{{ .env }}_lambda_execution_role" {
@@ -183,9 +183,9 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_attach_
   depends_on = ["aws_iam_role.{{ .projectName }}_{{ .env }}_lambda_execution_role"]
 }
 
-# output "{{ .projectName }}_{{ .env }}_lambda_execution_role_arn" {
-#     value = "${aws_iam_role.{{ .projectName }}_{{ .env }}_lambda_execution_role.arn}"
-# }
+output "{{ .projectName }}_{{ .env }}_lambda_execution_role_arn" {
+    value = "${aws_iam_role.{{ .projectName }}_{{ .env }}_lambda_execution_role.arn}"
+}
 
 # output "{{ .projectName }}_{{ .env }}_lambda_execution_role_name" {
 #     value = "${aws_iam_role.{{ .projectName }}_{{ .env }}_lambda_execution_role.name}"
