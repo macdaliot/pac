@@ -4,136 +4,141 @@ def unitTests = [:]
 def integrationTests = [:]
 def deployments = [:]
 def cleanups = [:]
+def buildDirectory = "/root/.jenkins/workspace/build-$BUILD_NUMBER"
 
 for (x in pipelineComponents){
   def jobName = x.trim()
   // create builds
   builds[jobName] = {
-    build job: jobName,
-      parameters: [
-        booleanParam(name: 'EXEC_BUILD', value: true),
-        booleanParam(name: 'EXEC_UNITTEST', value: false),
-        booleanParam(name: 'EXEC_DEPLOY', value: false),
-        booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
-        booleanParam(name: 'EXEC_CLEANUP', value: false),
-        stringParam(name: 'PARENTNAME', value: env.BUILD_TAG)
-      ]
+    build job: jobName, parameters: [
+      booleanParam(name: 'EXEC_BUILD', value: true),
+      booleanParam(name: 'EXEC_UNITTEST', value: false),
+      booleanParam(name: 'EXEC_DEPLOY', value: false),
+      booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
+      booleanParam(name: 'EXEC_CLEANUP', value: false),
+      stringParam(name: 'BUILD_DIRECTORY', value: buildDirectory)
+    ]
   }
   // create unit test runs
   unitTests[jobName] = {
-    build job: jobName,
-      parameters: [
-        booleanParam(name: 'EXEC_BUILD', value: false),
-        booleanParam(name: 'EXEC_UNITTEST', value: true),
-        booleanParam(name: 'EXEC_DEPLOY', value: false),
-        booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
-        booleanParam(name: 'EXEC_CLEANUP', value: false),
-        stringParam(name: 'PARENTNAME', value: env.BUILD_TAG)
-      ]
+    build job: jobName, parameters: [
+      booleanParam(name: 'EXEC_BUILD', value: false),
+      booleanParam(name: 'EXEC_UNITTEST', value: true),
+      booleanParam(name: 'EXEC_DEPLOY', value: false),
+      booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
+      booleanParam(name: 'EXEC_CLEANUP', value: false),
+      stringParam(name: 'BUILD_DIRECTORY', value: buildDirectory)
+    ]
   }
   // create integration test runs
   integrationTests[jobName] = {
-    build job: jobName,
-      parameters: [
-        booleanParam(name: 'EXEC_BUILD', value: false),
-        booleanParam(name: 'EXEC_UNITTEST', value: false),
-        booleanParam(name: 'EXEC_DEPLOY', value: false),
-        booleanParam(name: 'EXEC_INTEGRATIONTEST', value: true),
-        booleanParam(name: 'EXEC_CLEANUP', value: false),
-        stringParam(name: 'PARENTNAME', value: env.BUILD_TAG)
-      ]
+    build job: jobName, parameters: [
+      booleanParam(name: 'EXEC_BUILD', value: false),
+      booleanParam(name: 'EXEC_UNITTEST', value: false),
+      booleanParam(name: 'EXEC_DEPLOY', value: false),
+      booleanParam(name: 'EXEC_INTEGRATIONTEST', value: true),
+      booleanParam(name: 'EXEC_CLEANUP', value: false),
+      stringParam(name: 'BUILD_DIRECTORY', value: buildDirectory)
+    ]
   }
   // create deployments
   deployments[jobName] = {
-    build job: jobName,
-      parameters: [
-        booleanParam(name: 'EXEC_BUILD', value: false),
-        booleanParam(name: 'EXEC_UNITTEST', value: false),
-        booleanParam(name: 'EXEC_DEPLOY', value: true),
-        booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
-        booleanParam(name: 'EXEC_CLEANUP', value: false),
-        stringParam(name: 'PARENTNAME', value: env.BUILD_TAG)
-      ]
+    build job: jobName, parameters: [
+      booleanParam(name: 'EXEC_BUILD', value: false),
+      booleanParam(name: 'EXEC_UNITTEST', value: false),
+      booleanParam(name: 'EXEC_DEPLOY', value: true),
+      booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
+      booleanParam(name: 'EXEC_CLEANUP', value: false),
+      stringParam(name: 'BUILD_DIRECTORY', value: buildDirectory)
+    ]
   }
   // create cleanups
   cleanups[jobName] = {
-    build job: jobName,
-      parameters: [
-        booleanParam(name: 'EXEC_BUILD', value: false),
-        booleanParam(name: 'EXEC_UNITTEST', value: false),
-        booleanParam(name: 'EXEC_DEPLOY', value: false),
-        booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
-        booleanParam(name: 'EXEC_CLEANUP', value: true),
-        stringParam(name: 'PARENTNAME', value: env.BUILD_TAG)
-      ]
+    build job: jobName, parameters: [
+      booleanParam(name: 'EXEC_BUILD', value: false),
+      booleanParam(name: 'EXEC_UNITTEST', value: false),
+      booleanParam(name: 'EXEC_DEPLOY', value: false),
+      booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
+      booleanParam(name: 'EXEC_CLEANUP', value: true),
+      stringParam(name: 'BUILD_DIRECTORY', value: buildDirectory)
+    ]
   }
 }
 
 properties([
   buildDiscarder(
-  logRotator(
-    daysToKeepStr: '1',
-    numToKeepStr: '5'
-  )
+    logRotator(
+      daysToKeepStr: '1',
+      numToKeepStr: '5'
+    )
   )
 ])
 
 node {
-  try {
-    stage("SCM Checkout") {
-      checkout scm
-    }
-    stage("Build") {
-      parallel builds
-    }
-    stage("Unit Tests") {
-      parallel unitTests
-    }
-    stage("Deploy to Integration"){
-      parallel deployments
-    }
-    stage("Integration Tests") {
-      script {
-        sh 'cd integration-tests/gradle/wrapper; jar cf gradle-wrapper.jar *'
-        def exitCode = sh(script: 'cd integration-tests; chmod 755 gradlew; ./gradlew clean test aggregate', returnStatus: true)
-        publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'integration-tests/target/site/serenity', reportFiles: 'index.html', reportName: 'Serenity Report', reportTitles: ''])
-        if (exitCode > 0) {
-          sh 'commandthatdoesntexist'
-        }
+  sh "mkdir -p ${buildDirectory}"
+  dir(buildDirectory) {
+    try {
+      stage("SCM Checkout") {
+        checkout scm
       }
-    }
-    stage("Inspect") {
-      withCredentials([string(credentialsId: 'SONARLOGIN', variable: 'SONARLOGIN')]) {
+      stage("Build") {
         script {
-          // scan services for test coverage
-          sh '(test -d services && find services -type d -maxdepth 1 -mindepth 1 -exec sh coverage.sh {} \\;) || true'
-          // scan app for test coverage
-          sh 'sh coverage.sh app'
-          // merge coverage
-          def script = 'rm -rf coverage ; mkdir coverage ; npx lcov-result-merger "**/lcov.info" coverage/all.info'
-          sh script:script, returnStatus:true
-          // clean up old test reports
-          sh 'rm -f test-report.xml'
-          // write header
-          sh 'echo "<testExecutions version=\\"1\\">" > test-report.xml'
-          // merge reports (safely, capturing error if none existed)
-          script = 'find . -mindepth 2 -maxdepth 3 -name test-report.xml | xargs cat | grep -v "<\\?xml" | grep -v testExecutions >> test-report.xml' 
-          sh script:script, returnStatus:true
-          // write footer
-          sh 'echo "</testExecutions>" >> test-report.xml'
-          // install typescript so sonar can run
-          sh 'npm i typescript'
-          // run sonar scan
-          sh 'cat test-report.xml'
-          sh 'sonar-scanner -Dsonar.login=$SONARLOGIN'
+          sh "pushd core; npm i; popd"
+          sh "pushd domain; npm i; popd"
+        }
+        parallel builds
+      }
+      stage("Unit Tests") {
+        parallel unitTests
+      }
+      stage("Deploy to Integration"){
+        parallel deployments
+      }
+      stage("Inspect") {
+        withCredentials([string(credentialsId: 'SONARLOGIN', variable: 'SONARLOGIN')]) {
+          script {
+            // scan services for test coverage
+            sh '(test -d services && find services -type d -maxdepth 1 -mindepth 1 -exec sh coverage.sh {} \\;) || true'
+            // scan folders for test coverage
+            sh 'sh coverage.sh app'
+            sh 'sh coverage.sh core'
+            sh 'sh coverage.sh domain'
+            // merge coverage
+            def script = 'rm -rf coverage ; mkdir coverage ; npx lcov-result-merger "**/lcov.info" coverage/all.info'
+            sh script:script, returnStatus:true
+            // clean up old test reports
+            sh 'rm -f test-report.xml'
+            // write header
+            sh 'echo "<testExecutions version=\\"1\\">" > test-report.xml'
+            // merge reports (safely, capturing error if none existed)
+            script = 'find . -mindepth 2 -maxdepth 3 -name test-report.xml | xargs cat | grep -v "<\\?xml" | grep -v testExecutions >> test-report.xml' 
+            sh script:script, returnStatus:true
+            // write footer
+            sh 'echo "</testExecutions>" >> test-report.xml'
+            // install typescript so sonar can run
+            sh 'npm i typescript'
+            // run sonar scan
+            sh 'cat test-report.xml'
+            sh 'sonar-scanner -Dsonar.login=$SONARLOGIN'
+          }
+        }
+      }
+      stage("Integration Tests") {
+        script {
+          sh 'cd integration-tests/gradle/wrapper; jar cf gradle-wrapper.jar *'
+          def exitCode = sh(script: 'cd integration-tests; chmod 755 gradlew; ./gradlew clean test aggregate', returnStatus: true)
+          publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'integration-tests/target/site/serenity', reportFiles: 'index.html', reportName: 'Serenity Report', reportTitles: ''])
+          if (exitCode > 0) {
+            sh 'commandthatdoesntexist'
+          }
         }
       }
     }
-  }
-  catch (e) {
-    throw e;
-  }
-  finally {
-    parallel cleanups
+    catch (e) {
+      throw e;
+    }
+    finally {
+      parallel cleanups
+    }
   }
 }

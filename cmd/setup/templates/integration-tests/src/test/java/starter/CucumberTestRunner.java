@@ -9,7 +9,7 @@ import net.serenitybdd.cucumber.CucumberWithSerenity;
 @CucumberOptions(
         plugin = {"pretty"},
         features = "src/test/resources/features",
-        tags = {"~@UseCaseThreeAPITODO", "~@UseCaseThree"}
+        tags = {"~@UseCaseThreeAPITODO", "~@UseCaseThree", "~@APINOTYETREADY"}
 )
 public class CucumberTestRunner {
 
