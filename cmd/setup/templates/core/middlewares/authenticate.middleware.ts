@@ -34,7 +34,7 @@ export const handlePassportCallback = (protectedWith: TsoaRoute.Security, reques
     return next(passportInfo);
   } else {
     request.login(user, passportOptions, err => {
-      handleExpressRequestLoginCallback(protectedWith, request, next, user, err, logger);
+      handleExpressRequestLoginCallback(protectedWith, request, next, err, user, logger);
     });
   }
 }

@@ -11,10 +11,10 @@ export interface WebStorageData {
 }
 
 const getData = (): WebStorageData => {
-  let data: WebStorageData = {}
+  const data: WebStorageData = {}
   for (let i = 0; i < localStorage.length; ++i) {
-    let key = localStorage.key(i);
-    let value = localStorage.getItem(key);
+    const key = localStorage.key(i);
+    const value = localStorage.getItem(key);
     data[key] = value;
   }
   return data;
@@ -29,17 +29,17 @@ const hasItem = (key: string): boolean => {
 }
 
 const isSupported = (): boolean => {
-  return typeof(Storage) !== "undefined";
+  return typeof (Storage) !== "undefined";
 }
 
-const setItem= (key: string, value: string): void => {
+const setItem = (key: string, value: string): void => {
   localStorage.setItem(key, value);
 }
 
 export const webStorage: WebStorage = {
-  getData: getData,
-  getItem: getItem,
-  hasItem: hasItem,
-  isSupported: isSupported,
-  setItem: setItem
+  getData,
+  getItem,
+  hasItem,
+  isSupported,
+  setItem
 }

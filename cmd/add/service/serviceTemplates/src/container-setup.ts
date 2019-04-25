@@ -17,7 +17,7 @@ export const setupContainer = (app: Express): Container => {
     app.use(
         pino({
             logger: serviceLogger.getPinoLogger(),
-            level: process.env.LOG_LEVEL
+            useLevel: 'trace'
         })
     );
     serviceLogger.debug('Container Value:', iocContainer);

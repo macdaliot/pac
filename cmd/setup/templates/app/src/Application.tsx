@@ -47,7 +47,7 @@ export class ApplicationComponent extends React.Component<{}, State> {
     if (loggedIn) {
       axios.defaults.headers.common[
         'Authorization'
-      ] = `Bearer ${appStore.getState()}`;
+      ] = `Bearer ${appStore.getState().token}`;
     }
     this.setState({ loggedIn });
   };

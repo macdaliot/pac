@@ -13,8 +13,8 @@ export type ApplicationState = Authentication;
 const initialApplicationState: ApplicationState = { user: null, token: null };
 
 const getUser = (token: string): IUser => {
-  let payload = token.split('.')[1]; // lop off header and signature
-  let json = Buffer.from(payload, 'base64').toString('ascii');
+  const payload = token.split('.')[1]; // lop off header and signature
+  const json = Buffer.from(payload, 'base64').toString('ascii');
   return JSON.parse(json);
 }
 
