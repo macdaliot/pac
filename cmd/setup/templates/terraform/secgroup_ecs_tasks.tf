@@ -4,33 +4,33 @@ resource "aws_security_group" "ecs_tasks" {
   description = "allow inbound access from the ALB only"
   vpc_id      = "${aws_vpc.application_vpc.id}"
 
-  # ingress {
-  #   protocol    = "tcp"
-  #   from_port   = "8080"
-  #   to_port     = "8080"
-  #   security_groups = ["${aws_security_group.lb.id}"]
-  # }
+  ingress {
+    protocol    = "tcp"
+    from_port   = "8080"
+    to_port     = "8080"
+    security_groups = ["${aws_security_group.lb.id}"]
+  }
 
-  # ingress {
-  #   protocol    = "tcp"
-  #   from_port   = "9000"
-  #   to_port     = "9000"
-  #   security_groups = ["${aws_security_group.lb.id}"]
-  # }
+  ingress {
+    protocol    = "tcp"
+    from_port   = "9000"
+    to_port     = "9000"
+    security_groups = ["${aws_security_group.lb.id}"]
+  }
 
-  # ingress {
-  #   protocol    = "tcp"
-  #   from_port   = "4448"
-  #   to_port     = "4448"
-  #   security_groups = ["${aws_security_group.lb.id}"]
-  # }
+  ingress {
+    protocol    = "tcp"
+    from_port   = "4448"
+    to_port     = "4448"
+    security_groups = ["${aws_security_group.lb.id}"]
+  }
 
-  # ingress {
-  #   protocol    = "tcp"
-  #   from_port   = "8500"
-  #   to_port     = "8500"
-  #   security_groups = ["${aws_security_group.lb.id}"]
-  # }
+  ingress {
+    protocol    = "tcp"
+    from_port   = "8500"
+    to_port     = "8500"
+    security_groups = ["${aws_security_group.lb.id}"]
+  }
 
   egress {
     protocol    = "-1"
