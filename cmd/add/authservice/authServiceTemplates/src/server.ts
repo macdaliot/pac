@@ -25,7 +25,7 @@ var samlStrategy = new SamlStrategy(
     entryPoint: 
       (process.env.AUTH0_CLIENT_ID && process.env.AUTH0_DOMAIN) ? 
         `https://${process.env.AUTH0_DOMAIN}/samlp/${process.env.AUTH0_CLIENT_ID}` :
-        `https://localhost/samlp/${generateRandomString()}`,
+        `http://localhost/samlp/${generateRandomString()}`,
     issuer: 
       (process.env.AUTH0_DOMAIN) ? 
         'urn:' + process.env.AUTH0_DOMAIN + '-saml' :
