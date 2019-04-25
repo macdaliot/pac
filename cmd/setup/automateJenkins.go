@@ -93,7 +93,7 @@ func createEntrypointJobXml(projectName string) {
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>java -jar ~/jenkins-cli.jar -s https://localhost:8080 -auth pyramid:systems build master</command>
+      <command>java -jar ~/jenkins-cli.jar -s http://localhost:8080 -auth pyramid:systems build master</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
