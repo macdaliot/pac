@@ -1,6 +1,6 @@
 resource "aws_ecs_service" "jenkins" {
   name            = "jenkins-ecs-service"
-  cluster         = "${aws_ecs_cluster.main.id}"
+  cluster         = "${aws_ecs_cluster.main.arn}"
   task_definition = "${aws_ecs_task_definition.jenkins.arn}"
   desired_count   = "${var.app_count}"
   launch_type     = "FARGATE"
@@ -25,7 +25,7 @@ resource "aws_ecs_service" "jenkins" {
 
 resource "aws_ecs_service" "sonarqube" {
   name            = "sonarqube-ecs-service"
-  cluster         = "${aws_ecs_cluster.main.id}"
+  cluster         = "${aws_ecs_cluster.main.arn}"
   task_definition = "${aws_ecs_task_definition.sonarqube.arn}"
   desired_count   = "${var.app_count}"
   launch_type     = "FARGATE"
@@ -50,7 +50,7 @@ resource "aws_ecs_service" "sonarqube" {
 
 resource "aws_ecs_service" "selenium" {
   name            = "selenium-ecs-service"
-  cluster         = "${aws_ecs_cluster.main.id}"
+  cluster         = "${aws_ecs_cluster.main.arn}"
   task_definition = "${aws_ecs_task_definition.selenium.arn}"
   desired_count   = "${var.app_count}"
   launch_type     = "FARGATE"
