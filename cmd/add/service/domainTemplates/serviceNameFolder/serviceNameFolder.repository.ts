@@ -1,10 +1,13 @@
-import { DynamoDB } from 'aws-sdk';
+import { DataMapper } from '@aws/dynamodb-data-mapper';
 import { Repository } from '../../core/database-connectors/amazon-dynamodb/repository';
 import { {{.serviceNamePascal}} } from './{{.serviceName}}';
 import { Injectable } from '@pyramid-systems/core';
 
 @Injectable()
 export class {{.serviceNamePascal}}Repository extends Repository<{{.serviceNamePascal}}> {
+    constructor(dataMapper: DataMapper) {
+        super(dataMapper);
+    }
 
     async getById(id: string) {
         return await this.get(id, {{.serviceNamePascal}});
