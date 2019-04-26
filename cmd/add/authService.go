@@ -8,7 +8,7 @@ import (
 
 // Service adds a new service to the application
 func AuthService() {
-	serviceName := "authentication"
+	serviceName := "auth"
 	createServiceDirectory(serviceName)
 	config := createTemplateConfig(serviceName)
 	authservice.CreateAllTemplatedFiles(config)
