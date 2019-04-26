@@ -1,7 +1,7 @@
 #! /bin/bash
 # Perform setup
 SERVICE_NAME=$(sed -e 's/.*\///g' <<< $(pwd))
-FULL_SERVICE_NAME=pac-testa-i-"$SERVICE_NAME"
+FULL_SERVICE_NAME=pac-{{.projectName}}-i-"$SERVICE_NAME"
 # If AWS resources already exist...
 if aws elbv2 describe-target-groups --names $FULL_SERVICE_NAME --region us-east-2; then
   echo "It appears the Lambda function exists. Updating the code in case there are any changes"

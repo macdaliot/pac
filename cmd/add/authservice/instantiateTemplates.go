@@ -18,6 +18,14 @@ func CreateAllTemplatedFiles(config map[string]string) {
     template, _ := box.FindString(templatePath)
     files.CreateFromTemplate(fullPath, template, config)
 	}
+
+  targetDirectory = "services/terraform"
+  box = packr.NewBox("./authTerraformTemplates")
+  for _, templatePath := range box.List() {
+    logger.Info(templatePath)
+    fullPath := filepath.Join(targetDirectory, templatePath)
+    files.EnsurePath(filepath.Dir(fullPath))
+    template, _ := box.FindString(templatePath)
+    files.CreateFromTemplate(fullPath, template, config)
+  }
 }
-
-

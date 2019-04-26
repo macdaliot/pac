@@ -4,7 +4,8 @@ def unitTests = [:]
 def integrationTests = [:]
 def deployments = [:]
 def cleanups = [:]
-def buildDirectory = "/root/.jenkins/workspace/build-$BUILD_NUMBER"
+def workspaceDirectory = "/root/.jenkins/workspace"
+def buildDirectory = workspaceDirectory + "/build-$BUILD_NUMBER"
 
 for (x in pipelineComponents){
   def jobName = x.trim()
@@ -49,17 +50,6 @@ for (x in pipelineComponents){
       booleanParam(name: 'EXEC_DEPLOY', value: true),
       booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
       booleanParam(name: 'EXEC_CLEANUP', value: false),
-      stringParam(name: 'BUILD_DIRECTORY', value: buildDirectory)
-    ]
-  }
-  // create cleanups
-  cleanups[jobName] = {
-    build job: jobName, parameters: [
-      booleanParam(name: 'EXEC_BUILD', value: false),
-      booleanParam(name: 'EXEC_UNITTEST', value: false),
-      booleanParam(name: 'EXEC_DEPLOY', value: false),
-      booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
-      booleanParam(name: 'EXEC_CLEANUP', value: true),
       stringParam(name: 'BUILD_DIRECTORY', value: buildDirectory)
     ]
   }
@@ -138,7 +128,14 @@ node {
       throw e;
     }
     finally {
-      parallel cleanups
+      dir(workspaceDirectory) {
+        // Delete all but the latest five build directories
+        script {
+          sh 'find . -type d -maxdepth 1 -regex ".*@tmp" -exec rm -Rf {} \\;'
+          sh 'find . -type d -maxdepth 1 ! -regex "\\.\\/build.*" -exec rm -Rf {} \\;'
+          sh 'rm -Rf `ls | sort -Vr | tail -n +6`'
+        }
+      }
     }
   }
 }
