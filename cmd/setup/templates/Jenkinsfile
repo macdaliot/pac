@@ -83,6 +83,11 @@ node {
     stage("SCM Checkout") {
       checkout scm
     }
+    stage("Chef InSpec") {
+      script {
+        sh 'sh inspec.sh'
+      }
+    }
     stage("Build") {
       parallel builds
     }
