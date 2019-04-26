@@ -183,7 +183,7 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_attach_
   depends_on = ["aws_iam_role.{{ .projectName }}_{{ .env }}_lambda_execution_role"]
 }
 
-output "{{ .projectName }}_{{ .env }}_lambda_execution_role_arn" {
+output "{{ .projectName }}_lambda_execution_role_arn" {
     value = "${aws_iam_role.{{ .projectName }}_{{ .env }}_lambda_execution_role.arn}"
 }
 
