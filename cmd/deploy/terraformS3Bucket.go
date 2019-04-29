@@ -1,10 +1,9 @@
-package setup
+package deploy
 
 import (
   "time"
 
   "github.com/PyramidSystemsInc/go/aws"
-  "github.com/PyramidSystemsInc/go/aws/kms"
   "github.com/PyramidSystemsInc/go/aws/s3"
   "github.com/PyramidSystemsInc/go/logger"
   "github.com/PyramidSystemsInc/go/str"
@@ -12,7 +11,7 @@ import (
 )
 
 // TerraformS3Bucket - Creates a Terraform S3 bucket
-func TerraformS3Bucket(projectName string) (string, string) {
+func TerraformS3Bucket(projectName string, encryptionKeyID string) (string, string) {
   region := "us-east-2"
   awsSession := aws.CreateAwsSession(region)
 
@@ -20,15 +19,13 @@ func TerraformS3Bucket(projectName string) (string, string) {
   terraformS3Bucket := str.Concat("terraform.", projectFqdn)
   createBucket("terraform", "private", projectFqdn, projectName, region, awsSession)
 
-  encryptionKeyID := kms.CreateEncryptionKey(awsSession, "pac-project", projectName)
-
   s3.EncryptBucket(terraformS3Bucket, encryptionKeyID)
   logger.Info("The S3 bucket for Terraform state has been created and encrypted")
 
   s3.EnableVersioning(terraformS3Bucket)
   logger.Info("Versioning has been enabled on the S3 bucket")
 
-  return projectFqdn, encryptionKeyID
+  return terraformS3Bucket, projectFqdn
 }
 
 func createBucket(suiteName string, access string, projectFqdn string, projectName string, region string, awsSession *session.Session) {

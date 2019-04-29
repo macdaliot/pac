@@ -12,11 +12,14 @@ import (
 )
 
 //Templates creates project directory, config files, and copies project files to project directory.
-func Templates(projectName string, description string, gitAuth string, awsRegion string, encryptionKeyID string) {
+func Templates(projectName string, description string, awsRegion string, encryptionKeyID string) {
   createRootProjectDirectory(projectName)
-  cfg := createConfig(projectName, description, gitAuth, awsRegion, encryptionKeyID)
+  cfg := createConfig(projectName, description, awsRegion, encryptionKeyID)
   createProjectFiles(cfg)
   logger.Info("Created project structure")
+  logger.Info("Installing node modules")
+  NpmInstall()
+  logger.Info("Finished installing node modules")
 }
 
 func createRootProjectDirectory(projectName string) {
@@ -26,11 +29,10 @@ func createRootProjectDirectory(projectName string) {
   os.Chdir(projectDirectory)
 }
 
-func createConfig(projectName string, description string, gitAuth string, awsRegion string, encryptionKeyID string) map[string]string {
+func createConfig(projectName string, description string, awsRegion string, encryptionKeyID string) map[string]string {
   cfg := make(map[string]string)
   cfg["projectName"] = projectName
   cfg["description"] = description
-  cfg["gitAuth"] = gitAuth
   cfg["region"] = awsRegion
   cfg["terraformAWSVersion"] = terraform.AWSVersion
   cfg["terraformTemplateVersion"] = terraform.TemplateVersion

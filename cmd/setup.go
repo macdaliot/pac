@@ -3,8 +3,6 @@ package cmd
 import (
   "github.com/PyramidSystemsInc/go/errors"
   "github.com/PyramidSystemsInc/go/logger"
-  "github.com/PyramidSystemsInc/go/str"
-  "github.com/PyramidSystemsInc/go/terraform"
   "github.com/PyramidSystemsInc/pac/cmd/setup"
   "github.com/PyramidSystemsInc/pac/config"
   "github.com/spf13/cobra"
@@ -12,8 +10,8 @@ import (
 
 var setupCmd = &cobra.Command{
   Use:   "setup",
-  Short: "Setup a new project",
-  Long: `Generate a new project with PAC (The default stack is a ReactJS front-end,
+  Short: "Setup new project templates",
+  Long: `Generate new project templates with PAC (The default stack is a ReactJS front-end,
 NodeJS/Express back-end, and DynamoDB database)`,
   Run: func(cmd *cobra.Command, args []string) {
     logger.SetLogLevel("info")
@@ -26,39 +24,18 @@ NodeJS/Express back-end, and DynamoDB database)`,
     backEnd := getBackEnd(cmd)
     database := getDatabase(cmd)
     warnExtraArgumentsAreIgnored(args)
-    setup.ValidateInputs(projectName, frontEnd, backEnd, database)
 
     // Perform various checks to ensure we should proceed
-    terraform.VerifyInstallation()
+    setup.ValidateInputs(projectName, frontEnd, backEnd, database)
 
-    // Set environment variables
-    setup.EnvironmentVariables(projectName)
+    // Create encryption key (used to secure Terraform state) which is needed for the Terraform templates
+    encryptionKeyID := setup.CreateEncryptionKey(projectName)
 
-    // Create an encrypted S3 bucket where Terraform can store state
-    projectFqdn, encryptionKeyID := setup.TerraformS3Bucket(projectName)
-
-    // Copy template files from ./cmd/setup/templates over to the new project's directory
-    setup.Templates(projectName, description, gitAuth, awsRegion, encryptionKeyID)
-    logger.Info("Installing node modules")
-    setup.NpmInstall()
-    logger.Info("Finished installing node modules")
-
-    // Call on Terraform to create the AWS infrastructure
-    setup.Infrastructure()
-
-    // Creates a GitHub repository and sets up a webhook to queue a Jenkins build every time a push is made to GitHub
-    jenkinsUrl := str.Concat("jenkins.", projectFqdn, ":8080")
-    setup.GitRepository(projectName)
-    setup.GitHubWebhook(projectName, gitAuth, jenkinsUrl)
+    // Copy template files from ./cmd/setup/templates over to the new project
+    setup.Templates(projectName, description, awsRegion, encryptionKeyID)
 
     // Set configuration values in the .pac file in the new project directory
     config.Set("encryptionKeyID", encryptionKeyID)
-    config.Set("jenkinsUrl", jenkinsUrl)
-    config.Set("projectFqdn", projectFqdn)
-    config.Set("terraformS3Bucket", "terraform."+projectFqdn)
-
-    // TODO: Add as a setup step
-    // setup.AutomateJenkins()
   },
 }
 
@@ -67,7 +44,6 @@ func init() {
   setupCmd.PersistentFlags().StringVarP(&projectName, "name", "n", "", "project name (required)")
   setupCmd.MarkPersistentFlagRequired("name")
   setupCmd.PersistentFlags().StringVar(&description, "description", "Project created by PAC", "short description of the project")
-  setupCmd.PersistentFlags().StringVar(&hostedZone, "hostedZone", "pac.pyramidchallenges.com", "existing AWS hosted zone FQDN (i.e. pac.pyramidchallenges.com)")
   setupCmd.PersistentFlags().StringVarP(&frontEnd, "front", "f", "ReactJS", "front-end framework/library")
   setupCmd.PersistentFlags().StringVarP(&backEnd, "back", "b", "Express", "back-end framework/library")
   setupCmd.PersistentFlags().StringVarP(&database, "database", "d", "DynamoDB", "database type")
@@ -78,9 +54,6 @@ func warnExtraArgumentsAreIgnored(args []string) {
     logger.Warn("Arguments were provided, but all arguments after 'setup' and before the flags are ignored")
   }
 }
-
-// TODO: pull from systems manager parameter store
-var gitAuth = "amRpZWRlcmlrc0Bwc2ktaXQuY29tOkRpZWRyZV4yMDE4"
 
 var projectName string
 
@@ -96,14 +69,6 @@ func getDescription(cmd *cobra.Command) string {
   description, err := cmd.Flags().GetString("description")
   errors.QuitIfError(err)
   return description
-}
-
-var hostedZone string
-
-func getHostedZone(cmd *cobra.Command) string {
-  hostedZone, err := cmd.Flags().GetString("hostedZone")
-  errors.QuitIfError(err)
-  return hostedZone
 }
 
 var frontEnd string

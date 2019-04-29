@@ -1,4 +1,4 @@
-package setup
+package deploy
 
 import (
   "bytes"
@@ -18,9 +18,9 @@ type CreateRepoRequest struct {
   Description string `json:"description"`
 }
 
-func GitRepository(projectName string) {
+func GitRepository(projectName string, gitAuth string) {
   repoConfig := createRepoConfig(projectName)
-  postToGitHub(repoConfig)
+  postToGitHub(repoConfig, gitAuth)
   setupRepository(projectName)
   logger.Info("Created GitHub repository")
 }
@@ -35,10 +35,10 @@ func createRepoConfig(projectName string) *bytes.Buffer {
   return bytes.NewBuffer(repoConfig)
 }
 
-func postToGitHub(repoConfig *bytes.Buffer) {
+func postToGitHub(repoConfig *bytes.Buffer, gitAuth string) {
   request, err := http.NewRequest("POST", "https://api.github.com/orgs/PyramidSystemsInc/repos", repoConfig)
   errors.LogIfError(err)
-  request.Header.Add("Authorization", str.Concat("Basic ", config.Get("gitAuth")))
+  request.Header.Add("Authorization", str.Concat("Basic ", gitAuth))
   client := &http.Client{}
   response, err := client.Do(request)
   errors.LogIfError(err)
