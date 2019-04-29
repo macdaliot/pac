@@ -4,9 +4,9 @@ import (
   "encoding/json"
   "io/ioutil"
   "path"
-	"github.com/PyramidSystemsInc/go/errors"
-	"github.com/PyramidSystemsInc/go/files"
-	"github.com/PyramidSystemsInc/go/str"
+  "github.com/PyramidSystemsInc/go/errors"
+  "github.com/PyramidSystemsInc/go/files"
+  "github.com/PyramidSystemsInc/go/str"
 )
 
 var CONFIG_FILE_NAME string = ".pac"
@@ -23,11 +23,11 @@ func GetRootDirectory() string {
 
 func Read() map[string]*json.RawMessage {
   rootDirectory := GetRootDirectory()
-	pacFileData, err := ioutil.ReadFile(path.Join(rootDirectory, CONFIG_FILE_NAME))
-	errors.QuitIfError(err)
+  pacFileData, err := ioutil.ReadFile(path.Join(rootDirectory, CONFIG_FILE_NAME))
+  errors.QuitIfError(err)
   var configData map[string]*json.RawMessage
   err = json.Unmarshal(pacFileData, &configData)
-	errors.QuitIfError(err)
+  errors.QuitIfError(err)
   return configData
 }
 

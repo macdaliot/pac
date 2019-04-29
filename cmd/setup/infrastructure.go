@@ -34,9 +34,9 @@ func createTfPlanVariablesConfig() map[string]string {
   awsSession := aws.CreateAwsSession(awsRegion)
   usedVpcCidrBlocks := ec2.GetAllVpcCidrBlocks(awsSession)
   freeVpcCidrBlocks := findFirstAvailableVpcCidrBlocks(usedVpcCidrBlocks, 2)
-	cfg := make(map[string]string)
+  cfg := make(map[string]string)
   cfg["region"] = awsRegion
-	cfg["management_cidr_block"] = freeVpcCidrBlocks[0]
+  cfg["management_cidr_block"] = freeVpcCidrBlocks[0]
   cfg["application_cidr_block"] = freeVpcCidrBlocks[1]
   return cfg
 }

@@ -3,11 +3,11 @@ package setup
 import (
   "os"
   "github.com/PyramidSystemsInc/go/aws"
-	"github.com/PyramidSystemsInc/go/aws/elbv2"
-	"github.com/PyramidSystemsInc/go/commands"
-	"github.com/PyramidSystemsInc/go/errors"
-	"github.com/PyramidSystemsInc/go/logger"
-	"github.com/PyramidSystemsInc/go/str"
+  "github.com/PyramidSystemsInc/go/aws/elbv2"
+  "github.com/PyramidSystemsInc/go/commands"
+  "github.com/PyramidSystemsInc/go/errors"
+  "github.com/PyramidSystemsInc/go/logger"
+  "github.com/PyramidSystemsInc/go/str"
 )
 
 func ValidateInputs(projectName string, frontEnd string, backEnd string, database string) {
