@@ -20,6 +20,7 @@ This command is to be run after templates are generated with 'pac setup'`,
     // Get the values from the pac config file
     projectName := config.Get("projectName")
     encryptionKeyID := config.Get("encryptionKeyID")
+    gitAuth := config.Get("gitAuth")
     warnExtraArgumentsAreIgnored(args)
 
     // Perform various checks to ensure we should proceed
@@ -31,9 +32,8 @@ This command is to be run after templates are generated with 'pac setup'`,
     // Create an encrypted S3 bucket where Terraform can store state
     terraformS3Bucket, projectFqdn := deploy.TerraformS3Bucket(projectName, encryptionKeyID)
 
-    // Creates a GitHub repository and sets up a webhook to queue a Jenkins build every time a push is made to GitHub
+    // Sets up a webhook to queue a Jenkins build every time a push is made to GitHub
     jenkinsUrl := str.Concat("jenkins.", projectFqdn, ":8080")
-    deploy.GitRepository(projectName, gitAuth)
     deploy.GitHubWebhook(projectName, gitAuth, jenkinsUrl)
 
     // Call on Terraform to create the infrastructure in the cloud
@@ -50,6 +50,3 @@ This command is to be run after templates are generated with 'pac setup'`,
 func init() {
   RootCmd.AddCommand(deployCmd)
 }
-
-// TODO: pull from systems manager parameter store
-var gitAuth = "amRpZWRlcmlrc0Bwc2ktaXQuY29tOkRpZWRyZV4yMDE4"

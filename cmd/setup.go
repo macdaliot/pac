@@ -34,8 +34,12 @@ NodeJS/Express back-end, and DynamoDB database)`,
     // Copy template files from ./cmd/setup/templates over to the new project
     setup.Templates(projectName, description, awsRegion, encryptionKeyID)
 
+    // Create a GitHub repository for the project
+    setup.GitRepository(projectName, description, gitAuth)
+
     // Set configuration values in the .pac file in the new project directory
     config.Set("encryptionKeyID", encryptionKeyID)
+    config.Set("gitAuth", gitAuth)
   },
 }
 
@@ -48,6 +52,9 @@ func init() {
   setupCmd.PersistentFlags().StringVarP(&backEnd, "back", "b", "Express", "back-end framework/library")
   setupCmd.PersistentFlags().StringVarP(&database, "database", "d", "DynamoDB", "database type")
 }
+
+// TODO: pull from systems manager parameter store
+var gitAuth = "amRpZWRlcmlrc0Bwc2ktaXQuY29tOkRpZWRyZV4yMDE4"
 
 func warnExtraArgumentsAreIgnored(args []string) {
   if len(args) > 0 {
