@@ -19,11 +19,11 @@
 The above workflow will set up your project and deploys it to AWS
 
 ### Helpful Links
-* [http://integration.{{.projectName}}.pac.pyramidchallenges.com](http://integration.{{.projectName}}.pac.pyramidchallenges.com) (takes ~15 minutes to provision)
+* [http://integration.{{.projectName}}.pac.pyramidchallenges.com.s3-website.us-east-2.amazonaws.com](http://integration.{{.projectName}}.pac.pyramidchallenges.com.s3-website.us-east-2.amazonaws.com)
 * [http://api.{{.projectName}}.pac.pyramidchallenges.com/api/<service-name>](http://api.{{.projectName}}.pac.pyramidchallenges.com/api/<service-name>)
-* [http://jenkins.{{.projectName}}.pac.pyramidchallenges.com:8080](http://jenkins.{{.projectName}}.pac.pyramidchallenges.com:8080)
-* [http://sonarqube.{{.projectName}}.pac.pyramidchallenges.com:9000](http://sonarqube.{{.projectName}}.pac.pyramidchallenges.com:9000)
-* [http://selenium.{{.projectName}}.pac.pyramidchallenges.com:4448](http://selenium.{{.projectName}}.pac.pyramidchallenges.com:4448)
+* [http://jenkins.{{.projectName}}.pac.pyramidchallenges.com](http://jenkins.{{.projectName}}.pac.pyramidchallenges.com)
+* [http://sonarqube.{{.projectName}}.pac.pyramidchallenges.com](http://sonarqube.{{.projectName}}.pac.pyramidchallenges.com)
+* [http://selenium.{{.projectName}}.pac.pyramidchallenges.com](http://selenium.{{.projectName}}.pac.pyramidchallenges.com)
 
 ### Description
 {{.description}}
