@@ -9,14 +9,18 @@ export class AuthenticationController extends Controller {
     super();
   }
 
+  /**
+   * Gets a login redirect. If the user is logged in, this will return "OK"
+   * Usually called when the user is *not* logged in, and redirects to SAML auth.
+   * @param request 
+   */
   @Get('login')
   getLogin(@Request() request: express.Request) {
-    // Leo: I'm leaving this here. Mike implemented it this way, but I don't think this will ever be hit unless there's a client that uses saml authentication.
     request.res.status(200).send('OK');
   }
 
   @Post('callback')
-  login(@Request() request: express.Request) {
+  processCallback(@Request() request: express.Request) {
     const response = request.res;
     createJwt(request, (err, encoded) => {
       if (err) {

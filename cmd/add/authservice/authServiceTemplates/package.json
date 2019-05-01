@@ -12,7 +12,8 @@
     "generate:client": "npx autorest --typescript --input-file=./docs/swagger.json --output-folder=../../app/src/services/auth --add-credentials=true",
     "test": "npx jest --coverage",
     "test-sonar": "npx jest --coverage --testResultsProcessor=jest-sonar-reporter",
-    "test-ci": "npx jest --ci --reporters=default --reporters=jest-junit"
+    "test-ci": "npx jest --ci --reporters=default --reporters=jest-junit",
+    "test-debug": "npx --node-arg --inspect-brk jest --runInBand"
   },
   "author": "Pyramid Systems, Inc.",
   "license": "ISC",
@@ -29,8 +30,9 @@
     "passport": "^0.4.0",
     "passport-auth0": "^1.1.0",
     "passport-jwt": "^4.0.0",
-    "reflect-metadata": "^0.1.13",
     "passport-saml": "^1.0.0",
+    "reflect-metadata": "^0.1.13",
+    "swagger": "^0.7.5",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

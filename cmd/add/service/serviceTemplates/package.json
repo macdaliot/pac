@@ -12,7 +12,8 @@
     "generate:client": "npx autorest --typescript --input-file=./docs/swagger.json --output-folder=../../app/src/services/{{.serviceName}} --add-credentials=true",
     "test": "npx jest --coverage",
     "test-sonar": "npx jest --coverage --testResultsProcessor=jest-sonar-reporter",
-    "test-ci": "npx jest --ci --reporters=default --reporters=jest-junit"
+    "test-ci": "npx jest --ci --reporters=default --reporters=jest-junit",
+    "test-debug": "npx --node-arg --inspect-brk jest --runInBand"
   },
   "author": "Pyramid Systems, Inc.",
   "license": "ISC",
