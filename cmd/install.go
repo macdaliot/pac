@@ -12,7 +12,7 @@ import (
 )
 
 var installCmd = &cobra.Command{
-	Use:   "install",
+	Use:  "install",
 	Short: "Installs all project dependencies",
 	Long: `Finds all package.json files within a project and runs 'npm install'
 on each directory`,
