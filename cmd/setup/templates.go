@@ -32,11 +32,7 @@ func createRootProjectDirectory(projectName string) {
 	os.Chdir(projectDirectory)
 }
 
-<<<<<<< HEAD
-func createConfig(projectName string, description string, gitAuth string, awsRegion string, encryptionKeyID string, env string) map[string]string {
-=======
 func createConfig(projectName, description, gitAuth, awsAccountID, awsRegion, encryptionKeyID, env string) map[string]string {
->>>>>>> c74347257fde145d91981dca761c3600cfe9fb93
 	cfg := make(map[string]string)
 	cfg["awsID"] = awsAccountID
 	cfg["projectName"] = projectName
@@ -47,11 +43,6 @@ func createConfig(projectName, description, gitAuth, awsAccountID, awsRegion, en
 	cfg["region"] = awsRegion
 	cfg["terraformAWSVersion"] = terraform.AWSVersion
 	cfg["terraformTemplateVersion"] = terraform.TemplateVersion
-<<<<<<< HEAD
-	cfg["encryptionKeyID"] = encryptionKeyID
-	cfg["env"] = env
-=======
->>>>>>> c74347257fde145d91981dca761c3600cfe9fb93
 	return cfg
 }
 
