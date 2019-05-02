@@ -7,7 +7,7 @@
 
 2. Create one or more microservices with:
 
-* cd svc
+* cd services
 * pac add service --name <service-name>
 
 3. Push to GitHub:

@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "baseUrl": "./",
+    "outDir": "dist/",
+    "target": "es6",
+    "resolveJsonModule": true,
+    "types": ["node", "jest", "reflect-metadata"],
+    "paths": {
+      "@pyramid-systems/core": ["./"],
+      "@pyramid-systems/domain": ["../domain"]
+    }
+  }
+}

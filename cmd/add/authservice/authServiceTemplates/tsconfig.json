@@ -1,25 +1,16 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
+    "moduleResolution": "node",
+    "baseUrl": "./",
     "target": "es6",
-    "noImplicitAny": false,
-    "sourceMap": false,
+    "types": ["node", "jest", "reflect-metadata"],
     "outDir": "dist/",
-    "allowJs": true,
-    "types": [
-      "node",
-      "jest"
-    ],
-    "typeRoots": [
-      "../node_modules/@types"
-    ]
-  },
-  "include": [
-    "src",
-    "test"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+    "resolveJsonModule": true,
+    "paths": {
+      "@pyramid-systems/domain": ["../../domain"],
+      "@pyramid-systems/core": ["../../core"]
+    }
+  }
 }

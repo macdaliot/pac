@@ -1,7 +1,7 @@
 package add
 
 import (
-  "path"
+	"path"
 	"github.com/PyramidSystemsInc/go/commands"
 	"github.com/PyramidSystemsInc/pac/cmd/add/authservice"
 )
@@ -12,6 +12,6 @@ func AuthService() {
 	createServiceDirectory(serviceName)
 	config := createTemplateConfig(serviceName)
 	authservice.CreateAllTemplatedFiles(config)
-	commands.Run("npm i", path.Join("svc/", serviceName))
+	commands.Run("npm i", path.Join("services/", serviceName))
 	editHaProxyConfig(serviceName, config["projectName"])
 }

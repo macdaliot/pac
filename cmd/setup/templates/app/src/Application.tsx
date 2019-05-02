@@ -5,9 +5,9 @@ import { Provider } from 'react-redux';
 import { renderRoutes } from 'react-router-config';
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
 import { appStore } from './redux/Store';
-import { GovWebsiteBanner } from './components/common/GovWebsiteBanner';
-import { Header } from './components/common/Header';
-import { NavigationBar } from './components/common/NavigationBar';
+import { GovWebsiteBanner } from './components/GovWebsiteBanner';
+import { Header } from './components/Header';
+import { NavigationBar } from './components/NavigationBar';
 import routes from './routes';
 import '@pyramidlabs/react-ui/styles.css';
 import './scss/main.scss';
@@ -40,17 +40,17 @@ export class ApplicationComponent extends React.Component<{}, State> {
         </Router>
       </Provider>
     );
-  }
+  };
 
   handleLogin = () => {
     const loggedIn = appStore.getState().user != null;
     if (loggedIn) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${appStore.getState().token}`;
+      axios.defaults.headers.common[
+        'Authorization'
+      ] = `Bearer ${appStore.getState().token}`;
     }
-    this.setState({
-      loggedIn: loggedIn
-    });
-  }
+    this.setState({ loggedIn });
+  };
 }
 
 export default hot(ApplicationComponent);

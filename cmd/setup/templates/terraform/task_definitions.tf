@@ -48,7 +48,7 @@ resource "aws_ecs_task_definition" "jenkins" {
         "valueFrom": "/pac/aws/secret_access_key"
       }
     ],
-    "image": "118104210923.dkr.ecr.us-east-2.amazonaws.com/pac-jenkins:env",
+    "image": "{{ .awsID }}.dkr.ecr.${var.region}.amazonaws.com/pac-jenkins:env",
     "name": "pac-jenkins",
     "networkMode": "awsvpc",
     "portMappings": [
@@ -97,7 +97,7 @@ resource "aws_ecs_task_definition" "sonarqube" {
       }
     ],
     "cpu": 2048,
-    "image": "118104210923.dkr.ecr.us-east-2.amazonaws.com/sonarqube",
+    "image": "{{ .awsID }}.dkr.ecr.${var.region}.amazonaws.com/sonarqube",
     "memory": 4096,
     "name": "sonarqube",
     "networkMode": "awsvpc",
@@ -123,7 +123,7 @@ resource "aws_ecs_task_definition" "sonarqube" {
       }
     ],
     "cpu": 2048,
-    "image": "118104210923.dkr.ecr.us-east-2.amazonaws.com/pac-sonar-db",
+    "image": "{{ .awsID }}.dkr.ecr.${var.region}.amazonaws.com/pac-sonar-db",
     "memory": 4096,
     "name": "pac-sonar-db",
     "networkMode": "awsvpc",
@@ -158,7 +158,7 @@ resource "aws_ecs_task_definition" "selenium" {
 [
   {
     "cpu": 2048,
-    "image": "118104210923.dkr.ecr.us-east-2.amazonaws.com/pac-selenium-hub",
+    "image": "{{ .awsID }}.dkr.ecr.${var.region}.amazonaws.com/pac-selenium-hub",
     "memory": 4096,
     "name": "pac-selenium-hub-${var.project_name}",
     "networkMode": "awsvpc",
@@ -184,7 +184,7 @@ resource "aws_ecs_task_definition" "selenium" {
   },
   {
     "cpu": 2048,
-    "image": "118104210923.dkr.ecr.us-east-2.amazonaws.com/pac-selenium-node-chrome",
+    "image": "{{ .awsID }}.dkr.ecr.${var.region}.amazonaws.com/pac-selenium-node-chrome",
     "memory": 4096,
     "name": "pac-selenium-node-chrome-${var.project_name}",
     "networkMode": "awsvpc",

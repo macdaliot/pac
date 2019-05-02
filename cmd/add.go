@@ -11,9 +11,9 @@ import (
 )
 
 var addCmd = &cobra.Command{
-	Use:   "add",
+	Use: "add",
 	Short: "Add to an existing project",
-	Long:  `Generate skeleton code for a new front-end page or back-end service`,
+	Long: `Generate skeleton code for a new front-end page or back-end service`,
 	Run: func(cmd *cobra.Command, args []string) {
 		logger.SetLogLevel("info")
 		addType := validateAddTypeArgument(args)

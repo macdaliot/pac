@@ -1,5 +1,5 @@
 #
-# https://www.terraform.io/docs/backends/config.html
+# http://www.terraform.io/docs/backends/config.html
 #
 # S3 bucket to store infrastructure state
 #
@@ -12,7 +12,7 @@ terraform {
 }
 
 #
-# https://www.terraform.io/docs/providers/aws/index.html
+# http://www.terraform.io/docs/providers/aws/index.html
 #
 # AWS provider so terraform can talk to AWS
 #
@@ -28,7 +28,7 @@ provider "template" {
 }
 
 #
-# https://www.terraform.io/docs/providers/random/index.html
+# http://www.terraform.io/docs/providers/random/index.html
 #
 provider "random" {
   version = "2.1"

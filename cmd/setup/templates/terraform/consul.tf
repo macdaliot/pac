@@ -106,7 +106,7 @@
 # }
 
 #
-# https://www.terraform.io/docs/providers/aws/r/lb_listener_rule.html#condition
+# http://www.terraform.io/docs/providers/aws/r/lb_listener_rule.html#condition
 #
 # resource "aws_lb_listener_rule" "consul_host" {
 #   listener_arn = "${aws_lb_listener.consul.arn}"
@@ -159,7 +159,7 @@
 # [
 #   {
 #     "cpu": 1024,
-#     "image": "118104210923.dkr.ecr.us-east-2.amazonaws.com/consul:srv",
+#     "image": "{{ .awsID }}.dkr.ecr.us-east-2.amazonaws.com/consul:srv",
 #     "memory": 2048,
 #     "name": "pac-consul-${var.project_name}",
 #     "networkMode": "awsvpc",

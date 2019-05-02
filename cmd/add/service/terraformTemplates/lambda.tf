@@ -1,5 +1,5 @@
 #
-# https://www.terraform.io/docs/providers/aws/r/lambda_function.html
+# http://www.terraform.io/docs/providers/aws/r/lambda_function.html
 # lambda function
 #
 resource "aws_lambda_function" "lambda_{{ .serviceName }}" {
@@ -24,8 +24,8 @@ resource "aws_lambda_function" "lambda_{{ .serviceName }}" {
 
 #
 # Create target group. Only one lambda can be registered per target group
-# https://docs.aws.amazon.com/elasticloadbalancing/latest/application/lambda-functions.html
-# https://www.terraform.io/docs/providers/aws/r/lb_target_group.html
+# http://docs.aws.amazon.com/elasticloadbalancing/latest/application/lambda-functions.html
+# http://www.terraform.io/docs/providers/aws/r/lb_target_group.html
 #
 resource "aws_alb_target_group" "{{ .projectName }}_{{ .serviceName }}_target_group" {
   name        = "pac-{{ .projectName }}-i-{{ .serviceName }}"
@@ -36,7 +36,7 @@ resource "aws_alb_target_group" "{{ .projectName }}_{{ .serviceName }}_target_gr
 }
 
 #
-# https://www.terraform.io/docs/providers/aws/r/lb_target_group_attachment.html
+# http://www.terraform.io/docs/providers/aws/r/lb_target_group_attachment.html
 #
 # Provides the ability to register instances and containers with an Application Load Balancer (ALB) 
 # or Network Load Balancer (NLB) target group
@@ -58,7 +58,7 @@ resource "aws_alb_target_group_attachment" "{{ .projectName }}_{{ .serviceName }
 }
 
 #
-# https://www.terraform.io/docs/providers/aws/r/lb_listener_rule.html
+# http://www.terraform.io/docs/providers/aws/r/lb_listener_rule.html
 # alb listener rule
 #
 resource "aws_lb_listener_rule" "{{ .projectName }}_{{ .serviceName }}_rule_100" {
@@ -91,7 +91,7 @@ resource "aws_lb_listener_rule" "{{ .projectName }}_{{ .serviceName }}_rule_200"
 }
 
 #
-# https://www.terraform.io/docs/providers/aws/r/dynamodb_table.html
+# http://www.terraform.io/docs/providers/aws/r/dynamodb_table.html
 # dynamo_db
 #
 resource "aws_dynamodb_table" "{{ .projectName }}_dynamodb_table_{{ .serviceName }}" {

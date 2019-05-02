@@ -7,7 +7,7 @@
 # #----------------------------------------------------------------------------------------------------------------------
 
 # #
-# # https://www.terraform.io/docs/providers/aws/r/acm_certificate.html
+# # http://www.terraform.io/docs/providers/aws/r/acm_certificate.html
 # #
 # resource "aws_acm_certificate" "integration_cert" {
 #   domain_name       = "integration.${var.project_name}.${var.hosted_zone}"
@@ -43,7 +43,7 @@
 # #----------------------------------------------------------------------------------------------------------------------
 
 # # 
-# # https://www.terraform.io/docs/providers/aws/r/cloudfront_origin_access_identity.html
+# # http://www.terraform.io/docs/providers/aws/r/cloudfront_origin_access_identity.html
 # #
 # resource "aws_cloudfront_origin_access_identity" "integration_oai" {
 #   comment = "${var.project_name}"
@@ -54,7 +54,7 @@
 # }
 
 # #
-# # https://www.terraform.io/docs/providers/aws/r/cloudfront_distribution.html
+# # http://www.terraform.io/docs/providers/aws/r/cloudfront_distribution.html
 # #
 # resource "aws_cloudfront_distribution" "s3_distribution" {
 #   origin {

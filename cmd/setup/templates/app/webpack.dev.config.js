@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const { TsConfigPathsPlugin } = require('awesome-typescript-loader');
 // const HtmlWebpackPlugin = require('html-webpack-plugin')
 // const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 
@@ -22,6 +23,9 @@ module.exports = {
     filename: 'bundle.js'
   },
   resolve: {
+    plugins: [
+      new TsConfigPathsPlugin()
+    ],
     extensions: ['.ts', '.tsx', '.js', '.jsx']
   },
   module: {
@@ -32,7 +36,7 @@ module.exports = {
           fallback: 'style-loader',
           use: ['css-loader']
         }))
-      }, 
+      },
       {
         test: /\.scss$/,
         use: ['css-hot-loader'].concat(ExtractTextPlugin.extract({
@@ -43,7 +47,7 @@ module.exports = {
             'sass-loader'
           ]
         }))
-      }, 
+      },
       {
         test: /\.(png|gif|jpg|jpeg|svg|xml)$/,
         use: ['url-loader']

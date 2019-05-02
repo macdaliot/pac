@@ -30,13 +30,13 @@ variable "hosted_zone" {
 variable "execution_role_arn" {
     description = "Role with polices to execute ECS tasks and access Systems Manager Parameter Store to retrieve secrets"
     # default = "arn:aws:iam::{{ .awsID }}:role/{{ .projectName }}-{{ .env }}-task-execution"
-    default = "arn:aws:iam::118104210923:role/{{ .projectName }}-dev-task-execution"
+    default = "arn:aws:iam::{{ .awsID }}:role/{{ .projectName }}-dev-task-execution"
 }
 
 variable "task_role_arn" {
     description = "Role with EC2, S3, and ECS access policies for ECS tasks"
     # default = "arn:aws:iam::{{ .awsID }}:role/{{ .projectName }}-{{ .env }}-jenkins"
-    default = "arn:aws:iam::118104210923:role/{{ .projectName }}-dev-jenkins"
+    default = "arn:aws:iam::{{ .awsID }}:role/{{ .projectName }}-dev-jenkins"
 }
 
 variable "app_count" {

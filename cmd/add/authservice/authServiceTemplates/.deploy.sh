@@ -22,7 +22,7 @@ else
   # Create Lambda Function
   LAMBDA_ARN=$(aws lambda create-function --function-name "$FULL_SERVICE_NAME" --runtime nodejs8.10 --role arn:aws:iam::118104210923:role/service-role/god --handler lambda.handler --zip-file fileb://function.zip --region us-east-2 | jq '.FunctionArn')
   LAMBDA_ARN=$(sed -e 's/^"//g' -e 's/"$//g' <<< $LAMBDA_ARN)
-  aws lambda tag-resource --resource $LAMBDA_ARN --tags pac-project-name={{.projectName}}
+  aws lambda tag-resource --resource $LAMBDA_ARN --tags pac-project-name=testa
   echo "INFO (2/5 Completed): Created Lambda Function"
 
   # Adjust Lambda permissions

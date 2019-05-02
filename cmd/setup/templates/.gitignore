@@ -1,8 +1,10 @@
 app/dist
 app/node_modules
-svc/*/node_modules
-svc/*/dist
-svc/**/.env
+core/node_modules
+domain/node_modules
+services/*/node_modules
+services/*/dist
+services/**/.env
 **/lambdaEnvironment.txt
 **/.DS_Store
 **/test-report.xml

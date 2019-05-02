@@ -1,20 +1,27 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
-import { appStore } from './redux/Store';
 import axios from 'axios';
+import { shallow } from 'enzyme';
 import { ApplicationComponent } from './Application';
+import { appStore } from './redux/Store';
+import { IUser } from '@pyramid-systems/domain';
 
-// TODO: Create a mock for appStore and axios
-const sampleUser: string = 'thisPerson';
+const sampleUser: IUser = {
+  exp: 1556083479,
+  groups: [],
+  iat: 1556047479,
+  iss: "urn:pacAuth",
+  name: "Sample",
+  sub: "sample@pyramidsystems.com"
+};
 
 describe('Application component (unit/shallow)', () => {
   it('should render', () => {
-    const component = shallow(<ApplicationComponent />)
+    const component = shallow(<ApplicationComponent />);
     expect(component.exists()).toBe(true);
   });
 
   it('should have a default "loggedIn" state of false', () => {
-    const component = shallow(<ApplicationComponent />)
+    const component = shallow(<ApplicationComponent />);
     expect(component.state('loggedIn')).toBe(false);
   });
 });

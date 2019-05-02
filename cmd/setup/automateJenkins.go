@@ -68,7 +68,7 @@ func createEntrypointJobXml(projectName string) {
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
-        <url>https://github.com/PyramidSystemsInc/{{.projectName}}.git</url>
+        <url>http://github.com/PyramidSystemsInc/{{.projectName}}.git</url>
         <credentialsId>gitcredentials</credentialsId>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
@@ -112,7 +112,7 @@ func createServicesPipelineXml(projectName string) {
   <keepDependencies>false</keepDependencies>
   <properties>
     <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.3">
-      <projectUrl>https://github.com/PyramidSystemsInc/{{.projectName}}/</projectUrl>
+      <projectUrl>http://github.com/PyramidSystemsInc/{{.projectName}}/</projectUrl>
       <displayName/>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
   </properties>
@@ -121,7 +121,7 @@ func createServicesPipelineXml(projectName string) {
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>https://github.com/PyramidSystemsInc/{{.projectName}}.git</url>
+          <url>http://github.com/PyramidSystemsInc/{{.projectName}}.git</url>
           <credentialsId>gitcredentials</credentialsId>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
@@ -134,7 +134,7 @@ func createServicesPipelineXml(projectName string) {
       <submoduleCfg class="list"/>
       <extensions/>
     </scm>
-    <scriptPath>svc/Jenkinsfile</scriptPath>
+    <scriptPath>services/Jenkinsfile</scriptPath>
     <lightweight>true</lightweight>
   </definition>
   <triggers/>
@@ -162,7 +162,7 @@ func createFrontEndPipelineXml(projectName string) {
     </jenkins.model.BuildDiscarderProperty>
     <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
     <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.3">
-      <projectUrl>https://github.com/PyramidSystemsInc/{{.projectName}}/</projectUrl>
+      <projectUrl>http://github.com/PyramidSystemsInc/{{.projectName}}/</projectUrl>
       <displayName/>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
   </properties>
@@ -171,7 +171,7 @@ func createFrontEndPipelineXml(projectName string) {
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>https://github.com/PyramidSystemsInc/{{.projectName}}.git</url>
+          <url>http://github.com/PyramidSystemsInc/{{.projectName}}.git</url>
           <credentialsId>gitcredentials</credentialsId>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
@@ -212,7 +212,7 @@ func createMasterPipelineXml(projectName string) {
     </jenkins.model.BuildDiscarderProperty>
     <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
     <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.3">
-      <projectUrl>https://github.com/PyramidSystemsInc/{{.projectName}}/</projectUrl>
+      <projectUrl>http://github.com/PyramidSystemsInc/{{.projectName}}/</projectUrl>
       <displayName/>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
   </properties>
@@ -221,7 +221,7 @@ func createMasterPipelineXml(projectName string) {
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>https://github.com/PyramidSystemsInc/{{.projectName}}.git</url>
+          <url>http://github.com/PyramidSystemsInc/{{.projectName}}.git</url>
           <credentialsId>gitcredentials</credentialsId>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>

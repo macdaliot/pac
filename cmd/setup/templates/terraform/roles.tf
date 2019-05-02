@@ -224,6 +224,15 @@ resource "aws_iam_policy" "{{ .projectName }}_{{ .env }}_lambda_dynamodb" {
 EOF
 }
 
+resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_lambda_dynamodb_policy_attach" {
+  role       = "${var.project_name}-{{ .env }}-lambda-execution-role"
+
+  # managed by AWS so we can hard code it
+  policy_arn = "${aws_iam_policy.{{ .projectName }}_{{ .env }}_lambda_dynamodb.arn}"
+
+  depends_on = ["aws_iam_role.{{ .projectName }}_{{ .env }}_lambda_execution_role"]
+}
+
 # output "{{ .projectName }}_{{ .env }}_lambda_dynamodb_policy_arn" {
 #   value = "${aws_iam_policy.{{ .projectName }}_{{ .env }}_lambda_dynamodb.arn}"
 # }

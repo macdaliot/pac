@@ -1,5 +1,5 @@
 #
-# https://www.terraform.io/docs/providers/aws/r/elasticsearch_domain.html
+# http://www.terraform.io/docs/providers/aws/r/elasticsearch_domain.html
 #
 resource "aws_elasticsearch_domain" "es" {
   count                 = "${var.enable_elasticsearch == "true" ? 1 : 0}"
@@ -37,7 +37,7 @@ output "elasticsearch_endpoint" {
 }
 
 # #
-# # https://www.terraform.io/docs/providers/aws/r/elasticsearch_domain_policy.html
+# # http://www.terraform.io/docs/providers/aws/r/elasticsearch_domain_policy.html
 # #
 # resource "aws_elasticsearch_domain_policy" "ip_based" {
 #   domain_name = "${aws_elasticsearch_domain.es.domain_name}"

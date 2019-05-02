@@ -8,17 +8,17 @@ import (
 )
 
 var getCmd = &cobra.Command{
-	Use:   "get",
+	Use: "get",
 	Short: "Retrieves the value from the PAC project configuration",
-	Long:  `Retrieves the value from the PAC project configuration`,
+	Long: `Retrieves the value from the PAC project configuration`,
 	Run: func(cmd *cobra.Command, args []string) {
 		logger.SetLogLevel("info")
-    property := getConfigPropertyName(cmd)
-    if property != "" {
-      logger.Info(config.Get(property))
-    } else {
-      logger.Info(config.Get(args[0]))
-    }
+		property := getConfigPropertyName(cmd)
+		if property != "" {
+			logger.Info(config.Get(property))
+		} else {
+			logger.Info(config.Get(args[0]))
+		}
 	},
 }
 

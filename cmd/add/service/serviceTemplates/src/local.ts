@@ -1,5 +1,9 @@
-import app from './server';
+import app from "./server";
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-app.listen(port, () => console.log("{{.serviceName}} is running on port " + port + "!"));
+app.listen(port, () =>
+    app
+        .get("logger")
+        .info("{{.serviceName}} Service is running on port " + port + "!")
+);

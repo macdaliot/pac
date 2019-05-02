@@ -3,7 +3,7 @@ variable "cnames" {
 }
 
 #
-# https://www.terraform.io/docs/providers/aws/r/route53_record.html
+# http://www.terraform.io/docs/providers/aws/r/route53_record.html
 #
 #
 # These records are created in application VPC instead of the management VPC because they requie a load balancer which

@@ -10,5 +10,5 @@ AUTH0_CLIENT_ID=PJqs70Pr0VRH67aR2TnHf4Sn6DDldiNR
 # This value is application specific and must match the value in the .env file on other services
 JWT_SECRET=4pWQUrx6RkgU6o2TC
 
-APP_ROOT=http://integration.{{.projectName}}.pac.pyramidchallenges.com.s3-website.us-east-2.amazonaws.com
-SAML_CALLBACK=http://api.{{.projectName}}.pac.pyramidchallenges.com/api/auth/callback
+APP_ROOT=http://integration.testa.pac.pyramidchallenges.com.s3-website.us-east-2.amazonaws.com
+SAML_CALLBACK=http://api.testa.pac.pyramidchallenges.com/api/auth/callback

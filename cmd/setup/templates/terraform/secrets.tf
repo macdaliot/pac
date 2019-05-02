@@ -10,7 +10,7 @@ variable "secrets" {
 }
 
 #
-# https://www.terraform.io/docs/providers/random/r/string.html
+# http://www.terraform.io/docs/providers/random/r/string.html
 #
 resource "random_string" "password" {
   count = "${length(var.secrets)}"
@@ -19,7 +19,7 @@ resource "random_string" "password" {
 }
 
 #
-# https://www.terraform.io/docs/providers/aws/r/ssm_parameter.html
+# http://www.terraform.io/docs/providers/aws/r/ssm_parameter.html
 #
 resource "aws_ssm_parameter" "jwt_issuer" {
   name  = "/pac/${var.project_name}/jwt/issuer"

@@ -9,15 +9,23 @@ import (
 )
 
 func CreateAllTemplatedFiles(config map[string]string) {
-  targetDirectory := "svc/auth"
+	targetDirectory := "services/auth"
 	box := packr.NewBox("./authServiceTemplates")
 	for _, templatePath := range box.List() {
 		logger.Info(templatePath)
-    fullPath := filepath.Join(targetDirectory, templatePath)
-    files.EnsurePath(filepath.Dir(fullPath))
-    template, _ := box.FindString(templatePath)
-    files.CreateFromTemplate(fullPath, template, config)
+		fullPath := filepath.Join(targetDirectory, templatePath)
+		files.EnsurePath(filepath.Dir(fullPath))
+		template, _ := box.FindString(templatePath)
+		files.CreateFromTemplate(fullPath, template, config)
+	}
+
+	targetDirectory = "services/terraform"
+	box = packr.NewBox("./authTerraformTemplates")
+	for _, templatePath := range box.List() {
+		logger.Info(templatePath)
+		fullPath := filepath.Join(targetDirectory, templatePath)
+		files.EnsurePath(filepath.Dir(fullPath))
+		template, _ := box.FindString(templatePath)
+		files.CreateFromTemplate(fullPath, template, config)
 	}
 }
-
-

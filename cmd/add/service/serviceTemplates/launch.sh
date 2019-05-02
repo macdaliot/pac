@@ -76,8 +76,9 @@ if [ ! -z "$AWS_ACCESS_KEY_ID" ] || [ ! -z "$AWS_SECRET_ACCESS_KEY" ]; then
           fi
         fi
         # Compile, build, and launch
+        npm run generate:templates
         npx tsc
-        docker run -it -d --name pac-$PROJECT_NAME-$SERVICE_NAME -v "$PWD":/usr/src/app -w /usr/src/app --network pac-$PROJECT_NAME -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY node:8 npm start
+        docker run --name pac-$PROJECT_NAME-$SERVICE_NAME -v "$PWD":/usr/src/app -w /usr/src/app --network pac-$PROJECT_NAME -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -it -d node:8 node dist/services/$SERVICE_NAME/src/local 
         if [ $(echo $?) -eq 0 ]; then
           echo "The $SERVICE_NAME microservice was successfully launched locally"
         else

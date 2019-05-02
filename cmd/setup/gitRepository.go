@@ -9,7 +9,6 @@ import (
 	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/go/str"
-	"github.com/PyramidSystemsInc/pac/config"
 )
 
 type CreateRepoRequest struct {
@@ -18,27 +17,27 @@ type CreateRepoRequest struct {
 	Description string `json:"description"`
 }
 
-func GitRepository(projectName string) {
-	repoConfig := createRepoConfig(projectName)
-	postToGitHub(repoConfig)
+func GitRepository(projectName string, description string, gitAuth string) {
+	repoConfig := createRepoConfig(projectName, description)
+	postToGitHub(repoConfig, gitAuth)
 	setupRepository(projectName)
 	logger.Info("Created GitHub repository")
 }
 
-func createRepoConfig(projectName string) *bytes.Buffer {
+func createRepoConfig(projectName string, description string) *bytes.Buffer {
 	repoConfig, err := json.Marshal(CreateRepoRequest{
-		Name:        projectName,
-		Private:     true,
-		Description: config.Get("description"),
+		Name: projectName,
+		Private: true,
+		Description: description,
 	})
 	errors.LogIfError(err)
 	return bytes.NewBuffer(repoConfig)
 }
 
-func postToGitHub(repoConfig *bytes.Buffer) {
+func postToGitHub(repoConfig *bytes.Buffer, gitAuth string) {
 	request, err := http.NewRequest("POST", "https://api.github.com/orgs/PyramidSystemsInc/repos", repoConfig)
 	errors.LogIfError(err)
-	request.Header.Add("Authorization", str.Concat("Basic ", config.Get("gitAuth")))
+	request.Header.Add("Authorization", str.Concat("Basic ", gitAuth))
 	client := &http.Client{}
 	response, err := client.Do(request)
 	errors.LogIfError(err)

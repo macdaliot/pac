@@ -11,7 +11,7 @@ import (
 	"github.com/PyramidSystemsInc/go/str"
 )
 
-func ValidateInputs(projectName string, frontEnd string, backEnd string, database string, env string) {
+func ValidateInputs(projectName, frontEnd, backEnd, database, env string) {
 	validateProjectName(projectName)
 	validateDockerAndPorts()
 	validateStack(frontEnd, backEnd, database)
