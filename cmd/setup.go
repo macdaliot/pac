@@ -23,23 +23,26 @@ NodeJS/Express back-end, and DynamoDB database)`,
     frontEnd := getFrontEnd(cmd)
     backEnd := getBackEnd(cmd)
     database := getDatabase(cmd)
+		env := getEnv(cmd)
     warnExtraArgumentsAreIgnored(args)
 
     // Perform various checks to ensure we should proceed
-    setup.ValidateInputs(projectName, frontEnd, backEnd, database)
+    setup.ValidateInputs(projectName, frontEnd, backEnd, database, env)
 
     // Create encryption key (used to secure Terraform state) which is needed for the Terraform templates
     encryptionKeyID := setup.CreateEncryptionKey(projectName)
 
     // Copy template files from ./cmd/setup/templates over to the new project
-    setup.Templates(projectName, description, awsRegion, encryptionKeyID)
+    awsAccountID := setup.Templates(projectName, description, gitAuth, awsRegion, encryptionKeyID, env)
 
     // Create a GitHub repository for the project
     setup.GitRepository(projectName, description, gitAuth)
 
     // Set configuration values in the .pac file in the new project directory
+		config.Set("awsID", awsAccountID)
     config.Set("encryptionKeyID", encryptionKeyID)
     config.Set("gitAuth", gitAuth)
+		config.Set("env", env)
   },
 }
 
@@ -51,6 +54,7 @@ func init() {
   setupCmd.PersistentFlags().StringVarP(&frontEnd, "front", "f", "ReactJS", "front-end framework/library")
   setupCmd.PersistentFlags().StringVarP(&backEnd, "back", "b", "Express", "back-end framework/library")
   setupCmd.PersistentFlags().StringVarP(&database, "database", "d", "DynamoDB", "database type")
+  setupCmd.PersistentFlags().StringVarP(&env, "env", "e", "dev", "environment name")
 }
 
 // TODO: pull from systems manager parameter store
@@ -100,4 +104,12 @@ func getDatabase(cmd *cobra.Command) string {
   database, err := cmd.Flags().GetString("database")
   errors.QuitIfError(err)
   return database
+}
+
+var env string
+
+func getEnv(cmd *cobra.Command) string {
+	env, err := cmd.Flags().GetString("env")
+	errors.QuitIfError(err)
+	return env
 }

@@ -1,5 +1,5 @@
 #
-# https://www.terraform.io/docs/providers/aws/r/lb_listener_rule.html#condition
+# http://www.terraform.io/docs/providers/aws/r/lb_listener_rule.html#condition
 #
 
 resource "aws_lb_listener_rule" "jenkins_host" {
@@ -17,6 +17,10 @@ resource "aws_lb_listener_rule" "jenkins_host" {
   }
 }
 
+output "alb_lrule_jenkins_arn" {
+  value = "${aws_lb_listener_rule.jenkins_host.arn}"
+}
+
 resource "aws_lb_listener_rule" "sonarqube_host" {
   listener_arn = "${aws_lb_listener.api.arn}"
   priority     = 98
@@ -32,6 +36,10 @@ resource "aws_lb_listener_rule" "sonarqube_host" {
   }
 }
 
+output "alb_lrule_sonarqube_arn" {
+  value = "${aws_lb_listener_rule.sonarqube_host.arn}"
+}
+
 resource "aws_lb_listener_rule" "selenium_host" {
   listener_arn = "${aws_lb_listener.api.arn}"
   priority     = 97
@@ -45,4 +53,8 @@ resource "aws_lb_listener_rule" "selenium_host" {
     field  = "host-header"
     values = ["selenium.${var.project_name}.${var.hosted_zone}"]
   }
+}
+
+output "alb_lrule_selenium_arn" {
+  value = "${aws_lb_listener_rule.selenium_host.arn}"
 }

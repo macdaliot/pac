@@ -1,10 +1,3 @@
-#
-# https://www.terraform.io/docs/providers/random/index.html
-#
-provider "random" {
-  version = "2.1"
-}
-
 variable "secrets" {
   default = [
     "jwt_secret",
@@ -17,7 +10,7 @@ variable "secrets" {
 }
 
 #
-# https://www.terraform.io/docs/providers/random/r/string.html
+# http://www.terraform.io/docs/providers/random/r/string.html
 #
 resource "random_string" "password" {
   count = "${length(var.secrets)}"
@@ -26,7 +19,7 @@ resource "random_string" "password" {
 }
 
 #
-# https://www.terraform.io/docs/providers/aws/r/ssm_parameter.html
+# http://www.terraform.io/docs/providers/aws/r/ssm_parameter.html
 #
 resource "aws_ssm_parameter" "jwt_issuer" {
   name  = "/pac/${var.project_name}/jwt/issuer"
@@ -34,15 +27,19 @@ resource "aws_ssm_parameter" "jwt_issuer" {
   type  = "SecureString"
   value = "urn:pacAuth"
   key_id = "${data.aws_kms_key.project_key.key_id}"
+  overwrite = true
 }
 
 resource "aws_ssm_parameter" "jwt_secret" {
   name  = "/pac/${var.project_name}/jwt/secret"
   description = "Test password"
   type  = "SecureString"
-  value = "${random_string.password.0.result}"
+  # value = "${random_string.password.0.result}"
+  value = "4pWQUrx6RkgU6o2TC"
   key_id = "${data.aws_kms_key.project_key.key_id}"
+  overwrite = true
 }
+
 resource "aws_ssm_parameter" "postgres_password" {
   name        = "/pac/${var.project_name}/postgres/password"
   description = "PostGRES password"
@@ -51,6 +48,7 @@ resource "aws_ssm_parameter" "postgres_password" {
   value       = "pyramid"
   key_id      = "${data.aws_kms_key.project_key.key_id}"
 }
+
 resource "aws_ssm_parameter" "sonar_jdbc_password" {
   name  = "/pac/${var.project_name}/sonar/sonar_jdbc_password"
   description = "Sonar JDBC password"
@@ -109,23 +107,23 @@ output "jwt_secret" {
   value = "${aws_ssm_parameter.jwt_secret.value}"
 }
 
-# output "postgres_password" {
-#   value = "${aws_ssm_parameter.postgres_password.value}"
-# }
+# # output "postgres_password" {
+# #   value = "${aws_ssm_parameter.postgres_password.value}"
+# # }
 
 
-# output "sonar_jdbc_username" {
-#   value = "${aws_ssm_parameter.sonar_jdbc_username.value}"
-# }
+# # output "sonar_jdbc_username" {
+# #   value = "${aws_ssm_parameter.sonar_jdbc_username.value}"
+# # }
 
-# output "sonar_jdbc_password" {
-#   value = "${aws_ssm_parameter.sonar_jdbc_password.value}"
-# }
+# # output "sonar_jdbc_password" {
+# #   value = "${aws_ssm_parameter.sonar_jdbc_password.value}"
+# # }
 
-# output "sonar_jdbc_url" {
-#   value = "${aws_ssm_parameter.sonar_jdbc_url.value}"
-# }
+# # output "sonar_jdbc_url" {
+# #   value = "${aws_ssm_parameter.sonar_jdbc_url.value}"
+# # }
 
-# output "jenkins_password" {
-#   value = "${aws_ssm_parameter.jenkins_password.value}"
-# }
+# # output "jenkins_password" {
+# #   value = "${aws_ssm_parameter.jenkins_password.value}"
+# # }

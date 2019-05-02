@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# https://golang.org/doc/install/source#environment
+# http://golang.org/doc/install/source#environment
 platforms=(
 "darwin/386"
 "darwin/amd64"

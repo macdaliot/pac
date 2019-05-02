@@ -1,54 +1,54 @@
 package setup
 
 import (
-  "time"
+	"time"
 
-  "github.com/PyramidSystemsInc/go/commands"
-  "github.com/PyramidSystemsInc/go/errors"
-  "github.com/PyramidSystemsInc/go/files"
-  "github.com/PyramidSystemsInc/go/logger"
-  "github.com/PyramidSystemsInc/go/str"
-  "github.com/PyramidSystemsInc/pac/config"
+	"github.com/PyramidSystemsInc/go/commands"
+	"github.com/PyramidSystemsInc/go/errors"
+	"github.com/PyramidSystemsInc/go/files"
+	"github.com/PyramidSystemsInc/go/logger"
+	"github.com/PyramidSystemsInc/go/str"
+	"github.com/PyramidSystemsInc/pac/config"
 )
 
 func AutomateJenkins() {
-  time.Sleep(60 * time.Second)
-  projectName := config.Get("projectName")
-  jenkinsUrl := config.Get("jenkinsUrl")
-  DownloadJenkinsCliJar(jenkinsUrl)
-  createEntrypointJobXml(projectName)
-  createMasterPipelineXml(projectName)
-  createFrontEndPipelineXml(projectName)
-  createServicesPipelineXml(projectName)
-  jenkinsCliCommandStart := str.Concat("java -jar jenkins-cli.jar -s http://", jenkinsUrl, " -auth pyramid:systems")
-  createPipelineJobs(jenkinsUrl, projectName, jenkinsCliCommandStart)
-  cleanUp()
-  logger.Info("Jenkins should now be completely configured.")
+	time.Sleep(60 * time.Second)
+	projectName := config.Get("projectName")
+	jenkinsURL := config.Get("jenkinsURL")
+	DownloadJenkinsCliJar(jenkinsURL)
+	createEntrypointJobXml(projectName)
+	createMasterPipelineXml(projectName)
+	createFrontEndPipelineXml(projectName)
+	createServicesPipelineXml(projectName)
+	jenkinsCliCommandStart := str.Concat("java -jar jenkins-cli.jar -s http://", jenkinsURL, " -auth pyramid:systems")
+	createPipelineJobs(jenkinsURL, projectName, jenkinsCliCommandStart)
+	cleanUp()
+	logger.Info("Jenkins should now be completely configured.")
 }
 
-func DownloadJenkinsCliJar(jenkinsUrl string) {
-  corruptJenkinsCliError := "Error: Invalid or corrupt jarfile jenkins-cli.jar"
-  jenkinsCliPath := "./jenkins-cli.jar"
-  err := files.Download(str.Concat("http://", jenkinsUrl, "/jnlpJars/jenkins-cli.jar"), jenkinsCliPath)
-  if err != nil {
-    logger.Info("Made it in the if")
-    if err.Error() == corruptJenkinsCliError {
-      logger.Info("Made it in the nested if")
-      files.Delete(jenkinsCliPath)
-      logger.Info("Received a corrupt Jenkins CLI. Attempting another download")
-      time.Sleep(20 * time.Second)
-      DownloadJenkinsCliJar(jenkinsUrl)
-    } else {
-      errors.LogAndQuit(str.Concat("Downloading the Jenkins CLI failed with the following error: ", err.Error()))
-    }
-  }
+func DownloadJenkinsCliJar(jenkinsURL string) {
+	corruptJenkinsCliError := "Error: Invalid or corrupt jarfile jenkins-cli.jar"
+	jenkinsCliPath := "./jenkins-cli.jar"
+	err := files.Download(str.Concat("http://", jenkinsURL, "/jnlpJars/jenkins-cli.jar"), jenkinsCliPath)
+	if err != nil {
+		logger.Info("Made it in the if")
+		if err.Error() == corruptJenkinsCliError {
+			logger.Info("Made it in the nested if")
+			files.Delete(jenkinsCliPath)
+			logger.Info("Received a corrupt Jenkins CLI. Attempting another download")
+			time.Sleep(20 * time.Second)
+			DownloadJenkinsCliJar(jenkinsURL)
+		} else {
+			errors.LogAndQuit(str.Concat("Downloading the Jenkins CLI failed with the following error: ", err.Error()))
+		}
+	}
 }
 
 func createEntrypointJobXml(projectName string) {
-  filePath := "entrypoint-job.xml"
-  config := make(map[string]string)
-  config["projectName"] = projectName
-  const template = `<?xml version='1.1' encoding='UTF-8'?>
+	filePath := "entrypoint-job.xml"
+	config := make(map[string]string)
+	config["projectName"] = projectName
+	const template = `<?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
   <description></description>
@@ -68,7 +68,7 @@ func createEntrypointJobXml(projectName string) {
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
-        <url>https://github.com/PyramidSystemsInc/{{.projectName}}.git</url>
+        <url>http://github.com/PyramidSystemsInc/{{.projectName}}.git</url>
         <credentialsId>gitcredentials</credentialsId>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
@@ -100,19 +100,19 @@ func createEntrypointJobXml(projectName string) {
   <buildWrappers />
 </project>
 `
-  files.CreateFromTemplate(filePath, template, config)
+	files.CreateFromTemplate(filePath, template, config)
 }
 
 func createServicesPipelineXml(projectName string) {
-  filePath := "services-pipeline.xml"
-  config := make(map[string]string)
-  config["projectName"] = projectName
-  const template = `<?xml version="1.1" encoding="UTF-8"?><flow-definition plugin="workflow-job@2.31">
+	filePath := "services-pipeline.xml"
+	config := make(map[string]string)
+	config["projectName"] = projectName
+	const template = `<?xml version="1.1" encoding="UTF-8"?><flow-definition plugin="workflow-job@2.31">
   <description/>
   <keepDependencies>false</keepDependencies>
   <properties>
     <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.3">
-      <projectUrl>https://github.com/PyramidSystemsInc/{{.projectName}}/</projectUrl>
+      <projectUrl>http://github.com/PyramidSystemsInc/{{.projectName}}/</projectUrl>
       <displayName/>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
   </properties>
@@ -121,7 +121,7 @@ func createServicesPipelineXml(projectName string) {
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>https://github.com/PyramidSystemsInc/{{.projectName}}.git</url>
+          <url>http://github.com/PyramidSystemsInc/{{.projectName}}.git</url>
           <credentialsId>gitcredentials</credentialsId>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
@@ -141,14 +141,14 @@ func createServicesPipelineXml(projectName string) {
   <disabled>false</disabled>
 </flow-definition>
 `
-  files.CreateFromTemplate(filePath, template, config)
+	files.CreateFromTemplate(filePath, template, config)
 }
 
 func createFrontEndPipelineXml(projectName string) {
-  filePath := "front-end-pipeline.xml"
-  config := make(map[string]string)
-  config["projectName"] = projectName
-  const template = `<?xml version="1.1" encoding="UTF-8"?><flow-definition plugin="workflow-job@2.31">
+	filePath := "front-end-pipeline.xml"
+	config := make(map[string]string)
+	config["projectName"] = projectName
+	const template = `<?xml version="1.1" encoding="UTF-8"?><flow-definition plugin="workflow-job@2.31">
   <description/>
   <keepDependencies>false</keepDependencies>
   <properties>
@@ -162,7 +162,7 @@ func createFrontEndPipelineXml(projectName string) {
     </jenkins.model.BuildDiscarderProperty>
     <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
     <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.3">
-      <projectUrl>https://github.com/PyramidSystemsInc/{{.projectName}}/</projectUrl>
+      <projectUrl>http://github.com/PyramidSystemsInc/{{.projectName}}/</projectUrl>
       <displayName/>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
   </properties>
@@ -171,7 +171,7 @@ func createFrontEndPipelineXml(projectName string) {
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>https://github.com/PyramidSystemsInc/{{.projectName}}.git</url>
+          <url>http://github.com/PyramidSystemsInc/{{.projectName}}.git</url>
           <credentialsId>gitcredentials</credentialsId>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
@@ -191,14 +191,14 @@ func createFrontEndPipelineXml(projectName string) {
   <disabled>false</disabled>
 </flow-definition>
 `
-  files.CreateFromTemplate(filePath, template, config)
+	files.CreateFromTemplate(filePath, template, config)
 }
 
 func createMasterPipelineXml(projectName string) {
-  filePath := "master-pipeline.xml"
-  config := make(map[string]string)
-  config["projectName"] = projectName
-  const template = `<?xml version="1.1" encoding="UTF-8"?><flow-definition plugin="workflow-job@2.31">
+	filePath := "master-pipeline.xml"
+	config := make(map[string]string)
+	config["projectName"] = projectName
+	const template = `<?xml version="1.1" encoding="UTF-8"?><flow-definition plugin="workflow-job@2.31">
   <description/>
   <keepDependencies>false</keepDependencies>
   <properties>
@@ -212,7 +212,7 @@ func createMasterPipelineXml(projectName string) {
     </jenkins.model.BuildDiscarderProperty>
     <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
     <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.3">
-      <projectUrl>https://github.com/PyramidSystemsInc/{{.projectName}}/</projectUrl>
+      <projectUrl>http://github.com/PyramidSystemsInc/{{.projectName}}/</projectUrl>
       <displayName/>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
   </properties>
@@ -221,7 +221,7 @@ func createMasterPipelineXml(projectName string) {
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>https://github.com/PyramidSystemsInc/{{.projectName}}.git</url>
+          <url>http://github.com/PyramidSystemsInc/{{.projectName}}.git</url>
           <credentialsId>gitcredentials</credentialsId>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
@@ -241,25 +241,25 @@ func createMasterPipelineXml(projectName string) {
   <disabled>false</disabled>
 </flow-definition>
 `
-  files.CreateFromTemplate(filePath, template, config)
+	files.CreateFromTemplate(filePath, template, config)
 }
 
-func createPipelineJobs(jenkinsUrl string, projectName string, jenkinsCliCommandStart string) {
-  jobData := files.Read("entrypoint-job.xml")
-  createJobCommand := str.Concat(jenkinsCliCommandStart, " create-job entrypoint")
-  commands.RunWithStdin(createJobCommand, string(jobData), "")
-  jobData = files.Read("services-pipeline.xml")
-  createJobCommand = str.Concat(jenkinsCliCommandStart, " create-job services")
-  commands.RunWithStdin(createJobCommand, string(jobData), "")
-  jobData = files.Read("front-end-pipeline.xml")
-  createJobCommand = str.Concat(jenkinsCliCommandStart, " create-job front-end")
-  commands.RunWithStdin(createJobCommand, string(jobData), "")
-  jobData = files.Read("master-pipeline.xml")
-  createJobCommand = str.Concat(jenkinsCliCommandStart, " create-job master")
-  commands.RunWithStdin(createJobCommand, string(jobData), "")
+func createPipelineJobs(jenkinsURL string, projectName string, jenkinsCliCommandStart string) {
+	jobData := files.Read("entrypoint-job.xml")
+	createJobCommand := str.Concat(jenkinsCliCommandStart, " create-job entrypoint")
+	commands.RunWithStdin(createJobCommand, string(jobData), "")
+	jobData = files.Read("services-pipeline.xml")
+	createJobCommand = str.Concat(jenkinsCliCommandStart, " create-job services")
+	commands.RunWithStdin(createJobCommand, string(jobData), "")
+	jobData = files.Read("front-end-pipeline.xml")
+	createJobCommand = str.Concat(jenkinsCliCommandStart, " create-job front-end")
+	commands.RunWithStdin(createJobCommand, string(jobData), "")
+	jobData = files.Read("master-pipeline.xml")
+	createJobCommand = str.Concat(jenkinsCliCommandStart, " create-job master")
+	commands.RunWithStdin(createJobCommand, string(jobData), "")
 }
 
 func cleanUp() {
-  // TODO: Change to os.Rm() or something in order to support Windows CMD
-  commands.Run("rm jenkins-cli.jar entrypoint-job.xml front-end-pipeline.xml services-pipeline.xml master-pipeline.xml", "")
+	// TODO: Change to os.Rm() or something in order to support Windows CMD
+	commands.Run("rm jenkins-cli.jar entrypoint-job.xml front-end-pipeline.xml services-pipeline.xml master-pipeline.xml", "")
 }

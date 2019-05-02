@@ -33,15 +33,15 @@ This command is to be run after templates are generated with 'pac setup'`,
     terraformS3Bucket, projectFqdn := deploy.TerraformS3Bucket(projectName, encryptionKeyID)
 
     // Sets up a webhook to queue a Jenkins build every time a push is made to GitHub
-    jenkinsUrl := str.Concat("jenkins.", projectFqdn)
-    deploy.GitHubWebhook(projectName, gitAuth, jenkinsUrl)
+    jenkinsURL := str.Concat("jenkins.", projectFqdn)
+    deploy.GitHubWebhook(projectName, gitAuth, jenkinsURL)
 
     // Call on Terraform to create the infrastructure in the cloud
     deploy.Infrastructure()
 
     // Set configuration values in the .pac file in the new project directory
     config.Set("gitAuth", gitAuth)
-    config.Set("jenkinsUrl", jenkinsUrl)
+    config.Set("jenkinsURL", jenkinsURL)
     config.Set("projectFqdn", projectFqdn)
     config.Set("terraformS3Bucket", terraformS3Bucket)
   },

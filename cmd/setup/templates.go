@@ -4,22 +4,25 @@ import (
   "os"
   "path/filepath"
 
-  "github.com/PyramidSystemsInc/go/directories"
-  "github.com/PyramidSystemsInc/go/files"
-  "github.com/PyramidSystemsInc/go/logger"
-  "github.com/PyramidSystemsInc/go/terraform"
-  "github.com/gobuffalo/packr"
+  "github.com/PyramidSystemsInc/go/aws/sts"
+	"github.com/PyramidSystemsInc/go/directories"
+	"github.com/PyramidSystemsInc/go/files"
+	"github.com/PyramidSystemsInc/go/logger"
+	"github.com/PyramidSystemsInc/go/terraform"
+	"github.com/gobuffalo/packr"
 )
 
-//Templates creates project directory, config files, and copies project files to project directory.
-func Templates(projectName string, description string, awsRegion string, encryptionKeyID string) {
-  createRootProjectDirectory(projectName)
-  cfg := createConfig(projectName, description, awsRegion, encryptionKeyID)
-  createProjectFiles(cfg)
-  logger.Info("Created project structure")
+// Templates - creates project directory, config files, and copies project files to project directory.
+func Templates(projectName, description, gitAuth, awsRegion, encryptionKeyID, env string) string {
+	createRootProjectDirectory(projectName)
+  awsAccountID := sts.GetAccountID()
+	cfg := createConfig(projectName, description, gitAuth, awsAccountID, awsRegion, encryptionKeyID, env)
+	createProjectFiles(cfg)
+	logger.Info("Created project structure")
   logger.Info("Installing node modules")
   NpmInstall()
   logger.Info("Finished installing node modules")
+  return awsAccountID
 }
 
 func createRootProjectDirectory(projectName string) {
@@ -29,15 +32,18 @@ func createRootProjectDirectory(projectName string) {
   os.Chdir(projectDirectory)
 }
 
-func createConfig(projectName string, description string, awsRegion string, encryptionKeyID string) map[string]string {
-  cfg := make(map[string]string)
-  cfg["projectName"] = projectName
-  cfg["description"] = description
-  cfg["region"] = awsRegion
-  cfg["terraformAWSVersion"] = terraform.AWSVersion
-  cfg["terraformTemplateVersion"] = terraform.TemplateVersion
-  cfg["encryptionKeyID"] = encryptionKeyID
-  return cfg
+func createConfig(projectName, description, gitAuth, awsAccountID, awsRegion, encryptionKeyID, env string) map[string]string {
+	cfg := make(map[string]string)
+  cfg["awsID"] = awsAccountID
+	cfg["projectName"] = projectName
+	cfg["description"] = description
+	cfg["encryptionKeyID"] = encryptionKeyID
+	cfg["env"] = env
+	cfg["gitAuth"] = gitAuth
+	cfg["region"] = awsRegion
+	cfg["terraformAWSVersion"] = terraform.AWSVersion
+	cfg["terraformTemplateVersion"] = terraform.TemplateVersion
+	return cfg
 }
 
 func createProjectFiles(cfg map[string]string) {
