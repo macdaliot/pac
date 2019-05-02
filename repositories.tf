@@ -1,3 +1,7 @@
+variable "enable_create_repos" {
+    default = "false"
+}
+
 locals {
     repos = [
         "pac-jenkins",
@@ -9,6 +13,7 @@ locals {
 }
 
 resource "aws_ecr_repository" "repo" {
-    count = "${length(local.repos)}"
+    # count = "${length(local.repos)}"
+    count = "${var.enable_create_repos == "true" ? length(local.repos) : 0}"
     name  = "${element(local.repos, count.index)}"
 }
