@@ -18,7 +18,7 @@ app.use(cors())
     .use(passport.initialize())
     .use(express.json())
     .use(express.urlencoded({ extended: false }))
-    .use('/api/gizmos/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+    .use('/api/{{.serviceName}}/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 RegisterRoutes(app, container);
 
