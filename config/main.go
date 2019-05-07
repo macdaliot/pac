@@ -72,7 +72,8 @@ func ReadAll() map[string]string {
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 
-	var result map[string]string
+	result := make(map[string]string)
+
 	json.Unmarshal([]byte(byteValue), &result)
 
 	return result
