@@ -9,6 +9,7 @@ import (
 	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/go/str"
+	"github.com/PyramidSystemsInc/pac/config"
 )
 
 type CreateRepoRequest struct {
@@ -17,7 +18,11 @@ type CreateRepoRequest struct {
 	Description string `json:"description"`
 }
 
-func GitRepository(projectName string, description string, gitAuth string) {
+func GitRepository() {
+	projectName := config.Get("projectName")
+	description := config.Get("description")
+	gitAuth := config.Get("gitAuth")
+
 	repoConfig := createRepoConfig(projectName, description)
 	postToGitHub(repoConfig, gitAuth)
 	setupRepository(projectName)
@@ -26,8 +31,8 @@ func GitRepository(projectName string, description string, gitAuth string) {
 
 func createRepoConfig(projectName string, description string) *bytes.Buffer {
 	repoConfig, err := json.Marshal(CreateRepoRequest{
-		Name: projectName,
-		Private: true,
+		Name:        projectName,
+		Private:     true,
 		Description: description,
 	})
 	errors.LogIfError(err)

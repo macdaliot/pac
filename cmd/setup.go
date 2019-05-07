@@ -1,6 +1,10 @@
 package cmd
 
 import (
+	"fmt"
+	"io/ioutil"
+
+	"github.com/PyramidSystemsInc/go/aws/sts"
 	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/pac/cmd/setup"
@@ -9,13 +13,12 @@ import (
 )
 
 var setupCmd = &cobra.Command{
-	Use: "setup",
+	Use:   "setup",
 	Short: "Setup new project templates",
 	Long: `Generate new project templates with PAC (The default stack is a ReactJS front-end,
 NodeJS/Express back-end, and DynamoDB database)`,
 	Run: func(cmd *cobra.Command, args []string) {
 		logger.SetLogLevel("info")
-		awsRegion := "us-east-2"
 
 		// Get the values provided by command line flags -OR- the default values if not provided
 		projectName := getProjectName(cmd)
@@ -24,25 +27,50 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		backEnd := getBackEnd(cmd)
 		database := getDatabase(cmd)
 		env := getEnv(cmd)
+		awsRegion := getAWSRegion(cmd)
 		warnExtraArgumentsAreIgnored(args)
 
 		// Perform various checks to ensure we should proceed
 		setup.ValidateInputs(projectName, frontEnd, backEnd, database, env)
 
+		// Create project directory
+		setup.CreateRootProjectDirectory(projectName)
+
+		// Copy configuration file to project directory
+		input, err := ioutil.ReadFile("C:\\Users\\MMcNairy\\go\\src\\github.com\\PyramidSystemsInc\\pac\\.pac.json")
+		if err != nil {
+			errors.QuitIfError(err)
+			return
+		}
+
+		config.GoToRootProjectDirectory(projectName)
+
+		destinationFile := ".pac.json"
+
+		err = ioutil.WriteFile(destinationFile, input, 0644)
+		if err != nil {
+			fmt.Println("Error creating", destinationFile)
+			errors.QuitIfError(err)
+			return
+		}
+
 		// Create encryption key (used to secure Terraform state) which is needed for the Terraform templates
 		encryptionKeyID := setup.CreateEncryptionKey(projectName)
 
 		// Copy template files from ./cmd/setup/templates over to the new project
-		awsAccountID := setup.Templates(projectName, description, gitAuth, awsRegion, encryptionKeyID, env)
-
-		// Create a GitHub repository for the project
-		setup.GitRepository(projectName, description, gitAuth)
+		awsAccountID := sts.GetAccountID()
 
 		// Set configuration values in the .pac file in the new project directory
+		config.Set("projectName", projectName)
+		config.Set("description", description)
+		config.Set("region", awsRegion)
 		config.Set("awsID", awsAccountID)
 		config.Set("encryptionKeyID", encryptionKeyID)
 		config.Set("gitAuth", gitAuth)
 		config.Set("env", env)
+
+		// Create a GitHub repository for the project
+		setup.GitRepository()
 	},
 }
 
@@ -55,6 +83,7 @@ func init() {
 	setupCmd.PersistentFlags().StringVarP(&backEnd, "back", "b", "Express", "back-end framework/library")
 	setupCmd.PersistentFlags().StringVarP(&database, "database", "d", "DynamoDB", "database type")
 	setupCmd.PersistentFlags().StringVarP(&env, "env", "e", "dev", "environment name")
+	setupCmd.PersistentFlags().StringVarP(&awsRegion, "awsregion", "w", "us-east-2", "AWS Region")
 }
 
 // TODO: pull from systems manager parameter store
@@ -112,4 +141,12 @@ func getEnv(cmd *cobra.Command) string {
 	env, err := cmd.Flags().GetString("env")
 	errors.QuitIfError(err)
 	return env
+}
+
+var awsRegion string
+
+func getAWSRegion(cmd *cobra.Command) string {
+	awsRegion, err := cmd.Flags().GetString("awsregion")
+	errors.QuitIfError(err)
+	return awsRegion
 }

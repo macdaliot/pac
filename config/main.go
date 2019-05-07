@@ -2,14 +2,19 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"os"
 	"path"
+	"path/filepath"
+
+	"github.com/PyramidSystemsInc/go/directories"
 	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/go/files"
 	"github.com/PyramidSystemsInc/go/str"
 )
 
-var CONFIG_FILE_NAME string = ".pac"
+var CONFIG_FILE_NAME string = ".pac.json"
 
 func GetRootDirectory() string {
 	rootDirectory := files.FindUpTree(CONFIG_FILE_NAME)
@@ -21,6 +26,12 @@ func GetRootDirectory() string {
 	return ""
 }
 
+func GoToRootProjectDirectory(projectName string) {
+	workingDirectory := directories.GetWorking()
+	projectDirectory := filepath.Join(workingDirectory, projectName)
+	os.Chdir(projectDirectory)
+}
+
 func Read() map[string]*json.RawMessage {
 	rootDirectory := GetRootDirectory()
 	pacFileData, err := ioutil.ReadFile(path.Join(rootDirectory, CONFIG_FILE_NAME))
@@ -29,6 +40,29 @@ func Read() map[string]*json.RawMessage {
 	err = json.Unmarshal(pacFileData, &configData)
 	errors.QuitIfError(err)
 	return configData
+}
+
+func ReadAll() map[string]string {
+	//fix scope, namespace etc.
+	GoToRootProjectDirectory(Get("projectName"))
+
+	// Open our jsonFile
+	jsonFile, err := os.Open(".pac.json")
+
+	// if we os.Open returns an error then handle it
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// defer the closing of our jsonFile so that we can parse it later on
+	defer jsonFile.Close()
+
+	byteValue, _ := ioutil.ReadAll(jsonFile)
+
+	var result map[string]string
+	json.Unmarshal([]byte(byteValue), &result)
+
+	return result
 }
 
 func Get(property string) string {
@@ -58,8 +92,8 @@ func removeQuotes(data string) string {
 	if len(data) > 0 && data[0] == '"' {
 		data = data[1:]
 	}
-	if len(data) > 0 && data[len(data) - 1] == '"' {
-		data = data[:len(data) - 1]
+	if len(data) > 0 && data[len(data)-1] == '"' {
+		data = data[:len(data)-1]
 	}
 	return data
 }

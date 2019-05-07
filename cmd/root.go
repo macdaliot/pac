@@ -3,13 +3,14 @@ package cmd
 import (
 	"fmt"
 	"os"
+
 	"github.com/spf13/cobra"
 )
 
 var cfgFile string
 
 var RootCmd = &cobra.Command{
-	Use: "pac",
+	Use:   "pac",
 	Short: "Pyramid Application Constructor",
 	Long: `The Pyramid App Constructor (PAC) is a toolkit to help jumpstart the
 application development process, specifically designed for compressed
@@ -42,7 +43,7 @@ func initConfig() {
 		viper.SetConfigFile(cfgFile)
 	}
 
-	viper.SetConfigName(".pac")   // name of config file (without extension)
+	viper.SetConfigName(".pac.json")   // name of config file (without extension)
 	viper.AddConfigPath("$HOME")  // adding home directory as first search path
 	viper.AutomaticEnv()          // read in environment variables that match
 
