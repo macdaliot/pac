@@ -31,7 +31,7 @@ func DeleteAllResources() {
 	logger.Info("Terraform is finished destroying AWS resources")
 
 	projectName := config.Get("projectName")
-	region := "us-east-2"
+	region := config.Get("region")
 	awsSession := aws.CreateAwsSession(region)
 
 	s3.DeleteAllObjectVersions(config.Get("terraformS3Bucket"), awsSession)

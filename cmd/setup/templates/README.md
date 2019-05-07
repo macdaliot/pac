@@ -19,7 +19,7 @@
 The above workflow will set up your project and deploys it to AWS
 
 ### Helpful Links
-* [http://integration.{{.projectName}}.pac.pyramidchallenges.com.s3-website.us-east-2.amazonaws.com](http://integration.{{.projectName}}.pac.pyramidchallenges.com.s3-website.us-east-2.amazonaws.com)
+* [http://integration.{{.projectName}}.pac.pyramidchallenges.com.s3-website.{{ .region }.amazonaws.com](http://integration.{{.projectName}}.pac.pyramidchallenges.com.s3-website.{{ .region }.amazonaws.com)
 * [http://api.{{.projectName}}.pac.pyramidchallenges.com/api/<service-name>](http://api.{{.projectName}}.pac.pyramidchallenges.com/api/<service-name>)
 * [http://jenkins.{{.projectName}}.pac.pyramidchallenges.com](http://jenkins.{{.projectName}}.pac.pyramidchallenges.com)
 * [http://sonarqube.{{.projectName}}.pac.pyramidchallenges.com](http://sonarqube.{{.projectName}}.pac.pyramidchallenges.com)

@@ -57,7 +57,7 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		// Create encryption key (used to secure Terraform state) which is needed for the Terraform templates
 		encryptionKeyID := setup.CreateEncryptionKey(projectName)
 
-		// Copy template files from ./cmd/setup/templates over to the new project
+		// Get AWS account ID, used to form some ARNs in Terraform
 		awsAccountID := sts.GetAccountID()
 
 		// Set configuration values in the .pac file in the new project directory
@@ -68,6 +68,9 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		config.Set("encryptionKeyID", encryptionKeyID)
 		config.Set("gitAuth", gitAuth)
 		config.Set("env", env)
+
+		// Copy template files from ./cmd/setup/templates over to the new project
+		setup.Templates()
 
 		// Create a GitHub repository for the project
 		setup.GitRepository()

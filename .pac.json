@@ -5,7 +5,7 @@
     "front" : "ReactJS",
     "back" : "Express",
     "database" : "DynamoDB",
-    "region" : "us-east-2",
+    "region" : "",
     "awsProviderVersion" : "1.60",
     "templateVersion" : "2.1"
 }

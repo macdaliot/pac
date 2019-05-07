@@ -8,6 +8,7 @@ import (
 	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/go/terraform"
+	"github.com/PyramidSystemsInc/pac/config"
 )
 
 // Calls on Terraform to create the AWS infrastructure
@@ -30,7 +31,7 @@ func Infrastructure() {
 }
 
 func createTfPlanVariablesConfig() map[string]string {
-	awsRegion := "us-east-2"
+	awsRegion := config.Get("region")
 	awsSession := aws.CreateAwsSession(awsRegion)
 	usedVpcCidrBlocks := ec2.GetAllVpcCidrBlocks(awsSession)
 	freeVpcCidrBlocks := findFirstAvailableVpcCidrBlocks(usedVpcCidrBlocks, 2)
@@ -50,17 +51,18 @@ func findFirstAvailableVpcCidrBlocks(usedCidrBlocks []string, numberToFind int) 
 		if i == 0 {
 			secondPartDigits = append(secondPartDigits, "1")
 		} else {
-			lastValue, err := strconv.Atoi(secondPartDigits[i - 1])
+			lastValue, err := strconv.Atoi(secondPartDigits[i-1])
 			if err != nil {
 				errors.LogAndQuit(cidrBlockError + err.Error())
 			}
-			secondPartDigits = append(secondPartDigits, strconv.Itoa(lastValue + 1))
+			secondPartDigits = append(secondPartDigits, strconv.Itoa(lastValue+1))
 		}
 		digitFound := true
 		for digitFound {
 			digitFound = false
-			out: for _, usedCidrBlock := range usedCidrBlocks {
-				testCidrBlock := "10."+secondPartDigits[i]+".0.0/16"
+		out:
+			for _, usedCidrBlock := range usedCidrBlocks {
+				testCidrBlock := "10." + secondPartDigits[i] + ".0.0/16"
 				if usedCidrBlock == testCidrBlock {
 					numberDigit, err := strconv.Atoi(secondPartDigits[i])
 					if err != nil {

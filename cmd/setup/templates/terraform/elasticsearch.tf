@@ -114,7 +114,7 @@ variable "es_endpoint" {
 
 variable "cwl_endpoint" {
   type    = "string"
-  default = "logs.us-east-2.amazonaws.com"
+  default = "logs.{{ .region }}.amazonaws.com"
 }
 
 # CloudWatch Logs uses Lambda to deliver log data to Amazon ES. 

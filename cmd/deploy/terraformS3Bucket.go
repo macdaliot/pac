@@ -7,12 +7,13 @@ import (
 	"github.com/PyramidSystemsInc/go/aws/s3"
 	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/go/str"
+	"github.com/PyramidSystemsInc/pac/config"
 	"github.com/aws/aws-sdk-go/aws/session"
 )
 
 // TerraformS3Bucket - Creates a Terraform S3 bucket
 func TerraformS3Bucket(projectName string, encryptionKeyID string) (string, string) {
-	region := "us-east-2"
+	region := config.Get("region")
 	awsSession := aws.CreateAwsSession(region)
 
 	projectFqdn := str.Concat(projectName, ".pac.pyramidchallenges.com")

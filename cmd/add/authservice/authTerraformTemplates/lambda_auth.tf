@@ -12,7 +12,7 @@ resource "aws_lambda_function" "lambda_auth" {
 
   environment {
     variables = {
-      APP_ROOT        = "http://integration.{{ .projectName }}.pac.pyramidchallenges.com.s3-website.us-east-2.amazonaws.com"
+      APP_ROOT        = "http://integration.{{ .projectName }}.pac.pyramidchallenges.com.s3-website.{{ .region }}.amazonaws.com"
       AUTH0_CLIENT_ID = "PJqs70Pr0VRH67aR2TnHf4Sn6DDldiNR"
       AUTH0_DOMAIN    = "pyramidsystems.auth0.com"
       JWT_SECRET      = "${data.terraform_remote_state.pac.jwt_secret}"
