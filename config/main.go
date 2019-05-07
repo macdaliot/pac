@@ -16,16 +16,20 @@ import (
 
 var CONFIG_FILE_NAME string = ".pac.json"
 
+// GetRootDirectory returns the path to the project root directory
 func GetRootDirectory() string {
 	rootDirectory := files.FindUpTree(CONFIG_FILE_NAME)
+
 	if rootDirectory != "" {
 		return rootDirectory
 	} else {
 		errors.QuitIfError(errors.New("This is not a PAC project. Navigate to a PAC project and try again"))
 	}
+
 	return ""
 }
 
+// GoToRootProjectDirectory changes the working directory to the project root directory
 func GoToRootProjectDirectory(projectName string) {
 	workingDirectory := directories.GetWorking()
 	projectDirectory := filepath.Join(workingDirectory, projectName)
@@ -34,17 +38,26 @@ func GoToRootProjectDirectory(projectName string) {
 
 func Read() map[string]*json.RawMessage {
 	rootDirectory := GetRootDirectory()
+
+	GoToRootProjectDirectory(Get("projectName"))
+
 	pacFileData, err := ioutil.ReadFile(path.Join(rootDirectory, CONFIG_FILE_NAME))
 	errors.QuitIfError(err)
+
 	var configData map[string]*json.RawMessage
+
 	err = json.Unmarshal(pacFileData, &configData)
 	errors.QuitIfError(err)
+
 	return configData
 }
 
+// ReadAll returns the .pac.json file as a map[string]string
 func ReadAll() map[string]string {
-	//fix scope, namespace etc.
+	// TODO: fix scope, namespace etc.
 	GoToRootProjectDirectory(Get("projectName"))
+
+	fmt.Println(os.Getwd())
 
 	// Open our jsonFile
 	jsonFile, err := os.Open(".pac.json")
@@ -84,6 +97,7 @@ func Set(property string, value string) {
 	configData[property] = &newRawMessage
 	newConfigData, err := json.Marshal(&configData)
 	errors.QuitIfError(err)
+
 	err = ioutil.WriteFile(path.Join(GetRootDirectory(), CONFIG_FILE_NAME), []byte(newConfigData), 0644)
 	errors.QuitIfError(err)
 }

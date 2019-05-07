@@ -40,6 +40,7 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		input, err := ioutil.ReadFile("C:\\Users\\MMcNairy\\go\\src\\github.com\\PyramidSystemsInc\\pac\\.pac.json")
 		if err != nil {
 			errors.QuitIfError(err)
+
 			return
 		}
 
@@ -48,9 +49,11 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		destinationFile := ".pac.json"
 
 		err = ioutil.WriteFile(destinationFile, input, 0644)
+
 		if err != nil {
 			fmt.Println("Error creating", destinationFile)
 			errors.QuitIfError(err)
+
 			return
 		}
 

@@ -15,8 +15,10 @@ import (
 func Templates() {
 	createProjectFiles()
 	logger.Info("Created project structure")
+
 	logger.Info("Installing node modules")
 	NpmInstall()
+
 	logger.Info("Finished installing node modules")
 }
 
@@ -28,6 +30,7 @@ func CreateRootProjectDirectory(projectName string) {
 
 func createConfig(projectName, description, gitAuth, awsAccountID, awsRegion, encryptionKeyID, env string) map[string]string {
 	cfg := make(map[string]string)
+
 	cfg["awsID"] = awsAccountID
 	cfg["projectName"] = projectName
 	cfg["description"] = description
@@ -37,16 +40,21 @@ func createConfig(projectName, description, gitAuth, awsAccountID, awsRegion, en
 	cfg["region"] = awsRegion
 	cfg["terraformAWSVersion"] = terraform.AWSVersion
 	cfg["terraformTemplateVersion"] = terraform.TemplateVersion
+
 	return cfg
 }
 
 func createProjectFiles() {
+	// get values in .pac.json configuration file
 	cfg := config.ReadAll()
 	box := packr.NewBox("./templates")
+
 	for _, templatePath := range box.List() {
 		logger.Info(templatePath)
 		files.EnsurePath(filepath.Dir(templatePath))
+
 		template, _ := box.FindString(templatePath)
+
 		if templatePath != "core/templates/routes.template.ts" {
 			files.CreateFromTemplate(templatePath, template, cfg)
 		} else {
