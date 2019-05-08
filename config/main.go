@@ -14,11 +14,30 @@ import (
 	"github.com/PyramidSystemsInc/go/str"
 )
 
-var CONFIG_FILE_NAME string = ".pac.json"
+// ConfigFileName is a json formatted file used to store configuration variables
+const ConfigFileName string = ".pac.json"
+
+// CopyConfig copies the default .pac.json file to the project root
+func CopyConfig(projectName string) {
+	projectDir := os.Getenv("GOPATH") + "\\src\\" + projectName
+	src := os.Getenv("GOPATH") + "\\src\\github.com\\PyramidSystemsInc\\pac\\" + ConfigFileName
+	dest := projectDir + "\\" + ConfigFileName
+
+	// Copy configuration file to templates directory
+	input, err := ioutil.ReadFile(src)
+	if err != nil {
+		errors.LogIfError(err)
+	}
+
+	err = ioutil.WriteFile(dest, input, 0644)
+	if err != nil {
+		errors.LogIfError(err)
+	}
+}
 
 // GetRootDirectory returns the path to the project root directory
 func GetRootDirectory() string {
-	rootDirectory := files.FindUpTree(CONFIG_FILE_NAME)
+	rootDirectory := files.FindUpTree(ConfigFileName)
 
 	if rootDirectory != "" {
 		return rootDirectory
@@ -41,7 +60,7 @@ func Read() map[string]*json.RawMessage {
 
 	GoToRootProjectDirectory(Get("projectName"))
 
-	pacFileData, err := ioutil.ReadFile(path.Join(rootDirectory, CONFIG_FILE_NAME))
+	pacFileData, err := ioutil.ReadFile(path.Join(rootDirectory, ConfigFileName))
 	errors.QuitIfError(err)
 
 	var configData map[string]*json.RawMessage
@@ -52,15 +71,13 @@ func Read() map[string]*json.RawMessage {
 	return configData
 }
 
-// ReadAll returns the .pac.json file as a map[string]string
+// ReadAll changes the current working directory to the project root and returns the .pac.json file as a map[string]string
 func ReadAll() map[string]string {
 	// TODO: fix scope, namespace etc.
-	GoToRootProjectDirectory(Get("projectName"))
-
-	fmt.Println(os.Getwd())
+	path := GetRootDirectory()
 
 	// Open our jsonFile
-	jsonFile, err := os.Open(".pac.json")
+	jsonFile, err := os.Open(path + "\\.pac.json")
 
 	// if we os.Open returns an error then handle it
 	if err != nil {
@@ -92,6 +109,19 @@ func Get(property string) string {
 	}
 }
 
+// Preset sets values in .pac.json in the project template prior to deploy
+func Preset(property string, value string) {
+	configData := ReadAll()
+	configData[property] = value
+	newConfigData, err := json.Marshal(&configData)
+	errors.QuitIfError(err)
+
+	destinationFile := os.Getenv("GOPATH") + "\\src\\github.com\\PyramidSystemsInc\\pac\\cmd\\setup\\templates\\.pac.json"
+
+	err = ioutil.WriteFile(destinationFile, []byte(newConfigData), 0644)
+	errors.QuitIfError(err)
+}
+
 func Set(property string, value string) {
 	configData := Read()
 	newRawMessage := json.RawMessage(`"` + value + `"`)
@@ -99,7 +129,9 @@ func Set(property string, value string) {
 	newConfigData, err := json.Marshal(&configData)
 	errors.QuitIfError(err)
 
-	err = ioutil.WriteFile(path.Join(GetRootDirectory(), CONFIG_FILE_NAME), []byte(newConfigData), 0644)
+	rootDir := GetRootDirectory()
+
+	err = ioutil.WriteFile(path.Join(rootDir, ConfigFileName), []byte(newConfigData), 0644)
 	errors.QuitIfError(err)
 }
 

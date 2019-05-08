@@ -1,6 +1,7 @@
 package setup
 
 import (
+	"os"
 	"path/filepath"
 
 	"github.com/PyramidSystemsInc/go/directories"
@@ -13,7 +14,11 @@ import (
 
 // Templates - creates project directory, config files, and copies project files to project directory.
 func Templates() {
-	createProjectFiles()
+	// Get values in .pac.json configuration file
+	cfg := config.ReadAll()
+
+	// Create the project files from templates, passing in map of variables for template string substitution
+	createProjectFiles(cfg)
 	logger.Info("Created project structure")
 
 	logger.Info("Installing node modules")
@@ -44,9 +49,12 @@ func createConfig(projectName, description, gitAuth, awsAccountID, awsRegion, en
 	return cfg
 }
 
-func createProjectFiles() {
-	// get values in .pac.json configuration file
-	cfg := config.ReadAll()
+func createProjectFiles(cfg map[string]string) {
+	// NOTE: not ideal
+	path := os.Getenv("GOPATH") + "\\src\\github.com\\PyramidSystemsInc\\pac\\cmd\\setup"
+
+	os.Chdir(path)
+
 	box := packr.NewBox("./templates")
 
 	for _, templatePath := range box.List() {

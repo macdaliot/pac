@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-	"io/ioutil"
-
 	"github.com/PyramidSystemsInc/go/aws/sts"
 	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/go/logger"
@@ -36,39 +33,21 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		// Create project directory
 		setup.CreateRootProjectDirectory(projectName)
 
-		// Copy configuration file to project directory
-		input, err := ioutil.ReadFile("C:\\Users\\MMcNairy\\go\\src\\github.com\\PyramidSystemsInc\\pac\\.pac.json")
-		if err != nil {
-			errors.QuitIfError(err)
-
-			return
-		}
-
-		config.GoToRootProjectDirectory(projectName)
-
-		destinationFile := ".pac.json"
-
-		err = ioutil.WriteFile(destinationFile, input, 0644)
-
-		if err != nil {
-			fmt.Println("Error creating", destinationFile)
-			errors.QuitIfError(err)
-
-			return
-		}
+		// Copy configuration file to templates directory
+		config.CopyConfig(projectName)
 
 		// Create encryption key (used to secure Terraform state) which is needed for the Terraform templates
-		encryptionKeyID := setup.CreateEncryptionKey(projectName)
+		// encryptionKeyID := setup.CreateEncryptionKey(projectName)
 
-		// Get AWS account ID, used to form some ARNs in Terraform
+		// Get AWS account ID, used to form some ARNs in Terraform files
 		awsAccountID := sts.GetAccountID()
 
-		// Set configuration values in the .pac file in the new project directory
+		// Set configuration values in the .pac.json file in the new project directory
 		config.Set("projectName", projectName)
 		config.Set("description", description)
 		config.Set("region", awsRegion)
 		config.Set("awsID", awsAccountID)
-		config.Set("encryptionKeyID", encryptionKeyID)
+		// config.Set("encryptionKeyID", encryptionKeyID)
 		config.Set("gitAuth", gitAuth)
 		config.Set("env", env)
 
