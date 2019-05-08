@@ -159,7 +159,7 @@
 # [
 #   {
 #     "cpu": 1024,
-#     "image": "{{ .awsID }}.dkr.ecr.us-east-2.amazonaws.com/vault:srv",
+#     "image": "{{ .awsID }}.dkr.ecr.{{ .region }}.amazonaws.com/vault:srv",
 #     "memory": 2048,
 #     "name": "pac-vault-${var.project_name}",
 #     "networkMode": "awsvpc",
@@ -172,7 +172,7 @@
 #       "logDriver": "awslogs",
 #       "options": { 
 #           "awslogs-group" : "${var.project_name}-log-group",
-#           "awslogs-region": "us-east-2",
+#           "awslogs-region": "{{ .region }}",
 #           "awslogs-stream-prefix": "ecs"
 #       }
 #     }
