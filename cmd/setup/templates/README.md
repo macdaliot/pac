@@ -19,7 +19,7 @@
 The above workflow will set up your project and deploys it to AWS
 
 ### Helpful Links
-* [https://integration.{{.projectName}}.pac.pyramidchallenges.com](https://integration.{{.projectName}}.pac.pyramidchallenges.com) (takes ~15 minutes to provision)
+* [https://integration.{{.projectName}}.pac.pyramidchallenges.com.s3-website.{{ .region }}.amazonaws.com](https://integration.{{.projectName}}.pac.pyramidchallenges.com.s3-website.{{ .region }}.amazonaws.com)
 * [https://api.{{.projectName}}.pac.pyramidchallenges.com/api/<service-name>](https://api.{{.projectName}}.pac.pyramidchallenges.com/api/<service-name>)
 * [https://jenkins.{{.projectName}}.pac.pyramidchallenges.com](https://jenkins.{{.projectName}}.pac.pyramidchallenges.com)
 * [https://sonarqube.{{.projectName}}.pac.pyramidchallenges.com](https://sonarqube.{{.projectName}}.pac.pyramidchallenges.com)

@@ -159,7 +159,7 @@
 # [
 #   {
 #     "cpu": 1024,
-#     "image": "{{ .awsID }}.dkr.ecr.us-east-2.amazonaws.com/consul:srv",
+#     "image": "{{ .awsID }}.dkr.ecr.{{ .region }}.amazonaws.com/consul:srv",
 #     "memory": 2048,
 #     "name": "pac-consul-${var.project_name}",
 #     "networkMode": "awsvpc",
@@ -172,7 +172,7 @@
 #       "logDriver": "awslogs",
 #       "options": { 
 #           "awslogs-group" : "${var.project_name}-log-group",
-#           "awslogs-region": "us-east-2",
+#           "awslogs-region": "{{ .region }}",
 #           "awslogs-stream-prefix": "ecs"
 #       }
 #     }

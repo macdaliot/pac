@@ -13,7 +13,7 @@ for DIRECTORY in ${DIRECTORIES}; do
       npm run generate:swagger
       npx tsc || return 2
       zip -r function dist/* lambda.js package.json node_modules >> /dev/null
-      rm -Rf dist docs
+      rm -Rf dist
     popd
   fi
 done

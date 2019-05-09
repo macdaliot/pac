@@ -8,8 +8,8 @@ import * as passport from 'passport';
 import { jwtStrategy, errorMiddleware, } from '@pyramid-systems/core';
 import * as swaggerUi from 'swagger-ui-express';
 import * as swaggerDocument from '../docs/swagger.json';
-import { RegisterRoutes } from './generated/routes.js';
-import { setupContainer } from './container-setup.js';
+import { RegisterRoutes } from './generated/routes';
+import { setupContainer } from './container-setup';
 
 passport.use(jwtStrategy);
 const app = express();

@@ -1,4 +1,0 @@
-{
-  "projectName": "{{.projectName}}",
-  "description": "{{.description}}"
-}
