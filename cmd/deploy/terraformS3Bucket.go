@@ -1,6 +1,7 @@
 package deploy
 
 import (
+	"strings"
 	"time"
 
 	"github.com/PyramidSystemsInc/go/aws"
@@ -30,7 +31,11 @@ func TerraformS3Bucket(projectName string, encryptionKeyID string) (string, stri
 
 func createBucket(suiteName string, access string, projectFqdn string, projectName string, region string, awsSession *session.Session) {
 	frontEndFqdn := str.Concat(suiteName, ".", projectFqdn)
-	s3.MakeBucket(frontEndFqdn, access, region, awsSession)
+	err := s3.MakeBucket(frontEndFqdn, access, region, awsSession)
+	if err != nil && strings.HasPrefix(err.Error(), "BucketAlreadyOwnedByYou") {
+		logger.Info("The terraform state bucket already exists and is owned by you")
+		return
+	}
 	time.Sleep(time.Second * 3)
 	tagKey := "pac-project-name"
 	s3.TagBucket(frontEndFqdn, tagKey, projectName, awsSession)

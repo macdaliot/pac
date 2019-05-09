@@ -55,6 +55,11 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		awsAccountID := sts.GetAccountID()
 		config.Set("awsID", awsAccountID)
 
+		// Find the first available VPC CIDR blocks and save them to the configuration
+		freeVpcCidrBlocks := setup.FindAvailableVpcCidrBlocks()
+		config.Set("awsManagementVpcCidrBlock", freeVpcCidrBlocks[0])
+		config.Set("awsApplicationVpcCidrBlock", freeVpcCidrBlocks[1])
+
 		// Copy template files from ./cmd/setup/templates over to the new project
 		setup.Templates()
 

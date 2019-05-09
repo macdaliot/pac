@@ -91,9 +91,9 @@ variable "enable_integration_bucket" {
 # VPC
 #----------------------------------------------------------------------------------------------------------------------
 variable "management_cidr_block" {
-    default = "10.101.0.0/16"
+    default = "{{ .awsManagementVpcCidrBlock }}"
 }
 
 variable "application_cidr_block" {
-    default = "10.201.0.0/16"
+    default = "{{ .awsApplicationVpcCidrBlock }}"
 }

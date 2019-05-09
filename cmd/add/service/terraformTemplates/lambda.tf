@@ -20,6 +20,7 @@ resource "aws_lambda_function" "lambda_{{ .serviceName }}" {
   handler          = "lambda.handler"
   # source_code_hash = "${base64sha256(file(var.lambda_function_payload))}"
   runtime          = "nodejs8.10"
+  depends_on       = ["aws_s3_bucket_object.lambda_{{ .serviceName }}_code"]
 
   environment {
     variables = {
