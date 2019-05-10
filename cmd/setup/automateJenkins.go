@@ -12,7 +12,6 @@ import (
 )
 
 func AutomateJenkins() {
-	time.Sleep(60 * time.Second)
 	projectName := config.Get("projectName")
 	jenkinsURL := config.Get("jenkinsURL")
 	DownloadJenkinsCliJar(jenkinsURL)
