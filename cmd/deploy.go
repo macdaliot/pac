@@ -37,7 +37,8 @@ This command is to be run after templates are generated with 'pac setup'`,
 		deploy.GitHubWebhook(projectName, gitAuth, jenkinsURL)
 
 		// Call on Terraform to create the infrastructure in the cloud
-		deploy.Infrastructure()
+		deploy.Infrastructure("dns")
+		deploy.Infrastructure(".")
 
 		// Set configuration values in the .pac file in the new project directory
 		config.Set("gitAuth", gitAuth)

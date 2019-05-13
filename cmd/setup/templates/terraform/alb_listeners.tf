@@ -6,7 +6,7 @@ resource "aws_lb_listener" "api" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = "${aws_acm_certificate.main.arn}"
+  certificate_arn   = "${data.terraform_remote_state.dns.acm_cert_arn}"
 
 
 

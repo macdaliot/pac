@@ -11,7 +11,7 @@ variable "cnames" {
 #
 resource "aws_route53_record" "record" {
   count   = "${length(var.cnames)}"
-  zone_id = "${aws_route53_zone.main.zone_id}"
+  zone_id = "${data.terraform_remote_state.dns.main_zone_id}"
   name    = "${element(var.cnames,count.index)}"
   type    = "CNAME"
   ttl     = "60"

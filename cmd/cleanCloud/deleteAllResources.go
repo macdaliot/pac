@@ -18,6 +18,7 @@ func DeleteAllResources() {
 	os.Chdir(config.GetRootDirectory())
 
 	// Initialize all Terraform template directories
+	terraform.Initialize("terraform/dns")
 	terraform.Initialize("terraform")
 	terraform.Initialize("services/terraform")
 
@@ -28,7 +29,10 @@ func DeleteAllResources() {
 
 	output = terraform.Destroy("terraform")
 	logger.Info(output)
-	logger.Info("Terraform is finished destroying AWS resources")
+
+	output = terraform.Destroy("terraform/dns")
+	logger.Info(output)
+	logger.Info("Terraform is finished destroying Terraform Managed AWS resources")
 
 	projectName := config.Get("projectName")
 	region := "us-east-2"
