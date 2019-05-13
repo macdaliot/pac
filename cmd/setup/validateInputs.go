@@ -13,7 +13,7 @@ import (
 
 func ValidateInputs(projectName, frontEnd, backEnd, database, env string) {
 	validateProjectName(projectName)
-	validateDockerAndPorts()
+	// validateDockerAndPorts()
 	validateStack(frontEnd, backEnd, database)
 	validateALBUniqueName(projectName)
 	validateEnv(env)
