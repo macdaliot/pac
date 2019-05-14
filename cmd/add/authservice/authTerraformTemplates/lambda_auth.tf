@@ -1,16 +1,26 @@
 #
+# https://www.terraform.io/docs/providers/aws/r/s3_bucket_object.html
+# Upload the zip file full of Lambda code to the Lambda S3 bucket
+#
+resource "aws_s3_bucket_object" "lambda_auth_code" {
+  bucket = "lambda.${var.project_name}.${var.hosted_zone}"
+  key    = "auth.zip"
+  source = "${path.cwd}/../auth/function.zip"
+}
+
+#
 # https://www.terraform.io/docs/providers/aws/r/lambda_function.html
 # lambda function
 #
 resource "aws_lambda_function" "lambda_auth" {
   s3_bucket        = "lambda.${var.project_name}.${var.hosted_zone}"
   s3_key           = "auth.zip"
-  filename         = "${path.cwd}/../auth/function.zip"
   function_name    = "pac-{{ .projectName }}-i-auth"
   role             = "${data.terraform_remote_state.pac.{{ .projectName }}_lambda_execution_role_arn}"
   handler          = "lambda.handler"
   # source_code_hash = "${base64sha256(file(var.lambda_function_payload))}"
   runtime          = "nodejs8.10"
+  depends_on       = ["aws_s3_bucket_object.lambda_auth_code"]
 
   environment {
     variables = {
