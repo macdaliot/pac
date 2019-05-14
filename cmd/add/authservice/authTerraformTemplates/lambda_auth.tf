@@ -3,6 +3,8 @@
 # lambda function
 #
 resource "aws_lambda_function" "lambda_auth" {
+  s3_bucket        = "lambda.${var.project_name}.${var.hosted_zone}"
+  s3_key           = "auth.zip"
   filename         = "${path.cwd}/../auth/function.zip"
   function_name    = "pac-{{ .projectName }}-i-auth"
   role             = "${data.terraform_remote_state.pac.{{ .projectName }}_lambda_execution_role_arn}"
