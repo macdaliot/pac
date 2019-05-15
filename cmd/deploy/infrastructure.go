@@ -1,6 +1,9 @@
 package deploy
 
 import (
+	"os"
+
+	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/go/terraform"
 	"github.com/PyramidSystemsInc/pac/config"
