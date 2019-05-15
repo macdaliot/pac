@@ -12,6 +12,7 @@ for DIRECTORY in ${DIRECTORIES}; do
       npm run generate:routes
       npm run generate:swagger
       npx tsc || return 2
+      npm prune --production
       zip -r function dist/* lambda.js package.json node_modules >> /dev/null
       rm -Rf dist
     popd
