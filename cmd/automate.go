@@ -1,35 +1,29 @@
 package cmd
 
 import (
-	"github.com/PyramidSystemsInc/pac/cmd/setup"
-	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/go/logger"
+	"github.com/PyramidSystemsInc/pac/cmd/setup"
+	"github.com/PyramidSystemsInc/pac/util"
 	"github.com/spf13/cobra"
 )
 
 var automateCmd = &cobra.Command{
-	Use: "automate",
+	Use:   "automate",
 	Short: "Instruct pac to handle an aspect of the project by itself",
-	Long: `Instruct pac to handle an aspect of the project by itself`,
+	Long:  `Instruct pac to handle an aspect of the project by itself`,
 	Run: func(cmd *cobra.Command, args []string) {
+		pipelineInitializerMap := make(map[string]func())
+		pipelineInitializerMap["jenkins"] = setup.AutomateJenkins
+		pipelineInitializerMap["azure"] = setup.AutomateAzure
+
 		logger.SetLogLevel("info")
-		validateAutomateTypeArgument(args)
-		setup.AutomateJenkins()
+		if util.ValidatePipelineType(args) {
+			pipelineInitializerMap[args[0]]()
+		}
 	},
 }
 
 func init() {
-	RootCmd.AddCommand(automateCmd)
-}
 
-func validateAutomateTypeArgument(args []string) {
-	if len(args) == 1 {
-		if args[0] != "jenkins" {
-			errors.LogAndQuit("The type was set to an invalid value. The valid types are 'jenkins'")
-		}
-	} else if len(args) == 0 {
-		errors.LogAndQuit("A type must be specifed after the 'automate' command. The valid types are 'jenkins'")
-	} else if len(args) > 1 {
-		errors.LogAndQuit("Only one type may be passed for each 'automate' command")
-	}
+	RootCmd.AddCommand(automateCmd)
 }
