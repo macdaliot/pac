@@ -1,4 +1,4 @@
-import { setupContainer } from './container-setup';
+import { setupContainer } from '../src/container-setup';
 import * as express from 'express';
 const mockPassport = {
     use: jest.fn(),

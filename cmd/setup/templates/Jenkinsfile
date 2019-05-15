@@ -133,7 +133,7 @@ node {
         script {
           sh 'find . -type d -maxdepth 1 -regex ".*@tmp" -exec rm -Rf {} \\;'
           sh 'find . -type d -maxdepth 1 ! -regex "\\.\\/build.*" -exec rm -Rf {} \\;'
-          sh 'rm -Rf `ls | sort -Vr | tail -n +6`'
+          sh 'rm -Rf `ls | sort -Vr | tail -n +4`'
         }
       }
     }

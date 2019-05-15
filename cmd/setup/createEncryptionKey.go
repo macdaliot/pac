@@ -8,7 +8,8 @@ import (
 )
 
 // CreateEncryptionKey - Creates an encryption key which will secure the Terraform state
-func CreateEncryptionKey(projectName string) string {
+func CreateEncryptionKey() string {
+	projectName := config.Get("projectName")
 	region := config.Get("region")
 	awsSession := aws.CreateAwsSession(region)
 	encryptionKeyID := kms.CreateEncryptionKey(awsSession, "pac-project", projectName)

@@ -7,18 +7,13 @@ import (
 	"github.com/PyramidSystemsInc/go/directories"
 	"github.com/PyramidSystemsInc/go/files"
 	"github.com/PyramidSystemsInc/go/logger"
-	"github.com/PyramidSystemsInc/go/terraform"
 	"github.com/PyramidSystemsInc/pac/config"
 	"github.com/gobuffalo/packr"
 )
 
 // Templates - creates project directory, config files, and copies project files to project directory.
 func Templates() {
-	// Get values in .pac.json configuration file
-	cfg := config.ReadAll()
-
-	// Create the project files from templates, passing in map of variables for template string substitution
-	createProjectFiles(cfg)
+	createProjectFiles()
 	logger.Info("Created project structure")
 
 	logger.Info("Installing node modules")
@@ -27,34 +22,24 @@ func Templates() {
 	logger.Info("Finished installing node modules")
 }
 
+// CreateRootProjectDirectory returns the path to the project root
 func CreateRootProjectDirectory(projectName string) {
 	workingDirectory := directories.GetWorking()
 	projectDirectory := filepath.Join(workingDirectory, projectName)
 	directories.Create(projectDirectory)
 }
 
-func createConfig(projectName, description, gitAuth, awsAccountID, awsRegion, encryptionKeyID, env string) map[string]string {
-	cfg := make(map[string]string)
-
-	cfg["awsID"] = awsAccountID
-	cfg["projectName"] = projectName
-	cfg["description"] = description
-	cfg["encryptionKeyID"] = encryptionKeyID
-	cfg["env"] = env
-	cfg["gitAuth"] = gitAuth
-	cfg["region"] = awsRegion
-	cfg["terraformAWSVersion"] = terraform.AWSVersion
-	cfg["terraformTemplateVersion"] = terraform.TemplateVersion
-
-	return cfg
+// GoToRootProjectDirectory changes the working directory to the project root
+func GoToRootProjectDirectory(projectName string) {
+	workingDirectory := directories.GetWorking()
+	projectDirectory := filepath.Join(workingDirectory, projectName)
+	os.Chdir(projectDirectory)
 }
 
-func createProjectFiles(cfg map[string]string) {
-	// NOTE: not ideal
-	path := os.Getenv("GOPATH") + "\\src\\github.com\\PyramidSystemsInc\\pac\\cmd\\setup"
-
-	os.Chdir(path)
-
+// createProjectFiles "boxes" the template files and replaces Go template strings with the variables stored in the
+// .pac.json configuration file
+func createProjectFiles() {
+	cfg := config.ReadAll()
 	box := packr.NewBox("./templates")
 
 	for _, templatePath := range box.List() {

@@ -4,6 +4,7 @@ import (
 	"github.com/PyramidSystemsInc/go/aws/sts"
 	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/go/logger"
+	"github.com/PyramidSystemsInc/go/terraform"
 	"github.com/PyramidSystemsInc/pac/cmd/setup"
 	"github.com/PyramidSystemsInc/pac/config"
 	"github.com/spf13/cobra"
@@ -18,38 +19,46 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		logger.SetLogLevel("info")
 
 		// Get the values provided by command line flags -OR- the default values if not provided
-		projectName := getProjectName(cmd)
-		description := getDescription(cmd)
-		frontEnd := getFrontEnd(cmd)
+		awsRegion := getAWSRegion(cmd)
 		backEnd := getBackEnd(cmd)
 		database := getDatabase(cmd)
+		description := getDescription(cmd)
 		env := getEnv(cmd)
-		awsRegion := getAWSRegion(cmd)
+		frontEnd := getFrontEnd(cmd)
+		projectName := getProjectName(cmd)
 		warnExtraArgumentsAreIgnored(args)
 
 		// Perform various checks to ensure we should proceed
 		setup.ValidateInputs(projectName, frontEnd, backEnd, database, env)
 
-		// Create project directory
 		setup.CreateRootProjectDirectory(projectName)
-
-		// Copy configuration file to templates directory
-		config.CopyConfig(projectName)
-
-		// Create encryption key (used to secure Terraform state) which is needed for the Terraform templates
-		// encryptionKeyID := setup.CreateEncryptionKey(projectName)
-
-		// Get AWS account ID, used to form some ARNs in Terraform files
-		awsAccountID := sts.GetAccountID()
+		setup.GoToRootProjectDirectory(projectName)
+		config.Create()
 
 		// Set configuration values in the .pac.json file in the new project directory
-		config.Set("projectName", projectName)
+		config.Set("backEnd", backEnd)
+		config.Set("database", database)
 		config.Set("description", description)
-		config.Set("region", awsRegion)
-		config.Set("awsID", awsAccountID)
-		// config.Set("encryptionKeyID", encryptionKeyID)
-		config.Set("gitAuth", gitAuth)
 		config.Set("env", env)
+		config.Set("frontEnd", frontEnd)
+		config.Set("gitAuth", gitAuth)
+		config.Set("projectName", projectName)
+		config.Set("region", awsRegion)
+		config.Set("terraformAWSVersion", terraform.AWSVersion)
+		config.Set("terraformTemplateVersion", terraform.TemplateVersion)
+
+		// Create encryption key (used to secure Terraform state) which is needed for the Terraform templates
+		encryptionKeyID := setup.CreateEncryptionKey()
+		config.Set("encryptionKeyID", encryptionKeyID)
+
+		// Read AWS Account ID from System Manager
+		awsAccountID := sts.GetAccountID()
+		config.Set("awsID", awsAccountID)
+
+		// Find the first available VPC CIDR blocks and save them to the configuration
+		freeVpcCidrBlocks := setup.FindAvailableVpcCidrBlocks()
+		config.Set("awsManagementVpcCidrBlock", freeVpcCidrBlocks[0])
+		config.Set("awsApplicationVpcCidrBlock", freeVpcCidrBlocks[1])
 
 		// Copy template files from ./cmd/setup/templates over to the new project
 		setup.Templates()

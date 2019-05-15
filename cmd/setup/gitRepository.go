@@ -22,10 +22,10 @@ func GitRepository() {
 	projectName := config.Get("projectName")
 	description := config.Get("description")
 	gitAuth := config.Get("gitAuth")
-
 	repoConfig := createRepoConfig(projectName, description)
 	postToGitHub(repoConfig, gitAuth)
 	setupRepository(projectName)
+	// TODO: Do not log this if the repository was not created (201 status)
 	logger.Info("Created GitHub repository")
 }
 

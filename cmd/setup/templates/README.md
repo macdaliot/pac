@@ -19,11 +19,11 @@
 The above workflow will set up your project and deploys it to AWS
 
 ### Helpful Links
-* [http://integration.{{.projectName}}.pac.pyramidchallenges.com.s3-website.{{ .region }.amazonaws.com](http://integration.{{.projectName}}.pac.pyramidchallenges.com.s3-website.{{ .region }.amazonaws.com)
-* [http://api.{{.projectName}}.pac.pyramidchallenges.com/api/<service-name>](http://api.{{.projectName}}.pac.pyramidchallenges.com/api/<service-name>)
-* [http://jenkins.{{.projectName}}.pac.pyramidchallenges.com](http://jenkins.{{.projectName}}.pac.pyramidchallenges.com)
-* [http://sonarqube.{{.projectName}}.pac.pyramidchallenges.com](http://sonarqube.{{.projectName}}.pac.pyramidchallenges.com)
-* [http://selenium.{{.projectName}}.pac.pyramidchallenges.com](http://selenium.{{.projectName}}.pac.pyramidchallenges.com)
+* [https://integration.{{.projectName}}.pac.pyramidchallenges.com.s3-website.{{ .region }}.amazonaws.com](https://integration.{{.projectName}}.pac.pyramidchallenges.com.s3-website.{{ .region }}.amazonaws.com)
+* [https://api.{{.projectName}}.pac.pyramidchallenges.com/api/<service-name>](https://api.{{.projectName}}.pac.pyramidchallenges.com/api/<service-name>)
+* [https://jenkins.{{.projectName}}.pac.pyramidchallenges.com](https://jenkins.{{.projectName}}.pac.pyramidchallenges.com)
+* [https://sonarqube.{{.projectName}}.pac.pyramidchallenges.com](https://sonarqube.{{.projectName}}.pac.pyramidchallenges.com)
+* [https://selenium.{{.projectName}}.pac.pyramidchallenges.com](https://selenium.{{.projectName}}.pac.pyramidchallenges.com)
 
 ### Description
 {{.description}}
