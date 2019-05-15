@@ -5,7 +5,7 @@
 #
 terraform {
   backend "s3" {
-    bucket = "terraform.{{ .projectName }}.{{ .hostedZone }}"
+    bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
     key    = "state/development/lambdas"
     region = "{{ .region }}"
   }
@@ -31,7 +31,7 @@ data "terraform_remote_state" "pac" {
   backend = "s3"
 
   config {
-    bucket = "terraform.{{ .projectName }}.{{ .hostedZone}}"
+    bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
     key    = "state/development"
     region = "{{ .region }}"
   }
