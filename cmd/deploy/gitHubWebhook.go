@@ -57,7 +57,7 @@ func createWebhookRequestBody(jenkinsURL string) *bytes.Buffer {
 		},
 		Config: CreateWebhookRequestConfig{
 			ContentType: "json",
-			Url: str.Concat("http://", jenkinsURL, "/github-webhook/"),
+			Url:         str.Concat("https://", jenkinsURL, "/github-webhook/"),
 		},
 	})
 	errors.LogIfError(err)

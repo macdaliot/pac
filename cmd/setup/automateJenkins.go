@@ -12,7 +12,6 @@ import (
 )
 
 func AutomateJenkins() {
-	time.Sleep(60 * time.Second)
 	projectName := config.Get("projectName")
 	jenkinsURL := config.Get("jenkinsURL")
 	DownloadJenkinsCliJar(jenkinsURL)
@@ -20,7 +19,7 @@ func AutomateJenkins() {
 	createMasterPipelineXml(projectName)
 	createFrontEndPipelineXml(projectName)
 	createServicesPipelineXml(projectName)
-	jenkinsCliCommandStart := str.Concat("java -jar jenkins-cli.jar -s http://", jenkinsURL, " -auth pyramid:systems")
+	jenkinsCliCommandStart := str.Concat("java -jar jenkins-cli.jar -s https://", jenkinsURL, " -auth pyramid:systems")
 	createPipelineJobs(jenkinsURL, projectName, jenkinsCliCommandStart)
 	cleanUp()
 	logger.Info("Jenkins should now be completely configured.")
@@ -29,7 +28,7 @@ func AutomateJenkins() {
 func DownloadJenkinsCliJar(jenkinsURL string) {
 	corruptJenkinsCliError := "Error: Invalid or corrupt jarfile jenkins-cli.jar"
 	jenkinsCliPath := "./jenkins-cli.jar"
-	err := files.Download(str.Concat("http://", jenkinsURL, "/jnlpJars/jenkins-cli.jar"), jenkinsCliPath)
+	err := files.Download(str.Concat("https://", jenkinsURL, "/jnlpJars/jenkins-cli.jar"), jenkinsCliPath)
 	if err != nil {
 		logger.Info("Made it in the if")
 		if err.Error() == corruptJenkinsCliError {

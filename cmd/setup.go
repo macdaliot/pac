@@ -11,7 +11,7 @@ import (
 )
 
 var setupCmd = &cobra.Command{
-	Use: "setup",
+	Use:   "setup",
 	Short: "Setup new project templates",
 	Long: `Generate new project templates with PAC (The default stack is a ReactJS front-end,
 NodeJS/Express back-end, and DynamoDB database)`,

@@ -6,7 +6,7 @@
 terraform {
   backend "s3" {
     bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
-    key    = "state/development"
+    key    = "state/development/dns"
     region = "{{ .region }}"
   }
 }
@@ -32,15 +32,4 @@ provider "template" {
 #
 provider "random" {
   version = "2.1"
-}
-
-// Reference DNS infor in different S3 key
-data "terraform_remote_state" "dns" {
-  backend = "s3"
-
-  config {
-    bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
-    key    = "state/development/dns"
-    region = "{{ .region }}"
-  }
 }
