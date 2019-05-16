@@ -54,9 +54,8 @@ func read() map[string]*json.RawMessage {
 
 // ReadAll changes the current working directory to the project root and returns the .pac.json file as a map[string]string
 func ReadAll() map[string]string {
-	// TODO: fix scope, namespace etc.
 	path := GetRootDirectory()
-	pacJSON := files.Read(filepath.Join(path, ".pac.json"))
+	pacJSON := files.Read(filepath.Join(path, configFileName))
 	result := make(map[string]string)
 	json.Unmarshal([]byte(pacJSON), &result)
 	return result
