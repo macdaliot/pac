@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/PyramidSystemsInc/go/aws/sts"
+	"github.com/PyramidSystemsInc/go/aws/util"
 	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/go/terraform"
@@ -59,6 +60,10 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		freeVpcCidrBlocks := setup.FindAvailableVpcCidrBlocks()
 		config.Set("awsManagementVpcCidrBlock", freeVpcCidrBlocks[0])
 		config.Set("awsApplicationVpcCidrBlock", freeVpcCidrBlocks[1])
+
+		// Get the public address of the end-user for security groups to give access to network resources to user
+		endUserIP := util.GetPublicIP()
+		config.Set("endUserIP", endUserIP)
 
 		// Copy template files from ./cmd/setup/templates over to the new project
 		setup.Templates()
