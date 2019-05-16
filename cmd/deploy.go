@@ -41,7 +41,6 @@ This command is to be run after templates are generated with 'pac setup'`,
 		deploy.Infrastructure(".")
 
 		// Set configuration values in the .pac file in the new project directory
-		config.Set("gitAuth", gitAuth)
 		config.Set("jenkinsURL", jenkinsURL)
 		config.Set("projectFqdn", projectFqdn)
 		config.Set("terraformS3Bucket", terraformS3Bucket)
