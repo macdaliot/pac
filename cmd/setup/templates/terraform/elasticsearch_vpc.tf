@@ -291,7 +291,7 @@ data "aws_ami" "amzn" {
 }
 
 resource "aws_security_group" "es_jumpbox" {
-  count              = "${var.enable_elasticsearch == "true" ? 1 : 0}"
+  count       = "${var.enable_elasticsearch == "true" ? 1 : 0}"
   name        = "${var.project_name}-es-jumpbox"
   description = "controls access to Kibana"
   vpc_id      = "${aws_vpc.application_vpc.id}"
@@ -324,7 +324,7 @@ resource "aws_security_group" "es_jumpbox" {
 }
 
 resource "aws_instance" "jumpbox" {
-  count              = "${var.enable_elasticsearch == "true" ? 1 : 0}"
+  count                       = "${var.enable_elasticsearch == "true" ? 1 : 0}"
   ami                         = "${data.aws_ami.amzn.id}"
   associate_public_ip_address = true
   instance_type               = "t2.micro"
