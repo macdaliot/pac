@@ -81,7 +81,7 @@ func init() {
 }
 
 // TODO: pull from systems manager parameter store
-var gitAuth = "amRpZWRlcmlrc0Bwc2ktaXQuY29tOkRpZWRyZV4yMDE4"
+var gitAuth = "b4a58a78726c0db748603d4ddd491c66957fa806"
 
 func warnExtraArgumentsAreIgnored(args []string) {
 	if len(args) > 0 {
