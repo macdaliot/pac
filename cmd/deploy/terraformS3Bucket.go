@@ -20,6 +20,7 @@ func TerraformS3Bucket(projectName string, encryptionKeyID string) (string, stri
 	projectFqdn := str.Concat(projectName, ".pac.pyramidchallenges.com")
 	terraformS3Bucket := str.Concat("terraform.", projectFqdn)
 	createBucket("terraform", "private", projectFqdn, projectName, region, awsSession)
+	config.Set("terraformS3Bucket", terraformS3Bucket)
 
 	s3.EncryptBucket(terraformS3Bucket, encryptionKeyID)
 	logger.Info("The S3 bucket for Terraform state has been created and encrypted")
