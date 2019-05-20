@@ -33,6 +33,7 @@ func createServiceDirectory(serviceName string) {
 func createTemplateConfig(serviceName string) map[string]string {
 	cfg := make(map[string]string)
 	cfg["projectName"] = config.Get("projectName")
+	cfg["region"] = config.Get("region")
 	cfg["serviceName"] = serviceName
 	cfg["serviceNamePascal"] = strings.Title(serviceName)
 	return cfg
