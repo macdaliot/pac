@@ -2,7 +2,7 @@
 # http://www.terraform.io/docs/providers/aws/r/lb_listener.html
 #
 resource "aws_lb_listener" "api" {
-  load_balancer_arn = "${aws_lb.main.arn}"
+  load_balancer_arn = "${aws_lb.application.arn}"
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"

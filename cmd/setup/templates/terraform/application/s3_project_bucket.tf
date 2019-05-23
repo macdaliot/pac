@@ -1,6 +1,6 @@
-resource "aws_s3_bucket" "demo" {
-  count         = "${var.enable_demo_bucket == "true" ? 1:0}"
-  bucket        = "demo.${var.project_name}.${var.hosted_zone}"
+
+resource "aws_s3_bucket" "project" {
+  bucket        = "project.${var.project_name}.${var.hosted_zone}"
   acl           = "public-read"
   force_destroy = true
 
@@ -14,7 +14,7 @@ resource "aws_s3_bucket" "demo" {
   }
 
   tags = {
-    Name = "${var.project_name} demo bucket"
+    Name = "${var.project_name} project bucket"
   }
 
   # server_side_encryption_configuration {
@@ -27,10 +27,10 @@ resource "aws_s3_bucket" "demo" {
   # }
 }
 
-# output "s3_demo_bucket_name" {
-#     value = "${aws_s3_bucket.demo.*.bucket}"
+# output "s3_project_bucket_name" {
+#     value = "${aws_s3_bucket.project.bucket}"
 # }
 
-# output "demo_brdn" {
-#     value = "${aws_s3_bucket.demo.*.bucket_regional_domain_name}"
+# output "project_brdn" {
+#     value = "${aws_s3_bucket.project.*.bucket_regional_domain_name}"
 # }

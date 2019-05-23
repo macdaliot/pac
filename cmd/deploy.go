@@ -45,6 +45,7 @@ This command is to be run after templates are generated with 'pac setup'`,
 			deploy.Infrastructure("dns")
 		}
 
+		deploy.Infrastructure("dns")
 		deploy.Infrastructure(".")
 
 		// Set configuration values in the .pac file in the new project directory
