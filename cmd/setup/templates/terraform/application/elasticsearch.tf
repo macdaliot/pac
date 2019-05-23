@@ -12,7 +12,7 @@ resource "aws_elasticsearch_domain" "es" {
 
   vpc_options {
     subnet_ids = [
-      "${aws_subnet.private.0.id}"
+      "${aws_subnet.public.0.id}"
     ]
 
     security_group_ids = ["${aws_security_group.es.id}"]
@@ -87,14 +87,14 @@ resource "aws_security_group" "es" {
   count       = "${var.enable_elasticsearch == "true" ? 1 : 0}"
   name        = "elasticsearch-${var.project_name}"
   description = "Managed by Terraform"
-  vpc_id      = "${aws_vpc.management_vpc.id}"
+  vpc_id      = "${aws_vpc.application_vpc.id}"
 
   ingress {
     from_port = 443
     to_port   = 443
     protocol  = "tcp"
     cidr_blocks = [
-      "${aws_vpc.management_vpc.cidr_block}"
+      "${aws_vpc.application_vpc.cidr_block}"
     ]
   }
 }
@@ -187,8 +187,8 @@ resource "aws_lambda_function" "cwl_stream_lambda" {
   }
 
   vpc_config {
-      subnet_ids         = ["${aws_subnet.private.0.id}", "${aws_subnet.private.1.id}"]
-      security_group_ids = ["${aws_vpc.management_vpc.default_security_group_id}"]
+      subnet_ids         = ["${aws_subnet.public.0.id}", "${aws_subnet.public.1.id}"]
+      security_group_ids = ["${aws_vpc.application_vpc.default_security_group_id}"]
   }
 }
 
