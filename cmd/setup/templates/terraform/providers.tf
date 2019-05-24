@@ -6,7 +6,7 @@
 terraform {
   backend "s3" {
     bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
-    key    = "state/development"
+    key    = "tfstate/{{ .env }}/management_vpc"
     region = "{{ .region }}"
   }
 }
@@ -40,7 +40,7 @@ data "terraform_remote_state" "dns" {
 
   config {
     bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
-    key    = "state/development/dns"
+    key    = "tfstate/{{ .env }}/dns"
     region = "{{ .region }}"
   }
 }

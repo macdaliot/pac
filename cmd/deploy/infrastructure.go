@@ -51,8 +51,6 @@ func ValidatePath(dir string) (path string, err error) {
 		path += "/dns_pristine"
 	case "ssl":
 		path += "/ssl"
-	case "application":
-		path += "/application"
 	}
 
 	_, err = os.Stat(path)

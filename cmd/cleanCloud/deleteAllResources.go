@@ -19,16 +19,12 @@ func DeleteAllResources() {
 
 	// Initialize all Terraform template directories
 	terraform.Initialize("terraform/dns")
-	terraform.Initialize("terraform") // this is the management vpc
-	terraform.Initialize("terraform/application")
-	terraform.Initialize("services/terraform")
+	terraform.Initialize("terraform")          // this is the management vpc
+	terraform.Initialize("services/terraform") // this includes application vpc
 
 	// Destroy AWS resources managed by Terraform
 	logger.Info("Terraform is destroying all AWS resources...")
 	output := terraform.Destroy("services/terraform")
-	logger.Info(output)
-
-	output = terraform.Destroy("terraform/application")
 	logger.Info(output)
 
 	output = terraform.Destroy("terraform")
