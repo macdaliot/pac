@@ -3,7 +3,7 @@
 #
 
 resource "aws_lb_listener_rule" "jenkins_host" {
-  listener_arn = "${aws_lb_listener.api.arn}"
+  listener_arn = "${aws_lb_listener.https.arn}"
   priority     = 99
 
   action {
@@ -22,7 +22,7 @@ output "alb_lrule_jenkins_arn" {
 }
 
 resource "aws_lb_listener_rule" "sonarqube_host" {
-  listener_arn = "${aws_lb_listener.api.arn}"
+  listener_arn = "${aws_lb_listener.https.arn}"
   priority     = 98
 
   action {
@@ -41,7 +41,7 @@ output "alb_lrule_sonarqube_arn" {
 }
 
 resource "aws_lb_listener_rule" "selenium_host" {
-  listener_arn = "${aws_lb_listener.api.arn}"
+  listener_arn = "${aws_lb_listener.https.arn}"
   priority     = 97
 
   action {
