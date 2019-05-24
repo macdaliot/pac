@@ -1,7 +1,7 @@
 resource "aws_lb" "application" {
-  name            = "${var.project_name}-load-balancer"
+  name            = "${var.project_name}-app-lb"
   subnets         = ["${aws_subnet.public.*.id}"]
-  security_groups = ["${aws_security_group.lb.id}"]
+  security_groups = ["${aws_security_group.application_lb.id}"]
 }
 
 output "alb_application_name" {
