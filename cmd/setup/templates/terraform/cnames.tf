@@ -15,7 +15,7 @@ resource "aws_route53_record" "record" {
   name    = "${element(var.cnames,count.index)}"
   type    = "CNAME"
   ttl     = "60"
-  records = ["${aws_lb.main.dns_name}"]
+  records = ["${aws_lb.management.dns_name}"]
 }
 
 output "cnames" {

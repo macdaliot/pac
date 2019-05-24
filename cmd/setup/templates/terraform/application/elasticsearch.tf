@@ -198,14 +198,14 @@ resource "aws_lambda_permission" "cloudwatch_allow" {
   action        = "lambda:InvokeFunction"
   function_name = "${aws_lambda_function.cwl_stream_lambda.arn}"
   principal     = "${var.cwl_endpoint}"
-  source_arn    = "${aws_cloudwatch_log_group.{{ .projectName }}_log_group.arn}"
+  source_arn    = "${data.terraform_remote_state.management.{{ .projectName }}_log_group_arn}"
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_logs_to_es" {
   count           = "${var.enable_elasticsearch == "true" ? 1 : 0}"
   depends_on      = ["aws_lambda_permission.cloudwatch_allow"]
   name            = "cloudwatch_logs_to_elasticsearch"
-  log_group_name  = "${aws_cloudwatch_log_group.{{ .projectName }}_log_group.name}"
+  log_group_name  = "${data.terraform_remote_state.management.{{ .projectName }}_log_group_name}"
   filter_pattern  = ""
   destination_arn = "${aws_lambda_function.cwl_stream_lambda.arn}"
 }
