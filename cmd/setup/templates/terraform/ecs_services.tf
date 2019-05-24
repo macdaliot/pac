@@ -9,7 +9,7 @@ resource "aws_ecs_service" "jenkins" {
   network_configuration {
     security_groups  = ["${aws_security_group.ecs_tasks.id}"]
     subnets          = ["${aws_subnet.private.*.id}"]
-    assign_private_ip = true
+    # assign_private_ip = true
   }
 
   load_balancer {
@@ -19,7 +19,7 @@ resource "aws_ecs_service" "jenkins" {
   }
 
   depends_on = [
-    "aws_lb_listener.api"
+    "aws_lb_listener.https"
   ]
 }
 
@@ -34,7 +34,7 @@ resource "aws_ecs_service" "sonarqube" {
   network_configuration {
     security_groups  = ["${aws_security_group.ecs_tasks.id}"]
     subnets          = ["${aws_subnet.private.*.id}"]
-    assign_private_ip = true
+    # assign_private_ip = true
   }
 
   load_balancer {
@@ -44,7 +44,7 @@ resource "aws_ecs_service" "sonarqube" {
   }
 
   depends_on = [
-    "aws_lb_listener.api"
+    "aws_lb_listener.https"
   ]
 }
 
@@ -59,7 +59,7 @@ resource "aws_ecs_service" "selenium" {
   network_configuration {
     security_groups  = ["${aws_security_group.ecs_tasks.id}"]
     subnets          = ["${aws_subnet.private.*.id}"]
-    assign_private_ip = true
+    # assign_private_ip = true
   }
 
   load_balancer {
@@ -69,6 +69,6 @@ resource "aws_ecs_service" "selenium" {
   }
 
   depends_on = [
-    "aws_lb_listener.api"
+    "aws_lb_listener.https"
   ]
 }
