@@ -16,7 +16,7 @@ resource "aws_lambda_function" "lambda_{{ .serviceName }}" {
   s3_bucket        = "lambda.${var.project_name}.${var.hosted_zone}"
   s3_key           = "{{ .serviceName }}.zip"
   function_name    = "pac-{{ .projectName }}-i-{{ .serviceName }}"
-  role             = "${data.terraform_remote_state.pac.{{ .projectName }}_lambda_execution_role_arn}"
+  role             = "${data.terraform_remote_state.app.{{ .projectName }}_lambda_execution_role_arn}"
   handler          = "lambda.handler"
   # source_code_hash = "${base64sha256(file(var.lambda_function_payload))}"
   runtime          = "nodejs8.10"
@@ -24,8 +24,8 @@ resource "aws_lambda_function" "lambda_{{ .serviceName }}" {
 
   environment {
     variables = {
-      JWT_ISSUER = "${data.terraform_remote_state.pac.jwt_issuer}"
-      JWT_SECRET = "${data.terraform_remote_state.pac.jwt_secret}"
+      JWT_ISSUER = "${data.terraform_remote_state.app.jwt_issuer}"
+      JWT_SECRET = "${data.terraform_remote_state.app.jwt_secret}"
     }
   }
 
@@ -43,7 +43,7 @@ resource "aws_alb_target_group" "{{ .projectName }}_{{ .serviceName }}_target_gr
   name        = "pac-{{ .projectName }}-i-{{ .serviceName }}"
   port        = "80"
   protocol    = "http"
-  vpc_id      = "${data.terraform_remote_state.pac.application_vpc_id}"
+  vpc_id      = "${data.terraform_remote_state.app.application_vpc_id}"
   target_type = "lambda"
 }
 
@@ -74,7 +74,7 @@ resource "aws_alb_target_group_attachment" "{{ .projectName }}_{{ .serviceName }
 # alb listener rule
 #
 resource "aws_lb_listener_rule" "{{ .projectName }}_{{ .serviceName }}_rule_100" {
-  listener_arn = "${data.terraform_remote_state.pac.aws_lb_listener_api_arn}"
+  listener_arn = "${data.terraform_remote_state.app.aws_lb_listener_api_arn}"
 
   action {
     type = "forward"
@@ -88,7 +88,7 @@ resource "aws_lb_listener_rule" "{{ .projectName }}_{{ .serviceName }}_rule_100"
 }
 
 resource "aws_lb_listener_rule" "{{ .projectName }}_{{ .serviceName }}_rule_200" {
-  listener_arn = "${data.terraform_remote_state.pac.aws_lb_listener_api_arn}"
+  listener_arn = "${data.terraform_remote_state.app.aws_lb_listener_api_arn}"
 
 
   action {

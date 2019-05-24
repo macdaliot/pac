@@ -27,12 +27,12 @@ provider "template" {
   version = "2.1"
 }
 
-data "terraform_remote_state" "pac" {
+data "terraform_remote_state" "app" {
   backend = "s3"
 
   config {
     bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
-    key    = "state/development"
+    key    = "state/development/application_vpc"
     region = "{{ .region }}"
   }
 }
