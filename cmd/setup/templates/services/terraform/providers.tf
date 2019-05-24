@@ -6,7 +6,7 @@
 terraform {
   backend "s3" {
     bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
-    key    = "state/development/lambdas"
+    key    = "tfstate/{{ .env }}/application_vpc"
     region = "{{ .region }}"
   }
 }
@@ -27,12 +27,30 @@ provider "template" {
   version = "2.1"
 }
 
-data "terraform_remote_state" "app" {
+#
+# http://www.terraform.io/docs/providers/random/index.html
+#
+provider "random" {
+  version = "2.1"
+}
+
+// Reference DNS infor in different S3 key
+data "terraform_remote_state" "dns" {
   backend = "s3"
 
   config {
     bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
-    key    = "state/development/application_vpc"
+    key    = "tfstate/{{ .env }}/dns"
+    region = "{{ .region }}"
+  }
+}
+
+data "terraform_remote_state" "management" {
+  backend = "s3"
+
+  config {
+    bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
+    key    = "tfstate/{{ .env }}/management_vpc"
     region = "{{ .region }}"
   }
 }

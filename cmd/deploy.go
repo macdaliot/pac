@@ -39,7 +39,6 @@ This command is to be run after templates are generated with 'pac setup'`,
 		// Call on Terraform to create the infrastructure in the cloud
 		deploy.Infrastructure("dns")
 		deploy.Infrastructure(".") // management vpc
-		deploy.Infrastructure("application")
 
 		// Set configuration values in the .pac file in the new project directory
 		config.Set("jenkinsURL", jenkinsURL)
