@@ -86,7 +86,7 @@ func editIntegrationTestApiFeatures(serviceName string) {
 func editPackageJsonScripts(serviceName string) {
 	filePath := "package.json"
 	lineToMatch := "  \"scripts\": {"
-	newLine := str.Concat("    \"start:" + serviceName + "\":\"cd core && npm install && cd ../domain && npm install && cd ../services/" + serviceName + " && npm install && npm run start\",");
+	newLine := str.Concat("    \"start:" + serviceName + "\": \"cd core && npm install && cd ../domain && npm install && cd ../services/" + serviceName + " && npm install && npm run start:cloud\",");
 	files.AppendBelow(filePath, lineToMatch, newLine)
 	logger.Info(str.Concat("Edited the root package.json to include the new microservice start script"))
 }
