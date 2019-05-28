@@ -22,6 +22,7 @@ func Service(serviceName string) {
 	commands.Run("npm i", path.Join("services/", serviceName))
 	editHaProxyConfig(serviceName, cfg["projectName"])
 	editIntegrationTestApiFeatures(serviceName)
+	editPackageJsonScripts(serviceName)
 	commands.Run("terraform init -input=false", path.Join("services/", "terraform"))
 }
 
@@ -80,4 +81,12 @@ func editIntegrationTestApiFeatures(serviceName string) {
 	lineToMatch = "      | endpoint  |"
 	files.AppendBelow(filePath, lineToMatch, `      | `+serviceNameWithTrailingSpaces+`|`)
 	logger.Info(str.Concat("Edited the integration tests to test the new ", serviceName, " endpoints"))
+}
+
+func editPackageJsonScripts(serviceName string) {
+	filePath := "package.json"
+	lineToMatch := "  \"scripts\": {"
+	newLine := str.Concat("    \"start:" + serviceName + "\":\"cd core && npm install && cd ../domain && npm install && cd ../services/" + serviceName + " && npm install && npm run start\",");
+	files.AppendBelow(filePath, lineToMatch, newLine)
+	logger.Info(str.Concat("Edited the root package.json to include the new microservice start script"))
 }
