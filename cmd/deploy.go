@@ -45,7 +45,7 @@ This command is to be run after templates are generated with 'pac setup'`,
 			deploy.Infrastructure("dns")
 		}
 
-		deploy.Infrastructure(".")
+		// deploy.Infrastructure(".")
 
 		// Set configuration values in the .pac file in the new project directory
 		config.Set("jenkinsURL", jenkinsURL)
