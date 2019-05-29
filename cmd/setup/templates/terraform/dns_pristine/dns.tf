@@ -10,6 +10,7 @@ resource "aws_route53_zone" "main" {
 output "main_zone_id" {
   value = "${aws_route53_zone.main.zone_id}"
 }
+
 resource "aws_route53_record" "ns" {
   zone_id = "${aws_route53_zone.main.zone_id}"
   name    = "${var.project_name}.${var.hosted_zone}"
