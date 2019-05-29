@@ -26,6 +26,7 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		env := getEnv(cmd)
 		frontEnd := getFrontEnd(cmd)
 		projectName := getProjectName(cmd)
+		dnsPristine := getDNSPristine(cmd)
 		warnExtraArgumentsAreIgnored(args)
 
 		// Perform various checks to ensure we should proceed
@@ -39,6 +40,7 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		config.Set("backEnd", backEnd)
 		config.Set("database", database)
 		config.Set("description", description)
+		config.Set("dnsPristine", dnsPristine)
 		config.Set("env", env)
 		config.Set("frontEnd", frontEnd)
 		config.Set("gitAuth", gitAuth)
@@ -78,6 +80,7 @@ func init() {
 	setupCmd.PersistentFlags().StringVarP(&database, "database", "d", "DynamoDB", "database type")
 	setupCmd.PersistentFlags().StringVarP(&env, "env", "e", "dev", "environment name")
 	setupCmd.PersistentFlags().StringVarP(&awsRegion, "awsregion", "w", "us-east-2", "AWS Region")
+	setupCmd.PersistentFlags().StringVarP(&dnsPristine, "pristine", "p", "false", "Hosted zone doesn't already exist.")
 }
 
 // TODO: pull from systems manager parameter store
@@ -143,4 +146,12 @@ func getAWSRegion(cmd *cobra.Command) string {
 	awsRegion, err := cmd.Flags().GetString("awsregion")
 	errors.QuitIfError(err)
 	return awsRegion
+}
+
+var dnsPristine string
+
+func getDNSPristine(cmd *cobra.Command) string {
+	dnsPristine, err := cmd.Flags().GetString("pristine")
+	errors.QuitIfError(err)
+	return dnsPristine
 }
