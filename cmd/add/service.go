@@ -23,6 +23,7 @@ func Service(serviceName string) {
 	editHaProxyConfig(serviceName, cfg["projectName"])
 	editIntegrationTestApiFeatures(serviceName)
 	editPackageJsonScripts(serviceName)
+  editCfDeployScript(serviceName)
 	commands.Run("terraform init -input=false", path.Join("services/", "terraform"))
 }
 
@@ -86,7 +87,15 @@ func editIntegrationTestApiFeatures(serviceName string) {
 func editPackageJsonScripts(serviceName string) {
 	filePath := "package.json"
 	lineToMatch := "  \"scripts\": {"
-	newLine := str.Concat("    \"start:" + serviceName + "\": \"cd core && npm install && cd ../domain && npm install && cd ../services/" + serviceName + " && npm install && npm run start:cloud\",");
+	newLine := str.Concat("    \"start:", serviceName, "\": \"cd core && npm install && cd ../domain && npm install && cd ../services/", serviceName, " && npm install && npm run start:cloud\",");
 	files.AppendBelow(filePath, lineToMatch, newLine)
 	logger.Info(str.Concat("Edited the root package.json to include the new microservice start script"))
+}
+
+func editCfDeployScript(serviceName string) {
+	filePath := "services/.cfDeploy.sh"
+	lineToMatch := "#! /bin/bash"
+	newLine := str.Concat("cf push -f manifest.yml -c \"npm run start:", serviceName, "\"")
+	files.AppendBelow(filePath, lineToMatch, newLine)
+	logger.Info(str.Concat("Edited the .cfDeploy.sh script to include the new microservice in its deploy to Cloud Foundry"))
 }
