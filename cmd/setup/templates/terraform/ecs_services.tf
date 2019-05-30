@@ -1,28 +1,3 @@
-resource "aws_ecs_service" "jenkins" {
-  name            = "jenkins-ecs-service"
-  cluster         = "${aws_ecs_cluster.main.arn}"
-  task_definition = "${aws_ecs_task_definition.jenkins.arn}"
-  desired_count   = "${var.app_count}"
-  launch_type     = "FARGATE"
-  health_check_grace_period_seconds = 30
-
-  network_configuration {
-    security_groups  = ["${aws_security_group.ecs_tasks.id}"]
-    subnets          = ["${aws_subnet.private.*.id}"]
-    assign_public_ip = true # need for pulling from ECR registry
-  }
-
-  load_balancer {
-    target_group_arn = "${aws_lb_target_group.jenkins.id}"
-    container_name   = "pac-jenkins"
-    container_port   = "8080"
-  }
-
-  depends_on = [
-    "aws_lb_listener.https"
-  ]
-}
-
 resource "aws_ecs_service" "sonarqube" {
   name            = "sonarqube-ecs-service"
   cluster         = "${aws_ecs_cluster.main.arn}"
