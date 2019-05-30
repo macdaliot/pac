@@ -69,10 +69,11 @@ import { NextFunction } from 'connect';
                                                     try {
                                                         validatedArgs = getValidatedArgs(args, request);
                                                     } catch (err) {
-                                                        request.log.error(JSON.stringify(err));
                                                         if(err instanceof ValidateError) {
-                                                            return next(new HttpException(err.status, err.message));
+                                                            request.log.error(err.message);
+                                                            return next(new HttpException(err.status, err.fields));
                                                         } else {
+                                                            request.log.error(JSON.stringify(err));
                                                             return next(err);
                                                         }
                                                     }
@@ -135,7 +136,10 @@ import { NextFunction } from 'connect';
                 }
             });
             if (Object.keys(fieldErrors).length > 0) {
-                throw new ValidateError(fieldErrors, '');
+                const message = Object.keys(fieldErrors).reduce((acc, key) => {
+                    return `${acc}\n[${key}] has validation error: ${fieldErrors[key].message}!`
+                }, '')
+                throw new ValidateError(fieldErrors, message);
             }
             return values;
         }
