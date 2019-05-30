@@ -78,7 +78,9 @@ if [ ! -z "$AWS_ACCESS_KEY_ID" ] || [ ! -z "$AWS_SECRET_ACCESS_KEY" ]; then
         # Compile, build, and launch
         npm run generate:templates:local
         npx tsc
-        docker run --name pac-$PROJECT_NAME-$SERVICE_NAME -v "$PWD":/usr/src/app -w /usr/src/app --network pac-$PROJECT_NAME -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -it -d node:8 node dist/services/$SERVICE_NAME/src/local 
+        SERVICE_MOUNT_DIR=$(pwd)
+        SERVICE_MOUNT_DIR=${SERVICE_MOUNT_DIR#*/mnt}
+        docker run --name pac-$PROJECT_NAME-$SERVICE_NAME -v $SERVICE_MOUNT_DIR:/usr/src/app -w /usr/src/app --network pac-$PROJECT_NAME -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -it -d node:8 node dist/services/$SERVICE_NAME/src/local
         if [ $(echo $?) -eq 0 ]; then
           echo "The $SERVICE_NAME microservice was successfully launched locally"
         else
@@ -103,6 +105,7 @@ if [ ! -z "$AWS_ACCESS_KEY_ID" ] || [ ! -z "$AWS_SECRET_ACCESS_KEY" ]; then
     fi
   else
     HAPROXY_CONFIG_PATH=$(echo $(pwd) | sed -e 's/^\/c/C:/g')
+    HAPROXY_CONFIG_PATH=${HAPROXY_CONFIG_PATH#*/mnt}
     docker run --name pac-proxy-local --network pac-$PROJECT_NAME -p $HAPROXY_PORT:$HAPROXY_PORT -v $HAPROXY_CONFIG_PATH:/usr/local/etc/haproxy:ro -d haproxy >>/dev/null
     if [ $(echo $?) -eq 0 ]; then
       echo "Launched local microservice proxy running on port $HAPROXY_PORT"
