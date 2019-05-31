@@ -244,8 +244,8 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_lambda_
 #----------------------------------------------------------------------------------------------------------------------
 # ECS EC2 ROLES
 #----------------------------------------------------------------------------------------------------------------------
-resource "aws_iam_role" "ecsInstanceRole" {
-  name = "ecsInstanceRole-${var.project_name}"
+resource "aws_iam_role" "ecsInstanceRole_{{ .env }}" {
+  name = "ecsInstanceRole-{{ .env }}-${var.project_name}"
 
   assume_role_policy = <<EOF
 {
@@ -264,8 +264,8 @@ resource "aws_iam_role" "ecsInstanceRole" {
 EOF
 }
 
-resource "aws_iam_role_policy" "ecsInstanceRolePolicy" {
-  name = "ecsInstanceRolePolicy-${var.project_name}"
+resource "aws_iam_role_policy" "ecsInstanceRolePolicy_{{ .env }}" {
+  name = "ecsInstanceRolePolicy-{{ .env }}-${var.project_name}"
   role = "${aws_iam_role.ecsInstanceRole.id}"
 
   policy = <<EOF
@@ -297,8 +297,8 @@ EOF
 }
 
 # Create ECS IAM Service Role and Policy
-resource "aws_iam_role" "ecsServiceRole" {
-  name = "ecsServiceRole-${var.project_name}"
+resource "aws_iam_role" "ecsServiceRole_{{ .env }}" {
+  name = "ecsServiceRole-{{ .env }}-${var.project_name}"
 
   assume_role_policy = <<EOF
 {
@@ -317,8 +317,8 @@ resource "aws_iam_role" "ecsServiceRole" {
 EOF
 }
 
-resource "aws_iam_role_policy" "ecsServiceRolePolicy" {
-  name = "ecsServiceRolePolicy-${var.project_name}"
+resource "aws_iam_role_policy" "ecsServiceRolePolicy_{{ .env }}" {
+  name = "ecsServiceRolePolicy-{{ .env }}-${var.project_name}"
   role = "${aws_iam_role.ecsServiceRole.id}"
 
   policy = <<EOF
