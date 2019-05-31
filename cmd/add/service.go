@@ -1,6 +1,7 @@
 package add
 
 import (
+	"fmt"
 	"path"
 	"strings"
 
@@ -78,7 +79,15 @@ func editPackageJsonScripts(serviceName string) {
 func editCfDeployScript(serviceName string) {
 	filePath := "services/.cfDeploy.sh"
 	lineToMatch := "#! /bin/bash"
-	newLine := str.Concat("cf push -f manifest.yml -c \"npm run start:", serviceName, "\"")
-	files.AppendBelow(filePath, lineToMatch, newLine)
+	newSection := fmt.Sprintf(`
+pushd %s/cfBase
+cf push astrofdic%s -f manifest.yml -c "npm run start:demo" --no-start
+secretKey=$(cf env astrofdic%s |  grep -oP 'AWS_SECRET_ACCESS_KEY": "\K(.*)(?=")')
+keyId=$(cf env astrofdic%s |  grep -oP 'AWS_ACCESS_KEY_ID": "\K(.*)(?=")')
+cf set-env astrofdic%s AWS_SECRET_ACCESS_KEY ${secretKey}
+cf set-env astrofdic%s AWS_ACCESS_KEY_ID ${keyId}
+cf start astrofdic%s
+popd`, serviceName, serviceName, serviceName, serviceName,serviceName,serviceName, serviceName)
+	files.AppendBelow(filePath, lineToMatch, newSection)
 	logger.Info(str.Concat("Edited the .cfDeploy.sh script to include the new microservice in its deploy to Cloud Foundry"))
 }
