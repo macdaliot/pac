@@ -76,7 +76,7 @@ if [ ! -z "$AWS_ACCESS_KEY_ID" ] || [ ! -z "$AWS_SECRET_ACCESS_KEY" ]; then
           fi
         fi
         # Compile, build, and launch
-        npm run generate:templates:local
+        npm run generate:templates:dev
         npx tsc
         SERVICE_MOUNT_DIR=$(pwd)
         SERVICE_MOUNT_DIR=${SERVICE_MOUNT_DIR#*/mnt}
