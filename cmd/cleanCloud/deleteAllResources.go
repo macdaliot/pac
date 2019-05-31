@@ -30,7 +30,12 @@ func DeleteAllResources() {
 	output = terraform.Destroy("terraform")
 	logger.Info(output)
 
-	output = terraform.Destroy("terraform/dns")
+	if config.Get("dnsPristine") == "true" {
+		output = terraform.Destroy("terraform/dns_pristine")
+	} else {
+		output = terraform.Destroy("terraform/dns")
+	}
+
 	logger.Info(output)
 	logger.Info("Terraform is finished destroying Terraform Managed AWS resources")
 
