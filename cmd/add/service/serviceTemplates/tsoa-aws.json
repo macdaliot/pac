@@ -10,10 +10,10 @@
     "outputDirectory": "./docs",
     "entryFile": "./src/local.ts",
     "basePath": "/api",
-    "host": "{{.serviceName}}.cfapps.io",
+    "host": "api.astrofdic{{.serviceName}}.pac.pyramidchallenges.com",
     "version": "1.0",
-    "name": "{{.serviceNamePascal}} Service",
-    "description": "A micro service for {{.serviceNamePascal}}",
+    "name": "astrofdic{{.serviceName}} Service",
+    "description": "A micro service for astrofdic{{.serviceNamePascal}}",
     "license": "ISC",
     "securityDefinitions": {
       "Bearer": {
