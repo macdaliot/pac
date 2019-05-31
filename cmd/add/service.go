@@ -22,7 +22,6 @@ func Service(serviceName string) {
 
 	commands.Run("npm i", path.Join("services/", serviceName))
 	editHaProxyConfig(serviceName, cfg["projectName"])
-	editIntegrationTestApiFeatures(serviceName)
 	editPackageJsonScripts(serviceName)
   editCfDeployScript(serviceName)
 	commands.Run("terraform init -input=false", path.Join("services/", "terraform"))
@@ -69,26 +68,10 @@ func editHaProxyConfig(serviceName string, projectName string) {
 	logger.Info("Updated the local microservice proxy configuration")
 }
 
-func editIntegrationTestApiFeatures(serviceName string) {
-	filePath := "integration-tests/src/test/resources/features/API.feature"
-	lineToMatch := "      | endpoint  | status | token |"
-	lineLength := 10
-	serviceNameWithTrailingSpaces := serviceName
-	for i := 0; i < lineLength-len(serviceName); i++ {
-		serviceNameWithTrailingSpaces += " "
-	}
-	newLine := str.Concat("      | ", serviceNameWithTrailingSpaces, "| 200    | false |")
-	files.AppendBelow(filePath, lineToMatch, newLine)
-
-	lineToMatch = "      | endpoint  |"
-	files.AppendBelow(filePath, lineToMatch, `      | `+serviceNameWithTrailingSpaces+`|`)
-	logger.Info(str.Concat("Edited the integration tests to test the new ", serviceName, " endpoints"))
-}
-
 func editPackageJsonScripts(serviceName string) {
 	filePath := "package.json"
 	lineToMatch := "  \"scripts\": {"
-	newLine := str.Concat("    \"start:", serviceName, "\": \"cd core && npm install && cd ../domain && npm install && cd ../services/", serviceName, " && npm install && npm run start:cloud\",");
+	newLine := str.Concat("    \"start:", serviceName, "\": \"pushd app; npm i; popd; pushd core; npm i; popd; pushd domain; npm i; popd; cd services/" + serviceName + "; npm i\",");
 	files.AppendBelow(filePath, lineToMatch, newLine)
 	logger.Info(str.Concat("Edited the root package.json to include the new microservice start script"))
 }
