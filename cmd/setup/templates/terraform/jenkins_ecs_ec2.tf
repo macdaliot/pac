@@ -12,7 +12,7 @@ data "aws_ami" "ecs_ami" {
 
 resource "aws_iam_instance_profile" "ecsInstanceProfile" {
   name = "ecsInstanceProfile-${var.project_name}"
-  role = "${aws_iam_role.ecsInstanceRole{{ .env }}.name}"
+  role = "${aws_iam_role.ecsInstanceRole_{{ .env }}.name}"
 }
 
 # Generate user_data from template file

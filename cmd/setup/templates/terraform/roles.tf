@@ -266,7 +266,7 @@ EOF
 
 resource "aws_iam_role_policy" "ecsInstanceRolePolicy_{{ .env }}" {
   name = "ecsInstanceRolePolicy-{{ .env }}-${var.project_name}"
-  role = "${aws_iam_role.ecsInstanceRole{{ .env }}.id}"
+  role = "${aws_iam_role.ecsInstanceRole_{{ .env }}.id}"
 
   policy = <<EOF
 {
@@ -319,7 +319,7 @@ EOF
 
 resource "aws_iam_role_policy" "ecsServiceRolePolicy_{{ .env }}" {
   name = "ecsServiceRolePolicy-{{ .env }}-${var.project_name}"
-  role = "${aws_iam_role.ecsServiceRole{{ .env }}.id}"
+  role = "${aws_iam_role.ecsServiceRole_{{ .env }}.id}"
 
   policy = <<EOF
 {
