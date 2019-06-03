@@ -1,8 +1,8 @@
 #
 # http://www.terraform.io/docs/providers/aws/r/lb_listener.html
 #
-resource "aws_lb_listener" "https" {
-  load_balancer_arn = "${aws_lb.management.arn}"
+resource "aws_lb_listener" "api" {
+  load_balancer_arn = "${aws_lb.application.arn}"
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
@@ -11,7 +11,7 @@ resource "aws_lb_listener" "https" {
 
 
   default_action {
-    type          = "redirect"
+    type             = "redirect"
 
     redirect {
       port        = "443"
@@ -23,6 +23,6 @@ resource "aws_lb_listener" "https" {
   }
 }
 
-output "aws_lb_listener_https_arn" {
-  value = "${aws_lb_listener.https.arn}"
+output "aws_lb_listener_api_arn" {
+  value = "${aws_lb_listener.api.arn}"
 }

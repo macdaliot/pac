@@ -1,5 +1,5 @@
 variable "cnames" {
-  default = ["jenkins", "selenium", "sonarqube"]
+  default = ["api"]
 }
 
 #
@@ -15,7 +15,7 @@ resource "aws_route53_record" "record" {
   name    = "${element(var.cnames,count.index)}"
   type    = "CNAME"
   ttl     = "60"
-  records = ["${aws_lb.management.dns_name}"]
+  records = ["${aws_lb.application.dns_name}"]
 }
 
 output "cnames" {

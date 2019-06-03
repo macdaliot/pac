@@ -47,21 +47,21 @@ variable "app_count" {
 #----------------------------------------------------------------------------------------------------------------------
 # ELASTICSEARCH
 #----------------------------------------------------------------------------------------------------------------------
-variable "enable_elasticsearch" {
-  description = "Whether or not to create Elasticsearch service"
-  default = "false"
-}
+# variable "enable_elasticsearch" {
+#   description = "Whether or not to create Elasticsearch service"
+#   default = "false"
+# }
 
-variable "es_version" {
-    default = "6.5"
-}
-variable "es_instance_type" {
-    default = "r4.large.elasticsearch"
-}
+# variable "es_version" {
+#     default = "6.5"
+# }
+# variable "es_instance_type" {
+#     default = "r4.large.elasticsearch"
+# }
 
-variable "es_automated_snapshot_start_hour" {
-    default = 23
-}
+# variable "es_automated_snapshot_start_hour" {
+#     default = 23
+# }
 
 #----------------------------------------------------------------------------------------------------------------------
 # JUMPBOX / BASTION HOST
@@ -91,24 +91,8 @@ variable "env" {
 }
 
 #----------------------------------------------------------------------------------------------------------------------
-# S3
-#----------------------------------------------------------------------------------------------------------------------
-
-variable "enable_demo_bucket" {
-    default = "false"
-}
-
-variable "enable_integration_bucket" {
-    default = "true"
-}
-
-#----------------------------------------------------------------------------------------------------------------------
 # VPC
 #----------------------------------------------------------------------------------------------------------------------
 variable "management_cidr_block" {
     default = "{{ .awsManagementVpcCidrBlock }}"
-}
-
-variable "application_cidr_block" {
-    default = "{{ .awsApplicationVpcCidrBlock }}"
 }

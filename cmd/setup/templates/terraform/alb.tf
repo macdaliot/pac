@@ -1,13 +1,13 @@
-resource "aws_lb" "main" {
+resource "aws_lb" "management" {
   name            = "${var.project_name}-load-balancer"
-  subnets         = ["${aws_subnet.public.*.id}"]
-  security_groups = ["${aws_security_group.lb.id}"]
+  subnets         = ["${aws_subnet.private.*.id}"]
+  security_groups = ["${aws_security_group.management_lb.id}"]
 }
 
-output "alb_name" {
-    value = "${aws_lb.main.name}"
+output "alb_management_name" {
+    value = "${aws_lb.management.name}"
 }
 
-output "alb_arn" {
-    value = "${aws_lb.main.arn}"
+output "alb_management_arn" {
+    value = "${aws_lb.management.arn}"
 }
