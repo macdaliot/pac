@@ -21,7 +21,6 @@ var runCmd = &cobra.Command{
 		logger.SetLogLevel("info")
 		projectName := findProjectName()
 		createDockerNetworkIfNeeded(projectName)
-		docker.CleanContainers("pac-" + projectName + "-db-local")
 		runDatabaseContainer(projectName)
 		runMicroserviceContainers(projectName)
 		runReverseProxyContainer(projectName)
@@ -49,7 +48,8 @@ func createDockerNetworkIfNeeded(projectName string) {
 }
 
 func runDatabaseContainer(projectName string) {
-	docker.RunContainer("pac-" + projectName + "-db-local", "pac-" + projectName, []int{27017}, []int{27017}, "", "", []string{}, "mongo", "")
+	containerName := "pac-" + projectName + "-db-local"
+	docker.RunContainer(containerName, "pac-" + projectName, []int{27017}, []int{27017}, "", "", []string{}, "mongo", "")
 	logger.Info("The database is running")
 }
 
@@ -65,18 +65,22 @@ func runMicroserviceContainers(projectName string) {
 }
 
 func runMicroserviceContainer(serviceName string, projectName string) {
+	containerName := "pac-" + projectName + "-" + serviceName
 	awsAccessKey, err := aws.GetAccessKey()
 	errors.LogIfError(err)
 	awsSecretKey, err := aws.GetSecretKey()
 	errors.LogIfError(err)
 	serviceMountDirectory := config.GetRootDirectory() + "/services/" + serviceName
-	docker.RunContainer("pac-" + projectName + "-" + serviceName, "pac-" + projectName, []int{}, []int{}, serviceMountDirectory + ":/usr/src/app", "/usr/src/app", []string{"AWS_ACCESS_KEY_ID=" + awsAccessKey, "AWS_SECRET_ACCESS_KEY=" + awsSecretKey}, "node:8", "node dist/services/"+ serviceName + "/src/local")
+	docker.CleanContainers(containerName)
+	docker.RunContainer(containerName, "pac-" + projectName, []int{}, []int{}, serviceMountDirectory + ":/usr/src/app", "/usr/src/app", []string{"AWS_ACCESS_KEY_ID=" + awsAccessKey, "AWS_SECRET_ACCESS_KEY=" + awsSecretKey}, "node:8", "node dist/services/"+ serviceName + "/src/local")
 	logger.Info("The " + serviceName + " microservice is running")
 }
 
 // docker run --name pac-proxy-local --network pac-$PROJECT_NAME -p $HAPROXY_PORT:$HAPROXY_PORT -v $HAPROXY_CONFIG_PATH:/usr/local/etc/haproxy:ro -d haproxy
 func runReverseProxyContainer(projectName string) {
+	containerName := "pac-" + projectName + "-proxy-local"
+	docker.CleanContainers(containerName)
 	proxyMountDirectory := config.GetRootDirectory() + "/services"
-	docker.RunContainer("pac-" + projectName + "-proxy-local", "pac-" + projectName, []int{8080}, []int{8080}, proxyMountDirectory + ":/usr/local/etc/haproxy:ro", "", []string{}, "haproxy", "")
+	docker.RunContainer(containerName, "pac-" + projectName, []int{8080}, []int{8080}, proxyMountDirectory + ":/usr/local/etc/haproxy:ro", "", []string{}, "haproxy", "")
 	logger.Info("The reverse proxy is running")
 }
