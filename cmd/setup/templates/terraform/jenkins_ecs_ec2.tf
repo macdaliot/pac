@@ -11,7 +11,7 @@ data "aws_ami" "ecs_ami" {
 }
 
 resource "aws_iam_instance_profile" "ecsInstanceProfile" {
-  name = "ecsInstanceProfile-${var.project_name}"
+  name = "ecsInstanceProfile-{{ .env }}-${var.project_name}"
   role = "${aws_iam_role.ecsInstanceRole_{{ .env }}.name}"
 }
 
