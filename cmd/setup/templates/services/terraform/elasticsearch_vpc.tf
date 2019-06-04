@@ -243,15 +243,27 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_dev_lambda_elastic
   policy_arn = "${aws_iam_policy.{{ .projectName }}_dev_dynamodb_elasticsearch.arn}"
 }
 
+#
+# https://www.terraform.io/docs/providers/aws/r/s3_bucket_object.html
+# Upload the zip file full of Lambda code to the Lambda S3 bucket
+#
+resource "aws_s3_bucket_object" "lambda_dynamodb_to_elastic_code" {
+  bucket = "lambda.${var.project_name}.${var.hosted_zone}"
+  key    = "{{ .serviceName }}.zip"
+  source = "${path.cwd}/dynamoDbToElasticSearch.zip"
+}
+
 resource "aws_lambda_function" "dynamodb_elasticsearch_lambda" {
   count            = "${var.enable_elasticsearch == "true" ? 1 : 0}"
-  filename         = "dynamoDbToElasticSearch.zip"
+  s3_bucket        = "lambda.${var.project_name}.${var.hosted_zone}"
+  s3_key           = "dynamoDbToElasticSearch.zip"
   function_name    = "DynamoDBToElasticsearch-${var.project_name}"
   #role             = "${aws_iam_role.lambda_dynamodb_elasticsearch_execution_role.arn}"
   role             = "${aws_iam_role.lambda_elasticsearch_execution_role.arn}"
   handler          = "index.lambda_handler"
-  #source_code_hash = "${base64sha256(file("cwl2eslambda.zip"))}"
+  source_code_hash = "${base64sha256(file("dynamoDbToElasticSearch.zip"))}"
   runtime          = "python3.7"
+  depends_on       = ["aws_s3_bucket_object.lambda_dynamodb_to_elastic_code"]
 
   environment {
     variables = {
