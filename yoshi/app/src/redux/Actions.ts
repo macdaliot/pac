@@ -1,0 +1,1 @@
+export const JWT_RECEIVED = 'JWT_RECEIVED'

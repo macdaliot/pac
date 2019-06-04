@@ -1,0 +1,52 @@
+{
+  "name": "@pyramid-systems/core",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "@aws/dynamodb-data-mapper": "^0.7.3",
+    "@aws/dynamodb-data-mapper-annotations": "^0.7.3",
+    "aws-sdk": "^2.437.0",
+    "express": "^4.16.4",
+    "inversify": "^5.0.1",
+    "jsonwebtoken": "^8.5.1",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "passport-saml": "^1.0.0",
+    "pino": "^5.12.0",
+    "reflect-metadata": "^0.1.13",
+    "tsoa": "^2.3.8"
+  },
+  "devDependencies": {
+    "@types/express": "^4.16.1",
+    "@types/jest": "^24.0.0",
+    "@types/passport": "^1.0.0",
+    "@types/passport-jwt": "^3.0.1",
+    "@types/passport-saml": "^1.0.2",
+    "@types/pino": "^5.8.6",
+    "concurrently": "^4.1.0",
+    "jest": "^24.7.1",
+    "jest-junit": "^6.3.0",
+    "jest-sonar-reporter": "^2.0.0",
+    "ts-jest": "^24.0.2",
+    "typescript": "^3.4.4"
+  },
+  "scripts": {
+    "test": "tsc && npx jest --coverage",
+    "test-sonar": "npx jest --coverage --testResultsProcessor=jest-sonar-reporter",
+    "test-watch": "concurrently -n typescript,jest -kill-others \"npx tsc --watch\" \"npx jest --watch --color\""
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^@pyramid-systems/core(.*)$": "<rootDir>$1",
+      "^@pyramid-systems/domain(.*)$": "<rootDir>/../domain$1"
+    },
+    "modulePathIgnorePatterns": [
+      "dist"
+    ]
+  },
+  "author": "Pyramid Systems Inc.",
+  "license": "ISC"
+}
