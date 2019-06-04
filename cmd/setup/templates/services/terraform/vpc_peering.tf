@@ -1,5 +1,5 @@
 resource "aws_vpc_peering_connection" "pc" {
-  peer_vpc_id   = "${aws_vpc.management_vpc.id}"
+  peer_vpc_id   = "${data.terraform_remote_state.management.management_vpc_id}"
   vpc_id        = "${aws_vpc.application_vpc.id}" 
   auto_accept   = true
 

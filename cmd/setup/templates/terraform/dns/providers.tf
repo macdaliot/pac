@@ -6,7 +6,7 @@
 terraform {
   backend "s3" {
     bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
-    key    = "state/development/dns"
+    key    = "tfstate/{{ .env }}/dns"
     region = "{{ .region }}"
   }
 }

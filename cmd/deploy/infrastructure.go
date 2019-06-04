@@ -47,6 +47,8 @@ func ValidatePath(dir string) (path string, err error) {
 	switch dir {
 	case "dns":
 		path += "/dns"
+	case "dns_pristine":
+		path += "/dns_pristine"
 	case "ssl":
 		path += "/ssl"
 	}

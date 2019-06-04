@@ -5,6 +5,8 @@ import { {{.serviceNamePascal}}, {{.serviceNamePascal}}Repository } from '@pyram
 
 @Injectable()
 @Route('{{.serviceName}}')
+// Uncomment the line below and add your own scope names from Auth0 (do not change `'groups'`) in order to require a valid JWT to use this service
+// @Security('groups', ['<one-or-more-scope-names>'])
 export class {{.serviceNamePascal}}Controller extends Controller {
 
     constructor(private {{.serviceName}}Repository: {{.serviceNamePascal}}Repository) {

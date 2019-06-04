@@ -4,7 +4,7 @@
 
 # Creates a trust relationship with ecs-tasks.amazonaws.com and assumes that role
 resource "aws_iam_role" "{{ .projectName }}_{{ .env }}_jenkins" {
-    name = "{{ .projectName }}-dev-jenkins"
+    name = "{{ .projectName }}-{{ .env }}-jenkins"
 
     assume_role_policy = <<EOF
 {
@@ -24,7 +24,7 @@ EOF
 
 # Creates an inline policy to allow listing and updating route53 records
 resource "aws_iam_role_policy" "{{ .projectName }}_{{ .env }}_jenkins_update_route53" {
-  name   = "{{ .projectName }}-dev-jenkins-update-route53-policy"
+  name   = "{{ .projectName }}-{{ .env }}-jenkins-update-route53-policy"
   role   = "${aws_iam_role.{{ .projectName }}_{{ .env }}_jenkins.id}"
   policy = <<EOF
 {
@@ -49,7 +49,7 @@ EOF
 
 # Creates an inline policy on the lambda_elasticsearch_execution_role that allows us to stream logs to Elasticsearch.
 resource "aws_iam_role_policy" "{{ .projectName }}_{{ .env }}_jenkins_ec2_specifics" {
-  name   = "{{ .projectName }}-dev-jenkins-ec2-policy"
+  name   = "{{ .projectName }}-{{ .env }}-jenkins-ec2-policy"
   role   = "${aws_iam_role.{{ .projectName }}_{{ .env }}_jenkins.id}"
   policy = <<EOF
 {
@@ -95,7 +95,7 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_ecs_ful
 #----------------------------------------------------------------------------------------------------------------------
 # Creates a trust relationship with ecs-tasks.amazonaws.com and assumes that role
 resource "aws_iam_role" "{{ .projectName }}_task_execution" {
-    name = "${var.project_name}-dev-task-execution"
+    name = "${var.project_name}-{{ .env }}-task-execution"
 
     assume_role_policy = <<EOF
 {
@@ -122,7 +122,7 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_ecs_tas
 
 # Creates an inline policy to allow reading from System Manager Parameter Store
 resource "aws_iam_role_policy" "parameter_store" {
-  name   = "${var.project_name}-dev-parameter-store"
+  name   = "${var.project_name}-{{ .env }}-parameter-store"
   role   = "${aws_iam_role.{{ .projectName }}_task_execution.id}"
   policy = <<EOF
 {
@@ -154,7 +154,7 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_task_ec2_container
 #----------------------------------------------------------------------------------------------------------------------
 
 resource "aws_iam_role" "{{ .projectName }}_{{ .env }}_lambda_execution_role" {
-  name = "${var.project_name}-dev-lambda-execution-role"
+  name = "${var.project_name}-{{ .env }}-lambda-execution-role"
   force_detach_policies = true
 
   assume_role_policy = <<EOF
@@ -175,7 +175,7 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_attach_aws_lambda_role" {
-  role       = "${var.project_name}-dev-lambda-execution-role"
+  role       = "${var.project_name}-{{ .env }}-lambda-execution-role"
 
   # managed by AWS so we can hard code it
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaRole"
@@ -197,7 +197,7 @@ output "{{ .projectName }}_lambda_execution_role_arn" {
 
 
 resource "aws_iam_policy" "{{ .projectName }}_{{ .env }}_lambda_dynamodb" {
-  name = "${var.project_name}-dev-lambda-dynamodb-policy"
+  name = "${var.project_name}-{{ .env }}-lambda-dynamodb-policy"
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -240,3 +240,105 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_lambda_
 # output "{{ .projectName }}_{{ .env }}_lambda_dynamodb_policy_name" {
 #   value = "${aws_iam_policy.{{ .projectName }}_{{ .env }}_lambda_dynamodb.name}"
 # }
+
+#----------------------------------------------------------------------------------------------------------------------
+# ECS EC2 ROLES
+#----------------------------------------------------------------------------------------------------------------------
+resource "aws_iam_role" "ecsInstanceRole_{{ .env }}" {
+  name = "ecsInstanceRole-{{ .env }}-${var.project_name}"
+
+  assume_role_policy = <<EOF
+{
+ "Version": "2008-10-17",
+ "Statement": [
+   {
+     "Sid": "",
+     "Effect": "Allow",
+     "Principal": {
+       "Service": "ec2.amazonaws.com"
+     },
+     "Action": "sts:AssumeRole"
+   }
+ ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "ecsInstanceRolePolicy_{{ .env }}" {
+  name = "ecsInstanceRolePolicy-{{ .env }}-${var.project_name}"
+  role = "${aws_iam_role.ecsInstanceRole_{{ .env }}.id}"
+
+  policy = <<EOF
+{
+ "Version": "2012-10-17",
+ "Statement": [
+   {
+     "Effect": "Allow",
+     "Action": [
+       "ecs:CreateCluster",
+       "ecs:DeregisterContainerInstance",
+       "ecs:DiscoverPollEndpoint",
+       "ecs:Poll",
+       "ecs:RegisterContainerInstance",
+       "ecs:StartTelemetrySession",
+       "ecs:Submit*",
+       "ecr:GetAuthorizationToken",
+       "ecr:BatchCheckLayerAvailability",
+       "ecr:GetDownloadUrlForLayer",
+       "ecr:BatchGetImage",
+       "logs:CreateLogStream",
+       "logs:PutLogEvents"
+     ],
+     "Resource": "*"
+   }
+ ]
+}
+EOF
+}
+
+# Create ECS IAM Service Role and Policy
+resource "aws_iam_role" "ecsServiceRole_{{ .env }}" {
+  name = "ecsServiceRole-{{ .env }}-${var.project_name}"
+
+  assume_role_policy = <<EOF
+{
+ "Version": "2008-10-17",
+ "Statement": [
+   {
+     "Sid": "",
+     "Effect": "Allow",
+     "Principal": {
+       "Service": "ecs.amazonaws.com"
+     },
+     "Action": "sts:AssumeRole"
+   }
+ ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "ecsServiceRolePolicy_{{ .env }}" {
+  name = "ecsServiceRolePolicy-{{ .env }}-${var.project_name}"
+  role = "${aws_iam_role.ecsServiceRole_{{ .env }}.id}"
+
+  policy = <<EOF
+{
+ "Version": "2012-10-17",
+ "Statement": [
+   {
+     "Effect": "Allow",
+     "Action": [
+       "ec2:AuthorizeSecurityGroupIngress",
+       "ec2:Describe*",
+       "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
+       "elasticloadbalancing:DeregisterTargets",
+       "elasticloadbalancing:Describe*",
+       "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
+       "elasticloadbalancing:RegisterTargets"
+     ],
+     "Resource": "*"
+   }
+ ]
+}
+EOF
+}
