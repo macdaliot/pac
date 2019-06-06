@@ -215,8 +215,8 @@ resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_logs_to_es" {
 #----------------------------------------------------------------------------------------------------------------------
 
 resource "aws_iam_policy" "{{ .projectName }}_dev_dynamodb_elasticsearch" {
-  count              = "${var.enable_elasticsearch == "true" ? 1 : 0}"
-  name = "${var.project_name}-dev-dynamodb-elasticsearch-policy"
+  count  = "${var.enable_elasticsearch == "true" ? 1 : 0}"
+  name   = "${var.project_name}-dev-dynamodb-elasticsearch-policy"
   policy = <<EOF
 {
   "Version": "2012-10-17",
