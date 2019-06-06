@@ -48,7 +48,7 @@ resource "aws_alb_target_group" "{{ .projectName }}_auth_target_group" {
   name        = "pac-{{ .projectName }}-i-auth"
   port        = "80"
   protocol    = "http"
-  vpc_id      = "${data.terraform_remote_state.management.application_vpc_id}"
+  vpc_id      = "${aws_vpc.application_vpc.id}"
   target_type = "lambda"
 }
 
@@ -79,7 +79,7 @@ resource "aws_alb_target_group_attachment" "{{ .projectName }}_auth_target_group
 # alb listener rule
 #
 resource "aws_lb_listener_rule" "{{ .projectName }}_auth_rule_100" {
-  listener_arn = "${data.terraform_remote_state.management.aws_lb_listener_api_arn}"
+  listener_arn = "${aws_lb_listener.api.arn}"
   action {
     type = "forward"
     target_group_arn = "${aws_alb_target_group.{{ .projectName }}_auth_target_group.arn}"
@@ -91,7 +91,7 @@ resource "aws_lb_listener_rule" "{{ .projectName }}_auth_rule_100" {
 }
 
 resource "aws_lb_listener_rule" "{{ .projectName }}_auth_rule_200" {
-  listener_arn = "${data.terraform_remote_state.management.aws_lb_listener_api_arn}"
+  listener_arn = "${aws_lb_listener.api.arn}"
   action {
     type = "forward"
     target_group_arn = "${aws_alb_target_group.{{ .projectName }}_auth_target_group.arn}"
