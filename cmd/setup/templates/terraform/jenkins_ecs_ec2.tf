@@ -33,7 +33,7 @@ resource "aws_launch_configuration" "as_conf" {
   associate_public_ip_address = true # need for pulling from ECR registry
 
   root_block_device {
-    volume_size = "50"
+    volume_size = "60"
   }
 
   user_data = "${data.template_file.user_data.rendered}"
