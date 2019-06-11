@@ -18,7 +18,7 @@ resource "aws_lambda_function" "lambda_{{ .serviceName }}" {
   function_name    = "pac-{{ .projectName }}-i-{{ .serviceName }}"
   role             = "${data.terraform_remote_state.management.{{ .projectName }}_lambda_execution_role_arn}"
   handler          = "lambda.handler"
-  source_code_hash = "${base64sha256(file(${path.cwd}/../{{ .serviceName }}/function.zip"))}"
+  source_code_hash = "${base64sha256(file("${path.cwd}/../{{ .serviceName }}/function.zip"))}"
   runtime          = "nodejs8.10"
   depends_on       = ["aws_s3_bucket_object.lambda_{{ .serviceName }}_code"]
 
