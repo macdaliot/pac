@@ -7,6 +7,27 @@ def cleanups = [:]
 def workspaceDirectory = "/root/.jenkins/workspace"
 def buildDirectory = workspaceDirectory + "/build-$BUILD_NUMBER"
 
+def notifySlack(String stage, String buildStatus = 'STARTED') {
+    // Build status of null means success.
+    buildStatus = buildStatus ?: 'SUCCESS'
+
+    def color
+
+    if (buildStatus == 'STARTED') {
+        color = '#D4DADF'
+    } else if (buildStatus == 'SUCCESS') {
+        color = '#BDFFC3'
+    } else if (buildStatus == 'FAILED') {
+        color = '#FFFE89'
+    } else {
+        color = '#FF9FA1'
+    }
+
+    def msg = "${buildStatus}: ${stage}: `${env.JOB_NAME}` #${env.BUILD_NUMBER}:\n${env.BUILD_URL}"
+
+    slackSend(color: color, message: msg)
+}
+
 for (x in pipelineComponents){
   def jobName = x.trim()
   // create builds
@@ -69,20 +90,40 @@ node {
   dir(buildDirectory) {
     try {
       stage("SCM Checkout") {
-        checkout scm
+        try {
+          checkout scm
+        } catch (e) {
+          notifySlack("SCM Checkout", "FAILED")
+          throw e
+        }
       }
       stage("Build") {
         script {
           sh "pushd core; npm i; popd"
           sh "pushd domain; npm i; popd"
         }
-        parallel builds
+        try {
+          parallel builds
+        } catch (e) {
+          notifySlack("Build", "FAILED")
+          throw e
+        }
       }
       stage("Unit Tests") {
-        parallel unitTests
+        try {
+          parallel unitTests
+        } catch (e) {
+          notifySlack("Deploy to Integration", "FAILED")
+          throw e
+        }         
       }
       stage("Deploy to Integration"){
-        parallel deployments
+        try {
+          parallel deployments
+        } catch (e) {
+          notifySlack("Deploy to Integration", "FAILED")
+          throw e
+        }        
       }
       stage("Inspect") {
         withCredentials([string(credentialsId: 'SONARLOGIN', variable: 'SONARLOGIN')]) {
@@ -110,6 +151,10 @@ node {
             // run sonar scan
             sh 'cat test-report.xml'
             sh 'sonar-scanner -Dsonar.login=$SONARLOGIN'
+
+            if (exitCode > 0) {
+              notifySlack("Inspect", "FAILED")
+            }
           }
         }
       }
@@ -120,6 +165,7 @@ node {
           publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'integration-tests/target/site/serenity', reportFiles: 'index.html', reportName: 'Serenity Report', reportTitles: ''])
           if (exitCode > 0) {
             sh 'one-or-more-integration-tests-failed'
+            notifySlack("Integration Tests", "FAILED")
           }
         }
       }
