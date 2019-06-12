@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/go/str"
 	"github.com/PyramidSystemsInc/go/terraform"
 	"github.com/PyramidSystemsInc/pac/cmd/deploy"
@@ -15,13 +14,10 @@ var deployCmd = &cobra.Command{
 	Long: `Provision cloud resources using Terraform.
 This command is to be run after templates are generated with 'pac setup'`,
 	Run: func(cmd *cobra.Command, args []string) {
-		logger.SetLogLevel("info")
-
 		// Get the values from the pac config file
 		projectName := config.Get("projectName")
 		encryptionKeyID := config.Get("encryptionKeyID")
 		gitAuth := config.Get("gitAuth")
-		warnExtraArgumentsAreIgnored(args)
 
 		// Perform various checks to ensure we should proceed
 		terraform.VerifyInstallation()

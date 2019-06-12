@@ -1,18 +1,17 @@
 package cmd
 
 import (
-	"github.com/PyramidSystemsInc/pac/config"
 	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/go/logger"
+	"github.com/PyramidSystemsInc/pac/config"
 	"github.com/spf13/cobra"
 )
 
 var setCmd = &cobra.Command{
-	Use: "set",
+	Use:   "set",
 	Short: "Saves a property/value combination in the PAC project configuration",
-	Long: `Saves a property/value combination in the PAC project configuration`,
+	Long:  `Saves a property/value combination in the PAC project configuration`,
 	Run: func(cmd *cobra.Command, args []string) {
-		logger.SetLogLevel("info")
 		property := getConfigPropertyNameToSave(cmd)
 		value := getConfigValueToSave(cmd)
 		config.Set(property, value)
