@@ -26,9 +26,9 @@ func CreateAllTemplatedFiles(cfg map[string]string) {
 		files.EnsurePath(filepath.Dir(templatePath))
 		template, _ := box.FindString(templatePath)
 		if templatePath == "src/controller.ts" {
-			files.CreateFromTemplate(str.Concat("src/",serviceName,".controller.ts"), template, cfg)
+			files.CreateFromTemplate(str.Concat("src/", serviceName, ".controller.ts"), template, cfg)
 		} else if templatePath == "src/controller.spec.ts" {
-			files.CreateFromTemplate(str.Concat("src/",serviceName,".controller.spec.ts"), template, cfg)
+			files.CreateFromTemplate(str.Concat("src/", serviceName, ".controller.spec.ts"), template, cfg)
 		} else {
 			files.CreateFromTemplate(templatePath, template, cfg)
 		}
@@ -45,12 +45,12 @@ func CreateAllTemplatedFiles(cfg map[string]string) {
 		template, _ := box.FindString(templatePath)
 
 		if strings.Contains(templatePath, "serviceNameFolder") {
-			templatePath = strings.Replace(templatePath, "serviceNameFolder",serviceName,-1)
+			templatePath = strings.Replace(templatePath, "serviceNameFolder", serviceName, -1)
 		}
 
 		files.EnsurePath(filepath.Dir(templatePath))
 
-		logger.Info("Replaced template path: " +templatePath)
+		logger.Info("Replaced template path: " + templatePath)
 
 		files.CreateFromTemplate(templatePath, template, cfg)
 	}
@@ -60,11 +60,10 @@ func CreateAllTemplatedFiles(cfg map[string]string) {
 	logger.Info("Updating the index.ts for domain")
 
 	files.EnsurePath(filepath.Dir("domain"))
-	exportTemplate := fmt.Sprintf("\nexport * from './%s';", serviceName);
-	exportModelTemplate := fmt.Sprintf("\nexport * from './%s/%s';", serviceName, serviceName);
+	exportTemplate := fmt.Sprintf("\nexport * from './%s';", serviceName)
+	exportModelTemplate := fmt.Sprintf("\nexport * from './%s/%s';", serviceName, serviceName)
 	files.Append("./domain/index.ts", []byte(exportTemplate))
 	files.Append("./domain/models.ts", []byte(exportModelTemplate))
-
 
 	os.Chdir(config.GetRootDirectory())
 	os.Chdir("./services/terraform")
@@ -73,8 +72,14 @@ func CreateAllTemplatedFiles(cfg map[string]string) {
 	for _, templatePath := range box.List() {
 		logger.Info(templatePath)
 		files.EnsurePath(filepath.Dir(templatePath))
-		template, _ := box.FindString(templatePath)
-		files.CreateFromTemplate(templatePath, template, cfg)
+
+		if strings.HasSuffix(templatePath, ".zip") {
+			fileContents, _ := box.Find(templatePath)
+			files.CreateFromBinary(templatePath, fileContents)
+		} else {
+			template, _ := box.FindString(templatePath)
+			files.CreateFromTemplate(templatePath, template, cfg)
+		}
 	}
 
 	os.Rename("./lambda.tf", "./lambda_"+serviceName+".tf")

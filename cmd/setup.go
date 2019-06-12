@@ -70,6 +70,9 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		// Copy template files from ./cmd/setup/templates over to the new project
 		setup.Templates()
 
+		// Copy binary (zip) files into Terraform directories
+		setup.CopyBinaries()
+
 		// Create a GitHub repository for the project
 		setup.GitRepository()
 	},
