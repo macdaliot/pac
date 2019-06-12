@@ -62,11 +62,11 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		config.Set("awsManagementVpcCidrBlock", freeVpcCidrBlocks[0])
 		config.Set("awsApplicationVpcCidrBlock", freeVpcCidrBlocks[1])
 
-		// Copy template files from ./cmd/setup/templates over to the new project
-		setup.Templates()
-
 		// Create a GitHub repository for the project
 		setup.GitRepository()
+
+		// Copy template files from ./cmd/setup/templates over to the new project
+		setup.Templates()
 	},
 }
 
