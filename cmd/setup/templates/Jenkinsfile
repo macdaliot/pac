@@ -151,10 +151,6 @@ node {
             // run sonar scan
             sh 'cat test-report.xml'
             sh 'sonar-scanner -Dsonar.login=$SONARLOGIN'
-
-            if (exitCode > 0) {
-              notifySlack("Inspect", "FAILED")
-            }
           }
         }
       }
