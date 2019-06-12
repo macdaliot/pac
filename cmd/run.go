@@ -2,13 +2,13 @@ package cmd
 
 import (
 	"io/ioutil"
+	"strings"
 
 	"github.com/PyramidSystemsInc/go/aws"
 	"github.com/PyramidSystemsInc/go/commands"
 	"github.com/PyramidSystemsInc/go/docker"
 	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/go/logger"
-	"github.com/PyramidSystemsInc/go/str"
 	"github.com/PyramidSystemsInc/pac/config"
 	"github.com/spf13/cobra"
 )
@@ -43,7 +43,7 @@ func findProjectName() string {
 }
 
 func createDockerNetworkIfNeeded(projectName string) {
-	networkName := str.Concat("pac-", projectName)
+	networkName := strings.Join([]string{"pac-", projectName}, "")
 	if !docker.DoesNetworkExist(networkName) {
 		docker.CreateNetwork(networkName)
 	}

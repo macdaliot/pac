@@ -1,7 +1,8 @@
 package cmd
 
 import (
-	"github.com/PyramidSystemsInc/go/str"
+	"strings"
+
 	"github.com/PyramidSystemsInc/go/terraform"
 	"github.com/PyramidSystemsInc/pac/cmd/deploy"
 	"github.com/PyramidSystemsInc/pac/config"
@@ -29,7 +30,7 @@ This command is to be run after templates are generated with 'pac setup'`,
 		terraformS3Bucket, projectFqdn := deploy.TerraformS3Bucket(projectName, encryptionKeyID)
 
 		// Sets up a webhook to queue a Jenkins build every time a push is made to GitHub
-		jenkinsURL := str.Concat("jenkins.", projectFqdn)
+		jenkinsURL := strings.Join([]string{"jenkins.", projectFqdn}, "")
 		deploy.GitHubWebhook(projectName, gitAuth, jenkinsURL)
 
 		// Call on Terraform to create the infrastructure in the cloud
