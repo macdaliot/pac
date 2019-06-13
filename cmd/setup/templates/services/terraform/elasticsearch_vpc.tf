@@ -114,7 +114,7 @@ variable "es_endpoint" {
 
 variable "cwl_endpoint" {
   type    = "string"
-  default = "logs.us-east-2.amazonaws.com"
+  default = "logs.{{ .region }}.amazonaws.com"
 }
 
 # CloudWatch Logs uses Lambda to deliver log data to Amazon ES. 
@@ -260,7 +260,7 @@ resource "aws_lambda_function" "dynamodb_elasticsearch_lambda" {
   function_name    = "DynamoDBToElasticsearch-${var.project_name}"
   #role             = "${aws_iam_role.lambda_dynamodb_elasticsearch_execution_role.arn}"
   role             = "${aws_iam_role.lambda_elasticsearch_execution_role.arn}"
-  handler          = "index.py.lambda_handler"
+  handler          = "index.lambda_handler"
   source_code_hash = "${base64sha256(file("dynamoDbToElasticSearch.zip"))}"
   runtime          = "python3.7"
   depends_on       = ["aws_s3_bucket_object.lambda_dynamodb_to_elastic_code"]
