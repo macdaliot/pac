@@ -1,6 +1,7 @@
 package deploy
 
 import (
+	"os"
 	"strings"
 	"time"
 
@@ -34,8 +35,16 @@ func TerraformS3Bucket(projectName string, encryptionKeyID string) (string, stri
 func createBucket(suiteName string, access string, projectFqdn string, projectName string, region string, awsSession *session.Session) {
 	frontEndFqdn := str.Concat(suiteName, ".", projectFqdn)
 	err := s3.MakeBucket(frontEndFqdn, access, region, awsSession)
-	if err != nil && strings.HasPrefix(err.Error(), "BucketAlreadyOwnedByYou") {
-		logger.Info("The terraform state bucket already exists and is owned by you")
+
+	if err != nil {
+		if strings.HasPrefix(err.Error(), "BucketAlreadyOwnedByYou") {
+			logger.Info("The terraform state bucket already exists and is owned by you")
+		} else {
+			logger.Info(err.Error())
+			// Exit, something unexpected happen and deployment can't happen without an S3 bucket.
+			os.Exit(1)
+		}
+
 		return
 	}
 	time.Sleep(time.Second * 3)
