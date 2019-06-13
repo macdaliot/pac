@@ -25,7 +25,7 @@ cloud platform, and is supported by relevant open source libraries`,
 	Version: "1.0",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		// Set log level
-		logger.SetLogLevel(logger.INFO)
+		logger.SetLogLevel("info")
 
 		// Check for extra arguments
 		warnExtraArgumentsAreIgnored(args)
