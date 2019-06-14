@@ -4,18 +4,16 @@ import (
 	"os"
 
 	"github.com/PyramidSystemsInc/go/errors"
-	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/pac/cmd/add"
 	"github.com/PyramidSystemsInc/pac/config"
 	"github.com/spf13/cobra"
 )
 
 var addCmd = &cobra.Command{
-	Use: "add",
+	Use:   "add",
 	Short: "Add to an existing project",
-	Long: `Generate skeleton code for a new front-end page or back-end service`,
+	Long:  `Generate skeleton code for a new front-end page or back-end service`,
 	Run: func(cmd *cobra.Command, args []string) {
-		logger.SetLogLevel("info")
 		addType := validateAddTypeArgument(args)
 		os.Chdir(config.GetRootDirectory())
 		addFiles(cmd, addType)

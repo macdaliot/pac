@@ -1,18 +1,16 @@
 package cmd
 
 import (
-	"github.com/PyramidSystemsInc/pac/cmd/setup"
 	"github.com/PyramidSystemsInc/go/errors"
-	"github.com/PyramidSystemsInc/go/logger"
+	"github.com/PyramidSystemsInc/pac/cmd/setup"
 	"github.com/spf13/cobra"
 )
 
 var automateCmd = &cobra.Command{
-	Use: "automate",
+	Use:   "automate",
 	Short: "Instruct pac to handle an aspect of the project by itself",
-	Long: `Instruct pac to handle an aspect of the project by itself`,
+	Long:  `Instruct pac to handle an aspect of the project by itself`,
 	Run: func(cmd *cobra.Command, args []string) {
-		logger.SetLogLevel("info")
 		validateAutomateTypeArgument(args)
 		setup.AutomateJenkins()
 	},
