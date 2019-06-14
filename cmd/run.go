@@ -6,10 +6,10 @@ import (
 	"github.com/PyramidSystemsInc/go/docker"
 	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/go/logger"
-	"github.com/PyramidSystemsInc/go/str"
 	"github.com/PyramidSystemsInc/pac/config"
 	"github.com/spf13/cobra"
 	"io/ioutil"
+	"strings"
 )
 
 // TODO: Attempting to run a container that is already running does not fail, but fails silently (currently the quickest way to get this done)
@@ -19,7 +19,6 @@ var runCmd = &cobra.Command{
 	Short: "Runs the front-end and the micro-services of a PAC project, locally",
 	Long:  `Runs the front-end and the micro-services of a PAC project, locally`,
 	Run: func(cmd *cobra.Command, args []string) {
-		logger.SetLogLevel("info")
 		projectName := findProjectName()
 		createDockerNetworkIfNeeded(projectName)
 		docker.CleanContainers("pac-" + projectName + "-db-local")
@@ -46,7 +45,7 @@ func findProjectName() string {
 }
 
 func createDockerNetworkIfNeeded(projectName string) {
-	networkName := str.Concat("pac-", projectName)
+	networkName := strings.Join([]string{"pac-", projectName}, "")
 	if !docker.DoesNetworkExist(networkName) {
 		docker.CreateNetwork(networkName)
 	}

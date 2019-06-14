@@ -3,7 +3,6 @@ package cmd
 import (
 	"github.com/PyramidSystemsInc/go/aws/sts"
 	"github.com/PyramidSystemsInc/go/errors"
-	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/go/terraform"
 	"github.com/PyramidSystemsInc/pac/cmd/setup"
 	"github.com/PyramidSystemsInc/pac/config"
@@ -16,8 +15,6 @@ var setupCmd = &cobra.Command{
 	Long: `Generate new project templates with PAC (The default stack is a ReactJS front-end,
 NodeJS/Express back-end, and DynamoDB database)`,
 	Run: func(cmd *cobra.Command, args []string) {
-		logger.SetLogLevel("info")
-
 		// Get the values provided by command line flags -OR- the default values if not provided
 		awsRegion := getAWSRegion(cmd)
 		backEnd := getBackEnd(cmd)
@@ -27,7 +24,6 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		frontEnd := getFrontEnd(cmd)
 		projectName := getProjectName(cmd)
 		dnsPristine := getDNSPristine(cmd)
-		warnExtraArgumentsAreIgnored(args)
 
 		// Perform various checks to ensure we should proceed
 		setup.ValidateInputs(projectName, frontEnd, backEnd, database, env)
@@ -85,12 +81,6 @@ func init() {
 
 // TODO: pull from systems manager parameter store
 var gitAuth = "amRpZWRlcmlrc0Bwc2ktaXQuY29tOkRpZWRyZV4yMDE4"
-
-func warnExtraArgumentsAreIgnored(args []string) {
-	if len(args) > 0 {
-		logger.Warn("Arguments were provided, but all arguments after 'setup' and before the flags are ignored")
-	}
-}
 
 var projectName string
 
