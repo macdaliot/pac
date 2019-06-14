@@ -12,8 +12,7 @@ if (window.location.host.startsWith('localhost')) {
 } else {
   UrlConfig = {
     apiUrl: 'https://api.{{.projectName}}.pac.pyramidchallenges.com/api/',
-    siteUrl:
-      'http://integration.{{.projectName}}.pac.pyramidchallenges.com.s3-website.{{ .region }}.amazonaws.com'
+    siteUrl: 'https://integration.{{.projectName}}.pac.pyramidchallenges.com'
   };
 }
 
