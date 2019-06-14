@@ -27,6 +27,18 @@ resource "aws_route53_record" "integration_cert_validation" {
   ttl     = 60
 }
 
+resource "aws_route53_record" "integration_cloudfront" {
+  zone_id = "${data.terraform_remote_state.dns.main_zone_id}"
+  name    = "integration.${var.project_name}.${var.hosted_zone}"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_cloudfront_distribution.s3_distribution.domain_name}"
+    zone_id                = "${aws_cloudfront_distribution.s3_distribution.hosted_zone_id}"
+    evaluate_target_health = false
+  }
+}
+
 resource "aws_acm_certificate_validation" "integration_cert" {
   certificate_arn         = "${aws_acm_certificate.integration_cert.arn}"
   validation_record_fqdns = ["${aws_route53_record.integration_cert_validation.fqdn}"]

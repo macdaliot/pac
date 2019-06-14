@@ -16,3 +16,7 @@ resource "aws_s3_bucket" "integration" {
     Name = "${var.project_name} integration bucket"
   }
 }
+
+output "aws_s3_bucket_integration_brdn" {
+  value = "${aws_s3_bucket.integration.bucket_regional_domain_name}"
+}
