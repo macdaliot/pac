@@ -12,16 +12,11 @@ import (
 )
 
 var installCmd = &cobra.Command{
-	Use:  "install",
+	Use:   "install",
 	Short: "Installs all project dependencies",
 	Long: `Finds all package.json files within a project and runs 'npm install'
 on each directory`,
 	Run: func(cmd *cobra.Command, args []string) {
-		logger.SetLogLevel("info")
-
-		// Warn the user that any additional arguments provided will be ignored
-		warnExtraArgumentsAreIgnored(args)
-
 		// Run `npm install` for each Node project directory within the PAC project
 		util.GoToRootDirectory()
 		packageJsonLocations, err := commands.Run("find . -name package.json", "")

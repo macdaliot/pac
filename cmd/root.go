@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -21,6 +22,14 @@ to achieve acceptable software hygiene. PAC is an evolving toolkit, and
 currently supports a slightly adjusted MERN stack (DynamoDB, Express, React,
 Node). It leverages Jenkins for pipelines, Auth0 for authentication, AWS as the
 cloud platform, and is supported by relevant open source libraries`,
+	Version: "1.0",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		// Set log level
+		logger.SetLogLevel("info")
+
+		// Check for extra arguments
+		warnExtraArgumentsAreIgnored(args)
+	},
 }
 
 func Execute() {
@@ -53,3 +62,9 @@ func initConfig() {
 	}
 }
 */
+
+func warnExtraArgumentsAreIgnored(args []string) {
+	if len(args) > 0 {
+		logger.Warn("Arguments were provided, but all arguments after 'setup' and before the flags are ignored")
+	}
+}
