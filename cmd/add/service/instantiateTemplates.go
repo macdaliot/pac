@@ -5,10 +5,11 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-
+	"strings"
 	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/go/files"
 	"github.com/PyramidSystemsInc/go/logger"
+	"github.com/PyramidSystemsInc/go/str"
 	"github.com/PyramidSystemsInc/pac/config"
 	"github.com/gobuffalo/packr"
 )
