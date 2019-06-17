@@ -36,11 +36,6 @@
       "^.+\\.(scss|css|svg|png|sass)$": "identity-obj-proxy"
     }
   },
-  "husky": {
-    "hooks": {
-      "pre-push": "npm run build && npm test"
-    }
-  },
   "author": "Pyramid Systems, Inc.",
   "license": "ISC",
   "dependencies": {

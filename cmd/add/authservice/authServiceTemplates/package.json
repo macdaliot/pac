@@ -73,10 +73,5 @@
   "_moduleAliases": {
     "@pyramid-systems/core": "dist/core",
     "@pyramid-systems/domain": "dist/domain"
-  },
-  "husky": {
-    "hooks": {
-      "pre-push": "npm run build && npm test"
-    }
   }
 }

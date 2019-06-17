@@ -1,13 +1,19 @@
 {
-  "name": "{{.projectName}}",
+  "name": "root",
   "version": "0.0.1",
   "description": "Project created by PAC",
   "devDependencies": {
     "typescript": "^3.5.2",
-    "ts-node": "^8.3.0"
+    "ts-node": "^8.3.0",
+    "lerna": "^3.15.0"
   },
   "scripts": {
-    "install": "npx ts-node recursive-npm-install.ts"
+    "install": "npx lerna bootstrap"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "lerna run build && lerna run test"
+    }
   },
   "author": "Pyramid Systems, Inc.",
   "license": "ISC"

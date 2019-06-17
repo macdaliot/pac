@@ -1,0 +1,10 @@
+{
+  "packages": ["app/**", "core/**", "domain/**", "services/**"],
+  "npmClient": "npm",
+  "command": {
+    "bootstrap": {
+      "npmClientArgs": ["install"]
+    }
+  },
+  "version": "0.0.1"
+}
