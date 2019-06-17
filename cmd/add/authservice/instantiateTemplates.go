@@ -1,31 +1,18 @@
 package authservice
 
 import (
-	"path/filepath"
-
 	"github.com/PyramidSystemsInc/go/files"
-	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/gobuffalo/packr"
 )
 
 func CreateAllTemplatedFiles(config map[string]string) {
-	targetDirectory := "services/auth"
-	box := packr.NewBox("./authServiceTemplates")
-	for _, templatePath := range box.List() {
-		logger.Info(templatePath)
-		fullPath := filepath.Join(targetDirectory, templatePath)
-		files.EnsurePath(filepath.Dir(fullPath))
-		template, _ := box.FindString(templatePath)
-		files.CreateFromTemplate(fullPath, template, config)
-	}
+	options := files.TemplateOptions{
+		TargetDirectory: "services/auth",
+		Box:             packr.NewBox("./authServiceTemplates"),
+		Config:          config}
+	files.CreateTemplatedFiles(options)
 
-	targetDirectory = "services/terraform"
-	box = packr.NewBox("./authTerraformTemplates")
-	for _, templatePath := range box.List() {
-		logger.Info(templatePath)
-		fullPath := filepath.Join(targetDirectory, templatePath)
-		files.EnsurePath(filepath.Dir(fullPath))
-		template, _ := box.FindString(templatePath)
-		files.CreateFromTemplate(fullPath, template, config)
-	}
+	options.TargetDirectory = "services/terraform"
+	options.Box = packr.NewBox("./authTerraformTemplates")
+	files.CreateTemplatedFiles(options)
 }

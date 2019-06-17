@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"io/ioutil"
-	"strings"
-
 	"github.com/PyramidSystemsInc/go/aws"
 	"github.com/PyramidSystemsInc/go/commands"
 	"github.com/PyramidSystemsInc/go/docker"
@@ -11,6 +8,8 @@ import (
 	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/pac/config"
 	"github.com/spf13/cobra"
+	"io/ioutil"
+	"strings"
 )
 
 // TODO: Attempting to run a container that is already running does not fail, but fails silently (currently the quickest way to get this done)
@@ -24,10 +23,13 @@ var runCmd = &cobra.Command{
 		createDockerNetworkIfNeeded(projectName)
 		docker.CleanContainers("pac-" + projectName + "-db-local")
 		runDatabaseContainer(projectName)
+		createDynamoTables(projectName)
 		runMicroserviceContainers(projectName)
 		runReverseProxyContainer(projectName)
 	},
 }
+
+type microFunction func(fileName string, projectName string)
 
 func init() {
 	RootCmd.AddCommand(runCmd)
@@ -54,22 +56,24 @@ func runDatabaseContainer(projectName string) {
 	logger.Info("The database is running")
 }
 
+func createDynamoTables(projectName string) {
+	iterateServiceDirAndRunFunc(createDynamoTable, projectName)
+}
+
+//TODO [joe] use aws dynamodb sdk instead
+func createDynamoTable(serviceName string, projectName string) {
+	serviceMountDirectory := config.GetRootDirectory() + "/services/" + serviceName
+	commands.Run("aws dynamodb create-table --cli-input-json file://dynamoConfig.json --endpoint-url http://localhost:8001", serviceMountDirectory)
+	logger.Info("Created DynamoDB table for the " + serviceName + " microservice." )
+}
+
 func runMicroserviceContainers(projectName string) {
-	files, err := ioutil.ReadDir(config.GetRootDirectory() + "/services")
-	errors.QuitIfError(err)
-	for _, file := range files {
-		fileName := file.Name()
-		if fileName != "terraform" && file.IsDir() {
-			runMicroserviceContainer(fileName, projectName)
-		}
-	}
+	iterateServiceDirAndRunFunc(runMicroserviceContainer, projectName)
 }
 
 func runMicroserviceContainer(serviceName string, projectName string) {
-	awsAccessKey, err := aws.GetAccessKey()
-	errors.LogIfError(err)
-	awsSecretKey, err := aws.GetSecretKey()
-	errors.LogIfError(err)
+	awsAccessKey := aws.GetAccessKey()
+	awsSecretKey := aws.GetSecretKey()
 	serviceMountDirectory := config.GetRootDirectory() + "/services/" + serviceName
 	commands.Run("npm run generate:templates", serviceMountDirectory)
 	commands.Run("npx tsc", serviceMountDirectory)
@@ -82,4 +86,15 @@ func runReverseProxyContainer(projectName string) {
 	proxyMountDirectory := config.GetRootDirectory() + "/services"
 	docker.RunContainer("pac-"+projectName+"-proxy-local", "pac-"+projectName, []int{3000}, []int{3000}, proxyMountDirectory+":/usr/local/etc/haproxy:ro", "", []string{}, "haproxy", "")
 	logger.Info("The reverse proxy is running")
+}
+
+func iterateServiceDirAndRunFunc(fn microFunction, projectName string){
+	files, err := ioutil.ReadDir(config.GetRootDirectory() + "/services")
+	errors.QuitIfError(err)
+	for _, file := range files {
+		fileName := file.Name()
+		if fileName != "terraform" && file.IsDir() {
+			fn(fileName, projectName)
+		}
+	}
 }

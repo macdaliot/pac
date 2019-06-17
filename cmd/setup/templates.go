@@ -39,19 +39,5 @@ func GoToRootProjectDirectory(projectName string) {
 // createProjectFiles "boxes" the template files and replaces Go template strings with the variables stored in the
 // .pac.json configuration file
 func createProjectFiles() {
-	cfg := config.ReadAll()
-	box := packr.NewBox("./templates")
-
-	for _, templatePath := range box.List() {
-		logger.Info(templatePath)
-		files.EnsurePath(filepath.Dir(templatePath))
-
-		template, _ := box.FindString(templatePath)
-
-		if templatePath != "core/templates/routes.template.ts" {
-			files.CreateFromTemplate(templatePath, template, cfg)
-		} else {
-			files.Write(templatePath, []byte(template))
-		}
-	}
+	files.CreateTemplatedFiles(files.TemplateOptions{Box: packr.NewBox("./templates"), Config: config.ReadAll()})
 }
