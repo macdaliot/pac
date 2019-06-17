@@ -1,3 +1,3 @@
 project_name          = "{{ .projectName }}"
-enable_elasticsearch  = "true"
+enable_elasticsearch  = "false"
 enable_keypair_output = "false"
