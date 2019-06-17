@@ -114,7 +114,7 @@ variable "es_endpoint" {
 
 variable "cwl_endpoint" {
   type    = "string"
-  default = "logs.us-east-2.amazonaws.com"
+  default = "logs.{{ .region }}.amazonaws.com"
 }
 
 # CloudWatch Logs uses Lambda to deliver log data to Amazon ES. 
@@ -260,7 +260,7 @@ resource "aws_lambda_function" "dynamodb_elasticsearch_lambda" {
   function_name    = "DynamoDBToElasticsearch-${var.project_name}"
   #role             = "${aws_iam_role.lambda_dynamodb_elasticsearch_execution_role.arn}"
   role             = "${aws_iam_role.lambda_elasticsearch_execution_role.arn}"
-  handler          = "index.py.lambda_handler"
+  handler          = "index.lambda_handler"
   source_code_hash = "${base64sha256(file("dynamoDbToElasticSearch.zip"))}"
   runtime          = "python3.7"
   depends_on       = ["aws_s3_bucket_object.lambda_dynamodb_to_elastic_code"]
@@ -336,11 +336,12 @@ resource "aws_security_group" "es_jumpbox" {
 }
 
 resource "aws_instance" "jumpbox" {
-  count                       = "${var.enable_elasticsearch == "true" ? 1 : 0}"
+  count                       = "${var.enable_jumpbox == "true" ? 1 : 0}"
   ami                         = "${data.aws_ami.amzn.id}"
   associate_public_ip_address = true
   instance_type               = "t2.micro"
-  key_name                    = "jumpbox"
+  # referring to the key pair to be used to SSH into box
+  key_name                    = "jumpbox-${var.project_name}"
   subnet_id                   = "${aws_subnet.public.0.id}"
   vpc_security_group_ids      = ["${aws_security_group.es_jumpbox.id}"]
 

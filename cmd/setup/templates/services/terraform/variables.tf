@@ -38,7 +38,7 @@ variable "es_automated_snapshot_start_hour" {
 # JUMPBOX / BASTION HOST
 #----------------------------------------------------------------------------------------------------------------------
 variable "enable_jumpbox" {
-    default = false
+    default = "false"
     description = "Enable the ec2 instance used to connect to resources inside the VPC not directly accessible via the Internet."
 }
 

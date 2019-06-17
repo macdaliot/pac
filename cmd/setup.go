@@ -25,6 +25,7 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		frontEnd := getFrontEnd(cmd)
 		projectName := getProjectName(cmd)
 		dnsPristine := getDNSPristine(cmd)
+		hostedZone := getHostedZone(cmd)
 
 		// Perform various checks to ensure we should proceed
 		setup.ValidateInputs(projectName, frontEnd, backEnd, database, env)
@@ -45,6 +46,7 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		config.Set("region", awsRegion)
 		config.Set("terraformAWSVersion", terraform.AWSVersion)
 		config.Set("terraformTemplateVersion", terraform.TemplateVersion)
+		config.Set("hostedZone", hostedZone)
 
 		// Create encryption key (used to secure Terraform state) which is needed for the Terraform templates
 		encryptionKeyID := setup.CreateEncryptionKey()
@@ -86,6 +88,7 @@ func init() {
 	setupCmd.PersistentFlags().StringVarP(&env, "env", "e", "dev", "environment name")
 	setupCmd.PersistentFlags().StringVarP(&awsRegion, "awsregion", "w", "us-east-2", "AWS Region")
 	setupCmd.PersistentFlags().StringVarP(&dnsPristine, "pristine", "p", "false", "Hosted zone doesn't already exist.")
+	setupCmd.PersistentFlags().StringVarP(&hostedZone, "hostedzone", "z", "pac.pyramidchallenges.com", "DNS zone to add records to.")
 }
 
 // TODO: pull from systems manager parameter store
@@ -153,4 +156,12 @@ func getDNSPristine(cmd *cobra.Command) string {
 	dnsPristine, err := cmd.Flags().GetString("pristine")
 	errors.QuitIfError(err)
 	return dnsPristine
+}
+
+var hostedZone string
+
+func getHostedZone(cmd *cobra.Command) string {
+	hostedZone, err := cmd.Flags().GetString("hostedzone")
+	errors.QuitIfError(err)
+	return hostedZone
 }
