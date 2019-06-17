@@ -9,12 +9,35 @@ export type AnyFunction = (...args: any[]) => any;
 export type StringMap<T> = { [key: string]: T };
 
 export type Action<T extends string, P = void> = P extends void
-  ? Readonly<{ type: T }>
-  : Readonly<{ type: string; payload: P }>;
+    ? Readonly<{ type: T }>
+    : Readonly<{ type: T; payload: P }>;
 
+
+
+/**
+ * Get actions types union when using the create action function.
+ * It is recommended to export them under the same name as your Actions object, to leverage token merging
+ *
+ * @example
+ *
+ * ```ts
+ * const GET_USER_ID = 'GET_USER_ID'
+ * const SET_USER = 'SET_USER'
+ *
+ * export const Actions = {
+ *  setAge: (age: number) => createAction(GET_USER, age),
+ *  setName: (name: string) => createAction(SET_USER, name),
+ *  reloadUrl: () => createAction(RELOAD_URL),
+ * }
+ *
+ * // The type will be the following:
+ * { Readonly <{ type: "GET_USER_ID"; payload: number; }> | Readonly <{ type: "SET_USER"; payload: string; }>
+ * export type Actions = ActionsUnion<typeof Actions>
+ * ```
+ */
 export type ActionsUnion<A extends StringMap<AnyFunction>> = ReturnType<
-  A[keyof A]
->;
+    A[keyof A]
+    >;
 
 /**
  * Only use if you prefer to use if else than switch statements
@@ -22,18 +45,19 @@ export type ActionsUnion<A extends StringMap<AnyFunction>> = ReturnType<
  * @param action The action object
  */
 export const isActionOf = (
-  actionName: string,
-  action: Readonly<{ type: string }>
+    actionName: string,
+    action: Readonly<{ type: string }>
 ): boolean => {
   return action.type === actionName;
 };
 
-export function createAction<T extends string>(type: T): Action<T>;
+export function createAction<T extends string>(type: T): Action<T>
 export function createAction<T extends string, P>(
-  type: string,
-  payload: P
-): Action<T, P>;
-export function createAction<T, P>(type: T, payload?: P) {
-  const action = payload === undefined ? { type } : { type, payload };
-  return action;
+    type: T,
+    payload: P
+): Action<T, P>
+export function createAction<T extends string, P>(type: T, payload?: P) {
+  const action = payload === undefined ? { type } : { type, payload }
+
+  return action
 }
