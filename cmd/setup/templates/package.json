@@ -1,0 +1,14 @@
+{
+  "name": "{{.projectName}}",
+  "version": "0.0.1",
+  "description": "Project created by PAC",
+  "devDependencies": {
+    "typescript": "^3.5.2",
+    "ts-node": "^8.3.0"
+  },
+  "scripts": {
+    "install": "npx ts-node recursive-npm-install.ts"
+  },
+  "author": "Pyramid Systems, Inc.",
+  "license": "ISC"
+}
