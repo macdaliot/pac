@@ -340,7 +340,7 @@ resource "aws_instance" "jumpbox" {
   ami                         = "${data.aws_ami.amzn.id}"
   associate_public_ip_address = true
   instance_type               = "t2.micro"
-  key_name                    = "jumpbox"
+  key_name                    = "jumpbox-${var.project_name}"
   subnet_id                   = "${aws_subnet.public.0.id}"
   vpc_security_group_ids      = ["${aws_security_group.es_jumpbox.id}"]
 
