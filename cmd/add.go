@@ -2,12 +2,18 @@ package cmd
 
 import (
 	"os"
+	"strings"
 
 	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/pac/cmd/add"
 	"github.com/PyramidSystemsInc/pac/config"
 	"github.com/spf13/cobra"
 )
+
+var addResourceMap = map[string]func(*cobra.Command){
+	"service" : addService,
+	"authService" : addAuthService,
+}
 
 var addCmd = &cobra.Command{
 	Use:   "add",
@@ -16,7 +22,7 @@ var addCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		addType := validateAddTypeArgument(args)
 		os.Chdir(config.GetRootDirectory())
-		addFiles(cmd, addType)
+		addResourceMap[addType](cmd)
 	},
 }
 
@@ -27,27 +33,17 @@ func init() {
 
 func validateAddTypeArgument(args []string) string {
 	if len(args) == 1 {
-		if args[0] == "service" || args[0] == "authService" {
+		if _,ok := addResourceMap[args[0]]; ok {
 			return args[0]
 		} else {
-			errors.LogAndQuit("The type was set to an invalid value. The valid types are 'service' and 'authService'")
+			errors.LogAndQuit("The type was set to an invalid value. The valid types are " + getSupportedFlags(addResourceMap))
 		}
 	} else if len(args) == 0 {
-		errors.LogAndQuit("A type must be specifed after the 'add' command. The valid types are 'service' and 'authService'")
+		errors.LogAndQuit("A type must be specified after the 'add' command. The valid types are " + getSupportedFlags(addResourceMap))
 	} else if len(args) > 1 {
 		errors.LogAndQuit("Only one type may be passed for each 'add' command")
 	}
 	return ""
-}
-
-func addFiles(cmd *cobra.Command, addType string) {
-	if addType == "service" {
-		addService(cmd)
-	} else if addType == "authService" {
-		addAuthService(cmd)
-	} else {
-		errors.LogAndQuit("The type was set to an invalid value. The valid types are 'service' and 'authService'")
-	}
 }
 
 func addService(cmd *cobra.Command) {
@@ -65,4 +61,12 @@ func getName(cmd *cobra.Command) string {
 	name, err := cmd.Flags().GetString("name")
 	errors.QuitIfError(err)
 	return name
+}
+
+func getSupportedFlags(m map[string]func(*cobra.Command)) string {
+	keys := make([]string, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	return "'" + strings.Join(keys, "', '") + "'"
 }
