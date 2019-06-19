@@ -1,30 +1,5 @@
 ## {{.projectName}}
 
-
-
-### Getting Started
-
-###### This workflow will set up your project, deploy it to AWS, and set up the pipeline
-
-1. pac deploy
-
-2. Navigate to your Jenkins' IP address (see `Helpful Links` section below). If you can see a login page, run from your project's root directory:
-
-* `pac automate jenkins`
-
-3. Create one or more microservices with:
-
-* `pac add service --name <service-name>`
-* `pac add authService`
-
-4. Push to GitHub:
-
-* `git add --all`
-* `git commit -m "Initial commit"`
-* `git push origin master`
-
-
-
 ### Setting up Authentication Locally
 
 1. Ensure you have created one or more services and one authentication service
@@ -37,7 +12,7 @@
 
 5. Run `launch.sh`
 
-6. If you did not create the project yourself, request the `.env` files that appear in each service folders from the person who created the project (they are created with the `pac add` command, but included in the `.gitignore` file)
+6. If you did not create the project yourself, request the `.env` files that appear in each service folders from the person who created the project
 
 ###### Top Troubleshooting Tip
 
