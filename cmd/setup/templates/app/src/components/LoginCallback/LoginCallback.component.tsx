@@ -6,9 +6,12 @@ import { Dispatch, bindActionCreators } from 'redux';
 import { createAction, ActionsUnion } from '@app/core/action';
 import { webStorage } from '@app/config';
 import { JWT_RECEIVED } from '@app/redux/Actions';
+import { IUser } from '@pyramid-systems/domain';
+import { getUserFromToken } from '@app/core/token.helper';
 
 const actions = {
-  setToken: (token: string) => createAction(JWT_RECEIVED, token)
+  setToken: (token: string, user: IUser) =>
+      createAction(JWT_RECEIVED, { token, user })
 };
 export type LoginCallbackActions = ActionsUnion<typeof actions>;
 
@@ -23,16 +26,15 @@ type ReduxStateToProps = ReturnType<typeof mapStateToProps>;
 type ReduxDispatchToProps = ReturnType<typeof mapDispatchToProps>;
 type LoginCallbackProps = Location & ReduxDispatchToProps & ReduxStateToProps;
 
-export class LoginCallbackComponent extends React.Component<
-    LoginCallbackProps
-    > {
+export class LoginCallbackComponent extends React.Component<LoginCallbackProps> {
   componentDidMount = () => {
     const token = this.props.location.search.slice(1);
     if (webStorage.isSupported()) {
-      const tokenName = "pac-{{.projectName}}-token";
+      const tokenName = 'pac-testdsa-token';
       webStorage.setItem(tokenName, token.toString());
     }
-    this.props.setToken(token);
+
+    this.props.setToken(token, getUserFromToken(token));
   };
 
   render = () => {

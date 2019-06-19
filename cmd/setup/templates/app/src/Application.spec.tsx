@@ -26,28 +26,12 @@ describe('Application component (unit/shallow)', () => {
   });
 });
 
-describe('Application component handles login correctly', () => {
+describe('Application component dispatches an action if a token is in local storage', () => {
   it('should keep the loggedIn state variable at false if the user is null', () => {
     appStore.getState().user = undefined;
     const component = shallow(<ApplicationComponent />);
     const instance = component.instance() as ApplicationComponent;
-    instance.handleLogin();
+
     expect(component.state('loggedIn')).toEqual(false);
-  });
-
-  it('should set the token as an axios default header if the user is not null', () => {
-    appStore.getState().user = sampleUser;
-    const component = shallow(<ApplicationComponent />);
-    const instance = component.instance() as ApplicationComponent;
-    instance.handleLogin();
-    expect(axios.defaults.headers.common['Authorization']).not.toBe(undefined);
-  });
-
-  it('should set the loggedIn state variable to true if the user is not null', () => {
-    appStore.getState().user = sampleUser;
-    const component = shallow(<ApplicationComponent />);
-    const instance = component.instance() as ApplicationComponent;
-    instance.handleLogin();
-    expect(component.state('loggedIn')).toEqual(true);
   });
 });
