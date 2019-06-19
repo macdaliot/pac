@@ -26,9 +26,9 @@ if (webStorage.isSupported() && webStorage.hasItem(tokenName)) {
 }
 
 export const rootReducer = (
-  state = initialApplicationState,
-  action: LoginCallbackActions
-) => {
+  state: ApplicationState = initialApplicationState,
+  action: Partial<LoginCallbackActions>
+): ApplicationState => {
   switch (action.type) {
     case JWT_RECEIVED:
       try {
