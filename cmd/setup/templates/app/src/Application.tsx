@@ -11,7 +11,7 @@ import routes from './routes';
 import '@pyramidlabs/react-ui/styles.css';
 import './scss/main.scss';
 import { webStorage } from './config';
-import { getUserFromToken } from './core/token-helper';
+import { getUserFromToken } from './core/token.helper';
 import { JWT_RECEIVED } from './redux/Actions';
 import { createAction } from './core/action';
 
