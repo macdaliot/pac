@@ -12,14 +12,6 @@
 
 5. If you did not create the project yourself, request the `.env` files that appear in each service folders from the person who created the project
 
-###### Top Troubleshooting Tip
-
-* If you are a Windows user and the `launch.sh` script failed:
-
-1. Open up the script and replace all instances of `aws.cmd` to `aws`
-
-
-
 ### Setting up Authentication in the Cloud
 
 1. Ensure you have created an authentication service
