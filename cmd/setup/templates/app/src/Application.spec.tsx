@@ -1,5 +1,4 @@
 import * as React from 'react';
-import axios from 'axios';
 import { shallow } from 'enzyme';
 import { ApplicationComponent } from './Application';
 import { appStore } from './redux/Store';
