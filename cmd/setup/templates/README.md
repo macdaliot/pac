@@ -6,13 +6,11 @@
 
 2. Navigate to `./services/<any-regular-service-name>` in any bash-like terminal
 
-3. Change the `launch.sh` script to have executable permissions (`chmod 755 launch.sh`)
+3. Ensure nothing is running on ports 3000 or 8001
 
-4. Ensure nothing is running on ports 3000 or 8001
+4. Use the dev-tool provided [here](https://pac-dev-tools.s3.us-east-2.amazonaws.com/) to deploy locally 
 
-5. Run `launch.sh`
-
-6. If you did not create the project yourself, request the `.env` files that appear in each service folders from the person who created the project
+5. If you did not create the project yourself, request the `.env` files that appear in each service folders from the person who created the project
 
 ###### Top Troubleshooting Tip
 
