@@ -1,15 +1,10 @@
-app/dist
-app/node_modules
-core/node_modules
-domain/node_modules
-services/*/node_modules
-services/*/dist
 services/**/.env
 **/lambdaEnvironment.txt
 **/.DS_Store
 **/test-report.xml
 **/coverage/**
 **/node_modules
+**/dist
 
 *.dll
 *.exe
