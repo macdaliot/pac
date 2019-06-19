@@ -9,6 +9,7 @@ services/**/.env
 **/.DS_Store
 **/test-report.xml
 **/coverage/**
+**/node_modules
 
 *.dll
 *.exe
