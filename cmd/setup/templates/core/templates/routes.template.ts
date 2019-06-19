@@ -21,13 +21,12 @@ import { NextFunction } from 'connect';
             isNullOrUndefined,
             HttpException,
             authenticateMiddleware,
-            Request,
             ILogger
         } from '@pyramid-systems/core';
         import { Container } from 'inversify';
         import { IUser } from '@pyramid-systems/domain';
 
-        import { Response, NextFunction, Express } from 'express'
+        import { Request, Response, NextFunction, Express } from 'express'
 
         const models: TsoaRoute.Models = {
         {{#each models}}
@@ -50,7 +49,7 @@ import { NextFunction } from 'connect';
                                 };
                                     const validationService = new ValidationService(models);
 
-                                    export function RegisterRoutes(app: Express, iocContainer: Container) {
+                                    export const RegisterRoutes = (app: Express, iocContainer: Container) => {
                                         const logger = iocContainer.get<ILogger>(ILogger);
                                         {{#each controllers}}
                                         {{#each actions}}
@@ -58,7 +57,7 @@ import { NextFunction } from 'connect';
                                             {{#if security.length}}
                                         authenticateMiddleware({{json security}}, logger),
                                         {{/if}}
-                                            function (request: Request, response: Response, next: NextFunction) {
+                                            (request: Request, response: Response, next: NextFunction) => {
                                                 const args = {
                                                 {{#each parameters}}
                                                 {{@key}}: {{{json this}}},
@@ -89,11 +88,11 @@ import { NextFunction } from 'connect';
 {{/each}}
     {{/each}}
 
-        function isController(object: any): object is Controller {
+        const isController = (object: any): object is Controller => {
             return 'getHeaders' in object && 'getStatus' in object && 'setStatus' in object;
         }
 
-        function promiseHandler(controllerObj: any, promise: any, response: Response, next: NextFunction) {
+        const promiseHandler (controllerObj: any, promise: any, response: Response, next: NextFunction) => {
             return Promise.resolve(promise)
                 .then((data: any) => {
                     let statusCode;
@@ -115,7 +114,7 @@ import { NextFunction } from 'connect';
                 .catch((error: any) => next(error));
         }
 
-        function getValidatedArgs(args: any, request: any): any[] {
+        const getValidatedArgs (args: any, request: any): any[] => {
             const fieldErrors: FieldErrors  = {};
             const values = Object.keys(args).map((key) => {
                 const name = args[key].name;

@@ -1,5 +1,9 @@
-import { Request } from "express";
 import { ILogger } from "@pyramid-systems/core";
-export interface Request extends Request {
-  log: ILogger;
+
+declare global {
+  namespace Express {
+    export interface Request {
+      log: ILogger;
+    }
+  }
 }
