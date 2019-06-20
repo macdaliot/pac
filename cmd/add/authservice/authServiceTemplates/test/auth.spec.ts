@@ -2,12 +2,9 @@ import * as express from 'express';
 import {
   errorMiddleware,
   generateRandomString,
-  HttpException,
-  Request
+  HttpException
 } from '@pyramid-systems/core';
 import { logMock } from './common';
-
-
 
 describe('generic functions', () => {
   it('should generate random strings', () => {
@@ -28,9 +25,9 @@ describe('generic functions', () => {
     };
 
     let error = new HttpException(500, 'Things went wrong');
-    let request = { body: {}, log: logMock } as Request;
+    let request = { body: {}, log: logMock } as express.Request;
     let response = { status: statusFunc, send: sendFunc } as express.Response;
-    errorMiddleware(error, request, response, () => {});
+    errorMiddleware(error, request, response, () => { });
     expect(statusResult).toBe(expectedStatus);
   });
 });

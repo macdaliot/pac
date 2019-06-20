@@ -1,8 +1,8 @@
 import { TsoaRoute } from 'tsoa';
-import { Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import * as passport from 'passport';
 import { IUser } from '@pyramid-systems/domain';
-import { intersection, isNullOrUndefined, Request, ILogger } from '@pyramid-systems/core';
+import { intersection, isNullOrUndefined, ILogger } from '@pyramid-systems/core';
 
 const passportOptions = { session: false };
 

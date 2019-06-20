@@ -1,36 +1,36 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { ApplicationComponent } from './Application';
-import { appStore } from './redux/Store';
-import { IUser } from '@pyramid-systems/domain';
+import { ApplicationStore } from './redux/Store';
+import { WebStorage, IWebStorage } from './config';
+import { Store } from 'redux';
+jest.mock('./config');
+jest.mock('./redux/Store');
 
-const sampleUser: IUser = {
-  exp: 1556083479,
-  groups: [],
-  iat: 1556047479,
-  iss: "urn:pacAuth",
-  name: "Sample",
-  sub: "sample@pyramidsystems.com"
-};
+let StorageMock: jest.Mocked<IWebStorage> = WebStorage as any;
+let StoreMock: jest.Mocked<Store> = ApplicationStore as any;
 
-describe('Application component (unit/shallow)', () => {
-  it('should render', () => {
-    const component = shallow(<ApplicationComponent />);
-    expect(component.exists()).toBe(true);
+describe('Application component', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
   });
 
-  it('should have a default "loggedIn" state of false', () => {
-    const component = shallow(<ApplicationComponent />);
-    expect(component.state('loggedIn')).toBe(false);
+  describe('Token is stored in local storage', () => {
+    it('should dispatch an action to the store', () => {
+      StorageMock.isSupported.mockReturnValue(true);
+      StorageMock.hasItem.mockReturnValue(true);
+      StorageMock.getItem.mockReturnValue(
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+      );
+      shallow(<ApplicationComponent />);
+      expect(StoreMock.dispatch).toHaveBeenCalledTimes(1);
+    });
   });
-});
 
-describe('Application component dispatches an action if a token is in local storage', () => {
-  it('should keep the loggedIn state variable at false if the user is null', () => {
-    appStore.getState().user = undefined;
-    const component = shallow(<ApplicationComponent />);
-    const instance = component.instance() as ApplicationComponent;
-
-    expect(component.state('loggedIn')).toEqual(false);
+  describe('Token not stored in local storage', () => {
+    it('should not dispatch an action to the store', () => {
+      shallow(<ApplicationComponent />);
+      expect(StoreMock.dispatch).toHaveBeenCalledTimes(0);
+    });
   });
 });

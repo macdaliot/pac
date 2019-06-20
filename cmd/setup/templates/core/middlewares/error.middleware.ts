@@ -1,6 +1,5 @@
-import { NextFunction, Response } from 'express';
+import { NextFunction, Response, Request } from 'express';
 import { HttpException } from '../exceptions/http.exception';
-import { Request } from '@pyramid-systems/core';
 
 export function errorMiddleware(
     error: HttpException,
