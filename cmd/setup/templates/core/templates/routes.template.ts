@@ -92,7 +92,7 @@ import { NextFunction } from 'connect';
             return 'getHeaders' in object && 'getStatus' in object && 'setStatus' in object;
         }
 
-        const promiseHandler (controllerObj: any, promise: any, response: Response, next: NextFunction) => {
+        const promiseHandler = (controllerObj: any, promise: any, response: Response, next: NextFunction) => {
             return Promise.resolve(promise)
                 .then((data: any) => {
                     let statusCode;
@@ -114,7 +114,7 @@ import { NextFunction } from 'connect';
                 .catch((error: any) => next(error));
         }
 
-        const getValidatedArgs (args: any, request: any): any[] => {
+        const getValidatedArgs = (args: any, request: any): any[] => {
             const fieldErrors: FieldErrors  = {};
             const values = Object.keys(args).map((key) => {
                 const name = args[key].name;

@@ -1,9 +1,9 @@
 import { UrlConfig } from './urlConfig';
-import { webStorage, WebStorage, WebStorageData } from './webStorage';
-
+import { IWebStorage } from './WebStorage';
+import WebStorage from './WebStorage';
+export const tokenName = 'pac-{{.projectName}}-token';
 export {
   UrlConfig,
-  webStorage,
   WebStorage,
-  WebStorageData
+  IWebStorage
 };
