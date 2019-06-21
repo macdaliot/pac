@@ -1,4 +1,4 @@
-import { WebStorage } from "./index";
+import {IWebStorage, WebStorage} from "./index";
 jest.mock('./index');
 
 let StorageMock: jest.Mocked<IWebStorage> = WebStorage as any;

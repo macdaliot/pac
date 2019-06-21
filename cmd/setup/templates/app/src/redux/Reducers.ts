@@ -1,4 +1,3 @@
-import { Buffer } from 'buffer';
 import { LoginCallbackActions } from '@app/components/LoginCallback/LoginCallback.component';
 import { IUser } from '@pyramid-systems/domain';
 import { JWT_RECEIVED } from './Actions';
