@@ -12,7 +12,7 @@ const initialApplicationState: ApplicationState = { user: null, token: null };
 
 export const rootReducer = (
     state: ApplicationState = initialApplicationState,
-    action: Partial<LoginCallbackActions>
+    action: LoginCallbackActions
 ): ApplicationState => {
   switch (action.type) {
     case JWT_RECEIVED:

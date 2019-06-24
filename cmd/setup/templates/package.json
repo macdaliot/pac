@@ -12,7 +12,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "lerna run build && lerna run test"
+      "pre-push": "git stash && git checkout HEAD && lerna run build && lerna run test && git stash pop"
     }
   },
   "author": "Pyramid Systems, Inc.",
