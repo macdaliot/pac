@@ -3,7 +3,9 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
+	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/spf13/cobra"
 )
@@ -24,9 +26,17 @@ Node). It leverages Jenkins for pipelines, Auth0 for authentication, AWS as the
 cloud platform, and is supported by relevant open source libraries`,
 	Version: "1.0",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		// Set log level
-		logger.SetLogLevel(logger.INFO)
+		logLevel := strings.ToUpper(getLogLevel(cmd))
 
+		input, validInput := logger.ParseLevel(logLevel)
+		
+		if validInput {
+			logger.SetLogLevel(input)
+		} else {
+			logger.SetLogLevel(logger.INFO)
+			logger.Warn("Invalid log level input. Valid inputs are: " + getValidLogFlags(logger.Levels) + ". Defaulting to 'info' log level")
+		}
+		
 		// Check for extra arguments
 		warnExtraArgumentsAreIgnored(args)
 	},
@@ -40,6 +50,8 @@ func Execute() {
 }
 
 func init() {
+	RootCmd.PersistentFlags().StringVarP(&logLevel, "loglevel", "l", "", "log level (info, warning, error)")
+	
 	// cobra.OnInitialize(initConfig)
 	// RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.pac.yaml)")
 	// RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
@@ -63,8 +75,25 @@ func initConfig() {
 }
 */
 
+var logLevel string
+
+func getLogLevel(cmd *cobra.Command) string {
+	logLevel, err := cmd.Flags().GetString("loglevel")
+	errors.QuitIfError(err)
+	return logLevel
+}
+
+
 func warnExtraArgumentsAreIgnored(args []string) {
 	if len(args) > 0 {
 		logger.Warn("Arguments were provided, but all arguments after 'setup' and before the flags are ignored")
 	}
+}
+
+func getValidLogFlags(m map[logger.LogLevel]string) string {
+	values := make([]string, 0)
+	for _, v := range m {
+		values = append(values, strings.ToLower(v))
+	}
+	return "'" + strings.Join(values, "', '") + "'"
 }
