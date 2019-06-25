@@ -1,16 +1,16 @@
 package starter.pageObject;
 
-import java.util.List;
-
-import org.openqa.selenium.By;
-
 import net.serenitybdd.core.annotations.findby.FindBy;
 import net.serenitybdd.core.pages.WebElementFacade;
+import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.pages.PageObject;
 
 //fix this later:
 //@DefaultUrl("http://api.peachfour.pac.pyramidchallenges.com/api/auth")
 public class LoginPage extends PageObject {
+
+	@Managed
+
 
 	@FindBy(xpath = "//*[@id=\"container\"]/div/header/div[2]/a/div/button")
 	private WebElementFacade initialLoginButton;
@@ -32,7 +32,7 @@ public class LoginPage extends PageObject {
 	private WebElementFacade usernameHeader;
 	@FindBy(className = "auth0-lock-name")
 	private WebElementFacade auth0Header;
-	@FindBy(xpath = "//*[@id=\"auth0-lock-container-1\"]/div/div[2]/form/div/div/div[2]/div/div/span/span")
+	@FindBy(xpath = "//*[@id=\"auth0-lock-container-1\"]/div/div[2]/form/div/div/div/div[2]/div[1]/div/div/span/span")
 	private WebElementFacade errorMessage;
 	// success messages
 	private static final String loginSuccessMessage = "success";
