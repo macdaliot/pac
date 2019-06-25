@@ -1,20 +1,16 @@
-Feature: PAC API Features
+Feature: API Features
 
-  @API
-  Scenario Outline: GET Request to endpoint
-    Then the <endpoint> will have a status of <status> with token: <token>
+  @TEST
+  Scenario Outline: HTTP GET Request to Endpoint
+    Then the <endpoint> will have a status of <status>
 
     Examples:
-      | endpoint  | status | token |
+      | endpoint      | status        |
 
-  @API
-  Scenario: Invalid Page
-    Given I am on an invalid page
-    Then the status is 200 and there is a page error message
 
-  @APINOTYETREADY
-  Scenario Outline: POST
-    Given I get a 200 status from POST <endpoint>
+  @NOTREADY
+  Scenario Outline: HTTP POST Request to Endpoint
+    Then the <endpoint> will have a status of <status>
 
-    Examples: 
-      | endpoint  |
+    Examples:
+      | endpoint      | status        |

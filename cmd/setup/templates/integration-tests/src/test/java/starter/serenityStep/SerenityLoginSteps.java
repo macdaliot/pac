@@ -12,7 +12,6 @@ public class SerenityLoginSteps {
 	LoginPage page;
 	EnvironmentVariables variables = SystemEnvironmentVariables.createEnvironmentVariables();
 	String baseFrontEndUri = variables.getProperty("baseFrontEndUri");
-	String token = variables.getProperty("token");
 
 	/**
 	 * User opens the application
