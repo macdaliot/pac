@@ -32,6 +32,8 @@ cloud platform, and is supported by relevant open source libraries`,
 		
 		if validInput {
 			logger.SetLogLevel(input)
+		} else if logLevel == "" {
+			logger.SetLogLevel(logger.INFO)
 		} else {
 			logger.SetLogLevel(logger.INFO)
 			logger.Warn("Invalid log level input. Valid inputs are: " + getValidLogFlags(logger.Levels) + ". Defaulting to 'info' log level")
