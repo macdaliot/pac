@@ -9,3 +9,14 @@ variable "hosted_zone" {
 variable "region" {
     default = "{{ .region }}"
 }
+
+#----------------------------------------------------------------------------------------------------------------------
+# VPC
+#----------------------------------------------------------------------------------------------------------------------
+variable "management_cidr_block" {
+    default = "{{ .awsManagementVpcCidrBlock }}"
+}
+
+variable "application_cidr_block" {
+    default = "{{ .awsApplicationVpcCidrBlock }}"
+}
