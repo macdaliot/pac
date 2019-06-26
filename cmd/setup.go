@@ -69,9 +69,6 @@ NodeJS/Express back-end, and DynamoDB database)`,
 		// This needs to happen before CopyBinaries so it has somewhere to copy to
 		setup.Templates()
 
-		// Copy binary (zip) files into Terraform directories
-		setup.CopyBinaries()
-
 		// Create a GitHub repository for the project
 		setup.GitRepository()
 	},
