@@ -1,0 +1,11 @@
+{
+    "watch": [
+    "./dist"
+],
+    "ext": "js",
+    "ignore": [
+    "./src/**/*.spec.ts"
+],
+    "legacyWatch": true,
+    "exec": "node dist/services/{{.serviceName}}/src/local"
+}
