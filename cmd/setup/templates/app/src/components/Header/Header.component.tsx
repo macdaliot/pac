@@ -5,14 +5,6 @@ import { Button, ButtonPriority } from '@pyramidlabs/react-ui';
 import { UrlConfig } from '../../config';
 import './header.scss';
 import { ApplicationState } from '@app/redux/Reducers';
-import { WebStorage, tokenName } from '@app/config';
-import {bindActionCreators, Dispatch} from "redux";
-import {createAction} from "@app/core/action";
-import {LOGOUT} from "@app/redux/Actions";
-
-const actions = {
-    logout: () => createAction(LOGOUT)
-};
 
 export const mapStateToProps = (
   state: ApplicationState
@@ -20,9 +12,7 @@ export const mapStateToProps = (
   userName: state.user ? state.user.name : null,
   isAuthenticated: Boolean(state.user)
 });
-
-export const mapDispatchToProps = (dispatch: Dispatch) =>
-    bindActionCreators(actions, dispatch);
+export const mapDispatchToProps = () => ({});
 
 type HeaderComponentState = { userName?: string; isAuthenticated?: boolean };
 type ReduxStateToProps = ReturnType<typeof mapStateToProps>;
@@ -44,13 +34,6 @@ export class HeaderComponent extends React.Component<HeaderProps> {
     );
   };
 
-  logout = () => {
-    if (WebStorage.isSupported()) {
-        WebStorage.removeItem(tokenName);
-    }
-    this.props.logout();
-    };
-
   renderLogin = () => {
     if (this.props.isAuthenticated) {
       return (
@@ -60,7 +43,7 @@ export class HeaderComponent extends React.Component<HeaderProps> {
             <span className="username">{this.props.userName}</span>
             <span className="fas fa-caret-down" />
           </div>
-          <Button text={'Logout'} priority={ButtonPriority.Primary} onClick={this.logout} />
+          <Button text={'Logout'} priority={ButtonPriority.Primary} />
         </div>
       );
     } else {
