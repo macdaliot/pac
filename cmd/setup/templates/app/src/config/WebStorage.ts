@@ -25,6 +25,10 @@ export class WebStorage implements IWebStorage {
   setItem = (key: string, value: string): void => {
     this.storage.setItem(key, value);
   }
+
+  removeItem = (key: string): void => {
+    this.storage.removeItem(key)
+  }
 }
 
 export default new WebStorage();
