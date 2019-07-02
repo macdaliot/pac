@@ -13,13 +13,17 @@ describe('header (unit/shallow)', () => {
   // shallow() will not render child components
 
   it('should show a login link when not logged in', () => {
-    const hdr = shallow(<HeaderComponent />);
+    const hdr = shallow(<HeaderComponent
+        logout={() => ({
+          type: 'LOGOUT'
+        })}
+    />);
     expect(
-      hdr.contains(
-        <a href="http://localhost:3000/api/auth/login">
-          <Button text={'Login'} priority={ButtonPriority.Primary} />
-        </a>
-      )
+        hdr.contains(
+            <a href="http://localhost:3000/api/auth/login">
+              <Button text={'Login'} priority={ButtonPriority.Primary} />
+            </a>
+        )
     ).toBe(true);
   });
 
@@ -28,7 +32,11 @@ describe('header (unit/shallow)', () => {
       userName: 'testUser',
       isAuthenticated: true
     };
-    const hdr = shallow(<HeaderComponent {...props} />);
+    const hdr = shallow(<HeaderComponent
+        {...props}
+        logout={() => ({
+          type: 'LOGOUT'
+        })}/>);
     expect(hdr.contains(<span className="username">testUser</span>)).toBe(true);
   });
 
