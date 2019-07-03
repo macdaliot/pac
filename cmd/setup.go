@@ -4,35 +4,41 @@ import (
 	"github.com/PyramidSystemsInc/go/aws/sts"
 	"github.com/PyramidSystemsInc/go/aws/util"
 	"github.com/PyramidSystemsInc/go/errors"
+	"github.com/PyramidSystemsInc/go/terraform"
 	"github.com/PyramidSystemsInc/pac/cmd/setup"
 	"github.com/PyramidSystemsInc/pac/config"
-	"github.com/PyramidSystemsInc/pac/go/terraform"
 	"github.com/spf13/cobra"
 )
 
-var supportedFlags = []string{
-	"back",
-	"database",
-	"description",
-	"pristine",
-	"env",
-	"front",
-	"name",
-	"awsregion",
-	"hostedzone"}
+const (
+	projName    string = "name"
+	back        string = "back"
+	front       string = "front"
+	database    string = "database"
+	env         string = "env"
+	description string = "description"
+)
+
+// FlagConfigNames Flag to config names
+type FlagConfigNames struct {
+	flagName   string
+	configName string
+}
+
+var supportedFlags = []FlagConfigNames{
+	{flagName: back, configName: "backEnd"},
+	{flagName: database, configName: database},
+	{flagName: description, configName: description},
+	{flagName: "pristine", configName: "dnsPristine"},
+	{flagName: env, configName: env},
+	{flagName: front, configName: "frontEnd"},
+	{flagName: projName, configName: "projectName"},
+	{flagName: "awsregion", configName: "region"},
+	{flagName: "hostedzone", configName: "hostedZone"},
+}
 
 // Used to store values for the supported flags
-var supportedFlagValues = make(map[string]string)
-
-// Used to convert the supported flags into the flag names used for the config file
-var flagToConfig = map[string]string{
-	"back":       "backEnd",
-	"pristine":   "dnsPristine",
-	"front":      "frontEnd",
-	"name":       "projectName",
-	"awsregion":  "region",
-	"hostedzone": "hostedZone",
-}
+var supportedFlagValues = make(map[FlagConfigNames]string)
 
 var setupCmd = &cobra.Command{
 	Use:   "setup",
@@ -42,23 +48,20 @@ var setupCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// Get the values provided by command line flags -OR- the default values if not provided
 		for _, val := range supportedFlags {
-			supportedFlagValues[val] = getFlagValue(cmd, val)
+			supportedFlagValues[val] = getFlagValue(cmd, val.flagName)
 		}
 
 		// Perform various checks to ensure we should proceed
-		setup.ValidateInputs(supportedFlagValues["name"], supportedFlagValues["front"], supportedFlagValues["back"], supportedFlagValues["database"], supportedFlagValues["env"])
+		nameInput := mapLookup(projName)
+		setup.ValidateInputs(nameInput, mapLookup(front), mapLookup(back), mapLookup(database), mapLookup(env))
 
-		setup.CreateRootProjectDirectory(supportedFlagValues["name"])
-		setup.GoToRootProjectDirectory(supportedFlagValues["name"])
+		setup.CreateRootProjectDirectory(nameInput)
+		setup.GoToRootProjectDirectory(nameInput)
 		config.Create()
 
 		// Set configuration values in the .pac.json file in the new project directory
 		for currFlag, val := range supportedFlagValues {
-			if configKey, exists := flagToConfig[currFlag]; exists {
-				config.Set(configKey, val)
-			} else {
-				config.Set(currFlag, val)
-			}
+			config.Set(currFlag.configName, val)
 		}
 
 		config.Set("gitAuth", gitAuth)
@@ -93,13 +96,13 @@ var setupCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(setupCmd)
-	setupCmd.PersistentFlags().StringP("name", "n", "", "project name (required)")
-	setupCmd.MarkPersistentFlagRequired("name")
+	setupCmd.PersistentFlags().StringP(projName, "n", "", "project name (required)")
+	setupCmd.MarkPersistentFlagRequired(projName)
 	setupCmd.PersistentFlags().StringP("description", "i", "Project created by PAC", "short description of the project")
-	setupCmd.PersistentFlags().StringP("front", "f", "ReactJS", "front-end framework/library")
-	setupCmd.PersistentFlags().StringP("back", "b", "Express", "back-end framework/library")
-	setupCmd.PersistentFlags().StringP("database", "d", "DynamoDB", "database type")
-	setupCmd.PersistentFlags().StringP("env", "e", "dev", "environment name")
+	setupCmd.PersistentFlags().StringP(front, "f", "ReactJS", "front-end framework/library")
+	setupCmd.PersistentFlags().StringP(back, "b", "Express", "back-end framework/library")
+	setupCmd.PersistentFlags().StringP(database, "d", "DynamoDB", "database type")
+	setupCmd.PersistentFlags().StringP(env, "e", "dev", "environment name")
 	setupCmd.PersistentFlags().StringP("awsregion", "w", "us-east-2", "AWS Region")
 	setupCmd.PersistentFlags().StringP("pristine", "p", "false", "Hosted zone doesn't already exist.")
 	setupCmd.PersistentFlags().StringP("hostedzone", "z", "pac.pyramidchallenges.com", "DNS zone to add records to.")
@@ -114,4 +117,15 @@ func getFlagValue(cmd *cobra.Command, flagString string) string {
 	flagValue, err := cmd.Flags().GetString(flagString)
 	errors.QuitIfError(err)
 	return flagValue
+}
+
+func mapLookup(input string) string {
+	returnVal := ""
+	for k, val := range supportedFlagValues {
+		if k.flagName == input {
+			returnVal = val
+			break
+		}
+	}
+	return returnVal
 }
