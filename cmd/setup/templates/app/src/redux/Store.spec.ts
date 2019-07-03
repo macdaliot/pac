@@ -1,5 +1,5 @@
 import { ApplicationStore } from './Store';
-import { JWT_RECEIVED } from './Actions';
+import { JWT_RECEIVED } from './Actions/Authentication';
 import { IUser } from '@pyramid-systems/domain';
 
 const tokenFromJwtIo =
@@ -18,8 +18,8 @@ describe('Redux store', () => {
     ApplicationStore.dispatch({ type: JWT_RECEIVED, payload: { token: tokenFromJwtIo, user: sampleUser } });
     const state = ApplicationStore.getState();
     expect(state).toBeTruthy();
-    expect(state.user).toBeTruthy();
-    expect(state.user.name).toEqual('John Doe');
-    expect(state.token).toEqual(tokenFromJwtIo);
+    expect(state.authentication.user).toBeTruthy();
+    expect(state.authentication.user.name).toEqual('John Doe');
+    expect(state.authentication.token).toEqual(tokenFromJwtIo);
   });
 });

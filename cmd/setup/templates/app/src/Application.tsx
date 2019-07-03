@@ -12,7 +12,7 @@ import '@pyramidlabs/react-ui/styles.css';
 import './scss/main.scss';
 import { WebStorage, tokenName } from './config';
 import { getUserFromToken } from './core/token.helper';
-import { JWT_RECEIVED } from './redux/Actions';
+import { JWT_RECEIVED } from './redux/Actions/Authentication';
 import { createAction } from './core/action';
 export class ApplicationComponent extends React.Component<{}> {
   constructor(props: any) {

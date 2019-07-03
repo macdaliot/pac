@@ -47,7 +47,9 @@ describe('header (unit/shallow)', () => {
       sub: ''
     };
     const inputState = {
-      user: fakeUser
+      authentication: {
+        user: fakeUser
+      }
     };
     const expectedProps = {
       userName: 'testUser',
@@ -74,8 +76,10 @@ describe('header (integration/mount)', () => {
 
   it('should show user information while logged in', () => {
     const defaultState = {
-      user: {
-        name: 'testUser'
+      authentication: {
+        user: {
+          name: 'testUser'
+        }
       }
     };
     const hdr = mountWithState(<Header />, defaultState);
