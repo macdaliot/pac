@@ -3,21 +3,13 @@ import { hot } from 'react-hot-loader/root';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
-import { createAction, ActionsUnion } from '@app/core/action';
 import { WebStorage, tokenName } from '@app/config';
-import { JWT_RECEIVED } from '@app/redux/Actions';
-import { IUser } from '@pyramid-systems/domain';
+import { loginCallbackActions } from '@app/redux/Actions/Authentication';
 import { getUserFromToken } from '@app/core/token.helper';
-
-const actions = {
-  setToken: (token: string, user: IUser) =>
-      createAction(JWT_RECEIVED, { token, user })
-};
-export type LoginCallbackActions = ActionsUnion<typeof actions>;
 
 export const mapStateToProps = () => ({});
 export const mapDispatchToProps = (dispatch: Dispatch) =>
-    bindActionCreators(actions, dispatch);
+    bindActionCreators(loginCallbackActions, dispatch);
 
 type Location = {
   location: { search: string };

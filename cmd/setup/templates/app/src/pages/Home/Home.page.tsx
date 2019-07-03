@@ -3,12 +3,12 @@ import { hot } from 'react-hot-loader/root';
 import { connect } from 'react-redux';
 import { Alert, AlertType } from '@pyramidlabs/react-ui';
 import './home.scss';
-import { ApplicationState } from '@app/redux/Reducers';
+import { ApplicationState } from '@app/redux/Reducers/Reducer';
 import { Dispatch } from 'redux';
 
 export const mapStateToProps = (state: ApplicationState) => {
   return {
-    isAuthenticated: Boolean(state.user)
+    isAuthenticated: Boolean(state.authentication && state.authentication.user)
   };
 };
 export const mapDispatchToProps = (dispatch: Dispatch) => ({});

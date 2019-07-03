@@ -4,26 +4,20 @@ import { connect } from 'react-redux';
 import { Button, ButtonPriority } from '@pyramidlabs/react-ui';
 import { UrlConfig } from '../../config';
 import './header.scss';
-import { ApplicationState } from '@app/redux/Reducers';
+import { ApplicationState } from '@app/redux/Reducers/Reducer';
 import { WebStorage, tokenName } from '@app/config';
 import { bindActionCreators, Dispatch } from "redux";
-import { ActionsUnion, createAction} from "@app/core/action";
-import { LOGOUT } from "@app/redux/Actions";
-
-const actions = {
-    logout: () => createAction(LOGOUT)
-};
-export type AuthenticationActions = ActionsUnion<typeof actions>;
+import { logoutActions } from "@app/redux/Actions/Authentication";
 
 export const mapStateToProps = (
   state: ApplicationState
 ): HeaderComponentState => ({
-  userName: state.user ? state.user.name : null,
-  isAuthenticated: Boolean(state.user)
+  userName: (state.authentication && state.authentication.user) ? state.authentication.user.name : null,
+  isAuthenticated: Boolean(state.authentication && state.authentication.user)
 });
 
 export const mapDispatchToProps = (dispatch: Dispatch) =>
-    bindActionCreators(actions, dispatch);
+    bindActionCreators(logoutActions, dispatch);
 
 type HeaderComponentState = { userName?: string; isAuthenticated?: boolean };
 type ReduxStateToProps = ReturnType<typeof mapStateToProps>;
