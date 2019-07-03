@@ -5,6 +5,7 @@ interface MockPino {
     level?: string;
     child(options: any): any;
 }
+process.env.LOG_LEVEL = "fatal";
 
 const pinoCastToAny = pino as any;
 const mockPino = <jest.Mock<MockPino>>pinoCastToAny;
@@ -75,7 +76,6 @@ describe('Logger', () => {
         const value = normalizeLogMessage('message');
         expect(value).toBe('');
     })
-
     it('normalizeLogMessage should return the itself string given type is not string', () => {
         const message = { x: 'message' };
         const value = normalizeLogMessage(message);
