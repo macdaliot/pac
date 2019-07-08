@@ -1,6 +1,10 @@
-import {Authentication} from "@app/redux/Reducers/Reducer";
 import {Actions, JWT_RECEIVED, LOGOUT} from "@app/redux/Actions/Authentication";
+import { IUser } from "@pyramid-systems/domain";
 
+export type Authentication = {
+    user?: IUser;
+    token?: string;
+  };
 
 const initialApplicationState: Authentication = { user: null, token: null };
 
