@@ -14,8 +14,8 @@ import (
 )
 
 const (
-	projName string = "projectName"
-	services string = "services/"
+	projName        string = "projectName"
+	serviceRootPath string = "services/"
 )
 
 // Service adds a new service to the application
@@ -24,14 +24,14 @@ func Service(serviceName string) {
 	cfg := createTemplateConfig(serviceName)
 	createServiceFiles(serviceName, cfg)
 
-	commands.Run("npm i", path.Join(services, serviceName))
+	commands.Run("npm i", path.Join(serviceRootPath, serviceName))
 	editHaProxyConfig(serviceName, cfg[projName])
 	editIntegrationTestApiFeatures(serviceName)
-	commands.Run("terraform init -input=false", path.Join(services, "terraform"))
+	commands.Run("terraform init -input=false", path.Join(serviceRootPath, "terraform"))
 }
 
 func createServiceDirectory(serviceName string) {
-	serviceDirectory := str.Concat(services, serviceName)
+	serviceDirectory := str.Concat(serviceRootPath, serviceName)
 	directories.Create(serviceDirectory)
 }
 
