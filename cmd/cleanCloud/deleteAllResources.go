@@ -13,6 +13,8 @@ import (
 	"github.com/PyramidSystemsInc/pac/config"
 )
 
+const terraformS3Bucket string = "terraformS3Bucket"
+
 // DeleteAllResources deletes the AWS resourced created by this application.
 func DeleteAllResources() {
 	os.Chdir(config.GetRootDirectory())
@@ -43,9 +45,9 @@ func DeleteAllResources() {
 	region := config.Get("region")
 	awsSession := aws.CreateAwsSession(region)
 
-	s3.DeleteAllObjectVersions(config.Get("terraformS3Bucket"), awsSession)
-	s3.DeleteAllDeleteMarkers(config.Get("terraformS3Bucket"), awsSession)
-	s3.DeleteBucket(config.Get("terraformS3Bucket"), awsSession)
+	s3.DeleteAllObjectVersions(config.Get(terraformS3Bucket), awsSession)
+	s3.DeleteAllDeleteMarkers(config.Get(terraformS3Bucket), awsSession)
+	s3.DeleteBucket(config.Get(terraformS3Bucket), awsSession)
 
 	resourcegroups.Create(projectName, "pac-project-name", projectName, awsSession)
 	resourcegroups.DeleteAllResources(projectName, awsSession)
