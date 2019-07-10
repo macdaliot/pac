@@ -5,7 +5,7 @@ describe('webStorage local storage wrapper', () => {
     let cut: IWebStorage;
     let storageMock: IStorageBackend;
     beforeEach(() => {
-        storageMock = { getItem: jest.fn(), setItem: jest.fn() };
+        storageMock = { getItem: jest.fn(), setItem: jest.fn(), removeItem: jest.fn() };
         cut = new WebStorageImpl(storageMock);
     })
     it("should wrap the getItem function", () => {
@@ -20,7 +20,11 @@ describe('webStorage local storage wrapper', () => {
         cut.setItem("foo", "bar");
         expect(storageMock.setItem).toBeCalledTimes(1);
     })
-    it("should use notice that storage isn't supported", () => {
+    it("should use the removeItem function in removeItem", () => {
+        cut.removeItem("foo");
+        expect(storageMock.removeItem).toBeCalledTimes(1);
+    })
+    it("should notice that storage isn't supported", () => {
         cut = new WebStorageImpl({} as IStorageBackend)
         expect(cut.isSupported()).toBeFalsy();
     })

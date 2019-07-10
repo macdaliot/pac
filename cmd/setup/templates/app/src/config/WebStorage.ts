@@ -1,12 +1,14 @@
 export interface IWebStorage {
-  getItem(key: string): string,
-  hasItem(key: string): boolean,
-  isSupported(): boolean,
-  setItem(key: string, value: string): void
+  getItem(key: string): string;
+  hasItem(key: string): boolean;
+  isSupported(): boolean;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
 }
 export interface IStorageBackend {
-  getItem(key: string): string,
-  setItem(key: string, value: string): void
+  getItem(key: string): string;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
 }
 
 export class WebStorageImpl implements IWebStorage {
