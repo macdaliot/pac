@@ -1,13 +1,20 @@
 export interface IWebStorage {
-  getItem(key: string): string,
-  hasItem(key: string): boolean,
-  isSupported(): boolean,
-  setItem(key: string, value: string): void
+  getItem(key: string): string;
+  hasItem(key: string): boolean;
+  isSupported(): boolean;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
+}
+export interface IStorageBackend {
+  getItem(key: string): string;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
 }
 
-export class WebStorage implements IWebStorage {
-  constructor(private storage: Storage = localStorage) {
-
+export class WebStorageImpl implements IWebStorage {
+  private storage: IStorageBackend;
+  constructor(storage: IStorageBackend = localStorage) {
+    this.storage = storage;
   }
 
   getItem = (key: string): string => {
@@ -19,12 +26,16 @@ export class WebStorage implements IWebStorage {
   }
 
   isSupported = (): boolean => {
-    return typeof (Storage) !== "undefined";
+    return typeof (Storage) !== "undefined" && (this.storage.getItem != null);
   }
 
   setItem = (key: string, value: string): void => {
     this.storage.setItem(key, value);
   }
+
+  removeItem = (key: string): void => {
+    this.storage.removeItem(key);
+  }
 }
 
-export default new WebStorage();
+export default new WebStorageImpl();

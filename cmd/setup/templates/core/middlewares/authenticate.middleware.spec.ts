@@ -1,5 +1,9 @@
 import { authenticateMiddleware, handlePassportCallback, handleExpressRequestLoginCallback } from '@pyramid-systems/core';
 import { TsoaRoute } from 'tsoa';
+
+jest.mock('passport', () => ({ authenticate: jest.fn((authType, options, callback) => () => { callback('This is an error', null); })}))
+import * as passport from 'passport';
+
 describe('Authentication Middleware', () => {
     it('should throw an exception given no security definitions defined', () => {
         const securities: TsoaRoute.Security[] = [{
@@ -17,6 +21,22 @@ describe('Authentication Middleware', () => {
         catch (e) {
             expect(e.message).toBe(`No security groups defined in your controller route. Did you do @Security('groups', ['{scope-names}']) above the controller class?`)
         }
+    })
+    it('should call authenticate given security definitions defined', () => {
+        const securities: TsoaRoute.Security[] = [{
+            groups: ['test']
+        }]
+
+        const mockILogger = jest.fn() as any;
+        const mockRequest = jest.fn() as any;
+        const mockResponse = jest.fn() as any;
+        const mockNext = jest.fn() as any;
+        var i = 0;
+        //(passport as any).authenticate = () => i++;
+        const curriedFunction = authenticateMiddleware(securities, mockILogger)
+        //console.log(passport.authenticate);
+        curriedFunction(mockRequest, mockResponse, mockNext);
+        expect(passport.authenticate).toBeCalledTimes(1);
     })
 
 

@@ -46,6 +46,7 @@ export const authenticateMiddleware = (security: TsoaRoute.Security[] = [], logg
         throw new Error(`No security groups defined in your controller route. Did you do @Security('groups', ['{scope-names}']) above the controller class?`);
       }
       if (protectedWith.groups.length > 0) {
+        console.log(passport.authenticate);
         passport.authenticate(
           'jwt',
           passportOptions,

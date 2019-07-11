@@ -4,15 +4,20 @@ import { connect } from 'react-redux';
 import { Button, ButtonPriority } from '@pyramidlabs/react-ui';
 import { UrlConfig } from '../../config';
 import './header.scss';
-import { ApplicationState } from '@app/redux/Reducers';
+import { ApplicationState } from '@app/redux/Reducers/Reducer';
+import { WebStorage, tokenName } from '@app/config';
+import { bindActionCreators, Dispatch } from "redux";
+import { logoutActions } from "@app/redux/Actions/Authentication";
 
 export const mapStateToProps = (
   state: ApplicationState
 ): HeaderComponentState => ({
-  userName: state.user ? state.user.name : null,
-  isAuthenticated: Boolean(state.user)
+  userName: (state.authentication && state.authentication.user) ? state.authentication.user.name : null,
+  isAuthenticated: Boolean(state.authentication && state.authentication.user)
 });
-export const mapDispatchToProps = () => ({});
+
+export const mapDispatchToProps = (dispatch: Dispatch) =>
+    bindActionCreators(logoutActions, dispatch);
 
 type HeaderComponentState = { userName?: string; isAuthenticated?: boolean };
 type ReduxStateToProps = ReturnType<typeof mapStateToProps>;
@@ -34,6 +39,13 @@ export class HeaderComponent extends React.Component<HeaderProps> {
     );
   };
 
+  logout = () => {
+    if (WebStorage.isSupported()) {
+        WebStorage.removeItem(tokenName);
+    }
+    this.props.logout();
+  };
+
   renderLogin = () => {
     if (this.props.isAuthenticated) {
       return (
@@ -43,7 +55,7 @@ export class HeaderComponent extends React.Component<HeaderProps> {
             <span className="username">{this.props.userName}</span>
             <span className="fas fa-caret-down" />
           </div>
-          <Button text={'Logout'} priority={ButtonPriority.Primary} />
+          <Button text={'Logout'} priority={ButtonPriority.Primary} onClick={this.logout} />
         </div>
       );
     } else {

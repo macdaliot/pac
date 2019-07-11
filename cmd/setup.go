@@ -10,43 +10,63 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	projName    string = "name"
+	back        string = "back"
+	front       string = "front"
+	database    string = "database"
+	env         string = "env"
+	description string = "description"
+)
+
+// FlagConfigNames Flag to config names
+type FlagConfigNames struct {
+	flagName   string
+	configName string
+}
+
+var supportedFlags = []FlagConfigNames{
+	{flagName: back, configName: "backEnd"},
+	{flagName: database, configName: database},
+	{flagName: description, configName: description},
+	{flagName: "pristine", configName: "dnsPristine"},
+	{flagName: env, configName: env},
+	{flagName: front, configName: "frontEnd"},
+	{flagName: projName, configName: "projectName"},
+	{flagName: "awsregion", configName: "region"},
+	{flagName: "hostedzone", configName: "hostedZone"},
+}
+
+// Used to store values for the supported flags
+var supportedFlagValues = make(map[FlagConfigNames]string)
+
 var setupCmd = &cobra.Command{
 	Use:   "setup",
 	Short: "Setup new project templates",
 	Long: `Generate new project templates with PAC (The default stack is a ReactJS front-end,
-NodeJS/Express back-end, and DynamoDB database)`,
+	NodeJS/Express back-end, and DynamoDB database)`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Get the values provided by command line flags -OR- the default values if not provided
-		awsRegion := getAWSRegion(cmd)
-		backEnd := getBackEnd(cmd)
-		database := getDatabase(cmd)
-		description := getDescription(cmd)
-		env := getEnv(cmd)
-		frontEnd := getFrontEnd(cmd)
-		projectName := getProjectName(cmd)
-		dnsPristine := getDNSPristine(cmd)
-		hostedZone := getHostedZone(cmd)
+		for _, val := range supportedFlags {
+			supportedFlagValues[val] = getFlagValue(cmd, val.flagName)
+		}
 
 		// Perform various checks to ensure we should proceed
-		setup.ValidateInputs(projectName, frontEnd, backEnd, database, env)
+		nameInput := mapLookup(projName)
+		setup.ValidateInputs(nameInput, mapLookup(front), mapLookup(back), mapLookup(database), mapLookup(env))
 
-		setup.CreateRootProjectDirectory(projectName)
-		setup.GoToRootProjectDirectory(projectName)
+		setup.CreateRootProjectDirectory(nameInput)
+		setup.GoToRootProjectDirectory(nameInput)
 		config.Create()
 
 		// Set configuration values in the .pac.json file in the new project directory
-		config.Set("backEnd", backEnd)
-		config.Set("database", database)
-		config.Set("description", description)
-		config.Set("dnsPristine", dnsPristine)
-		config.Set("env", env)
-		config.Set("frontEnd", frontEnd)
+		for currFlag, val := range supportedFlagValues {
+			config.Set(currFlag.configName, val)
+		}
+
 		config.Set("gitAuth", gitAuth)
-		config.Set("projectName", projectName)
-		config.Set("region", awsRegion)
 		config.Set("terraformAWSVersion", terraform.AWSVersion)
 		config.Set("terraformTemplateVersion", terraform.TemplateVersion)
-		config.Set("hostedZone", hostedZone)
 
 		// Create encryption key (used to secure Terraform state) which is needed for the Terraform templates
 		encryptionKeyID := setup.CreateEncryptionKey()
@@ -76,89 +96,36 @@ NodeJS/Express back-end, and DynamoDB database)`,
 
 func init() {
 	RootCmd.AddCommand(setupCmd)
-	setupCmd.PersistentFlags().StringVarP(&projectName, "name", "n", "", "project name (required)")
-	setupCmd.MarkPersistentFlagRequired("name")
-	setupCmd.PersistentFlags().StringVar(&description, "description", "Project created by PAC", "short description of the project")
-	setupCmd.PersistentFlags().StringVarP(&frontEnd, "front", "f", "ReactJS", "front-end framework/library")
-	setupCmd.PersistentFlags().StringVarP(&backEnd, "back", "b", "Express", "back-end framework/library")
-	setupCmd.PersistentFlags().StringVarP(&database, "database", "d", "DynamoDB", "database type")
-	setupCmd.PersistentFlags().StringVarP(&env, "env", "e", "dev", "environment name")
-	setupCmd.PersistentFlags().StringVarP(&awsRegion, "awsregion", "w", "us-east-2", "AWS Region")
-	setupCmd.PersistentFlags().StringVarP(&dnsPristine, "pristine", "p", "false", "Hosted zone doesn't already exist.")
-	setupCmd.PersistentFlags().StringVarP(&hostedZone, "hostedzone", "z", "pac.pyramidchallenges.com", "DNS zone to add records to.")
+	setupCmd.PersistentFlags().StringP(projName, "n", "", "project name (required)")
+	setupCmd.MarkPersistentFlagRequired(projName)
+	setupCmd.PersistentFlags().StringP("description", "i", "Project created by PAC", "short description of the project")
+	setupCmd.PersistentFlags().StringP(front, "f", "ReactJS", "front-end framework/library")
+	setupCmd.PersistentFlags().StringP(back, "b", "Express", "back-end framework/library")
+	setupCmd.PersistentFlags().StringP(database, "d", "DynamoDB", "database type")
+	setupCmd.PersistentFlags().StringP(env, "e", "dev", "environment name")
+	setupCmd.PersistentFlags().StringP("awsregion", "w", "us-east-2", "AWS Region")
+	setupCmd.PersistentFlags().StringP("pristine", "p", "false", "Hosted zone doesn't already exist.")
+	setupCmd.PersistentFlags().StringP("hostedzone", "z", "pac.pyramidchallenges.com", "DNS zone to add records to.")
 }
 
 // TODO: pull from systems manager parameter store
 var gitAuth = "amRpZWRlcmlrc0Bwc2ktaXQuY29tOkRpZWRyZV4yMDE4"
 
-var projectName string
+var flagValue string
 
-func getProjectName(cmd *cobra.Command) string {
-	projectName, err := cmd.Flags().GetString("name")
+func getFlagValue(cmd *cobra.Command, flagString string) string {
+	flagValue, err := cmd.Flags().GetString(flagString)
 	errors.QuitIfError(err)
-	return projectName
+	return flagValue
 }
 
-var description string
-
-func getDescription(cmd *cobra.Command) string {
-	description, err := cmd.Flags().GetString("description")
-	errors.QuitIfError(err)
-	return description
-}
-
-var frontEnd string
-
-func getFrontEnd(cmd *cobra.Command) string {
-	frontEnd, err := cmd.Flags().GetString("front")
-	errors.QuitIfError(err)
-	return frontEnd
-}
-
-var backEnd string
-
-func getBackEnd(cmd *cobra.Command) string {
-	backEnd, err := cmd.Flags().GetString("back")
-	errors.QuitIfError(err)
-	return backEnd
-}
-
-var database string
-
-func getDatabase(cmd *cobra.Command) string {
-	database, err := cmd.Flags().GetString("database")
-	errors.QuitIfError(err)
-	return database
-}
-
-var env string
-
-func getEnv(cmd *cobra.Command) string {
-	env, err := cmd.Flags().GetString("env")
-	errors.QuitIfError(err)
-	return env
-}
-
-var awsRegion string
-
-func getAWSRegion(cmd *cobra.Command) string {
-	awsRegion, err := cmd.Flags().GetString("awsregion")
-	errors.QuitIfError(err)
-	return awsRegion
-}
-
-var dnsPristine string
-
-func getDNSPristine(cmd *cobra.Command) string {
-	dnsPristine, err := cmd.Flags().GetString("pristine")
-	errors.QuitIfError(err)
-	return dnsPristine
-}
-
-var hostedZone string
-
-func getHostedZone(cmd *cobra.Command) string {
-	hostedZone, err := cmd.Flags().GetString("hostedzone")
-	errors.QuitIfError(err)
-	return hostedZone
+func mapLookup(input string) string {
+	returnVal := ""
+	for k, val := range supportedFlagValues {
+		if k.flagName == input {
+			returnVal = val
+			break
+		}
+	}
+	return returnVal
 }

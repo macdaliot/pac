@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "description": "Project created by PAC",
   "devDependencies": {
-    "typescript": "^3.5.2",
+    "lerna": "^3.15.0",
     "ts-node": "^8.3.0",
-    "lerna": "^3.15.0"
+    "typescript": "^3.5.2"
   },
   "scripts": {
     "install": "npx lerna bootstrap"
