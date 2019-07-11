@@ -3,16 +3,16 @@
   "version": "0.0.1",
   "description": "Project created by PAC",
   "devDependencies": {
-    "lerna": "^3.15.0",
-    "ts-node": "^8.3.0",
-    "typescript": "^3.5.2"
+    "husky": "^3.0.0",
+    "lerna": "^3.15.0"
   },
   "scripts": {
-    "install": "npx lerna bootstrap"
+    "install": "npx lerna bootstrap",
+    "testAllCommitted": "node ./prePush.js"
   },
   "husky": {
     "hooks": {
-      "pre-push": "git stash --include-untracked && npx lerna run build && npx lerna run test && git stash pop"
+      "pre-push": "npm run testAllCommitted"
     }
   },
   "author": "Pyramid Systems, Inc.",
