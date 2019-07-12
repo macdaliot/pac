@@ -5,7 +5,7 @@ describe('generateRandomString', () => {
         expect(generateRandomString()).toBeTruthy();
     })
     it('should have always have a length of 11', () => {
-        expect(generateRandomString().length).toBeGreaterThan(8);;
+        expect(generateRandomString().length).toBeGreaterThan(8);
     })
 });
 

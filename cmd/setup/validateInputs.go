@@ -24,11 +24,9 @@ func ValidateInputs(projectName, frontEnd, backEnd, database, env string) {
 // validateEnv checks the given env value and checks it against a list of valid values.
 // If the value is not in the list validation fails.
 func validateEnv(env string) {
-	if env != "dev" {
-		if env != "integration" {
-			logger.Err("Project environment must be either 'dev' or 'integration'")
-			os.Exit(2)
-		}
+	if env != "dev" && env != "integration" {
+		logger.Err("Project environment must be either 'dev' or 'integration'")
+		os.Exit(2)
 	}
 }
 

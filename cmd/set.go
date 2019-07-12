@@ -7,6 +7,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	prop string = "property"
+	val  string = "value"
+)
+
 var setCmd = &cobra.Command{
 	Use:   "set",
 	Short: "Saves a property/value combination in the PAC project configuration",
@@ -21,16 +26,16 @@ var setCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(setCmd)
-	setCmd.PersistentFlags().StringVarP(&configPropertyNameToSave, "property", "p", "", "Name of the property you want to create/overwrite")
-	setCmd.MarkPersistentFlagRequired("property")
-	setCmd.PersistentFlags().StringVarP(&configValueToSave, "value", "v", "", "Value you want to create/overwrite")
-	setCmd.MarkPersistentFlagRequired("value")
+	setCmd.PersistentFlags().StringVarP(&configPropertyNameToSave, prop, "p", "", "Name of the property you want to create/overwrite")
+	setCmd.MarkPersistentFlagRequired(prop)
+	setCmd.PersistentFlags().StringVarP(&configValueToSave, val, "v", "", "Value you want to create/overwrite")
+	setCmd.MarkPersistentFlagRequired(val)
 }
 
 var configPropertyNameToSave string
 
 func getConfigPropertyNameToSave(cmd *cobra.Command) string {
-	property, err := cmd.Flags().GetString("property")
+	property, err := cmd.Flags().GetString(prop)
 	errors.QuitIfError(err)
 	return property
 }
@@ -38,7 +43,7 @@ func getConfigPropertyNameToSave(cmd *cobra.Command) string {
 var configValueToSave string
 
 func getConfigValueToSave(cmd *cobra.Command) string {
-	value, err := cmd.Flags().GetString("value")
+	value, err := cmd.Flags().GetString(val)
 	errors.QuitIfError(err)
 	return value
 }

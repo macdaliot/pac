@@ -19,7 +19,7 @@ const (
 	description string = "description"
 )
 
-// FlagConfigNames Flag to config names
+// FlagConfigNames Associates the flag name used in the config file with the supported flag
 type FlagConfigNames struct {
 	flagName   string
 	configName string
@@ -98,7 +98,7 @@ func init() {
 	RootCmd.AddCommand(setupCmd)
 	setupCmd.PersistentFlags().StringP(projName, "n", "", "project name (required)")
 	setupCmd.MarkPersistentFlagRequired(projName)
-	setupCmd.PersistentFlags().StringP("description", "i", "Project created by PAC", "short description of the project")
+	setupCmd.PersistentFlags().StringP(description, "i", "Project created by PAC", "short description of the project")
 	setupCmd.PersistentFlags().StringP(front, "f", "ReactJS", "front-end framework/library")
 	setupCmd.PersistentFlags().StringP(back, "b", "Express", "back-end framework/library")
 	setupCmd.PersistentFlags().StringP(database, "d", "DynamoDB", "database type")

@@ -11,8 +11,10 @@ import (
 	"github.com/PyramidSystemsInc/pac/config"
 )
 
+const projName string = "projectName"
+
 func AutomateJenkins() {
-	projectName := config.Get("projectName")
+	projectName := config.Get(projName)
 	jenkinsURL := config.Get("jenkinsURL")
 	DownloadJenkinsCliJar(jenkinsURL)
 	createEntrypointJobXml(projectName)
@@ -46,7 +48,7 @@ func DownloadJenkinsCliJar(jenkinsURL string) {
 func createEntrypointJobXml(projectName string) {
 	filePath := "entrypoint-job.xml"
 	config := make(map[string]string)
-	config["projectName"] = projectName
+	config[projName] = projectName
 	const template = `<?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
@@ -105,7 +107,7 @@ func createEntrypointJobXml(projectName string) {
 func createServicesPipelineXml(projectName string) {
 	filePath := "services-pipeline.xml"
 	config := make(map[string]string)
-	config["projectName"] = projectName
+	config[projName] = projectName
 	const template = `<?xml version="1.1" encoding="UTF-8"?><flow-definition plugin="workflow-job@2.31">
   <description/>
   <keepDependencies>false</keepDependencies>
@@ -146,7 +148,7 @@ func createServicesPipelineXml(projectName string) {
 func createFrontEndPipelineXml(projectName string) {
 	filePath := "front-end-pipeline.xml"
 	config := make(map[string]string)
-	config["projectName"] = projectName
+	config[projName] = projectName
 	const template = `<?xml version="1.1" encoding="UTF-8"?><flow-definition plugin="workflow-job@2.31">
   <description/>
   <keepDependencies>false</keepDependencies>
@@ -196,7 +198,7 @@ func createFrontEndPipelineXml(projectName string) {
 func createMasterPipelineXml(projectName string) {
 	filePath := "master-pipeline.xml"
 	config := make(map[string]string)
-	config["projectName"] = projectName
+	config[projName] = projectName
 	const template = `<?xml version="1.1" encoding="UTF-8"?><flow-definition plugin="workflow-job@2.31">
   <description/>
   <keepDependencies>false</keepDependencies>

@@ -13,26 +13,31 @@ import (
 	"github.com/PyramidSystemsInc/pac/config"
 )
 
+const (
+	projName        string = "projectName"
+	serviceRootPath string = "services/"
+)
+
 // Service adds a new service to the application
 func Service(serviceName string) {
 	createServiceDirectory(serviceName)
 	cfg := createTemplateConfig(serviceName)
 	createServiceFiles(serviceName, cfg)
 
-	commands.Run("npm i", path.Join("services/", serviceName))
-	editHaProxyConfig(serviceName, cfg["projectName"])
+	commands.Run("npm i", path.Join(serviceRootPath, serviceName))
+	editHaProxyConfig(serviceName, cfg[projName])
 	editIntegrationTestApiFeatures(serviceName)
-	commands.Run("terraform init -input=false", path.Join("services/", "terraform"))
+	commands.Run("terraform init -input=false", path.Join(serviceRootPath, "terraform"))
 }
 
 func createServiceDirectory(serviceName string) {
-	serviceDirectory := str.Concat("services/", serviceName)
+	serviceDirectory := str.Concat(serviceRootPath, serviceName)
 	directories.Create(serviceDirectory)
 }
 
 func createTemplateConfig(serviceName string) map[string]string {
 	cfg := make(map[string]string)
-	cfg["projectName"] = config.Get("projectName")
+	cfg[projName] = config.Get(projName)
 	cfg["region"] = config.Get("region")
 	cfg["serviceName"] = serviceName
 	cfg["serviceNamePascal"] = strings.Title(serviceName)
