@@ -5,7 +5,6 @@ import { Button, ButtonPriority } from '@pyramidlabs/react-ui';
 import { UrlConfig } from '../../config';
 import './header.scss';
 import { ApplicationState } from '@app/redux/Reducers/Reducer';
-import { WebStorage, tokenName } from '@app/config';
 import { bindActionCreators, Dispatch } from "redux";
 import { logoutActions } from "@app/redux/Actions/Authentication";
 
@@ -39,13 +38,6 @@ export class HeaderComponent extends React.Component<HeaderProps> {
     );
   };
 
-  logout = () => {
-    if (WebStorage.isSupported()) {
-        WebStorage.removeItem(tokenName);
-    }
-    this.props.logout();
-  };
-
   renderLogin = () => {
     if (this.props.isAuthenticated) {
       return (
@@ -55,7 +47,7 @@ export class HeaderComponent extends React.Component<HeaderProps> {
             <span className="username">{this.props.userName}</span>
             <span className="fas fa-caret-down" />
           </div>
-          <Button text={'Logout'} priority={ButtonPriority.Primary} onClick={this.logout} />
+          <Button text={'Logout'} priority={ButtonPriority.Primary} onClick={this.props.logout} />
         </div>
       );
     } else {
