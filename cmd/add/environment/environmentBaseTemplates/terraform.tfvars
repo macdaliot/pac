@@ -1,0 +1,5 @@
+application_cidr_block = "{{ .vpcCidrBlock }}"
+environment_abbr = "{{ .environmentAbbr }}"
+environment_name = "{{ .environmentName }}"
+project_fqdn = "{{ .projectFqdn }}"
+project_name = "{{ .projectName }}"

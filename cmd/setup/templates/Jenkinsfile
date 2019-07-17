@@ -2,33 +2,32 @@ def pipelineComponents = ["front-end", "services"]
 def builds = [:]
 def unitTests = [:]
 def integrationTests = [:]
-def deployments = [:]
-def cleanups = [:]
-def workspaceDirectory = "/root/.jenkins/workspace"
+def integrationDeployments = [:]
+def stagingDeployments = [:]
+def workspaceDirectory = "/root/.jenkins/workspace/" + env.JOB_BASE_NAME
 def buildDirectory = workspaceDirectory + "/build-$BUILD_NUMBER"
 
 def notifySlack(String stage, String buildStatus = 'STARTED') {
-    // Build status of null means success.
-    buildStatus = buildStatus ?: 'SUCCESS'
+  // Build status of null means success.
+  buildStatus = buildStatus ?: 'SUCCESS'
 
-    def color
+  def color
+  if (buildStatus == 'STARTED') {
+    color = '#D4DADF'
+  } else if (buildStatus == 'SUCCESS') {
+    color = '#BDFFC3'
+  } else if (buildStatus == 'FAILED') {
+    color = '#FFFE89'
+  } else {
+    color = '#FF9FA1'
+  }
 
-    if (buildStatus == 'STARTED') {
-        color = '#D4DADF'
-    } else if (buildStatus == 'SUCCESS') {
-        color = '#BDFFC3'
-    } else if (buildStatus == 'FAILED') {
-        color = '#FFFE89'
-    } else {
-        color = '#FF9FA1'
-    }
+  def msg = "${buildStatus}: ${stage}: `${env.JOB_NAME}` #${env.BUILD_NUMBER}:\n${env.BUILD_URL}"
 
-    def msg = "${buildStatus}: ${stage}: `${env.JOB_NAME}` #${env.BUILD_NUMBER}:\n${env.BUILD_URL}"
-
-    slackSend(color: color, message: msg)
+  slackSend(color: color, message: msg)
 }
 
-for (x in pipelineComponents){
+for (x in pipelineComponents) {
   def jobName = x.trim()
   // create builds
   builds[jobName] = {
@@ -38,7 +37,8 @@ for (x in pipelineComponents){
       booleanParam(name: 'EXEC_DEPLOY', value: false),
       booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
       booleanParam(name: 'EXEC_CLEANUP', value: false),
-      stringParam(name: 'BUILD_DIRECTORY', value: buildDirectory)
+      stringParam(name: 'BUILD_DIRECTORY', value: buildDirectory),
+      stringParam(name: 'VPC_NAME', value: env.JOB_BASE_NAME)
     ]
   }
   // create unit test runs
@@ -49,7 +49,8 @@ for (x in pipelineComponents){
       booleanParam(name: 'EXEC_DEPLOY', value: false),
       booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
       booleanParam(name: 'EXEC_CLEANUP', value: false),
-      stringParam(name: 'BUILD_DIRECTORY', value: buildDirectory)
+      stringParam(name: 'BUILD_DIRECTORY', value: buildDirectory),
+      stringParam(name: 'VPC_NAME', value: env.JOB_BASE_NAME)
     ]
   }
   // create integration test runs
@@ -60,18 +61,32 @@ for (x in pipelineComponents){
       booleanParam(name: 'EXEC_DEPLOY', value: false),
       booleanParam(name: 'EXEC_INTEGRATIONTEST', value: true),
       booleanParam(name: 'EXEC_CLEANUP', value: false),
-      stringParam(name: 'BUILD_DIRECTORY', value: buildDirectory)
+      stringParam(name: 'BUILD_DIRECTORY', value: buildDirectory),
+      stringParam(name: 'VPC_NAME', value: env.JOB_BASE_NAME)
     ]
   }
   // create deployments
-  deployments[jobName] = {
+  integrationDeployments[jobName] = {
     build job: jobName, parameters: [
       booleanParam(name: 'EXEC_BUILD', value: false),
       booleanParam(name: 'EXEC_UNITTEST', value: false),
       booleanParam(name: 'EXEC_DEPLOY', value: true),
       booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
       booleanParam(name: 'EXEC_CLEANUP', value: false),
-      stringParam(name: 'BUILD_DIRECTORY', value: buildDirectory)
+      stringParam(name: 'BUILD_DIRECTORY', value: buildDirectory),
+      stringParam(name: 'VPC_NAME', value: "integration")
+    ]
+  }
+  // create deployments
+  stagingDeployments[jobName] = {
+    build job: jobName, parameters: [
+      booleanParam(name: 'EXEC_BUILD', value: false),
+      booleanParam(name: 'EXEC_UNITTEST', value: false),
+      booleanParam(name: 'EXEC_DEPLOY', value: true),
+      booleanParam(name: 'EXEC_INTEGRATIONTEST', value: false),
+      booleanParam(name: 'EXEC_CLEANUP', value: false),
+      stringParam(name: 'BUILD_DIRECTORY', value: buildDirectory),
+      stringParam(name: 'VPC_NAME', value: "staging")
     ]
   }
 }
@@ -109,21 +124,13 @@ node {
           throw e
         }
       }
-      stage("Unit Tests") {
+      stage("Unit Test") {
         try {
           parallel unitTests
         } catch (e) {
-          notifySlack("Deploy to Integration", "FAILED")
+          notifySlack("Unit Test", "FAILED")
           throw e
-        }         
-      }
-      stage("Deploy to Integration"){
-        try {
-          parallel deployments
-        } catch (e) {
-          notifySlack("Deploy to Integration", "FAILED")
-          throw e
-        }        
+        }
       }
       stage("Inspect") {
         withCredentials([string(credentialsId: 'SONARLOGIN', variable: 'SONARLOGIN')]) {
@@ -142,7 +149,7 @@ node {
             // write header
             sh 'echo "<testExecutions version=\\"1\\">" > test-report.xml'
             // merge reports (safely, capturing error if none existed)
-            script = 'find . -mindepth 2 -maxdepth 3 -name test-report.xml | xargs cat | grep -v "<\\?xml" | grep -v testExecutions >> test-report.xml' 
+            script = 'find . -mindepth 2 -maxdepth 3 -name test-report.xml | xargs cat | grep -v "<\\?xml" | grep -v testExecutions >> test-report.xml'
             sh script:script, returnStatus:true
             // write footer
             sh 'echo "</testExecutions>" >> test-report.xml'
@@ -154,7 +161,29 @@ node {
           }
         }
       }
-      stage("Integration Tests") {
+      stage('Archive') {
+        try {
+          // Save Git commit hash in a file called git-commit.txt
+          sh 'touch git-commit.txt'
+          sh 'echo -e ' + env.GIT_COMMIT + ' >> git-commit.txt'
+          // Compress all build products and Terraform templates into a zip file labeled with the environment and build number
+          sh 'zip -r build-' + env.BUILD_TAG + ' git-commit.txt app/dist/* services/*/function.zip terraform/*'
+          // Push the zip file to AWS S3
+          sh 'aws s3 cp build-' + env.BUILD_TAG + '.zip s3://builds.{{.projectName}}.pac.pyramidchallenges.com/'
+        } catch (e) {
+          notifySlack("Archive", "FAILED")
+          throw e
+        }
+      }
+      stage("Deploy to Integration Environment") {
+        try {
+          parallel integrationDeployments
+        } catch (e) {
+          notifySlack("Deploy to Integration Environment", "FAILED")
+          throw e
+        }        
+      }
+      stage("Integration Test") {
         script {
           sh 'cd integration-tests/gradle/wrapper; jar cf gradle-wrapper.jar *'
           def exitCode = sh(script: 'cd integration-tests; chmod 755 gradlew; ./gradlew clean test aggregate', returnStatus: true)
@@ -163,6 +192,25 @@ node {
             sh 'one-or-more-integration-tests-failed'
             notifySlack("Integration Tests", "FAILED")
           }
+        }
+      }
+      stage('Promote Release Candidate') {
+        try {
+          // Copy the build products zip file to a new zip file suffixed with "-rc"
+          sh 'cp build-' + env.BUILD_TAG + '.zip build-' + env.BUILD_TAG + '-rc.zip'
+          // Push the release candidate zip file to AWS S3
+          sh 'aws s3 cp build-' + env.BUILD_TAG + '-rc.zip s3://builds.{{.projectName}}.pac.pyramidchallenges.com/'
+        } catch (e) {
+          notifySlack("Promote Release Candidate", "FAILED")
+          throw e
+        }
+      }
+      stage("Deploy to Staging Environment") {
+        try {
+          parallel stagingDeployments
+        } catch (e) {
+          notifySlack("Deploy to Staging Environment", "FAILED")
+          throw e
         }
       }
     }

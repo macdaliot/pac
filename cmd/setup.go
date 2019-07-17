@@ -4,7 +4,9 @@ import (
 	"github.com/PyramidSystemsInc/go/aws/sts"
 	"github.com/PyramidSystemsInc/go/aws/util"
 	"github.com/PyramidSystemsInc/go/errors"
+	"github.com/PyramidSystemsInc/go/str"
 	"github.com/PyramidSystemsInc/go/terraform"
+	"github.com/PyramidSystemsInc/pac/cmd/add"
 	"github.com/PyramidSystemsInc/pac/cmd/setup"
 	"github.com/PyramidSystemsInc/pac/config"
 	"github.com/spf13/cobra"
@@ -17,6 +19,7 @@ const (
 	database    string = "database"
 	env         string = "env"
 	description string = "description"
+	hostedzone  string = "hostedzone"
 )
 
 // FlagConfigNames Associates the flag name used in the config file with the supported flag
@@ -34,7 +37,7 @@ var supportedFlags = []FlagConfigNames{
 	{flagName: front, configName: "frontEnd"},
 	{flagName: projName, configName: "projectName"},
 	{flagName: "awsregion", configName: "region"},
-	{flagName: "hostedzone", configName: "hostedZone"},
+	{flagName: hostedzone, configName: "hostedZone"},
 }
 
 // Used to store values for the supported flags
@@ -64,7 +67,10 @@ var setupCmd = &cobra.Command{
 			config.Set(currFlag.configName, val)
 		}
 
+		config.Set("environments", "")
 		config.Set("gitAuth", gitAuth)
+		config.Set("projectFqdn", str.Concat(nameInput, ".", mapLookup("hostedzone")))
+		config.Set("services", "")
 		config.Set("terraformAWSVersion", terraform.AWSVersion)
 		config.Set("terraformTemplateVersion", terraform.TemplateVersion)
 
@@ -76,10 +82,9 @@ var setupCmd = &cobra.Command{
 		awsAccountID := sts.GetAccountID()
 		config.Set("awsID", awsAccountID)
 
+		// TODO: Move magic string below to .pac.json
 		// Find the first available VPC CIDR blocks and save them to the configuration
-		freeVpcCidrBlocks := setup.FindAvailableVpcCidrBlocks()
-		config.Set("awsManagementVpcCidrBlock", freeVpcCidrBlocks[0])
-		config.Set("awsApplicationVpcCidrBlock", freeVpcCidrBlocks[1])
+		config.Set("awsManagementVpcCidrBlock", "10.0.0.0/16")
 
 		// Get the public address of the end-user for security groups to give access to network resources to user
 		endUserIP := util.GetPublicIP()
@@ -91,6 +96,11 @@ var setupCmd = &cobra.Command{
 
 		// Create a GitHub repository for the project
 		setup.GitRepository()
+
+		// Create the environments
+		add.Environment("integration")
+		add.Environment("staging")
+		add.Environment("production")
 	},
 }
 

@@ -2,6 +2,8 @@ package cleanCloud
 
 import (
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/PyramidSystemsInc/go/aws"
 	"github.com/PyramidSystemsInc/go/aws/kms"
@@ -19,26 +21,34 @@ const terraformS3Bucket string = "terraformS3Bucket"
 func DeleteAllResources() {
 	os.Chdir(config.GetRootDirectory())
 
-	// Initialize all Terraform template directories
+	environmentNames := strings.Split(config.Get("environments"), ",")
+	for _, environmentName := range environmentNames {
+		logger.Info(str.Concat("Terraform is cleaning the ", environmentName, " VPC..."))
+		terraformDir := filepath.Join("terraform/", environmentName)
+		terraform.Initialize(terraformDir)
+		terraform.Destroy(terraformDir)
+		logger.Info(str.Concat("Terraform cleaned the ", environmentName, " VPC"))
+	}
+
+	// Initialize all remaining Terraform template directories
 	terraform.Initialize("terraform/dns")
-	terraform.Initialize("terraform")          // this is the management vpc
-	terraform.Initialize("services/terraform") // this includes application vpc
+	terraform.Initialize("terraform/management")
 
-	// Destroy AWS resources managed by Terraform
-	logger.Info("Terraform is destroying all AWS resources...")
-	output := terraform.Destroy("services/terraform")
+	// Destroy the remaining AWS resources managed by Terraform
+	logger.Info("Terraform is cleaning the management VPC...")
+	output := terraform.Destroy("terraform/management")
 	logger.Info(output)
+	logger.Info("Terraform cleaned the management VPC")
 
-	output = terraform.Destroy("terraform")
-	logger.Info(output)
-
+	logger.Info("Terraform is cleaning the project's DNS records...")
 	if config.Get("dnsPristine") == "true" {
 		output = terraform.Destroy("terraform/dns_pristine")
 	} else {
 		output = terraform.Destroy("terraform/dns")
 	}
-
 	logger.Info(output)
+	logger.Info("Terraform cleaned the project's DNS records")
+
 	logger.Info("Terraform is finished destroying Terraform Managed AWS resources")
 
 	projectName := config.Get("projectName")

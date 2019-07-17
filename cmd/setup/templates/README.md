@@ -26,7 +26,7 @@
 
 6. Scroll down to "Allowed Callback URLs"
 
-7. Paste `https://api.{{.projectName}}.pac.pyramidchallenges.com/api/auth/callback` as a new entry (entries are separated by commas) at the bottom
+7. Paste `https://<environment-name>.{{.projectName}}.pac.pyramidchallenges.com/api/auth/callback` for each environment as a new entry (entries are separated by commas) at the bottom
 
 ###### Top Troubleshooting Tip
 
@@ -48,8 +48,14 @@
 
 ### Helpful Links
 
-* [http://integration.{{.projectName}}.pac.pyramidchallenges.com.s3-website.{{.region}}.amazonaws.com](http://integration.{{.projectName}}.pac.pyramidchallenges.com.s3-website.{{.region}}.amazonaws.com)
-* [https://api.{{.projectName}}.pac.pyramidchallenges.com/api/<service-name>](https://api.{{.projectName}}.pac.pyramidchallenges.com/api/<service-name>)
+* Front-End - https://<environment>.{{.projectName}}.pac.pyramidchallenges.com, where <environment> is one of the following:
+  * integration
+  * staging
+  * production
+* Example service endpoint - https://<environment>.{{.projectName}}.pac.pyramidchallenges.com/api/<service-name>, where <environment> is one of the following:
+  * integration
+  * staging
+  * production
 * [https://jenkins.{{.projectName}}.pac.pyramidchallenges.com](https://jenkins.{{.projectName}}.pac.pyramidchallenges.com)
 * [https://sonarqube.{{.projectName}}.pac.pyramidchallenges.com](https://sonarqube.{{.projectName}}.pac.pyramidchallenges.com)
 * [https://selenium.{{.projectName}}.pac.pyramidchallenges.com](https://selenium.{{.projectName}}.pac.pyramidchallenges.com)

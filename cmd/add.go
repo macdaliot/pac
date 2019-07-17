@@ -10,9 +10,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var addResourceMap = map[string]func(*cobra.Command){
-	"service" : addService,
+var addResourceMap = map[string]func(*cobra.Command) {
 	"authService" : addAuthService,
+	"environment" : addEnvironment,
+	"service" : addService,
 }
 
 var addCmd = &cobra.Command{
@@ -53,6 +54,11 @@ func addService(cmd *cobra.Command) {
 
 func addAuthService(cmd *cobra.Command) {
 	add.AuthService()
+}
+
+func addEnvironment(cmd *cobra.Command) {
+	name := getName(cmd)
+	add.Environment(name)
 }
 
 var name string

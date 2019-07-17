@@ -69,35 +69,3 @@ output "acm_cert_arn" {
   description = "The ARN of the issued certificate"
   value       = "${aws_acm_certificate.main.arn}"
 }
-
-# resource "aws_route53_record" "integration" {
-#   zone_id = "${aws_route53_zone.main.zone_id}"
-#   name    = "integration.${var.project_name}.${var.hosted_zone}"
-#   type    = "A"
-
-#   alias {
-#     name                   = "${aws_lb.main.dns_name}"
-#     zone_id                = "${aws_lb.main.zone_id}"
-#     evaluate_target_health = true
-#   }
-# }
-
-# output "integration_dns_record" {
-#     value = "${aws_route53_record.integration.name}"
-# }
-
-# resource "aws_route53_record" "demo" {
-#   zone_id = "${aws_route53_zone.main.zone_id}"
-#   name    = "demo.${var.project_name}.${var.hosted_zone}"
-#   type    = "A"
-
-#   alias {
-#     name                   = "${aws_lb.main.dns_name}"
-#     zone_id                = "${aws_lb.main.zone_id}"
-#     evaluate_target_health = true
-#   }
-# }
-
-# output "demo_dns_record" {
-#     value = "${aws_route53_record.demo.name}"
-# }

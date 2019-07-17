@@ -4,7 +4,8 @@ properties([
     booleanParam(name: 'EXEC_DEPLOY', defaultValue: true, description: 'Should execute deploy'),
     booleanParam(name: 'EXEC_INTEGRATIONTEST', defaultValue: true, description: 'Should execute integration tests'),
     booleanParam(name: 'EXEC_UNITTEST', defaultValue: true, description: 'Should execute unit tests'),
-    stringParam(name: 'BUILD_DIRECTORY', defaultValue: 'none', description: 'Unique directory for this Jenkins build')
+    stringParam(name: 'BUILD_DIRECTORY', defaultValue: 'none', description: 'Unique directory for this Jenkins build'),
+    stringParam(name: 'VPC_NAME', defaultValue: 'none', description: 'Environment/application VPC being deployed to')
   ])
 ])
 
@@ -22,7 +23,8 @@ node {
     }
     stage('Deploy To Integration') {
       if (params.EXEC_DEPLOY) {
-        sh 'sh .deploy.sh'
+        env.VPC_NAME = params.VPC_NAME
+        sh 'sh .deploy.sh ${VPC_NAME}'
       }
     }
   }

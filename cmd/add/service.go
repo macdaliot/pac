@@ -23,11 +23,10 @@ func Service(serviceName string) {
 	createServiceDirectory(serviceName)
 	cfg := createTemplateConfig(serviceName)
 	createServiceFiles(serviceName, cfg)
-
 	commands.Run("npm i", path.Join(serviceRootPath, serviceName))
 	editHaProxyConfig(serviceName, cfg[projName])
 	editIntegrationTestApiFeatures(serviceName)
-	commands.Run("terraform init -input=false", path.Join(serviceRootPath, "terraform"))
+	config.AppendToCommaSeparatedValue("services", serviceName)
 }
 
 func createServiceDirectory(serviceName string) {

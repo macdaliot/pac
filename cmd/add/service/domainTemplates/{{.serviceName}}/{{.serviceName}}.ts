@@ -6,10 +6,13 @@ import {
     attribute
 } from '@aws/dynamodb-data-mapper-annotations';
 
+const environmentAbbreviation = process.env.ENV_ABBR || 'int';
+const tableName = 'pac-{{.projectName}}-' + environmentAbbreviation + '-{{.serviceName}}';
+
 /**
  * A {{.serviceNamePascal}} object - but what exactly is a {{.serviceNamePascal}}?
  */
-@table('pac-{{.projectName}}-i-{{.serviceName}}')
+@table(tableName)
 export class {{.serviceNamePascal}} {
 
     /**

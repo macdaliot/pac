@@ -16,6 +16,7 @@ var deployCmd = &cobra.Command{
 This command is to be run after templates are generated with 'pac setup'`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Get the values from the pac config file
+		projectFqdn := config.Get("projectFqdn")
 		projectName := config.Get("projectName")
 		encryptionKeyID := config.Get("encryptionKeyID")
 		gitAuth := config.Get("gitAuth")
@@ -27,7 +28,7 @@ This command is to be run after templates are generated with 'pac setup'`,
 		deploy.SetEnvironmentVariables(projectName)
 
 		// Create an encrypted S3 bucket where Terraform can store state
-		terraformS3Bucket, projectFqdn := deploy.TerraformS3Bucket(projectName, encryptionKeyID)
+		terraformS3Bucket := deploy.TerraformS3Bucket(projectName, encryptionKeyID)
 
 		// Sets up a webhook to queue a Jenkins build every time a push is made to GitHub
 		jenkinsURL := strings.Join([]string{"jenkins.", projectFqdn}, "")
@@ -40,8 +41,7 @@ This command is to be run after templates are generated with 'pac setup'`,
 		} else {
 			deploy.Infrastructure("dns")
 		}
-
-		deploy.Infrastructure(".")
+		deploy.Infrastructure("management")
 
 		// Set configuration values in the .pac file in the new project directory
 		config.Set("jenkinsURL", jenkinsURL)

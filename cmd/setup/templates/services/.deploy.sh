@@ -1,18 +1,18 @@
 #! /bin/bash
 
+# $1 - The environment name to deploy to
+
 ## Download Terraform
-TF_VERSION="0.11.13"
+TF_VERSION="0.11.14"
 
-if [ $(find . -maxdepth 1 -type d | wc -l) -gt 2 ]; then
-  ## Navigate to Terraform directory
-  cd terraform
+## Navigate to Terraform directory
+cd ../terraform/$1
 
-  ## Initialize terraform
-  terraform init -input=false
+## Initialize Terraform
+terraform init -input=false
 
-  ## Save tf plan
-  terraform plan -out=tfplan -input=false
+## Save Terraform plan
+terraform plan -out=tfplan -input=false
 
-  ## Apply tf plan
-  terraform apply -input=false tfplan
-fi
+## Apply Terraform plan
+terraform apply -input=false tfplan

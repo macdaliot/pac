@@ -5,10 +5,12 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 
 	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/go/files"
 	"github.com/PyramidSystemsInc/go/logger"
+	"github.com/PyramidSystemsInc/go/str"
 	"github.com/PyramidSystemsInc/pac/config"
 	"github.com/gobuffalo/packr"
 )
@@ -16,14 +18,14 @@ import (
 func CreateAllTemplatedFiles(cfg map[string]string) {
 	serviceName := cfg["serviceName"]
 
-	// make sure we are at root dir
 	os.Chdir(config.GetRootDirectory())
 
 	// service templates
 	options := files.TemplateOptions{
 		Box:             packr.NewBox("./serviceTemplates"),
 		TargetDirectory: path.Join("services/", serviceName),
-		Config:          cfg}
+		Config:          cfg,
+	}
 	err := files.CreateTemplatedFiles(options)
 	errors.QuitIfError(err)
 
@@ -43,9 +45,17 @@ func CreateAllTemplatedFiles(cfg map[string]string) {
 	files.Append("./domain/index.ts", []byte(exportTemplate))
 	files.Append("./domain/models.ts", []byte(exportModelTemplate))
 
-	// terraform templates
-	options.Box = packr.NewBox("./terraformTemplates")
-	options.TargetDirectory = "./services/terraform"
-	err = files.CreateTemplatedFiles(options)
-	errors.QuitIfError(err)
+	// Terraform templates
+	environmentNames := strings.Split(config.Get("environments"), ",")
+	for _, environmentName := range environmentNames {
+		os.Chdir(config.GetRootDirectory())
+		cfg["environmentName"] = environmentName
+		options = files.TemplateOptions{
+			Box:             packr.NewBox("../environment/environmentLambdaTemplates"),
+			TargetDirectory: str.Concat("terraform/", environmentName),
+			Config:          cfg,
+		}
+		err = files.CreateTemplatedFiles(options)
+		errors.QuitIfError(err)
+	}
 }

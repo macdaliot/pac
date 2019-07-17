@@ -1,18 +1,36 @@
 package authservice
 
 import (
-	"github.com/PyramidSystemsInc/go/files"
+	"strings"
+
 	"github.com/gobuffalo/packr"
+
+	"github.com/PyramidSystemsInc/go/errors"
+	"github.com/PyramidSystemsInc/go/files"
+	"github.com/PyramidSystemsInc/go/str"
+	"github.com/PyramidSystemsInc/pac/config"
 )
 
-func CreateAllTemplatedFiles(config map[string]string) {
+func CreateAllTemplatedFiles(cfg map[string]string) {
+	// service code
 	options := files.TemplateOptions{
 		TargetDirectory: "services/auth",
 		Box:             packr.NewBox("./authServiceTemplates"),
-		Config:          config}
-	files.CreateTemplatedFiles(options)
+		Config:          cfg,
+	}
+	err := files.CreateTemplatedFiles(options)
+	errors.QuitIfError(err)
 
-	options.TargetDirectory = "services/terraform"
-	options.Box = packr.NewBox("./authTerraformTemplates")
-	files.CreateTemplatedFiles(options)
+	// Terraform templates
+	environmentNames := strings.Split(config.Get("environments"), ",")
+	for _, environmentName := range environmentNames {
+		cfg["environmentName"] = environmentName
+		options = files.TemplateOptions{
+			TargetDirectory: str.Concat("terraform/", environmentName),
+			Box:             packr.NewBox("./authTerraformTemplates"),
+			Config:          cfg,
+		}
+		err = files.CreateTemplatedFiles(options)
+		errors.QuitIfError(err)
+	}
 }

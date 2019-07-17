@@ -89,6 +89,15 @@ func Set(property string, value string) {
 	errors.QuitIfError(err)
 }
 
+func AppendToCommaSeparatedValue(property string, newValue string) {
+	currentValue := Get(property)
+	newValue = str.Concat(currentValue, ",", newValue)
+	if currentValue == "" {
+		newValue = newValue[1:len(newValue)]
+	}
+	Set(property, newValue)
+}
+
 func removeQuotes(data string) string {
 	if len(data) > 0 && data[0] == '"' {
 		data = data[1:]
