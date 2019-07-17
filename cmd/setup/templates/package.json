@@ -10,6 +10,9 @@
     "install": "npx lerna bootstrap",
     "testAllCommitted": "node ./prePush.js"
   },
+  "dependencies": {
+    "replace-in-file": "^4.1.1"
+  },
   "husky": {
     "hooks": {
       "pre-push": "npm run testAllCommitted"
