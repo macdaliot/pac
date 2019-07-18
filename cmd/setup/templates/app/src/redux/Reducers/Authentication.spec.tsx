@@ -16,11 +16,18 @@ describe('authenticationReducer', () => {
     });
 
     it("should parse the jwt payload for JWT_RECEIVED action type", () => {
-        const expectedState : any = {token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0b3B0YWwuY29tIiwiZXhwIjoxNDI2NDIwODAwLCJodHRwOi8vdG9wdGFsLmNvbS9qd3RfY2xhaW1zL2lzX2FkbWluIjp0cnVlLCJjb21wYW55IjoiVG9wdGFsIiwiYXdlc29tZSI6dHJ1ZX0" +
-                ".yRQYnWzskCZUxPwaQupWkiUzKELZ49eM7oWxAQK_ZXw", user: {awesome: true, company: "Toptal", exp: 1426420800, "http://toptal.com/jwt_claims/is_admin": true, iss: "toptal.com"}}
-        const jwtToken : string = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
-            "eyJpc3MiOiJ0b3B0YWwuY29tIiwiZXhwIjoxNDI2NDIwODAwLCJodHRwOi8vdG9wdGFsLmNvbS9qd3RfY2xhaW1zL2lzX2FkbWluIjp0cnVlLCJjb21wYW55IjoiVG9wdGFsIiwiYXdlc29tZSI6dHJ1ZX0." +
-            "yRQYnWzskCZUxPwaQupWkiUzKELZ49eM7oWxAQK_ZXw";
+        const expectedState : any = {
+            token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0b3B0YWwuY29tIiwiZXhwIjoxNDI2NDIwODAwLCJodHRwOi8vdG9wdGFsLmNvbS9qd3RfY2xhaW1zL2lzX2FkbWluIjp0cnVlLCJjb21wYW55IjoiVG9wdGFsIiwiYXdlc29tZSI6dHJ1ZX0.yRQYnWzskCZUxPwaQupWkiUzKELZ49eM7oWxAQK_ZXw",
+            user: {
+                awesome: true,
+                company: "Toptal",
+                exp: 1426420800,
+                "http://toptal.com/jwt_claims/is_admin": true,
+                iss: "toptal.com"
+            }
+        }
+
+        const jwtToken : string = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0b3B0YWwuY29tIiwiZXhwIjoxNDI2NDIwODAwLCJodHRwOi8vdG9wdGFsLmNvbS9qd3RfY2xhaW1zL2lzX2FkbWluIjp0cnVlLCJjb21wYW55IjoiVG9wdGFsIiwiYXdlc29tZSI6dHJ1ZX0.yRQYnWzskCZUxPwaQupWkiUzKELZ49eM7oWxAQK_ZXw";
         const myUser = getUserFromToken(jwtToken);
         const myJwtAction = createAction(JWT_RECEIVED, {token:jwtToken ,user:myUser})
         const authentication : Authentication = authenticationReducer(null, myJwtAction)
