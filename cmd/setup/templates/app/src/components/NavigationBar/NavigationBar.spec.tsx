@@ -15,19 +15,25 @@ jest.mock('../../routes', () => [
     path: '/no-display-name',
     exact: true,
     component: true
+  },
+  {
+    path: '/login',
+    displayName: "login",
+    exact: true,
+    component: false
   }
 ] as Array<Route>);
 
 describe('header (unit/shallow)', () => {
   it('should always have at least one link', () => {
-    const mockRoutesWithDisplayNamesCount = 1;
+    const mockRoutesWithDisplayNamesCount = 2;
     const component = shallow<NavigationBarComponent>(<NavigationBarComponent />);
     const links = component.find(Link);
     expect(links.length).toEqual(mockRoutesWithDisplayNamesCount);
   });
 
   it('should call renderRoute() once for each route', () => {
-    const mockRoutesCount = 2;
+    const mockRoutesCount = 3;
     const component = shallow<NavigationBarComponent>(<NavigationBarComponent />);
     const instance = component.instance();
     instance.renderRoute = jest.fn();

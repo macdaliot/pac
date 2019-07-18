@@ -1,5 +1,6 @@
 import {Actions, JWT_RECEIVED, LOGOUT} from "@app/redux/Actions/Authentication";
 import { IUser } from "@pyramid-systems/domain";
+import { WebStorage, tokenName } from '@app/config';
 
 export type Authentication = {
     user?: IUser;
@@ -19,8 +20,11 @@ export function authenticationReducer (
                 user: action.payload.user
             };
         case LOGOUT:
+            if (WebStorage.isSupported()) {
+                WebStorage.removeItem(tokenName);
+            }
             return initialApplicationState;
         default:
             return { ...state };
     }
-};
+}
