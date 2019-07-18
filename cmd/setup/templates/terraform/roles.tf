@@ -211,6 +211,7 @@ resource "aws_iam_policy" "{{ .projectName }}_{{ .env }}_lambda_dynamodb" {
               "dynamodb:BatchWriteItem",
               "dynamodb:PutItem",
               "dynamodb:GetItem",
+              "dynamodb:DeleteItem",
               "dynamodb:Scan",
               "dynamodb:Query",
               "dynamodb:UpdateItem",
