@@ -50,6 +50,7 @@ func CreateAllTemplatedFiles(cfg map[string]string) {
 	for _, environmentName := range environmentNames {
 		os.Chdir(config.GetRootDirectory())
 		cfg["environmentName"] = environmentName
+		cfg["environmentAbbr"] = environmentName[0:3]
 		options = files.TemplateOptions{
 			Box:             packr.NewBox("../environment/environmentLambdaTemplates"),
 			TargetDirectory: str.Concat("terraform/", environmentName),

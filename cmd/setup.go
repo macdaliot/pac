@@ -113,7 +113,7 @@ func init() {
 	setupCmd.PersistentFlags().StringP(back, "b", "Express", "back-end framework/library")
 	setupCmd.PersistentFlags().StringP(database, "d", "DynamoDB", "database type")
 	setupCmd.PersistentFlags().StringP(env, "e", "dev", "environment name")
-	setupCmd.PersistentFlags().StringP("awsregion", "w", "us-east-2", "AWS Region")
+	setupCmd.PersistentFlags().StringP("awsregion", "w", "us-east-1", "AWS Region")
 	setupCmd.PersistentFlags().StringP("pristine", "p", "false", "Hosted zone doesn't already exist.")
 	setupCmd.PersistentFlags().StringP("hostedzone", "z", "pac.pyramidchallenges.com", "DNS zone to add records to.")
 }

@@ -41,7 +41,7 @@ resource "aws_lambda_function" "lambda_{{ .serviceName }}" {
 # http://docs.aws.amazon.com/elasticloadbalancing/latest/application/lambda-functions.html
 # http://www.terraform.io/docs/providers/aws/r/lb_target_group.html
 #
-resource "aws_alb_target_group" "{{ .projectName }}_{{ .environmentName }}_{{ .serviceName }}_target_group" {
+resource "aws_alb_target_group" "{{ .projectName }}_{{ .environmentAbbr }}_{{ .serviceName }}_tg" {
   name        = "pac-${var.project_name}-${var.environment_name}-{{ .serviceName }}"
   port        = "80"
   protocol    = "http"
@@ -61,12 +61,12 @@ resource "aws_lambda_permission" "{{ .projectName }}_{{ .serviceName }}_with_lb"
   function_name = "pac-${var.project_name}-${var.environment_abbr}-{{ .serviceName }}"
   principal     = "elasticloadbalancing.amazonaws.com"
   #source_arn    = "${aws_alb_target_group.pac_lambda_target_group.arn}"
-  source_arn    = "${aws_alb_target_group.{{ .projectName }}_{{ .environmentName }}_{{ .serviceName }}_target_group.id}"
+  source_arn    = "${aws_alb_target_group.{{ .projectName }}_{{ .environmentAbbr }}_{{ .serviceName }}_tg.id}"
 }
 
 # register with load balancer target group 
-resource "aws_alb_target_group_attachment" "{{ .projectName }}_{{ .environmentName }}_{{ .serviceName }}_target_group_attachment" {
-  target_group_arn = "${aws_alb_target_group.{{ .projectName }}_{{ .environmentName }}_{{ .serviceName }}_target_group.id}"
+resource "aws_alb_target_group_attachment" "{{ .projectName }}_{{ .environmentAbbr }}_{{ .serviceName }}_tg_attachment" {
+  target_group_arn = "${aws_alb_target_group.{{ .projectName }}_{{ .environmentAbbr }}_{{ .serviceName }}_tg.id}"
   target_id        = "${aws_lambda_function.lambda_{{ .serviceName }}.arn}"
   depends_on       = ["aws_lambda_permission.{{ .projectName }}_{{ .serviceName }}_with_lb"]
 }
@@ -80,7 +80,7 @@ resource "aws_lb_listener_rule" "{{ .projectName }}_{{ .serviceName }}_rule_100"
 
   action {
     type = "forward"
-    target_group_arn = "${aws_alb_target_group.{{ .projectName }}_{{ .environmentName }}_{{ .serviceName }}_target_group.arn}"
+    target_group_arn = "${aws_alb_target_group.{{ .projectName }}_{{ .environmentAbbr }}_{{ .serviceName }}_tg.arn}"
   }
 
   condition {
@@ -94,7 +94,7 @@ resource "aws_lb_listener_rule" "{{ .projectName }}_{{ .serviceName }}_rule_200"
 
   action {
     type = "forward"
-    target_group_arn = "${aws_alb_target_group.{{ .projectName }}_{{ .environmentName }}_{{ .serviceName }}_target_group.arn}"
+    target_group_arn = "${aws_alb_target_group.{{ .projectName }}_{{ .environmentAbbr }}_{{ .serviceName }}_tg.arn}"
   }
 
   condition {
