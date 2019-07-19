@@ -1,5 +1,5 @@
 {
-    "TableName": "pac-{{.projectName}}-i-{{.serviceName}}",
+    "TableName": "pac-{{.projectName}}-int-{{.serviceName}}",
     "KeySchema": [
       {
         "AttributeName": "id",
