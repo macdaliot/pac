@@ -1,7 +1,7 @@
 resource "aws_vpc_peering_connection" "pc" {
-  peer_vpc_id   = "${data.terraform_remote_state.management.management_vpc_id}"
-  vpc_id        = "${aws_vpc.application_vpc.id}" 
-  auto_accept   = true
+  peer_vpc_id = data.terraform_remote_state.management.outputs.management_vpc_id
+  vpc_id      = aws_vpc.application_vpc.id
+  auto_accept = true
 
   # accepter {
   #   allow_remote_vpc_dns_resolution = true
@@ -17,9 +17,10 @@ resource "aws_vpc_peering_connection" "pc" {
 }
 
 output "vpc_peering_status" {
-  value = "${aws_vpc_peering_connection.pc.accept_status}"
+  value = aws_vpc_peering_connection.pc.accept_status
 }
 
 output "vpc_peering_id" {
-  value = "${aws_vpc_peering_connection.pc.id}"
+  value = aws_vpc_peering_connection.pc.id
 }
+

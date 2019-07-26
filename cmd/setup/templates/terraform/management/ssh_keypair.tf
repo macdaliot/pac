@@ -8,19 +8,24 @@ resource "tls_private_key" "jumpbox" {
 
 # Creates a keypair in AWS with the provided public signature
 resource "aws_key_pair" "jumpbox" {
-  key_name   = "jumpbox-${var.project_name}"
+  key_name = "jumpbox-${var.project_name}"
+
   # This is what gets added to the authorized_keys file
-  public_key = "${tls_private_key.jumpbox.public_key_openssh}"
+  public_key = tls_private_key.jumpbox.public_key_openssh
 }
 
 output "private_key" {
-    value = "${var.enable_keypair_output == "true" ? tls_private_key.jumpbox.private_key_pem : ""}"
+  value = tls_private_key.jumpbox.private_key_pem
+  sensitive = true
 }
 
 output "public_key" {
-    value = "${var.enable_keypair_output == "true" ? tls_private_key.jumpbox.public_key_pem : ""}"
+  value = tls_private_key.jumpbox.public_key_pem
+  sensitive = true
 }
 
 output "public_openssh" {
-    value = "${var.enable_keypair_output == "true" ? tls_private_key.jumpbox.public_key_openssh : ""}"
+  value = tls_private_key.jumpbox.public_key_openssh
+  sensitive = true
 }
+

@@ -19,20 +19,20 @@ resource "aws_lambda_function" "lambda_{{ .serviceName }}" {
   function_name    = "pac-${var.project_name}-${var.environment_abbr}-{{ .serviceName }}"
   role             = "${data.terraform_remote_state.management.{{ .projectName }}_lambda_execution_role_arn}"
   handler          = "lambda.handler"
-  source_code_hash = "${base64sha256(file("${path.cwd}/../../services/{{ .serviceName }}/function.zip"))}"
+  source_code_hash = base64sha256(file("${path.cwd}/../../services/{{ .serviceName }}/function.zip"))
   runtime          = "nodejs8.10"
   depends_on       = ["aws_s3_bucket_object.lambda_{{ .serviceName }}_code"]
 
   environment {
     variables = {
-      JWT_ISSUER = "${data.terraform_remote_state.management.jwt_issuer}"
-      JWT_SECRET = "${data.terraform_remote_state.management.jwt_secret}"
-      ENV_ABBR   = "${var.environment_abbr}"
+      JWT_ISSUER = data.terraform_remote_state.management.jwt_issuer
+      JWT_SECRET = data.terraform_remote_state.management.jwt_secret
+      ENV_ABBR   = var.environment_abbr
     }
   }
 
   tags {
-    pac-project-name = "${var.project_name}"
+    pac-project-name = var.project_name
   }
 }
 
@@ -45,7 +45,7 @@ resource "aws_alb_target_group" "{{ .projectName }}_{{ .environmentAbbr }}_{{ .s
   name        = "pac-${var.project_name}-${var.environment_name}-{{ .serviceName }}"
   port        = "80"
   protocol    = "http"
-  vpc_id      = "${aws_vpc.application_vpc.id}"
+  vpc_id      = aws_vpc.application_vpc.id
   target_type = "lambda"
 }
 
@@ -61,13 +61,13 @@ resource "aws_lambda_permission" "{{ .projectName }}_{{ .serviceName }}_with_lb"
   function_name = "pac-${var.project_name}-${var.environment_abbr}-{{ .serviceName }}"
   principal     = "elasticloadbalancing.amazonaws.com"
   #source_arn    = "${aws_alb_target_group.pac_lambda_target_group.arn}"
-  source_arn    = "${aws_alb_target_group.{{ .projectName }}_{{ .environmentAbbr }}_{{ .serviceName }}_tg.id}"
+  source_arn    = aws_alb_target_group.{{ .projectName }}_{{ .environmentAbbr }}_{{ .serviceName }}_tg.id
 }
 
 # register with load balancer target group 
 resource "aws_alb_target_group_attachment" "{{ .projectName }}_{{ .environmentAbbr }}_{{ .serviceName }}_tg_attachment" {
-  target_group_arn = "${aws_alb_target_group.{{ .projectName }}_{{ .environmentAbbr }}_{{ .serviceName }}_tg.id}"
-  target_id        = "${aws_lambda_function.lambda_{{ .serviceName }}.arn}"
+  target_group_arn = aws_alb_target_group.{{ .projectName }}_{{ .environmentAbbr }}_{{ .serviceName }}_tg.id
+  target_id        = aws_lambda_function.lambda_{{ .serviceName }}.arn
   depends_on       = ["aws_lambda_permission.{{ .projectName }}_{{ .serviceName }}_with_lb"]
 }
 
@@ -76,11 +76,11 @@ resource "aws_alb_target_group_attachment" "{{ .projectName }}_{{ .environmentAb
 # alb listener rule
 #
 resource "aws_lb_listener_rule" "{{ .projectName }}_{{ .serviceName }}_rule_100" {
-  listener_arn = "${aws_lb_listener.{{ .environmentName }}.arn}"
+  listener_arn = aws_lb_listener.{{ .environmentName }}.arn
 
   action {
     type = "forward"
-    target_group_arn = "${aws_alb_target_group.{{ .projectName }}_{{ .environmentAbbr }}_{{ .serviceName }}_tg.arn}"
+    target_group_arn = aws_alb_target_group.{{ .projectName }}_{{ .environmentAbbr }}_{{ .serviceName }}_tg.arn
   }
 
   condition {
@@ -90,11 +90,11 @@ resource "aws_lb_listener_rule" "{{ .projectName }}_{{ .serviceName }}_rule_100"
 }
 
 resource "aws_lb_listener_rule" "{{ .projectName }}_{{ .serviceName }}_rule_200" {
-  listener_arn = "${aws_lb_listener.{{ .environmentName }}.arn}"
+  listener_arn = aws_lb_listener.{{ .environmentName }}.arn
 
   action {
     type = "forward"
-    target_group_arn = "${aws_alb_target_group.{{ .projectName }}_{{ .environmentAbbr }}_{{ .serviceName }}_tg.arn}"
+    target_group_arn = aws_alb_target_group.{{ .projectName }}_{{ .environmentAbbr }}_{{ .serviceName }}_tg.arn
   }
 
   condition {
@@ -123,13 +123,13 @@ resource "aws_dynamodb_table" "{{ .projectName }}_dynamodb_table_{{ .serviceName
 
   tags = {
     Name = "${var.project_name}-dynamodb-table-{{ .serviceName }}"
-    pac-project-name = "${var.project_name}"
+    pac-project-name = var.project_name
   }
 }
 
 resource "aws_lambda_event_source_mapping" "{{ .projectName }}_dynamodb_table_{{ .serviceName }}_source_map" {
-  count             = "${var.enable_elasticsearch == "true" ? 1 : 0 }"
-  event_source_arn  = "${aws_dynamodb_table.{{ .projectName }}_dynamodb_table_{{ .serviceName }}.stream_arn}"
+  count             = var.enable_elasticsearch == "true" ? 1 : 0
+  event_source_arn  = aws_dynamodb_table.{{ .projectName }}_dynamodb_table_{{ .serviceName }}.stream_arn
   function_name     = "DynamoDBToElasticsearch-${var.project_name}"
   starting_position = "LATEST"
 }

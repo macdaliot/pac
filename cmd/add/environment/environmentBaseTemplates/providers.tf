@@ -5,8 +5,8 @@
 #
 terraform {
   backend "s3" {
-    bucket = "terraform.{{ .projectFqdn }}"
-    key    = "tfstate/{{ .env }}/{{ .environmentName }}"
+    bucket = "terraform.{{ .projectName }}.{{ .hostedZone }}"
+    key    = "tfstate/dev/integration"
     region = "{{ .region }}"
   }
 }
@@ -18,35 +18,35 @@ terraform {
 #
 provider "aws" {
   # not listed as require in documentation but will be asked for it if not set
-  region = "{{ .region }}"
-  version = "1.60"
+  region  = "{{ .region }}"
+  version = "~>2.21"
 }
 
 provider "template" {
-  version = "2.1"
+  version = "~>2.1"
 }
 
 #
 # http://www.terraform.io/docs/providers/random/index.html
 #
 provider "random" {
-  version = "2.1"
+  version = "~>2.1"
 }
 
 data "terraform_remote_state" "dns" {
   backend = "s3"
-  config {
-    bucket = "terraform.{{ .projectFqdn }}"
-    key    = "tfstate/{{ .env }}/dns"
+  config = {
+    bucket = "terraform.{{ .projectName }}.{{ .hostedZone }}"
+    key    = "tfstate/dev/dns"
     region = "{{ .region }}"
   }
 }
 
 data "terraform_remote_state" "management" {
   backend = "s3"
-  config {
-    bucket = "terraform.{{ .projectFqdn }}"
-    key    = "tfstate/{{ .env }}/management_vpc"
+  config = {
+    bucket = "terraform.{{ .projectName }}.{{ .hostedZone }}"
+    key    = "tfstate/dev/management_vpc"
     region = "{{ .region }}"
   }
 }

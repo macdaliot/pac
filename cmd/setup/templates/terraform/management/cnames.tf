@@ -10,14 +10,15 @@ variable "cnames" {
 # is created in the application VPC per design requirements to speed up setup
 #
 resource "aws_route53_record" "record" {
-  count   = "${length(var.cnames)}"
-  zone_id = "${data.terraform_remote_state.dns.main_zone_id}"
-  name    = "${element(var.cnames,count.index)}"
+  count   = length(var.cnames)
+  zone_id = data.terraform_remote_state.dns.outputs.main_zone_id
+  name    = element(var.cnames, count.index)
   type    = "CNAME"
   ttl     = "60"
-  records = ["${aws_lb.management.dns_name}"]
+  records = [aws_lb.management.dns_name]
 }
 
 output "cnames" {
-  value = "${aws_route53_record.record.*.name}"
+  value = aws_route53_record.record.*.name
 }
+
