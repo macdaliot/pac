@@ -161,7 +161,7 @@ resource "aws_ecs_task_definition" "jenkins" {
         "valueFrom": "/pac/aws/secret_access_key"
       }
     ],
-    "image": "{{ .awsID }}.dkr.ecr.us-east-2.amazonaws.com/pac-jenkins:env",
+    "image": "{{ .awsID }}.dkr.ecr.us-east-2.amazonaws.com/pac-jenkins:tf-0.12.4",
     "name": "pac-jenkins",
     "portMappings": [
       {
