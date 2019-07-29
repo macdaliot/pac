@@ -17,7 +17,7 @@ resource "aws_lambda_function" "lambda_auth" {
   s3_bucket        = "${var.environment_name}.${var.project_name}.${var.hosted_zone}"
   s3_key           = "auth.zip"
   function_name    = "pac-{{ .projectName }}-${var.environment_abbr}-auth"
-  role             = "${data.terraform_remote_state.management.{{ .projectName }}_lambda_execution_role_arn}"
+  role             = "${data.terraform_remote_state.management.outputs.{{ .projectName }}_lambda_execution_role.arn}"
   handler          = "lambda.handler"
   # source_code_hash = "${base64sha256(file(var.lambda_function_payload))}"
   runtime          = "nodejs8.10"
@@ -30,13 +30,13 @@ resource "aws_lambda_function" "lambda_auth" {
       AUTH0_CLIENT_ID = "PJqs70Pr0VRH67aR2TnHf4Sn6DDldiNR"
       AUTH0_DOMAIN    = "pyramidsystems.auth0.com"
       ENV_ABBR        = "{{ .environmentName }}"
-      JWT_SECRET      = data.terraform_remote_state.management.jwt_secret
+      JWT_SECRET      = data.terraform_remote_state.management.outputs.jwt_secret.value
       SAML_CALLBACK   = "https://{{ .environmentName }}.{{ .projectName }}.pac.pyramidchallenges.com/api/auth/callback"
       SAML_SIGNER     = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tDQpNSUlDK0RDQ0FlQ2dBd0lCQWdJSlBPV29wemhNQVdPSk1BMEdDU3FHU0liM0RRRUJDd1VBTUNNeElUQWZCZ05WDQpCQU1UR0hCNWNtRnRhV1J6ZVhOMFpXMXpMbUYxZEdnd0xtTnZiVEFlRncweE56QXpNVEV4T0RJd01EbGFGdzB6DQpNREV4TVRneE9ESXdNRGxhTUNNeElUQWZCZ05WQkFNVEdIQjVjbUZ0YVdSemVYTjBaVzF6TG1GMWRHZ3dMbU52DQpiVENDQVNJd0RRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFNa2pFeDkyZkFscmU0S0xYUXgvDQplQ2lUTFZOY2ljMnlUeXRRb2cveWJsRzJvMEx5L0lGdHhaTmpFaEF2ODQ1MGpiWDdFVG1iNkhrUEZWb0FHcDNsDQp6WGdxNTByL3pRSzRmMVp6Qzc1VC9YL01HVlF3TmRGNDZXUEJlaUs4T0xndzVZa2RUa1J6V1pDQm9zNGRMK2NZDQoyWHc0eGpZQ1MxL28wMExPZzVjaDdCTEtodTRSb0dRRnRWRUZBV0VTTytBZ2xCRVFSR2ljbXQ2WWhVTW5RdTV6DQo4bHdvTXRRNFlZdk9vNVpsbUdLZ2hEOEJzTmhidGdLRkV2UVlwbXpmZVQ5amRScjhGOHN6cHkya0xmTU0wRWMzDQo4cEEvNnFialA0ckhHdzE5ZS9FUmhyRlRTa2FFMFMyVFkya1l0V1RFODdCSHI4SWJFaHYvNDl1OGVkbW5ERlBFDQo3aDBDQXdFQUFhTXZNQzB3REFZRFZSMFRCQVV3QXdFQi96QWRCZ05WSFE0RUZnUVVLMEFuUHpXeGhLOTZzeEUrDQoydjhCQjRBc2ZKMHdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBSWRtYkFzVC9tK01YcFh0MzBuMHk4dU5JcCs4DQppTFVIM3duL3RaQUl6Tjk1WDJ1ZlNuRTZSb1dWaGNzOVAyT0NScjY0b1ZzU29McUJhWjVwSkhINmdtSTVlc0lTDQp6dlRFYXZIUDIyb2QyeDUwcEVlZGpzSyt5Rlh1bkZ2b2xYYnIyeFU2bmMwc3FuSW12OWVCMU1vN3FsU0hxQnhIDQpoUkh5NXhCUGVVcTI5U0ZrM0wwd042UUhaNXNTZGRKV2prYmMvVWdFZnpGeURNQUxqZEhHUGd2ZVB6bU44SlVJDQpWVkxYOHBrYWdQYVJ4RWd2dTN6RGtTRjBBMkEvejZPMFZVWWNXWi9YN1Nad0Z4d3ZRNEpoYTR1ejFOcHJrY0s0DQptNUNkY1pSak41WWlUWUV5YmtBWWR4Z0w3M3dZUUQwYlRYVVAySkRscVlYeVFUVVdPWHFaR0N4NXRFST0NCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0NCg=="
     }
   }
 
-  tags {
+  tags = {
       pac-project-name = "{{ .projectName }}"
   }
 }

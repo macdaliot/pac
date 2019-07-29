@@ -184,17 +184,12 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_attach_
 }
 
 output "{{ .projectName }}_lambda_execution_role_arn" {
-    value = "${aws_iam_role.{{ .projectName }}_{{ .env }}_lambda_execution_role.arn}"
+    value = "${aws_iam_role.{{ .projectName }}_{{ .env }}_lambda_execution_role}"
 }
 
-# output "{{ .projectName }}_{{ .env }}_lambda_execution_role_name" {
-#     value = "${aws_iam_role.{{ .projectName }}_{{ .env }}_lambda_execution_role.name}"
+# output "{{ .projectName }}_lambda_exec_policy_attachment_policy" {
+#     value ="${aws_iam_role_policy_attachment.{{ .projectName }}_{{ .env }}_attach_aws_lambda_role}"
 # }
-
-# output "{{ .projectName }}_lambda_exec_policy_attachment_policy_arn" {
-#     value ="${aws_iam_role_policy_attachment.{{ .projectName }}_{{ .env }}_attach_aws_lambda_role.id}"
-# }
-
 
 resource "aws_iam_policy" "{{ .projectName }}_{{ .env }}_lambda_dynamodb" {
   name = "${var.project_name}-{{ .env }}-lambda-dynamodb-policy"
@@ -234,13 +229,10 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_lambda_
   depends_on = ["aws_iam_role.{{ .projectName }}_{{ .env }}_lambda_execution_role"]
 }
 
-# output "{{ .projectName }}_{{ .env }}_lambda_dynamodb_policy_arn" {
-#   value = "${aws_iam_policy.{{ .projectName }}_{{ .env }}_lambda_dynamodb.arn}"
+# output "{{ .projectName }}_{{ .env }}_lambda_dynamodb_policy" {
+#   value = "${aws_iam_policy.{{ .projectName }}_{{ .env }}_lambda_dynamodb}"
 # }
 
-# output "{{ .projectName }}_{{ .env }}_lambda_dynamodb_policy_name" {
-#   value = "${aws_iam_policy.{{ .projectName }}_{{ .env }}_lambda_dynamodb.name}"
-# }
 
 #----------------------------------------------------------------------------------------------------------------------
 # ECS EC2 ROLES

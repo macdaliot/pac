@@ -17,7 +17,7 @@ resource "aws_lambda_function" "lambda_{{ .serviceName }}" {
   s3_bucket        = "${var.environment_name}.${var.project_fqdn}"
   s3_key           = "{{ .serviceName }}.zip"
   function_name    = "pac-${var.project_name}-${var.environment_abbr}-{{ .serviceName }}"
-  role             = data.terraform_remote_state.management.outputs.{{ .projectName }}_lambda_execution_role_arn
+  role             = data.terraform_remote_state.management.outputs.{{ .projectName }}_lambda_execution_role.arn
   handler          = "lambda.handler"
   source_code_hash = filebase64sha256("${path.cwd}/../../services/{{ .serviceName }}/function.zip")
   runtime          = "nodejs8.10"
@@ -25,8 +25,8 @@ resource "aws_lambda_function" "lambda_{{ .serviceName }}" {
 
   environment {
     variables = {
-      JWT_ISSUER = data.terraform_remote_state.management.outputs.jwt_issuer
-      JWT_SECRET = data.terraform_remote_state.management.outputs.jwt_secret
+      JWT_ISSUER = data.terraform_remote_state.management.outputs.jwt_issuer.value
+      JWT_SECRET = data.terraform_remote_state.management.outputs.jwt_secret.value
       ENV_ABBR   = var.environment_abbr
     }
   }
@@ -42,11 +42,15 @@ resource "aws_lambda_function" "lambda_{{ .serviceName }}" {
 # http://www.terraform.io/docs/providers/aws/r/lb_target_group.html
 #
 resource "aws_alb_target_group" "{{ .projectName }}_{{ .environmentAbbr }}_{{ .serviceName }}_tg" {
-  name        = "pac-${var.project_name}-${var.environment_name}-{{ .serviceName }}"
+  name        = "pac-${var.project_name}-{{ .serviceName }}"
   port        = "80"
   protocol    = "http"
   vpc_id      = aws_vpc.application_vpc.id
   target_type = "lambda"
+
+  tags = {
+    Name = "pac-${var.project_name}-${var.environment_name}-{{ .serviceName }}"
+  }
 }
 
 #

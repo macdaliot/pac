@@ -27,7 +27,8 @@ data "template_file" "user_data" {
 # Create Launch Configuration
 resource "aws_launch_configuration" "as_conf" {
   image_id                    = data.aws_ami.ecs_ami.id
-  instance_type               = "t3.large"
+  # changed from t3.large to t3.xlarge so there was enough memory to autoscale
+  instance_type               = "t3.xlarge"
   security_groups             = [aws_security_group.ecs_tasks.id]
   iam_instance_profile        = aws_iam_instance_profile.ecsInstanceProfile.id
   associate_public_ip_address = true # need for pulling from ECR registry
