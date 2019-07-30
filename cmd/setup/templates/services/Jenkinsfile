@@ -10,7 +10,7 @@ properties([
 ])
 
 node {
-  ansicolor('xterm') {
+  ansiColor('xterm') {
     dir(params.BUILD_DIRECTORY + "/services") {
       stage('Build') {
         if (params.EXEC_BUILD) {
