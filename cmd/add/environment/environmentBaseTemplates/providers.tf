@@ -5,8 +5,8 @@
 #
 terraform {
   backend "s3" {
-    bucket = "terraform.{{ .projectName }}.{{ .hostedZone }}"
-    key    = "tfstate/dev/integration"
+    bucket = "terraform.{{ .projectFqdn }}"
+    key    = "tfstate/{{ .env }}/{{ .environmentName }}"
     region = "{{ .region }}"
   }
 }
@@ -36,8 +36,8 @@ provider "random" {
 data "terraform_remote_state" "dns" {
   backend = "s3"
   config = {
-    bucket = "terraform.{{ .projectName }}.{{ .hostedZone }}"
-    key    = "tfstate/dev/dns"
+    bucket = "terraform.{{ .projectFqdn }}"
+    key    = "tfstate/{{ .env }}/dns"
     region = "{{ .region }}"
   }
 }
@@ -45,8 +45,8 @@ data "terraform_remote_state" "dns" {
 data "terraform_remote_state" "management" {
   backend = "s3"
   config = {
-    bucket = "terraform.{{ .projectName }}.{{ .hostedZone }}"
-    key    = "tfstate/dev/management_vpc"
+    bucket = "terraform.{{ .projectFqdn }}"
+    key    = "tfstate/{{ .env }}/management_vpc"
     region = "{{ .region }}"
   }
 }
