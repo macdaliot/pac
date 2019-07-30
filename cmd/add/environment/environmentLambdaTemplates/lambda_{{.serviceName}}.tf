@@ -82,11 +82,6 @@ resource "aws_alb_target_group_attachment" "{{ .projectName }}_{{ .environmentAb
   target_group_arn = aws_alb_target_group.{{ .projectName }}_{{ .environmentAbbr }}_{{ .serviceName }}_tg.id
   target_id        = aws_lambda_function.lambda_{{ .serviceName }}.arn
   depends_on       = [aws_lambda_permission.{{ .projectName }}_{{ .serviceName }}_with_lb]
-
-  tags = {
-    pac-project-name = var.project_name
-    environment      = var.environment_name
-  }
 }
 
 #
