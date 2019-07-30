@@ -1,0 +1,27 @@
+{
+  "name": "508-tests",
+  "version": "0.0.1",
+  "description": "Tests for the accessibility of the ReactJS front-end",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "npx tsc",
+    "generate-report": "node 508ReportGenerator",
+    "test": "rm -Rf *.csv; node build/index"
+  },
+  "dependencies": {
+    "axe-reports": "^1.1.11",
+    "axe-webdriverjs": "^2.2.0",
+    "axios": "^0.19.0",
+    "csv-parser": "^2.3.0",
+    "dotenv": "^6.2.0",
+    "selenium-webdriver": "^4.0.0-alpha.4"
+  },
+  "author": "Pyramid Systems Inc.",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/axe-webdriverjs": "^2.1.0",
+    "@types/dotenv": "^6.1.1",
+    "@types/node": "^12.6.8",
+    "typescript": "^3.5.3"
+  }
+}

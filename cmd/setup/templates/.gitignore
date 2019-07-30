@@ -46,3 +46,8 @@ integration-tests/target
 integration-tests/gradle/wrapper/gradle-wrapper.jar
 integration-tests/.classpath
 integration-tests/.project
+
+508-tests/test-results.csv
+508-tests/.env
+508-tests/build
+508-tests/508Report.html

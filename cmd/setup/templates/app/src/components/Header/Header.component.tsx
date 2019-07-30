@@ -31,7 +31,7 @@ export class HeaderComponent extends React.Component<HeaderProps> {
       <header className="header-component">
         <div className="section left">
           <div className="image" />
-          <span className="application-title">Application Title</span>
+          <h1 className="application-title">Application Title</h1>
         </div>
         <div className="section right">{this.renderLogin()}</div>
       </header>

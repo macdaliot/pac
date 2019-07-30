@@ -183,6 +183,10 @@ node {
           throw e
         }        
       }
+      stage("508 Test") {
+        sh 'cd 508-tests; npm i; npm run build; npm run test; npm run generate-report;'
+        publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: '508-tests', reportFiles: '508Report.html', reportName: '508 Report', reportTitles: ''])
+      }
       stage("Integration Test") {
         script {
           sh 'cd integration-tests/gradle/wrapper; jar cf gradle-wrapper.jar *'
