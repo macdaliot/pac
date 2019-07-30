@@ -11,6 +11,8 @@ resource "aws_route_table" "management_vpc" {
 
   tags = {
     Name = "${var.project_name} vpc peering route table"
+    pac-project-name = var.project_name
+    environment      = var.environment_name
   }
 }
 

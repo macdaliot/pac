@@ -7,6 +7,11 @@ resource "aws_s3_bucket_object" "lambda_{{ .serviceName }}_code" {
   key        = "{{ .serviceName }}.zip"
   source     = "${path.cwd}/../../services/{{ .serviceName }}/function.zip"
   depends_on = [aws_s3_bucket.{{ .environmentName }}]
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = var.environment_name
+  }
 }
 
 #
@@ -33,6 +38,7 @@ resource "aws_lambda_function" "lambda_{{ .serviceName }}" {
 
   tags = {
     pac-project-name = var.project_name
+    environment      = var.environment_name
   }
 }
 
@@ -49,7 +55,9 @@ resource "aws_alb_target_group" "{{ .projectName }}_{{ .environmentAbbr }}_{{ .s
   target_type = "lambda"
 
   tags = {
-    Name = "pac-${var.project_name}-${var.environment_name}-{{ .serviceName }}"
+    Name = "pac-${var.project_name}-${var.environment_name}-dollhair"
+    pac-project-name = var.project_name
+    environment      = var.environment_name
   }
 }
 
@@ -74,6 +82,11 @@ resource "aws_alb_target_group_attachment" "{{ .projectName }}_{{ .environmentAb
   target_group_arn = aws_alb_target_group.{{ .projectName }}_{{ .environmentAbbr }}_{{ .serviceName }}_tg.id
   target_id        = aws_lambda_function.lambda_{{ .serviceName }}.arn
   depends_on       = [aws_lambda_permission.{{ .projectName }}_{{ .serviceName }}_with_lb]
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = var.environment_name
+  }
 }
 
 #
@@ -127,8 +140,9 @@ resource "aws_dynamodb_table" "{{ .projectName }}_dynamodb_table_{{ .serviceName
   }
 
   tags = {
-    Name             = "${var.project_name}-dynamodb-table-{{ .serviceName }}"
+    Name             = "${var.project_name}-dynamodb-table-dollhair"
     pac-project-name = var.project_name
+    environment      = var.environment_name
   }
 }
 

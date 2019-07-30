@@ -5,7 +5,9 @@ resource "aws_subnet" "private" {
   vpc_id            = aws_vpc.management_vpc.id
 
   tags = {
-    name = "${var.project_name}-private-${count.index}"
+    Name             = "${var.project_name}-private-${count.index}"
+    pac-project-name = var.project_name
+    environment      = "management"
   }
 }
 

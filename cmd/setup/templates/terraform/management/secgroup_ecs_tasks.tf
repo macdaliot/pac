@@ -40,7 +40,9 @@ resource "aws_security_group" "ecs_tasks" {
   }
 
   tags = {
-    Name = var.project_name
+    Name             = var.project_name
+    pac-project-name = var.project_name
+    environment      = "management"
   }
 }
 

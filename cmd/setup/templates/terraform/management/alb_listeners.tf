@@ -1,6 +1,8 @@
 #
 # http://www.terraform.io/docs/providers/aws/r/lb_listener.html
 #
+# Doesn't support tags.
+#
 resource "aws_lb_listener" "https" {
   load_balancer_arn = aws_lb.management.arn
   port              = "443"

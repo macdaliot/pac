@@ -1,6 +1,8 @@
 #
 # http://www.terraform.io/docs/providers/aws/r/lb_listener_rule.html#condition
 #
+# Doesn't support tags.
+#
 
 resource "aws_lb_listener_rule" "jenkins_host" {
   listener_arn = aws_lb_listener.https.arn

@@ -13,6 +13,8 @@ resource "aws_vpc_peering_connection" "pc" {
 
   tags = {
     Name = "${var.project_name} management/${var.environment_name} vpc peering"
+    pac-project-name = var.project_name
+    environment      = var.environment_name
   }
 }
 

@@ -20,6 +20,11 @@ resource "aws_iam_role" "{{ .projectName }}_{{ .env }}_jenkins" {
   ]
 }
 EOF
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
 
 # Creates an inline policy to allow listing and updating route53 records
@@ -45,6 +50,7 @@ resource "aws_iam_role_policy" "{{ .projectName }}_{{ .env }}_jenkins_update_rou
     ]
 }
 EOF
+  # Tags not supported
 }
 
 # Creates an inline policy on the lambda_elasticsearch_execution_role that allows us to stream logs to Elasticsearch.
@@ -67,6 +73,8 @@ resource "aws_iam_role_policy" "{{ .projectName }}_{{ .env }}_jenkins_ec2_specif
     ]
 }
 EOF
+
+  # Tags not supported
 }
 
 resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_ec2_container_registry_full_access" {
@@ -74,6 +82,8 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_ec2_con
 
   # AWS Mananged policy, safe to hard code
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
+
+  # Tags not supported
 }
 
 resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_s3_read_only_access" {
@@ -81,6 +91,8 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_s3_read
 
   # AWS Mananged policy, safe to hard code
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+
+  # Tags not supported
 }
 
 resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_ecs_full_access" {
@@ -88,6 +100,8 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_ecs_ful
 
   # AWS Mananged policy, safe to hard code
   policy_arn = "arn:aws:iam::aws:policy/AmazonECS_FullAccess"
+
+  # Tags not supported
 }
 
 #----------------------------------------------------------------------------------------------------------------------
@@ -111,6 +125,11 @@ resource "aws_iam_role" "{{ .projectName }}_task_execution" {
   ]
 }
 EOF
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_ecs_task_execution" {
@@ -118,6 +137,8 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_ecs_tas
 
   # AWS Mananged policy, safe to hard code
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+
+  # Tags not supported
 }
 
 # Creates an inline policy to allow reading from System Manager Parameter Store
@@ -140,6 +161,8 @@ resource "aws_iam_role_policy" "parameter_store" {
     ]
 }
 EOF
+
+  # Tags not supported
 }
 
 resource "aws_iam_role_policy_attachment" "{{ .projectName }}_task_ec2_container_registry_full_access" {
@@ -147,6 +170,8 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_task_ec2_container
 
   # AWS Mananged policy, safe to hard code
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
+
+  # Tags not supported
 }
 
 #----------------------------------------------------------------------------------------------------------------------
@@ -172,6 +197,11 @@ resource "aws_iam_role" "{{ .projectName }}_{{ .env }}_lambda_execution_role" {
     ]
 }
 EOF
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_attach_aws_lambda_role" {
@@ -181,6 +211,8 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_attach_
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaRole"
 
   depends_on = ["aws_iam_role.{{ .projectName }}_{{ .env }}_lambda_execution_role"]
+
+  # Tags not supported
 }
 
 output "{{ .projectName }}_lambda_execution_role" {
@@ -227,6 +259,8 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_lambda_
   policy_arn = "${aws_iam_policy.{{ .projectName }}_{{ .env }}_lambda_dynamodb.arn}"
 
   depends_on = ["aws_iam_role.{{ .projectName }}_{{ .env }}_lambda_execution_role"]
+
+  # Tags not supported
 }
 
 # output "{{ .projectName }}_{{ .env }}_lambda_dynamodb_policy" {
@@ -255,6 +289,11 @@ resource "aws_iam_role" "ecsInstanceRole_{{ .env }}" {
  ]
 }
 EOF
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
 
 resource "aws_iam_role_policy" "ecsInstanceRolePolicy_{{ .env }}" {
@@ -287,6 +326,8 @@ resource "aws_iam_role_policy" "ecsInstanceRolePolicy_{{ .env }}" {
  ]
 }
 EOF
+
+  # Tags not supported
 }
 
 # Create ECS IAM Service Role and Policy
@@ -308,6 +349,11 @@ resource "aws_iam_role" "ecsServiceRole_{{ .env }}" {
  ]
 }
 EOF
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
 
 resource "aws_iam_role_policy" "ecsServiceRolePolicy_{{ .env }}" {
@@ -334,4 +380,6 @@ resource "aws_iam_role_policy" "ecsServiceRolePolicy_{{ .env }}" {
  ]
 }
 EOF
+
+  # Tags not supported
 }

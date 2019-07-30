@@ -14,6 +14,8 @@ resource "aws_s3_bucket" "{{ .environmentName }}" {
 
   tags = {
     Name = "${var.project_name} ${var.environment_name} bucket"
+    pac-project-name = var.project_name
+    environment      = var.environment_name
   }
 }
 

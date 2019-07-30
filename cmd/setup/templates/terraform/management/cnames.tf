@@ -16,6 +16,8 @@ resource "aws_route53_record" "record" {
   type    = "CNAME"
   ttl     = "60"
   records = [aws_lb.management.dns_name]
+
+  # Doesn't support tags
 }
 
 output "cnames" {

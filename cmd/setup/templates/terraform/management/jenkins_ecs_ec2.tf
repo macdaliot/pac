@@ -13,6 +13,8 @@ data "aws_ami" "ecs_ami" {
 resource "aws_iam_instance_profile" "ecsInstanceProfile" {
   name = "ecsInstanceProfile-{{ .env }}-${var.project_name}"
   role = aws_iam_role.ecsInstanceRole_{{ .env }}.name
+
+  # Tags not supported
 }
 
 # Generate user_data from template file
@@ -42,6 +44,8 @@ resource "aws_launch_configuration" "as_conf" {
   lifecycle {
     create_before_destroy = true
   }
+
+  # Tags not supported
 }
 
 # Create Auto Scaling Group
@@ -61,6 +65,8 @@ resource "aws_autoscaling_group" "asg" {
   lifecycle {
     create_before_destroy = true
   }
+
+  # Tags not supported
 }
 
 resource "aws_lb_target_group" "jenkins" {
@@ -78,6 +84,11 @@ resource "aws_lb_target_group" "jenkins" {
     healthy_threshold   = 3
     unhealthy_threshold = 3
     matcher             = 200
+  }
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
   }
 }
 
@@ -106,6 +117,11 @@ resource "aws_ecs_service" "jenkins" {
   }
 
   depends_on = [aws_lb_listener.https]
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
 
 resource "aws_ecs_task_definition" "jenkins" {
@@ -182,5 +198,8 @@ resource "aws_ecs_task_definition" "jenkins" {
 ]
 DEFINITION
 
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
-

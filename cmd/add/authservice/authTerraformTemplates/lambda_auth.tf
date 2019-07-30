@@ -37,7 +37,8 @@ resource "aws_lambda_function" "lambda_auth" {
   }
 
   tags = {
-      pac-project-name = "{{ .projectName }}"
+    pac-project-name = var.project_name
+    environment      = var.environment_name
   }
 }
 
@@ -52,6 +53,11 @@ resource "aws_alb_target_group" "{{ .projectName }}_auth_target_group" {
   protocol    = "http"
   vpc_id      = aws_vpc.application_vpc.id
   target_type = "lambda"
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = var.environment_name
+  }
 }
 
 #

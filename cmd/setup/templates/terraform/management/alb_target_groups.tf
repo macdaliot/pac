@@ -4,6 +4,12 @@ resource "aws_lb_target_group" "sonarqube" {
   protocol    = "HTTP"
   vpc_id      = aws_vpc.management_vpc.id
   target_type = "ip"
+
+  tags = {
+    Name             = var.project_name
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
 
 output "target_group_sonarqube_arn" {
@@ -16,6 +22,12 @@ resource "aws_lb_target_group" "selenium" {
   protocol    = "HTTP"
   vpc_id      = aws_vpc.management_vpc.id
   target_type = "ip"
+
+  tags = {
+    Name             = var.project_name
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
 
 output "target_group_selenium_arn" {

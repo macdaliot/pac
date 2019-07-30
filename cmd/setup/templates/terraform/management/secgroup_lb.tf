@@ -21,7 +21,9 @@ resource "aws_security_group" "management_lb" {
   }
 
   tags = {
-    Name = var.project_name
+    Name             = var.project_name
+    pac-project-name = var.project_name
+    environment      = "management"
   }
 }
 

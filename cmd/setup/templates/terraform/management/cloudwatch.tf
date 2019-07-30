@@ -7,6 +7,8 @@ resource "aws_cloudwatch_log_group" "{{ .projectName }}_log_group" {
   retention_in_days = var.cwl_retention
   tags = {
     Name = "${var.project_name}-log-group"
+    pac-project-name = var.project_name
+    environment      = "management"
   }
 }
 
@@ -23,4 +25,6 @@ output "{{ .projectName }}_log_group_arn" {
 resource "aws_cloudwatch_log_stream" "{{ .projectName }}_log_stream" {
   name           = "${var.project_name}-log-stream"
   log_group_name = aws_cloudwatch_log_group.{{ .projectName }}_log_group.name
+
+  # Doesn't support tags
 }

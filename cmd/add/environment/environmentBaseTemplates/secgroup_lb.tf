@@ -22,6 +22,8 @@ resource "aws_security_group" "application_lb" {
 
   tags = {
     Name = var.project_name
+    pac-project-name = var.project_name
+    environment      = var.environment_name
   }
 }
 

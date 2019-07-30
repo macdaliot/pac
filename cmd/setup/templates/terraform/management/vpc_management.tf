@@ -1,7 +1,10 @@
 resource "aws_vpc" "management_vpc" {
   cidr_block = var.management_cidr_block
+
   tags = {
     Name = "${var.project_name}-management-vpc"
+    pac-project-name = var.project_name
+    environment      = "management"
   }
 }
 

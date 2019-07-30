@@ -19,6 +19,8 @@ resource "aws_ecs_service" "sonarqube" {
   }
 
   depends_on = [aws_lb_listener.https]
+
+  # Long arn format must be used for tagging operations
 }
 
 resource "aws_ecs_service" "selenium" {
@@ -42,5 +44,6 @@ resource "aws_ecs_service" "selenium" {
   }
 
   depends_on = [aws_lb_listener.https]
-}
 
+  # Long arn format must be used for tagging operations
+}

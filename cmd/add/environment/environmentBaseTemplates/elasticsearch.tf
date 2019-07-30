@@ -28,6 +28,8 @@ resource "aws_elasticsearch_domain" "es" {
 
   tags = {
     Domain = "${var.project_name} Elasticsearch Domain"
+    pac-project-name = var.project_name
+    environment      = var.environment_name
   }
 }
 
@@ -97,6 +99,12 @@ resource "aws_security_group" "es" {
       aws_vpc.application_vpc.cidr_block,
     ]
   }
+
+  tags = {
+    Name             = var.project_name
+    pac-project-name = var.project_name
+    environment      = var.environment_name
+  }
 }
 
 # resource "aws_iam_service_linked_role" "es" {
@@ -141,6 +149,11 @@ resource "aws_iam_role" "lambda_elasticsearch_execution_role" {
 }
 EOF
 
+  tags = {
+    Name             = var.project_name
+    pac-project-name = var.project_name
+    environment      = var.environment_name
+  }
 }
 
 # When using a non-public Elasticsearch cluster, the Lambda IAM Execution Role needs to have the following permissions 
@@ -174,25 +187,31 @@ EOF
 }
 
 resource "aws_lambda_function" "cwl_stream_lambda" {
-count = var.enable_elasticsearch == "true" ? 1 : 0
-filename = "cwl2eslambda.zip"
-function_name = "LogsToElasticsearch-${var.project_name}"
-role = aws_iam_role.lambda_elasticsearch_execution_role[0].arn
-handler = "exports.handler"
+  count         = var.enable_elasticsearch = = "true" ? 1 : 0
+  filename      = "cwl2eslambda.zip"
+  function_name = "LogsToElasticsearch-${var.project_name}"
+  role          = aws_iam_role.lambda_elasticsearch_execution_role[0].arn
+  handler       = "exports.handler"
 
-#source_code_hash = "${base64sha256(file("cwl2eslambda.zip"))}"
-runtime = "nodejs8.10"
+  #source_code_hash = "${base64sha256(file("cwl2eslambda.zip"))}"
+  runtime = "nodejs8.10"
 
-environment {
-variables = {
-es_endpoint = aws_elasticsearch_domain.es[0].endpoint
-}
-}
+  environment {
+    variables = {
+      es_endpoint = aws_elasticsearch_domain.es[0].endpoint
+    }
+  }
 
-vpc_config {
-subnet_ids = [aws_subnet.public[0].id, aws_subnet.public[1].id]
-security_group_ids = [aws_vpc.application_vpc.default_security_group_id]
-}
+  vpc_config {
+    subnet_ids = [aws_subnet.public[0].id, aws_subnet.public[1].id]
+    security_group_ids = [aws_vpc.application_vpc.default_security_group_id]
+  }
+
+  tags = {
+    Name             = var.project_name
+    pac-project-name = var.project_name
+    environment      = var.environment_name
+  }
 }
 
 resource "aws_lambda_permission" "cloudwatch_allow" {
@@ -256,6 +275,12 @@ resource "aws_s3_bucket_object" "lambda_dynamodb_to_elastic_code" {
   key        = "dynamoDbToElasticSearch.zip"
   source     = "${path.cwd}/dynamoDbToElasticSearch.zip"
   depends_on = [aws_s3_bucket.{{ .environmentName }}]
+
+  tags = {
+    Name             = var.project_name
+    pac-project-name = var.project_name
+    environment      = var.environment_name
+  }
 }
 
 resource "aws_lambda_function" "dynamodb_elasticsearch_lambda" {
@@ -281,6 +306,12 @@ resource "aws_lambda_function" "dynamodb_elasticsearch_lambda" {
   vpc_config {
     subnet_ids         = [aws_subnet.public[0].id, aws_subnet.public[1].id]
     security_group_ids = [aws_vpc.application_vpc.default_security_group_id]
+  }
+
+  tags = {
+    Name             = var.project_name
+    pac-project-name = var.project_name
+    environment      = var.environment_name
   }
 }
 
@@ -337,7 +368,9 @@ resource "aws_security_group" "es_jumpbox" {
   }
 
   tags = {
-    Name = var.project_name
+    Name             = var.project_name
+    pac-project-name = var.project_name
+    environment      = var.environment_name
   }
 }
 
@@ -353,7 +386,9 @@ resource "aws_instance" "jumpbox" {
   vpc_security_group_ids = [aws_security_group.es_jumpbox[0].id]
 
   tags = {
-    Name = "${var.project_name} Jumpbox"
+    Name             = var.project_name
+    pac-project-name = var.project_name
+    environment      = var.environment_name
   }
 }
 

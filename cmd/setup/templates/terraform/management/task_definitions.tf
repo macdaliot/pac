@@ -72,6 +72,10 @@ resource "aws_ecs_task_definition" "sonarqube" {
 ]
 DEFINITION
 
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
 
 resource "aws_ecs_task_definition" "selenium" {
@@ -147,5 +151,9 @@ resource "aws_ecs_task_definition" "selenium" {
 ]
 DEFINITION
 
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
 

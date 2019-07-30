@@ -28,6 +28,11 @@ resource "aws_ssm_parameter" "jwt_issuer" {
   value       = "urn:pacAuth"
   key_id      = data.aws_kms_key.project_key.key_id
   overwrite   = true
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
 
 resource "aws_ssm_parameter" "jwt_secret" {
@@ -39,6 +44,11 @@ resource "aws_ssm_parameter" "jwt_secret" {
   value     = "4pWQUrx6RkgU6o2TC"
   key_id    = data.aws_kms_key.project_key.key_id
   overwrite = true
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
 
 resource "aws_ssm_parameter" "postgres_password" {
@@ -49,6 +59,11 @@ resource "aws_ssm_parameter" "postgres_password" {
   # value      = "${random_string.password.1.result}"
   value  = "pyramid"
   key_id = data.aws_kms_key.project_key.key_id
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
 
 resource "aws_ssm_parameter" "sonar_jdbc_password" {
@@ -57,6 +72,11 @@ resource "aws_ssm_parameter" "sonar_jdbc_password" {
   type        = "SecureString"
   value       = "sonar"
   key_id      = data.aws_kms_key.project_key.key_id
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
 
 resource "aws_ssm_parameter" "sonar_jdbc_url" {
@@ -65,6 +85,11 @@ resource "aws_ssm_parameter" "sonar_jdbc_url" {
   type        = "SecureString"
   value       = "jdbc:postgresql://localhost/sonar"
   key_id      = data.aws_kms_key.project_key.key_id
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
 
 resource "aws_ssm_parameter" "sonar_jdbc_username" {
@@ -75,6 +100,11 @@ resource "aws_ssm_parameter" "sonar_jdbc_username" {
   # value = "${random_string.password.3.result}"
   value  = "sonar"
   key_id = data.aws_kms_key.project_key.key_id
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
 
 resource "aws_ssm_parameter" "sonar_secret" {
@@ -83,6 +113,11 @@ resource "aws_ssm_parameter" "sonar_secret" {
   type        = "SecureString"
   value       = random_string.password[4].result
   key_id      = data.aws_kms_key.project_key.key_id
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
 
 resource "aws_ssm_parameter" "jenkins_username" {
@@ -91,6 +126,11 @@ resource "aws_ssm_parameter" "jenkins_username" {
   type        = "SecureString"
   value       = "pyramid"
   key_id      = data.aws_kms_key.project_key.key_id
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
 
 resource "aws_ssm_parameter" "jenkins_password" {
@@ -101,6 +141,11 @@ resource "aws_ssm_parameter" "jenkins_password" {
   #value = "${random_string.password.5.result}"
   value  = "systems"
   key_id = data.aws_kms_key.project_key.key_id
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
 
 output "jwt_issuer" {
