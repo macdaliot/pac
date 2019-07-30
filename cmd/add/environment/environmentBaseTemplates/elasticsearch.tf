@@ -255,7 +255,7 @@ resource "aws_s3_bucket_object" "lambda_dynamodb_to_elastic_code" {
   bucket     = "${var.environment_name}.${var.project_name}.${var.hosted_zone}"
   key        = "dynamoDbToElasticSearch.zip"
   source     = "${path.cwd}/dynamoDbToElasticSearch.zip"
-  depends_on = [aws_s3_bucket.integration]
+  depends_on = [aws_s3_bucket.{{ .environmentName }}]
 }
 
 resource "aws_lambda_function" "dynamodb_elasticsearch_lambda" {
