@@ -187,7 +187,7 @@ EOF
 }
 
 resource "aws_lambda_function" "cwl_stream_lambda" {
-  count         = var.enable_elasticsearch = = "true" ? 1 : 0
+  count         = var.enable_elasticsearch == "true" ? 1 : 0
   filename      = "cwl2eslambda.zip"
   function_name = "LogsToElasticsearch-${var.project_name}"
   role          = aws_iam_role.lambda_elasticsearch_execution_role[0].arn
