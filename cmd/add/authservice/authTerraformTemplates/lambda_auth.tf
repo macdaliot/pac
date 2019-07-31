@@ -48,7 +48,7 @@ resource "aws_lambda_function" "lambda_auth" {
 # https://www.terraform.io/docs/providers/aws/r/lb_target_group.html
 #
 resource "aws_alb_target_group" "{{ .projectName }}_auth_target_group" {
-  name        = "pac-{{ .projectName }}-${var.environment_abbr}-auth"
+  name        = "pac-${var.project_name}-${var.environment_abbr}-auth"
   port        = "80"
   protocol    = "http"
   vpc_id      = aws_vpc.application_vpc.id
