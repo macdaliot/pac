@@ -3,7 +3,7 @@
 #
 resource "aws_elasticsearch_domain" "es" {
   count                 = var.enable_elasticsearch == "true" ? 1 : 0
-  domain_name           = var.project_name
+  domain_name           = "${var.project_name}-${var.environment_abbr}"
   elasticsearch_version = var.es_version
 
   cluster_config {
@@ -189,7 +189,7 @@ EOF
 resource "aws_lambda_function" "cwl_stream_lambda" {
   count         = var.enable_elasticsearch == "true" ? 1 : 0
   filename      = "cwl2eslambda.zip"
-  function_name = "LogsToElasticsearch-${var.project_name}"
+  function_name = "LogsToElasticsearch-${var.project_name}-${var.environment_abbr}"
   role          = aws_iam_role.lambda_elasticsearch_execution_role[0].arn
   handler       = "exports.handler"
 
@@ -287,7 +287,7 @@ resource "aws_lambda_function" "dynamodb_elasticsearch_lambda" {
   count         = var.enable_elasticsearch == "true" ? 1 : 0
   s3_bucket     = "lambda.${var.project_name}.${var.hosted_zone}"
   s3_key        = "dynamoDbToElasticSearch.zip"
-  function_name = "DynamoDBToElasticsearch-${var.project_name}"
+  function_name = "DynamoDBToElasticsearch-${var.project_name}-${var.environment_abbr}"
 
   #role             = "${aws_iam_role.lambda_dynamodb_elasticsearch_execution_role.arn}"
   role             = aws_iam_role.lambda_elasticsearch_execution_role[0].arn
