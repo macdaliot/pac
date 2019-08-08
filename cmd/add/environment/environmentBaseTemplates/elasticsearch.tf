@@ -2,8 +2,7 @@
 # http://www.terraform.io/docs/providers/aws/r/elasticsearch_domain.html
 #
 resource "aws_elasticsearch_domain" "es" {
-  count                 = "${var.enable_elasticsearch == "true" ? 1 : 0}"
-  domain_name           = "${var.project_name}"
+  domain_name           = "${var.project_name}-${var.environment_abbr}"
   elasticsearch_version = "${var.es_version}"
 
   cluster_config {
@@ -60,7 +59,6 @@ output "elasticsearch_endpoint" {
 # }
 
 resource "aws_elasticsearch_domain_policy" "vpc_based" {
-  count           = "${var.enable_elasticsearch == "true" ? 1 : 0}"
   domain_name     = "${aws_elasticsearch_domain.es.domain_name}"
 
   access_policies = <<POLICIES
@@ -83,8 +81,7 @@ POLICIES
 }
 
 resource "aws_security_group" "es" {
-  count       = "${var.enable_elasticsearch == "true" ? 1 : 0}"
-  name        = "elasticsearch-${var.project_name}"
+  name        = "elasticsearch-${var.project_name}-${var.environment_abbr}"
   description = "Managed by Terraform"
   vpc_id      = "${aws_vpc.application_vpc.id}"
 
@@ -123,8 +120,7 @@ variable "cwl_endpoint" {
 # Elasticsearch Endpoint of other account and ensure permissions are granted to be able to publish to that ARN.
 #
 resource "aws_iam_role" "lambda_elasticsearch_execution_role" {
-  count              = "${var.enable_elasticsearch == "true" ? 1 : 0}"
-  name               = "${var.project_name}_lambda_elasticsearch_execution_role"
+  name               = "${var.project_name}_${var.environment_abbr}_lambda_elasticsearch_execution_role"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -144,7 +140,6 @@ EOF
 # When using a non-public Elasticsearch cluster, the Lambda IAM Execution Role needs to have the following permissions 
 # policy: AWSLambdaVPCAccessExecutionRole. So we are attaching it here.
 resource "aws_iam_role_policy_attachment" "AWSLambdaVPCAccessExecutionRole" {
-  count      = "${var.enable_elasticsearch == "true" ? 1 : 0}"
   role       = "${aws_iam_role.lambda_elasticsearch_execution_role.name}"
 
   # AWS Mananged role, safe to hard code
@@ -153,8 +148,7 @@ resource "aws_iam_role_policy_attachment" "AWSLambdaVPCAccessExecutionRole" {
 
 # Creates an inline policy on the lambda_elasticsearch_execution_role that allows us to stream logs to Elasticsearch.
 resource "aws_iam_role_policy" "lambda_elasticsearch_execution_policy" {
-  count  = "${var.enable_elasticsearch == "true" ? 1 : 0}"
-  name   = "${var.project_name}_lambda_elasticsearch_execution_policy"
+  name   = "${var.project_name}_${var.environment_abbr}_lambda_elasticsearch_execution_policy"
   role   = "${aws_iam_role.lambda_elasticsearch_execution_role.id}"
   policy = <<EOF
 {
@@ -171,9 +165,8 @@ EOF
 }
 
 resource "aws_lambda_function" "cwl_stream_lambda" {
-  count            = "${var.enable_elasticsearch == "true" ? 1 : 0}"
   filename         = "cwl2eslambda.zip"
-  function_name    = "LogsToElasticsearch-${var.project_name}"
+  function_name    = "LogsToElasticsearch-${var.project_name}-${var.environment_abbr}"
   role             = "${aws_iam_role.lambda_elasticsearch_execution_role.arn}"
   handler          = "exports.handler"
   #source_code_hash = "${base64sha256(file("cwl2eslambda.zip"))}"
@@ -192,7 +185,6 @@ resource "aws_lambda_function" "cwl_stream_lambda" {
 }
 
 resource "aws_lambda_permission" "cloudwatch_allow" {
-  count         = "${var.enable_elasticsearch == "true" ? 1 : 0}"
   statement_id  = "cloudwatch_allow"
   action        = "lambda:InvokeFunction"
   function_name = "${aws_lambda_function.cwl_stream_lambda.arn}"
@@ -201,7 +193,6 @@ resource "aws_lambda_permission" "cloudwatch_allow" {
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_logs_to_es" {
-  count           = "${var.enable_elasticsearch == "true" ? 1 : 0}"
   depends_on      = ["aws_lambda_permission.cloudwatch_allow"]
   name            = "cloudwatch_logs_to_elasticsearch"
   log_group_name  = "${data.terraform_remote_state.management.{{ .projectName }}_log_group_name}"
@@ -213,9 +204,8 @@ resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_logs_to_es" {
 # DYNAMOBDB ACTIVITY TO ELASTICSEARCH
 #----------------------------------------------------------------------------------------------------------------------
 
-resource "aws_iam_policy" "{{ .projectName }}_dev_dynamodb_elasticsearch" {
-  count  = "${var.enable_elasticsearch == "true" ? 1 : 0}"
-  name   = "${var.project_name}-dev-dynamodb-elasticsearch-policy"
+resource "aws_iam_policy" "dynamodb_elasticsearch" {
+  name   = "${var.project_name}-${var.environment_abbr}-dynamodb-elasticsearch-policy"
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -236,10 +226,9 @@ resource "aws_iam_policy" "{{ .projectName }}_dev_dynamodb_elasticsearch" {
 EOF
 }
 
-resource "aws_iam_role_policy_attachment" "{{ .projectName }}_dev_lambda_elasticsearch_attach_policy" {
-  count      = "${var.enable_elasticsearch == "true" ? 1 : 0}"
+resource "aws_iam_role_policy_attachment" "lambda_elasticsearch_policy_attachment" {
   role       ="${aws_iam_role.lambda_elasticsearch_execution_role.name}"
-  policy_arn = "${aws_iam_policy.{{ .projectName }}_dev_dynamodb_elasticsearch.arn}"
+  policy_arn = "${aws_iam_policy.dynamodb_elasticsearch.arn}"
 }
 
 #
@@ -254,10 +243,9 @@ resource "aws_s3_bucket_object" "lambda_dynamodb_to_elastic_code" {
 }
 
 resource "aws_lambda_function" "dynamodb_elasticsearch_lambda" {
-  count            = "${var.enable_elasticsearch == "true" ? 1 : 0}"
-  s3_bucket        = "lambda.${var.project_name}.${var.hosted_zone}"
+  s3_bucket        = "${var.environment_name}.${var.project_name}.${var.hosted_zone}"
   s3_key           = "dynamoDbToElasticSearch.zip"
-  function_name    = "DynamoDBToElasticsearch-${var.project_name}"
+  function_name    = "DynamoDBToElasticsearch-${var.project_name}-${var.environment_abbr}"
   #role             = "${aws_iam_role.lambda_dynamodb_elasticsearch_execution_role.arn}"
   role             = "${aws_iam_role.lambda_elasticsearch_execution_role.arn}"
   handler          = "index.lambda_handler"
@@ -303,8 +291,7 @@ data "aws_ami" "amzn" {
 }
 
 resource "aws_security_group" "es_jumpbox" {
-  count       = "${var.enable_elasticsearch == "true" ? 1 : 0}"
-  name        = "${var.project_name}-es-jumpbox"
+  name        = "${var.project_name}-${var.environment_abbr}-es-jumpbox"
   description = "controls access to Kibana"
   vpc_id      = "${aws_vpc.application_vpc.id}"
   revoke_rules_on_delete = true
