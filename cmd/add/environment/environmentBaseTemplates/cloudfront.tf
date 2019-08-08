@@ -38,14 +38,17 @@ resource "aws_route53_record" "{{ .environmentName }}_cloudfront" {
   }
 }
 
-resource "aws_acm_certificate_validation" "{{ .environmentName }}_cert" {
-  certificate_arn         = aws_acm_certificate.{{ .environmentName }}_cert.arn
-  validation_record_fqdns = [aws_route53_record.{{ .environmentName }}_cert_validation.fqdn]
-}
+# Already created by DNS module
+#
+# resource "aws_acm_certificate_validation" "{{ .environmentName }}_cert" {
+#   certificate_arn         = aws_acm_certificate.{{ .environmentName }}_cert.arn
+#   validation_record_fqdns = [aws_route53_record.{{ .environmentName }}_cert_validation.fqdn]
+# }
 
 resource "aws_lb_listener_certificate" "front_end" {
   listener_arn    = data.terraform_remote_state.management.outputs.aws_lb_listener_https_arn
-  certificate_arn = aws_acm_certificate_validation.{{ .environmentName }}_cert.certificate_arn
+  #certificate_arn = aws_acm_certificate_validation.{{ .environmentName }}_cert.certificate_arn
+  certificate_arn = data.terraform_remote_state.dns.outputs.acm_cert_arn
 }
 
 #----------------------------------------------------------------------------------------------------------------------
@@ -169,7 +172,8 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 
   viewer_certificate {
     cloudfront_default_certificate = true
-    acm_certificate_arn            = aws_acm_certificate.{{ .environmentName }}_cert.arn
+    #acm_certificate_arn            = aws_acm_certificate.{{ .environmentName }}_cert.arn
+    acm_certificate_arn            = data.terraform_remote_state.dns.outputs.acm_cert_arn
     ssl_support_method             = "sni-only"
   }
 

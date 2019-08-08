@@ -86,10 +86,12 @@ resource "aws_lb_target_group" "jenkins" {
     matcher             = 200
   }
 
-  tags = {
-    pac-project-name = var.project_name
-    environment      = "management"
-  }
+  # The new ARN and resource ID format must be enabled to add tags to the service
+  # 
+  # tags = {
+  #   pac-project-name = var.project_name
+  #   environment      = "management"
+  # }
 }
 
 output "target_group_jenkins_arn" {

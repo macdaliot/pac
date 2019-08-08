@@ -144,7 +144,7 @@ resource "aws_dynamodb_table" "{{ .projectName }}_dynamodb_table_{{ .serviceName
 resource "aws_lambda_event_source_mapping" "{{ .projectName }}_dynamodb_table_{{ .serviceName }}_source_map" {
   count             = var.enable_elasticsearch == "true" ? 1 : 0
   event_source_arn  = aws_dynamodb_table.{{ .projectName }}_dynamodb_table_{{ .serviceName }}.stream_arn
-  function_name     = "DynamoDBToElasticsearch-${var.project_name}"
+  function_name     = "DynamoDBToElasticsearch-${var.project_name}-${var.environment_abbr}"
   starting_position = "LATEST"
 }
 

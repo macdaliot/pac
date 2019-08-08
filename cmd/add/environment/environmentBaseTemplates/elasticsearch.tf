@@ -285,7 +285,7 @@ resource "aws_s3_bucket_object" "lambda_dynamodb_to_elastic_code" {
 
 resource "aws_lambda_function" "dynamodb_elasticsearch_lambda" {
   count         = var.enable_elasticsearch == "true" ? 1 : 0
-  s3_bucket     = "lambda.${var.project_name}.${var.hosted_zone}"
+  s3_bucket     = "${var.environment_name}.${var.project_name}.${var.hosted_zone}"
   s3_key        = "dynamoDbToElasticSearch.zip"
   function_name = "DynamoDBToElasticsearch-${var.project_name}-${var.environment_abbr}"
 
