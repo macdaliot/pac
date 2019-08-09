@@ -1,3 +1,6 @@
+import { Connectors } from './database-connectors';
+
+export { Connectors };
 export * from './utilities';
 export * from './inversion.of.control';
 export * from './logger';

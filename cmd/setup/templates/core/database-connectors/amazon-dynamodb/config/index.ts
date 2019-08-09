@@ -1,2 +1,3 @@
-export * from './app.info.config';
-export * from './aws.sdk.config';
+import { awsConfig } from './aws.sdk.config';
+
+export { awsConfig };

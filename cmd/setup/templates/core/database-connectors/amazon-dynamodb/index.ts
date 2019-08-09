@@ -1,1 +1,3 @@
-export * from './repository';
+import { DynamoRepository } from './dynamo.repository';
+
+export { DynamoRepository };

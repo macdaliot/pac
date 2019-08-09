@@ -1,26 +1,20 @@
-import { Controller } from 'tsoa';
 import {
-    decorate,
-    Container,
-    injectable as Injectable,
-    inject as Inject
+  decorate,
+  Container,
+  inject as Inject,
+  injectable as Injectable
 } from 'inversify';
+import { Controller } from 'tsoa';
 import "reflect-metadata";
-import { config, DynamoDB } from 'aws-sdk';
-import { awsConfig } from './database-connectors/amazon-dynamodb/config';
-import { DataMapper } from '@aws/dynamodb-data-mapper';
+import { Connectors, DynamoRepository } from './database-connectors';
 
 decorate(Injectable(), Controller);
-let env = process.env.ENVIRONMENT || 'cloud';
-config.update(awsConfig[env]);
-const iocContainer = new Container();
-iocContainer.bind(DataMapper).toDynamicValue(() => {
-    return new DataMapper({
-        client: new DynamoDB()
-    })
-})
+
+const iocContainer: Container = new Container();
+iocContainer.bind(Connectors.DynamoDB).to(DynamoRepository);
+
 export {
-    iocContainer,
-    Inject,
-    Injectable
+  iocContainer,
+  Inject,
+  Injectable
 };
