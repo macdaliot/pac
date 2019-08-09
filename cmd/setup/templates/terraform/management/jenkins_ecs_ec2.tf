@@ -120,10 +120,10 @@ resource "aws_ecs_service" "jenkins" {
 
   depends_on = [aws_lb_listener.https]
 
-  tags = {
-    pac-project-name = var.project_name
-    environment      = "management"
-  }
+  # tags = {
+  #   pac-project-name = var.project_name
+  #   environment      = "management"
+  # }
 }
 
 resource "aws_ecs_task_definition" "jenkins" {
