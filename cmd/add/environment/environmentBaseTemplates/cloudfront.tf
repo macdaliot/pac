@@ -70,6 +70,8 @@ output "{{ .environmentName }}_oai_path" {
 # http://www.terraform.io/docs/providers/aws/r/cloudfront_distribution.html
 #
 resource "aws_cloudfront_distribution" "s3_distribution" {
+  wait_for_deployment = false
+
   origin {
     domain_name = aws_lb.application.dns_name
     origin_id   = aws_lb.application.dns_name
