@@ -30,6 +30,7 @@ func createEnvironmentDirectory(environmentName string) {
 func createAddEnvironmentConfig(environmentName string) map[string]string {
 	cfg := make(map[string]string)
 	cfg["env"] = config.Get("env")
+	cfg["endUserIP"] = config.Get("endUserIP")
 	cfg["environmentAbbr"] = environmentName[0:3]
 	cfg["environmentName"] = environmentName
 	cfg["hostedZone"] = config.Get("hostedZone")

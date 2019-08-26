@@ -1,7 +1,6 @@
 ## {{.projectName}}
 
 
-
 ### Setting up the Environment Locally
 
 1. Ensure you have one or more services and one authentication service
@@ -96,6 +95,21 @@
 ### Post-Setup Authentication Steps
 
 * All services do not require authentication to begin with. In order to require a valid JWT token to use the service, uncomment the `@Security` annotation in the `controller.ts` file in the service's directory
+
+
+
+### Running 508 Tests Locally
+
+1. Navigate to the `508-tests` folder at the root of the project
+
+2. Run `npm i` to download all dependencies
+
+3. OPTIONAL: Edit the `TEST_LOCALLY` variable in the `.env` file to test aginst the integration environment, do nothing to test against
+ localhost:8080
+
+4. Run `npm run test` to generate `test-results.csv`
+
+5. Run `npm run report` to serve up `test-results.csv` as an HTML table
 
 
 

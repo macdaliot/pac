@@ -119,7 +119,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 
     forwarded_values {
       headers      = ["Host"]
-      query_string = false
+      query_string = true
 
       cookies {
         forward = "none"
@@ -133,7 +133,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     target_origin_id = "{{ .environmentName }}.${var.project_name}.${var.hosted_zone}"
 
     forwarded_values {
-      query_string = false
+      query_string = true
 
       cookies {
         forward = "none"

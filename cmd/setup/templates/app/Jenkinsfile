@@ -14,7 +14,7 @@ node {
     stage('Build') {
       if (params.EXEC_BUILD) {
         sh 'npm i'
-        sh 'npm run build'
+        sh 'NODE_OPTIONS="--max-old-space-size=4096" npm run build'
       }
     }
     stage('Unit Tests') {
