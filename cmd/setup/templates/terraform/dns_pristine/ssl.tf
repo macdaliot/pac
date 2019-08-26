@@ -51,8 +51,8 @@ resource "aws_acm_certificate" "main" {
 resource "aws_route53_record" "validation" {
   provider = aws.route53
   count    = length(var.domain_names)
-  name     = aws_acm_certificate.main.domain_validation_options[count.index]["resource_record_name"]
-  type     = aws_acm_certificate.main.domain_validation_options[count.index]["resource_record_type"]
+  name     = aws_acm_certificate.main.domain_validation_options[0]["resource_record_name"]
+  type     = aws_acm_certificate.main.domain_validation_options[0]["resource_record_type"]
 
   # default required for zone_ids lookup because https://github.com/hashicorp/terraform/issues/11574
   zone_id = data.aws_route53_zone.zid.zone_id != "" ? data.aws_route53_zone.zid.zone_id : lookup(var.zone_ids, element(var.domain_names, count.index), false)
@@ -64,7 +64,7 @@ resource "aws_route53_record" "validation" {
   # If the expression in the following list itself returns a list, remove the
   # brackets to avoid interpretation as a list of lists. If the expression
   # returns a single list item then leave it as-is and remove this TODO comment.
-  records = [aws_acm_certificate.main.domain_validation_options[count.index]["resource_record_value"]]
+  records = [aws_acm_certificate.main.domain_validation_options[0]["resource_record_value"]]
   ttl     = 60
 }
 
