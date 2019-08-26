@@ -3,6 +3,8 @@ pac.exe
 
 cmd/add/service/launchBatch\.go~
 
+test/build
+
 *.go~
 **/.DS_Store
 **/node_modules/**

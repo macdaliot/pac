@@ -1,11 +1,21 @@
 Feature: Front End Features
 
-  @UIREADY
-  Scenario: Page Exists
-    Then the page will return a status of 200
+  @FrontEnd
+  Scenario: Checking the Front End Status
+    Then the page will have a status of 200
 
 
-  @NOTREADY
-  Scenario: Page Does Not Exist
-    Given the address bar has a route not recognized by the app
-    Then the status is 200 and there is an error message
+  @FrontEnd
+  Scenario: Check Government Banner render
+    Given the user is on the home page
+    Then the government banner should render
+
+  @FrontEnd
+  Scenario: Check Login Button render
+    Given the user is on the home page
+    Then the login button should render
+    And the user should be able to click on the button
+
+
+
+
