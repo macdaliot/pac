@@ -107,9 +107,9 @@ resource "aws_security_group" "es" {
   }
 }
 
-# resource "aws_iam_service_linked_role" "es" {
-#   aws_service_name = "es.amazonaws.com"
-# }
+resource "aws_iam_service_linked_role" "es" {
+  aws_service_name = "es.amazonaws.com"
+}
 
 #----------------------------------------------------------------------------------------------------------------------
 # SEND CLOUDWATCH LOGS TO ELASTICSEARCH
