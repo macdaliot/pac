@@ -18,24 +18,24 @@ terraform {
 #
 provider "aws" {
   # not listed as require in documentation but will be asked for it if not set
-  region = "{{ .region }}"
-  version = "1.60"
+  region  = "{{ .region }}"
+  version = "~>2.21"
 }
 
 provider "template" {
-  version = "2.1"
+  version = "~>2.1"
 }
 
 #
 # http://www.terraform.io/docs/providers/random/index.html
 #
 provider "random" {
-  version = "2.1"
+  version = "~>2.1"
 }
 
 data "terraform_remote_state" "dns" {
   backend = "s3"
-  config {
+  config = {
     bucket = "terraform.{{ .projectFqdn }}"
     key    = "tfstate/{{ .env }}/dns"
     region = "{{ .region }}"
@@ -44,7 +44,7 @@ data "terraform_remote_state" "dns" {
 
 data "terraform_remote_state" "management" {
   backend = "s3"
-  config {
+  config = {
     bucket = "terraform.{{ .projectFqdn }}"
     key    = "tfstate/{{ .env }}/management_vpc"
     region = "{{ .region }}"

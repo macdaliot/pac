@@ -9,6 +9,7 @@ import (
 	"github.com/PyramidSystemsInc/go/aws/kms"
 	"github.com/PyramidSystemsInc/go/aws/resourcegroups"
 	"github.com/PyramidSystemsInc/go/aws/s3"
+	"github.com/PyramidSystemsInc/go/files"
 	"github.com/PyramidSystemsInc/go/logger"
 	"github.com/PyramidSystemsInc/go/str"
 	"github.com/PyramidSystemsInc/go/terraform"
@@ -20,8 +21,14 @@ const terraformS3Bucket string = "terraformS3Bucket"
 // DeleteAllResources deletes the AWS resourced created by this application.
 func DeleteAllResources() {
 	os.Chdir(config.GetRootDirectory())
-
 	environmentNames := strings.Split(config.Get("environments"), ",")
+
+	projectRoot := config.GetRootDirectory() + "/terraform/"
+
+	for i, _ := range environmentNames {
+		files.DirectoryFileStringReplace(projectRoot+environmentNames[i], "^lambda_", " source_code_hash", "#source_code_hash")
+	}
+
 	for _, environmentName := range environmentNames {
 		logger.Info(str.Concat("Terraform is cleaning the ", environmentName, " VPC..."))
 		terraformDir := filepath.Join("terraform/", environmentName)

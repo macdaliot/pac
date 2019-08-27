@@ -5,5 +5,7 @@ resource "aws_s3_bucket" "builds" {
 
   tags = {
     Name = "artifact bucket"
+    pac-project-name = var.project_name
+    environment = "management"
   }
 }

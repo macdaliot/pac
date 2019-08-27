@@ -14,9 +14,12 @@ resource "aws_s3_bucket" "{{ .environmentName }}" {
 
   tags = {
     Name = "${var.project_name} ${var.environment_name} bucket"
+    pac-project-name = var.project_name
+    environment      = var.environment_name
   }
 }
 
 output "s3_bucket_regional_domain_name" {
-  value = "${aws_s3_bucket.{{ .environmentName }}.bucket_regional_domain_name}"
+  value = aws_s3_bucket.{{ .environmentName }}.bucket_regional_domain_name
 }
+

@@ -12,18 +12,18 @@ resource "aws_route53_zone" "main" {
 }
 
 output "main_zone_id" {
-  value   = "${aws_route53_zone.main.zone_id}"
+  value   = aws_route53_zone.main.zone_id
 }
 resource "aws_route53_record" "ns" {
-  zone_id = "${data.aws_route53_zone.primary.zone_id}"
+  zone_id = data.aws_route53_zone.primary.zone_id
   name    = "${var.project_name}.${var.hosted_zone}"
   type    = "NS"
   ttl     = "30" # default 30, why so long?
 
   records = [
-    "${aws_route53_zone.main.name_servers.0}",
-    "${aws_route53_zone.main.name_servers.1}",
-    "${aws_route53_zone.main.name_servers.2}",
-    "${aws_route53_zone.main.name_servers.3}"
+    aws_route53_zone.main.name_servers[0],
+    aws_route53_zone.main.name_servers[1],
+    aws_route53_zone.main.name_servers[2],
+    aws_route53_zone.main.name_servers[3],
   ]
 }

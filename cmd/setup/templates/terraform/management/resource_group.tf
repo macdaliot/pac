@@ -1,5 +1,5 @@
 resource "aws_resourcegroups_group" "main" {
-  name = "${var.project_name}"
+  name = var.project_name
 
   resource_query {
     query = <<JSON
@@ -15,5 +15,7 @@ resource "aws_resourcegroups_group" "main" {
   ]
 }
 JSON
+
   }
 }
+

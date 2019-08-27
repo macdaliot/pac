@@ -38,7 +38,7 @@
     "pino-pretty": "^2.6.0",
     "reflect-metadata": "^0.1.13",
     "swagger-ui-express": "^4.0.2",
-    "tsoa": "^2.3.8",
+    "tsoa": "2.4.3",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

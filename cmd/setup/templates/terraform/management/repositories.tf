@@ -8,15 +8,21 @@ locals {
     "pac-selenium-hub",
     "pac-selenium-node-chrome",
     "pac-sonar-db",
-    "sonarqube"
+    "sonarqube",
   ]
 }
 
 resource "aws_ecr_repository" "repo" {
-  count = "${var.enable_create_repos == "true" ? length(local.repos) : 0}"
-  name  = "${element(local.repos, count.index)}"
+  count = var.enable_create_repos == "true" ? length(local.repos) : 0
+  name  = element(local.repos, count.index)
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
 
 output "enable_create_repos" {
-  value = "${var.enable_create_repos}"
+  value = var.enable_create_repos
 }
+

@@ -1,6 +1,6 @@
 resource "aws_ecs_task_definition" "sonarqube" {
-  execution_role_arn       = "${var.execution_role_arn}"
-  task_role_arn            = "${var.task_role_arn}"
+  execution_role_arn       = var.execution_role_arn
+  task_role_arn            = var.task_role_arn
   family                   = "sonarqube"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
@@ -71,16 +71,21 @@ resource "aws_ecs_task_definition" "sonarqube" {
   }
 ]
 DEFINITION
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
 
 resource "aws_ecs_task_definition" "selenium" {
-  execution_role_arn       = "${var.execution_role_arn}"
-  task_role_arn            = "${var.task_role_arn}"
-  family                   = "pac-selenium"
-  network_mode             = "awsvpc"
+  execution_role_arn = var.execution_role_arn
+  task_role_arn = var.task_role_arn
+  family = "pac-selenium"
+  network_mode = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "4096"
-  memory                   = "8192"
+  cpu = "4096"
+  memory = "8192"
 
   container_definitions = <<DEFINITION
 [
@@ -145,4 +150,10 @@ resource "aws_ecs_task_definition" "selenium" {
   }
 ]
 DEFINITION
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
 }
+

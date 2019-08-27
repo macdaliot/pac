@@ -10,21 +10,23 @@ properties([
 ])
 
 node {
-  dir(params.BUILD_DIRECTORY + "/services") {
-    stage('Build') {
-      if (params.EXEC_BUILD) {
-        sh 'sh .build.sh'
+  ansiColor('xterm') {
+    dir(params.BUILD_DIRECTORY + "/services") {
+      stage('Build') {
+        if (params.EXEC_BUILD) {
+          sh 'sh .build.sh'
+        }
       }
-    }
-    stage('Unit Test') {
-      if (params.EXEC_UNITTEST) {
-        sh 'sh .test.sh'
+      stage('Unit Test') {
+        if (params.EXEC_UNITTEST) {
+          sh 'sh .test.sh'
+        }
       }
-    }
-    stage('Deploy To Integration') {
-      if (params.EXEC_DEPLOY) {
-        env.VPC_NAME = params.VPC_NAME
-        sh 'sh .deploy.sh ${VPC_NAME}'
+      stage('Deploy To Integration') {
+        if (params.EXEC_DEPLOY) {
+          env.VPC_NAME = params.VPC_NAME
+          sh 'sh .deploy.sh ${VPC_NAME}'
+        }
       }
     }
   }

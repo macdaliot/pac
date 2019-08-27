@@ -1,9 +1,9 @@
 # ALB Security group
 # This is the group you need to edit if you want to restrict access to your application
 resource "aws_security_group" "management_lb" {
-  name        = "${var.project_name}-management-alb"
-  description = "controls access to the ALB"
-  vpc_id      = "${aws_vpc.management_vpc.id}"
+  name                   = "${var.project_name}-management-alb"
+  description            = "controls access to the ALB"
+  vpc_id                 = aws_vpc.management_vpc.id
   revoke_rules_on_delete = true
 
   ingress {
@@ -20,11 +20,14 @@ resource "aws_security_group" "management_lb" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags {
-    Name = "${var.project_name}"
+  tags = {
+    Name             = var.project_name
+    pac-project-name = var.project_name
+    environment      = "management"
   }
 }
 
 output "secgroup_management_lb_name" {
-    value = "${aws_security_group.management_lb.name}"
+  value = aws_security_group.management_lb.name
 }
+

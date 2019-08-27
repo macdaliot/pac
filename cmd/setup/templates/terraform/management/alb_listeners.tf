@@ -1,17 +1,17 @@
 #
 # http://www.terraform.io/docs/providers/aws/r/lb_listener.html
 #
+# Doesn't support tags.
+#
 resource "aws_lb_listener" "https" {
-  load_balancer_arn = "${aws_lb.management.arn}"
+  load_balancer_arn = aws_lb.management.arn
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = "${data.terraform_remote_state.dns.acm_cert_arn}"
-
-
+  certificate_arn   = data.terraform_remote_state.dns.outputs.acm_cert_arn
 
   default_action {
-    type          = "redirect"
+    type = "redirect"
 
     redirect {
       port        = "443"
@@ -24,5 +24,6 @@ resource "aws_lb_listener" "https" {
 }
 
 output "aws_lb_listener_https_arn" {
-  value = "${aws_lb_listener.https.arn}"
+  value = aws_lb_listener.https.arn
 }
+
