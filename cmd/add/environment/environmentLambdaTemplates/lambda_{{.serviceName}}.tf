@@ -55,7 +55,7 @@ resource "aws_alb_target_group" "{{ .projectName }}_{{ .environmentAbbr }}_{{ .s
   target_type = "lambda"
 
   tags = {
-    Name = "pac-${var.project_name}-${var.environment_name}-dollhair"
+    Name = "pac-${var.project_name}-${var.environment_name}"
     pac-project-name = var.project_name
     environment      = var.environment_name
   }
@@ -135,7 +135,7 @@ resource "aws_dynamodb_table" "{{ .projectName }}_dynamodb_table_{{ .serviceName
   }
 
   tags = {
-    Name             = "${var.project_name}-dynamodb-table-dollhair"
+    Name             = "${var.project_name}-dynamodb-table"
     pac-project-name = var.project_name
     environment      = var.environment_name
   }
