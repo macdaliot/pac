@@ -257,6 +257,259 @@ func createMasterPipelineXml(projectName string) {
 	files.CreateFromTemplate("master.xml", template, cfg)
 }
 
+func createNlpPipelineXml(projectName string) {
+  const template =`<?xml version='1.1' encoding='UTF-8'?>
+  <flow-definition plugin="workflow-job@2.35">
+  <actions/>
+  <description/>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+  <jenkins.model.BuildDiscarderProperty>
+  <strategy class="hudson.tasks.LogRotator">
+  <daysToKeep>-1</daysToKeep>
+  <numToKeep>3</numToKeep>
+  <artifactDaysToKeep>-1</artifactDaysToKeep>
+  <artifactNumToKeep>-1</artifactNumToKeep>
+  </strategy>
+  </jenkins.model.BuildDiscarderProperty>
+  <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.74">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.12.1">
+  <configVersion>2</configVersion>
+  <userRemoteConfigs>
+  <hudson.plugins.git.UserRemoteConfig>
+  <url>git@github.com:PyramidSystemsInc/bdso-fork.git</url>
+  <credentialsId>jenkins-git</credentialsId>
+  </hudson.plugins.git.UserRemoteConfig>
+  </userRemoteConfigs>
+  <branches>
+  <hudson.plugins.git.BranchSpec>
+  <name>*/data-science-pipeline</name>
+  </hudson.plugins.git.BranchSpec>
+  </branches>
+  <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+  <submoduleCfg class="list"/>
+  <extensions/>
+  </scm>
+  <scriptPath>terraform/ml/nlpPipeline.groovy</scriptPath>
+  <lightweight>true</lightweight>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+  </flow-definition>`
+
+  cfg := make(map[string]string)
+	cfg[projName] = projectName
+  files.CreateFromTemplate("nlp.xml", template, cfg)
+}
+
+func createDataPipelineXml(projectName string) {
+  const template =`<?xml version='1.1' encoding='UTF-8'?>
+  <flow-definition plugin="workflow-job@2.35">
+<actions/>
+<description/>
+<keepDependencies>false</keepDependencies>
+<properties>
+<jenkins.model.BuildDiscarderProperty>
+<strategy class="hudson.tasks.LogRotator">
+<daysToKeep>-1</daysToKeep>
+<numToKeep>3</numToKeep>
+<artifactDaysToKeep>-1</artifactDaysToKeep>
+<artifactNumToKeep>-1</artifactNumToKeep>
+</strategy>
+</jenkins.model.BuildDiscarderProperty>
+<org.jenkinsci.plugins.workflow.job.properties.DurabilityHintJobProperty>
+<hint>SURVIVABLE_NONATOMIC</hint>
+</org.jenkinsci.plugins.workflow.job.properties.DurabilityHintJobProperty>
+<hudson.model.ParametersDefinitionProperty>
+<parameterDefinitions>
+<hudson.model.StringParameterDefinition>
+<name>ENVIRONMENT</name>
+<description>name of the base environment</description>
+<defaultValue>dev</defaultValue>
+<trim>false</trim>
+</hudson.model.StringParameterDefinition>
+</parameterDefinitions>
+</hudson.model.ParametersDefinitionProperty>
+</properties>
+<definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.74">
+<scm class="hudson.plugins.git.GitSCM" plugin="git@3.12.1">
+<configVersion>2</configVersion>
+<userRemoteConfigs>
+<hudson.plugins.git.UserRemoteConfig>
+<url>git@github.com:PyramidSystemsInc/bdso-fork.git</url>
+<credentialsId>jenkins-git</credentialsId>
+</hudson.plugins.git.UserRemoteConfig>
+</userRemoteConfigs>
+<branches>
+<hudson.plugins.git.BranchSpec>
+<name>*/data-science-pipeline</name>
+</hudson.plugins.git.BranchSpec>
+</branches>
+<doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+<submoduleCfg class="list"/>
+<extensions/>
+</scm>
+<scriptPath>terraform/ml/dataPipeline.groovy</scriptPath>
+<lightweight>true</lightweight>
+</definition>
+<triggers/>
+<disabled>false</disabled>
+</flow-definition>`
+  cfg := make(map[string]string)
+	cfg[projName] = projectName
+  files.CreateFromTemplate("data.xml", template, cfg)
+}
+
+func createDeployEndpointPipelineXml(projectName string) {
+  const template =`<?xml version='1.1' encoding='UTF-8'?>
+  <flow-definition plugin="workflow-job@2.35">
+<actions/>
+<description/>
+<keepDependencies>false</keepDependencies>
+<properties>
+<jenkins.model.BuildDiscarderProperty>
+<strategy class="hudson.tasks.LogRotator">
+<daysToKeep>-1</daysToKeep>
+<numToKeep>3</numToKeep>
+<artifactDaysToKeep>-1</artifactDaysToKeep>
+<artifactNumToKeep>-1</artifactNumToKeep>
+</strategy>
+</jenkins.model.BuildDiscarderProperty>
+<hudson.model.ParametersDefinitionProperty>
+<parameterDefinitions>
+<hudson.model.StringParameterDefinition>
+<name>ENVIRONMENT</name>
+<description/>
+<defaultValue/>
+<trim>false</trim>
+</hudson.model.StringParameterDefinition>
+</parameterDefinitions>
+</hudson.model.ParametersDefinitionProperty>
+</properties>
+<definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.74">
+<scm class="hudson.plugins.git.GitSCM" plugin="git@3.12.1">
+<configVersion>2</configVersion>
+<userRemoteConfigs>
+<hudson.plugins.git.UserRemoteConfig>
+<url>git@github.com:PyramidSystemsInc/bdso-fork.git</url>
+<credentialsId>jenkins-git</credentialsId>
+</hudson.plugins.git.UserRemoteConfig>
+</userRemoteConfigs>
+<branches>
+<hudson.plugins.git.BranchSpec>
+<name>*/data-science-pipeline</name>
+</hudson.plugins.git.BranchSpec>
+</branches>
+<doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+<submoduleCfg class="list"/>
+<extensions/>
+</scm>
+<scriptPath>terraform/ml/deployEndpoint.groovy</scriptPath>
+<lightweight>true</lightweight>
+</definition>
+<triggers/>
+<disabled>false</disabled>
+</flow-definition>`
+  cfg := make(map[string]string)
+	cfg[projName] = projectName
+  files.CreateFromTemplate("deployEndpoint.xml", template, cfg)
+}
+
+func createPromoteArtifactsPipelineXml(projectName string) {
+  const template =`<?xml version='1.1' encoding='UTF-8'?>
+  <flow-definition plugin="workflow-job@2.35">
+<actions/>
+<description/>
+<keepDependencies>false</keepDependencies>
+<properties>
+<hudson.model.ParametersDefinitionProperty>
+<parameterDefinitions>
+<hudson.model.StringParameterDefinition>
+<name>ENVIRONMENT</name>
+<description/>
+<defaultValue/>
+<trim>false</trim>
+</hudson.model.StringParameterDefinition>
+</parameterDefinitions>
+</hudson.model.ParametersDefinitionProperty>
+</properties>
+<definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.74">
+<scm class="hudson.plugins.git.GitSCM" plugin="git@3.12.1">
+<configVersion>2</configVersion>
+<userRemoteConfigs>
+<hudson.plugins.git.UserRemoteConfig>
+<url>git@github.com:PyramidSystemsInc/bdso-fork.git</url>
+<credentialsId>jenkins-git</credentialsId>
+</hudson.plugins.git.UserRemoteConfig>
+</userRemoteConfigs>
+<branches>
+<hudson.plugins.git.BranchSpec>
+<name>*/data-science-pipeline</name>
+</hudson.plugins.git.BranchSpec>
+</branches>
+<doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+<submoduleCfg class="list"/>
+<extensions/>
+</scm>
+<scriptPath>terraform/ml/promoteArtifacts.groovy</scriptPath>
+<lightweight>true</lightweight>
+</definition>
+<triggers/>
+<disabled>false</disabled>
+</flow-definition>`
+  cfg := make(map[string]string)
+	cfg[projName] = projectName
+  files.CreateFromTemplate("promoteArtifact.xml", template, cfg)
+}
+
+func createTestEndpointPipelineXml(projectName string) {
+  const template =`<?xml version='1.1' encoding='UTF-8'?>
+  <flow-definition plugin="workflow-job@2.35">
+<actions/>
+<description/>
+<keepDependencies>false</keepDependencies>
+<properties>
+<hudson.model.ParametersDefinitionProperty>
+<parameterDefinitions>
+<hudson.model.StringParameterDefinition>
+<name>ENVIRONMENT</name>
+<description/>
+<defaultValue/>
+<trim>false</trim>
+</hudson.model.StringParameterDefinition>
+</parameterDefinitions>
+</hudson.model.ParametersDefinitionProperty>
+</properties>
+<definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.74">
+<scm class="hudson.plugins.git.GitSCM" plugin="git@3.12.1">
+<configVersion>2</configVersion>
+<userRemoteConfigs>
+<hudson.plugins.git.UserRemoteConfig>
+<url>git@github.com:PyramidSystemsInc/bdso-fork.git</url>
+<credentialsId>jenkins-git</credentialsId>
+</hudson.plugins.git.UserRemoteConfig>
+</userRemoteConfigs>
+<branches>
+<hudson.plugins.git.BranchSpec>
+<name>*/data-science-pipeline</name>
+</hudson.plugins.git.BranchSpec>
+</branches>
+<doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+<submoduleCfg class="list"/>
+<extensions/>
+</scm>
+<scriptPath>terraform/ml/testEndpoint.groovy</scriptPath>
+<lightweight>true</lightweight>
+</definition>
+<triggers/>
+<disabled>false</disabled>
+</flow-definition>`
+  cfg := make(map[string]string)
+	cfg[projName] = projectName
+  files.CreateFromTemplate("testEndpoint.xml", template, cfg)
+}
 
 func createProductionPipelineXml(projectName string) {
  const template = `<?xml version='1.1' encoding='UTF-8'?>
@@ -320,6 +573,21 @@ func createPipelineJobs(jenkinsURL string, projectName string, jenkinsCliCommand
 	commands.RunWithStdin(createJobCommand, string(jobData), "")
 	jobData = files.Read("prod.xml")
 	createJobCommand = str.Concat(jenkinsCliCommandStart, " create-job release-to-production")
+  commands.RunWithStdin(createJobCommand, string(jobData), "")
+  jobData = files.Read("nlp.xml")
+	createJobCommand = str.Concat(jenkinsCliCommandStart, " create-job nlp-pipeline")
+  commands.RunWithStdin(createJobCommand, string(jobData), "")
+  jobData = files.Read("data.xml")
+	createJobCommand = str.Concat(jenkinsCliCommandStart, " create-job data-pipeline")
+  commands.RunWithStdin(createJobCommand, string(jobData), "")
+  jobData = files.Read("deployEndpoint.xml")
+	createJobCommand = str.Concat(jenkinsCliCommandStart, " create-job deploy-endpoint")
+  commands.RunWithStdin(createJobCommand, string(jobData), "")
+  jobData = files.Read("promoteArtifacts.xml")
+	createJobCommand = str.Concat(jenkinsCliCommandStart, " create-job promote-artifacts")
+  commands.RunWithStdin(createJobCommand, string(jobData), "")
+  jobData = files.Read("testEndpoint.xml")
+	createJobCommand = str.Concat(jenkinsCliCommandStart, " create-job test-endpoint")
 	commands.RunWithStdin(createJobCommand, string(jobData), "")
 }
 
