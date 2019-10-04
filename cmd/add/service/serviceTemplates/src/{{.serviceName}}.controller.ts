@@ -1,13 +1,18 @@
-import * as express from 'express';
 import { Route, Get, Post, Controller, Request, Query, Path, Put, Body, Delete, Security, SuccessResponse  } from 'tsoa';
 import { Injectable } from '@pyramid-systems/core';
 import { {{.serviceNamePascal}}, {{.serviceNamePascal}}Repository } from '@pyramid-systems/domain';
+import { MongoClient } from "mongodb";
+import { IndexingService } from "../../../core/services/indexingService";
+
+
 
 @Injectable()
 @Route('{{.serviceName}}')
 // Uncomment the line below and add your own scope names from Auth0 (do not change `'groups'`) in order to require a valid JWT to use this service
 // @Security('groups', ['<one-or-more-scope-names>'])
 export class {{.serviceNamePascal}}Controller extends Controller {
+    domainModel: string = `${process.env.PROJECTNAME}-{{.serviceName}}`;
+    indexingService: IndexingService<{{.serviceNamePascal}}>;
 
     constructor(private {{.serviceName}}Repository: {{.serviceNamePascal}}Repository) {
         super();
@@ -22,16 +27,22 @@ export class {{.serviceNamePascal}}Controller extends Controller {
      */
     @Get('{id}')
     @SuccessResponse(200, "The {{.serviceNamePascal}} with the given Id")
-    getById(@Path('id') id: string) {
-        return this.{{.serviceName}}Repository.getById(id);
+    async getById(@Path('id') id: string) {
+        if(!this.{{.serviceName}}Repository){
+            await this.initConnection();
+        }
+        return this.{{.serviceName}}Repository.findById(id);
     }
     /**
      * @summary Gets all the {{.serviceNamePascal}}
      */
     @Get()
     @SuccessResponse(200, "A list of all existing {{.serviceNamePascal}}s")
-    getAll() {
-        return this.{{.serviceName}}Repository.getAll();
+    async getAll() {
+        if(!this.{{.serviceName}}Repository){
+            await this.initConnection();
+        }
+        return this.{{.serviceName}}Repository.findByFilter({});
     }
     /**
      * Post a new {{.serviceNamePascal}} to the backing store
@@ -42,8 +53,11 @@ export class {{.serviceNamePascal}}Controller extends Controller {
      */
     @Post()
     @SuccessResponse(200, "The inserted {{.serviceNamePascal}} (with the new Id?)")
-    post(@Body() newItem: {{.serviceNamePascal}}) {
-        return this.{{.serviceName}}Repository.add(newItem);
+    async post(@Body() newItems: {{.serviceNamePascal}}[]) {
+        if(!this.{{.serviceName}}Repository){
+            await this.initConnection();
+        }
+        return this.indexingService.insertMany(newItems);
     }
     /**
      * Update an existing {{.serviceNamePascal}} in the backing store
@@ -55,8 +69,11 @@ export class {{.serviceNamePascal}}Controller extends Controller {
      */
     @Put('{id}')
     @SuccessResponse(200, "The updated {{.serviceNamePascal}} with the given Id")
-    put(@Path('id') idToUpdate: string, @Body() itemWithUpdatedValues: {{.serviceNamePascal}}) {
-        return this.{{.serviceName}}Repository.update(idToUpdate, itemWithUpdatedValues);
+    async put(@Path('id') idToUpdate: string, @Body() itemWithUpdatedValues: {{.serviceNamePascal}}) {
+        if(!this.{{.serviceName}}Repository){
+            await this.initConnection();
+        }
+        return this.indexingService.update(idToUpdate, itemWithUpdatedValues);
     }
     /**
      * Delete an existing {{.serviceNamePascal}} in the backing store
@@ -68,7 +85,22 @@ export class {{.serviceNamePascal}}Controller extends Controller {
      */
     @Delete('{id}')
     @SuccessResponse(200, "The {{.serviceNamePascal}} with the given Id")
-    deleteById(@Path('id') idToDelete: string) {
-        return this.{{.serviceName}}Repository.deleteById(idToDelete);
+    async deleteById(@Path('id') idToDelete: string) {
+        if(!this.{{.serviceName}}Repository){
+            await this.initConnection();
+        }
+        return this.indexingService.deleteById(idToDelete);
+    }
+
+    private async initConnection() {
+        if (!this.{{.serviceName}}Repository) {
+            //local mongo connString `mongodb://<user>:<password>@<host>:27017/<db>`
+            const connection = await MongoClient.connect(process.env.MONGO_CONN_STRING, {
+                useNewUrlParser:true,
+                useUnifiedTopology: true});
+            const db = connection.db(this.domainModel);
+            this.{{.serviceName}}Repository = new {{.serviceNamePascal}}Repository(db, this.domainModel);
+            this.indexingService = new IndexingService(db, this.domainModel)
+        }
     }
 }

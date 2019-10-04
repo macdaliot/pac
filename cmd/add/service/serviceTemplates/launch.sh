@@ -25,21 +25,6 @@ if [ ! -z "$AWS_ACCESS_KEY_ID" ] || [ ! -z "$AWS_SECRET_ACCESS_KEY" ]; then
     fi
   fi
 
-  # Start DynamoDB if not running
-  DYNAMO_HOST_PORT=8001
-  DYNAMO_CONTAINER_PORT=8000
-  if docker port pac-db-local >>/dev/null 2>/dev/null ; then
-    echo "Local DynamoDB already exists, skipping DynamoDB creation"
-  else
-    docker run --name pac-db-local --network pac-$PROJECT_NAME -p $DYNAMO_HOST_PORT:$DYNAMO_CONTAINER_PORT -d amazon/dynamodb-local -jar DynamoDBLocal.jar -sharedDb >>/dev/null
-    if [ $(echo $?) -eq 0 ]; then
-      echo "Created local DynamoDB Docker container running on port $DYNAMO_HOST_PORT"
-    else
-      echo "ERROR: Something went wrong creating the DynamoDB Docker container. Is port $DYNAMO_HOST_PORT open?"
-      exit 2
-    fi
-  fi
-
   # Delete current service's container, if it exists
   SERVICE_CONTAINER_PID=$(docker ps -aqf Name=pac-$PROJECT_NAME-{{.serviceName}})
   if [ ! -z "$SERVICE_CONTAINER_PID" ]; then
@@ -65,16 +50,7 @@ if [ ! -z "$AWS_ACCESS_KEY_ID" ] || [ ! -z "$AWS_SECRET_ACCESS_KEY" ]; then
           npm i
           echo "Finished installing NPM modules for the $SERVICE_NAME microservice"
         fi
-        # Attempt creation of DynamoDB table
-        if [[ $(uname) =~ MINGW.* ]]; then
-          if aws.cmd dynamodb create-table --cli-input-json file://dynamoConfig.json --endpoint-url http://localhost:$DYNAMO_HOST_PORT >>/dev/null 2>/dev/null; then
-            echo "Created DynamoDB table for the $SERVICE_NAME microservice"
-          fi
-        else
-          if aws dynamodb create-table --cli-input-json file://dynamoConfig.json --endpoint-url http://localhost:$DYNAMO_HOST_PORT >>/dev/null 2>/dev/null; then
-            echo "Created DynamoDB table for the $SERVICE_NAME microservice"
-          fi
-        fi
+
         # Compile, build, and launch
         npm run generate:templates
         npx tsc

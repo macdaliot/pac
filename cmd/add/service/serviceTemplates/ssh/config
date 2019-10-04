@@ -1,0 +1,11 @@
+# AWS Tunnel
+Host awstunnel
+HostName <jumpboxIp>
+User ubuntu
+IdentitiesOnly yes
+IdentityFile ~/.ssh/<jumpboxpem>.pem
+LocalForward 9200 <es url w/out protocol>:443
+LocalForward <your ip>:9200 <es ip w/outProtocol>:443
+LocalForward <your ip>:27017 <doc db url, w/out protocol>:27017
+RemoteCommand bash -c 'echo "Listening on port 9200 for kibana and 27017 for docdb"; read -r -d '' _'
+

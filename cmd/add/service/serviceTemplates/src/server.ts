@@ -15,6 +15,8 @@ passport.use(jwtStrategy);
 const app = express();
 const container = setupContainer(app);
 app.use(cors())
+    //.use(bodyParser.json({limit: '50mb'})) use this for initial bulk import
+    //.use(bodyParser.urlencoded({limit: '50mb', extended: true})) use this for initial bulk import
     .use(passport.initialize())
     .use(express.json())
     .use(express.urlencoded({ extended: false }))
