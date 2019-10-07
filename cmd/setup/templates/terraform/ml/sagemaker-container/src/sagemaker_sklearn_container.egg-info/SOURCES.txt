@@ -1,0 +1,11 @@
+README.rst
+setup.cfg
+setup.py
+src/sagemaker_sklearn_container/__init__.py
+src/sagemaker_sklearn_container/serving.py
+src/sagemaker_sklearn_container/training.py
+src/sagemaker_sklearn_container.egg-info/PKG-INFO
+src/sagemaker_sklearn_container.egg-info/SOURCES.txt
+src/sagemaker_sklearn_container.egg-info/dependency_links.txt
+src/sagemaker_sklearn_container.egg-info/requires.txt
+src/sagemaker_sklearn_container.egg-info/top_level.txt
