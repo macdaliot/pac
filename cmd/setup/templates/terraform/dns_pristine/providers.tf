@@ -5,10 +5,12 @@
 #
 terraform {
   backend "s3" {
-    bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
+    bucket = "terraform.{{ .projectName }}.{{ .hostedZone }}"
     key    = "tfstate/{{ .env }}/dns"
     region = "{{ .region }}"
   }
+
+  required_version = "0.12.7"
 }
 
 #
@@ -20,16 +22,16 @@ provider "aws" {
   # not listed as require in documentation but will be asked for it if not set
   region = "{{ .region }}"
 
-  version = "1.60"
+  version = "~>2.21"
 }
 
 provider "template" {
-  version = "2.1"
+  version = "~>2.1"
 }
 
 #
 # http://www.terraform.io/docs/providers/random/index.html
 #
 provider "random" {
-  version = "2.1"
+  version = "~>2.1"
 }

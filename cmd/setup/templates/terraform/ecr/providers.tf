@@ -6,7 +6,7 @@
 terraform {
   backend "s3" {
     bucket = "terraform.{{ .projectName }}.{{ .hostedZone }}"
-    key    = "tfstate/{{ .env }}/dns"
+    key    = "tfstate/ecr"
     region = "{{ .region }}"
   }
 
@@ -26,12 +26,5 @@ provider "aws" {
 }
 
 provider "template" {
-  version = "~>2.1"
-}
-
-#
-# http://www.terraform.io/docs/providers/random/index.html
-#
-provider "random" {
   version = "~>2.1"
 }
