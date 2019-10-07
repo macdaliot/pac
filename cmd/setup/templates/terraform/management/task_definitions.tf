@@ -1,6 +1,6 @@
 resource "aws_ecs_task_definition" "sonarqube" {
   execution_role_arn       = aws_iam_role.{{ .projectName }}_task_execution.arn
-  task_role_arn            = aws_iam_role.{{ .projectname }}_{{ .env }}_jenkins.arn
+  task_role_arn            = aws_iam_role.{{ .projectName }}_{{ .env }}_jenkins.arn
   family                   = "sonarqube"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
