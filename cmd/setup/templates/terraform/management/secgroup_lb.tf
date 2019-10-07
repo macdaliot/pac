@@ -27,7 +27,10 @@ resource "aws_security_group" "management_lb" {
   }
 }
 
+output "secgroup_application_lb" {
+  value = aws_security_group.management_lb
+}
+
 output "secgroup_management_lb_name" {
   value = aws_security_group.management_lb.name
 }
-

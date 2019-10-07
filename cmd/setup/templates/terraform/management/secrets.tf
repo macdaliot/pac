@@ -148,6 +148,21 @@ resource "aws_ssm_parameter" "jenkins_password" {
   }
 }
 
+resource "aws_ssm_parameter" "tmdb_api_key" {
+  name        = "/pac/${var.project_name}/ml/tmdb"
+  description = "TMDB API Key"
+  type        = "SecureString"
+
+  #value = "${random_string.password.5.result}"
+  value  = "bc427978410d0411a6d39d2ea56f6217"
+  key_id = data.aws_kms_key.project_key.key_id
+
+  tags = {
+    pac-project-name = var.project_name
+    environment      = "management"
+  }
+}
+
 output "jwt_issuer" {
   value = aws_ssm_parameter.jwt_issuer
   sensitive = true
@@ -156,6 +171,10 @@ output "jwt_issuer" {
 output "jwt_secret" {
   value = aws_ssm_parameter.jwt_secret
   sensitive = true
+}
+
+output "tmdb_api_key" {
+  value = aws_ssm_parameter.tmdb_api_key
 }
 
 # output "postgres_password" {

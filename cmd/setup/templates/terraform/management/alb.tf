@@ -17,3 +17,7 @@ output "alb_management_name" {
 output "alb_management_arn" {
   value = aws_lb.management.arn
 }
+
+output "alb_management_dns_name" {
+  value = aws_lb.management.dns_name
+}

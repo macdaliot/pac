@@ -39,6 +39,11 @@ resource "aws_launch_configuration" "as_conf" {
     volume_size = "60"
   }
 
+  ebs_block_device {
+    volume_size = "900"
+    device_name = "/dev/xvdcz"
+  }
+
   user_data = data.template_file.user_data.rendered
 
   lifecycle {
@@ -52,8 +57,7 @@ resource "aws_launch_configuration" "as_conf" {
 resource "aws_autoscaling_group" "asg" {
   name = "asg-${aws_launch_configuration.as_conf.name}"
 
-  //availability_zones        = "${var.aws_zones}"
-  vpc_zone_identifier       = aws_subnet.private.*.id
+  vpc_zone_identifier       = [aws_subnet.private[0].id, aws_subnet.private[1].id]
   min_size                  = var.app_count
   max_size                  = var.app_count
   desired_capacity          = var.app_count
@@ -114,7 +118,7 @@ resource "aws_ecs_service" "jenkins" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.jenkins.id
-    container_name   = "pac-jenkins"
+    container_name   = "${var.project_name}-jenkins"
     container_port   = "8080"
   }
 
@@ -127,9 +131,9 @@ resource "aws_ecs_service" "jenkins" {
 }
 
 resource "aws_ecs_task_definition" "jenkins" {
-  execution_role_arn       = var.execution_role_arn
-  task_role_arn            = var.task_role_arn
-  family                   = "pac-jenkins"
+  execution_role_arn       = aws_iam_role.{{ .projectName }}_task_execution.arn
+  task_role_arn            = aws_iam_role.{{ .projectName }}_{{ .env }}_jenkins.arn
+  family                   = "${var.project_name}-jenkins"
   network_mode             = "bridge"
   requires_compatibilities = ["EC2"]
 
@@ -160,7 +164,7 @@ resource "aws_ecs_task_definition" "jenkins" {
       },
       {
         "name": "SONAR_SECRET",
-        "valueFrom": "/pac/sonar/secret"
+        "valueFrom": "/pac/${var.project_name}/sonar/secret"
       },
       {
         "name": "GITHUB_USERNAME",
@@ -179,7 +183,7 @@ resource "aws_ecs_task_definition" "jenkins" {
         "valueFrom": "/pac/aws/secret_access_key"
       }
     ],
-    "image": "{{ .awsID }}.dkr.ecr.us-east-2.amazonaws.com/pac-jenkins:tf-0.12.6",
+    "image": "{{ .awsID }}.dkr.ecr.us-east-2.amazonaws.com/${var.project_name}-jenkins",
     "name": "pac-jenkins",
     "portMappings": [
       {

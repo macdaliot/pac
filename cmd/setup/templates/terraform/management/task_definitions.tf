@@ -1,6 +1,6 @@
 resource "aws_ecs_task_definition" "sonarqube" {
-  execution_role_arn       = var.execution_role_arn
-  task_role_arn            = var.task_role_arn
+  execution_role_arn       = aws_iam_role.{{ .projectName }}_task_execution.arn
+  task_role_arn            = aws_iam_role.{{ .projectname }}_{{ .env }}_jenkins.arn
   family                   = "sonarqube"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
@@ -25,13 +25,31 @@ resource "aws_ecs_task_definition" "sonarqube" {
       }
     ],
     "cpu": 2048,
-    "image": "{{ .awsID }}.dkr.ecr.us-east-2.amazonaws.com/sonarqube",
+    "image": "${var.account_id}.dkr.ecr.${var.region}.amazonaws.com/${var.project_name}-sonarqube",
     "memory": 4096,
     "name": "sonarqube",
     "networkMode": "awsvpc",
     "portMappings": [
       {
         "containerPort": 9000
+      }
+    ],
+    "environment": [
+      {
+        "name": "PROJECT_NAME",
+        "value": "${var.project_name}"
+      },
+      {
+        "name": "SONAR_SECRET",
+        "value": "abcde"
+      },
+      {
+        "name": "SONAR_USERNAME",
+        "value": "pyramid"
+      },
+      {
+        "name": "SONAR_PASSWORD",
+        "value": "systems"
       }
     ],
     "logConfiguration": { 
@@ -51,7 +69,7 @@ resource "aws_ecs_task_definition" "sonarqube" {
       }
     ],
     "cpu": 2048,
-    "image": "{{ .awsID }}.dkr.ecr.us-east-2.amazonaws.com/pac-sonar-db",
+    "image": "${var.account_id}.dkr.ecr.${var.region}.amazonaws.com/${var.project_name}-sonar-db",
     "memory": 4096,
     "name": "pac-sonar-db",
     "networkMode": "awsvpc",
@@ -91,7 +109,7 @@ resource "aws_ecs_task_definition" "selenium" {
 [
   {
     "cpu": 2048,
-    "image": "{{ .awsID }}.dkr.ecr.us-east-2.amazonaws.com/pac-selenium-hub",
+    "image": "${var.account_id}.dkr.ecr.${var.region}.amazonaws.com/${var.project_name}-selenium-hub",
     "memory": 4096,
     "name": "pac-selenium-hub-${var.project_name}",
     "networkMode": "awsvpc",
@@ -117,7 +135,7 @@ resource "aws_ecs_task_definition" "selenium" {
   },
   {
     "cpu": 2048,
-    "image": "{{ .awsID }}.dkr.ecr.us-east-2.amazonaws.com/pac-selenium-node-chrome",
+    "image": "${var.account_id}.dkr.ecr.${var.region}.amazonaws.com/${var.project_name}-selenium-node-chrome",
     "memory": 4096,
     "name": "pac-selenium-node-chrome-${var.project_name}",
     "networkMode": "awsvpc",
@@ -156,4 +174,3 @@ DEFINITION
     environment      = "management"
   }
 }
-

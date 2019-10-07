@@ -1,0 +1,2 @@
+Ask Gereth about templatizing this file
+C:\Users\MMcNairy\go\src\github.com\PyramidSystemsInc\pac\cmd\setup\templates\terraform\ml\sagemaker-container\test\utils\local_mode.py

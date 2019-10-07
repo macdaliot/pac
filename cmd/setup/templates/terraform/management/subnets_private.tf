@@ -11,7 +11,10 @@ resource "aws_subnet" "private" {
   }
 }
 
+output "private_subnet" {
+  value = aws_subnet.private
+}
+
 output "private_subnets" {
   value = aws_subnet.private.*.cidr_block
 }
-
