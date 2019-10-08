@@ -1,1 +1,1 @@
-environment_name="{{ .environmentName }}"
+environment_name="{{.environmentName}}"

@@ -53,7 +53,7 @@ variable "account_id" {
 }
 
 variable "region" {
-    default = "{{ .region }}"
+    default = "{{.region}}"
 }
 
 #----------------------------------------------------------------------------------------------------------------------
@@ -78,12 +78,12 @@ variable "hosted_zone" {
 
 variable "execution_role_arn" {
     description = "Role with polices to execute ECS tasks and access Systems Manager Parameter Store to retrieve secrets"
-    default = "arn:aws:iam::{{ .awsID }}:role/{{ .projectName }}-{{ .env }}-task-execution"
+    default = "arn:aws:iam::{{.awsID}}:role/{{.projectName}}-{{.env}}-task-execution"
 }
 
 variable "task_role_arn" {
     description = "Role with EC2, S3, and ECS access policies for ECS tasks"
-    default = "arn:aws:iam::{{ .awsID }}:role/{{ .projectName }}-{{ .env }}-jenkins"
+    default = "arn:aws:iam::{{.awsID}}:role/{{.projectName}}-{{.env}}-jenkins"
 }
 
 variable "app_count" {
@@ -152,5 +152,5 @@ variable "enable_keypair_output" {
 # VPC
 #----------------------------------------------------------------------------------------------------------------------
 variable "management_cidr_block" {
-    default = "{{ .awsManagementVpcCidrBlock }}"
+    default = "{{.awsManagementVpcCidrBlock}}"
 }

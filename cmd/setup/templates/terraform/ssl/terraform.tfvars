@@ -1,2 +1,2 @@
-cert_domain_name = "*.{{ .projectName }}.{{ .hostedZone }}"
-region           = "{{ .region }}"
+cert_domain_name = "*.{{.projectName}}.{{.hostedZone}}"
+region           = "{{.region}}"

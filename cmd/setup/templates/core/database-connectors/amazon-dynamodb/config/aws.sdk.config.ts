@@ -1,5 +1,5 @@
 const cloud = {
-    region: '{{ .region }}'
+    region: '{{.region}}'
 };
 
 const local = {

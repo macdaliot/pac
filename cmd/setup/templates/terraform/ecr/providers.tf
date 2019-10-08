@@ -5,9 +5,9 @@
 #
 terraform {
   backend "s3" {
-    bucket = "terraform.{{ .projectName }}.{{ .hostedZone }}"
+    bucket = "terraform.{{.projectName}}.{{.hostedZone}}"
     key    = "tfstate/ecr"
-    region = "{{ .region }}"
+    region = "{{.region}}"
   }
 
   required_version = "0.12.7"
@@ -20,7 +20,7 @@ terraform {
 #
 provider "aws" {
   # not listed as require in documentation but will be asked for it if not set
-  region = "{{ .region }}"
+  region = "{{.region}}"
 
   version = "~>2.21"
 }

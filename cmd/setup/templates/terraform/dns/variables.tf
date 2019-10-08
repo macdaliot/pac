@@ -1,5 +1,5 @@
 variable "project_name" {
-    default = "{{ .projectName }}"
+    default = "{{.projectName}}"
 }
 
 variable "hosted_zone" {
@@ -7,7 +7,7 @@ variable "hosted_zone" {
 }
 
 variable "region" {
-    default = "{{ .region }}"
+    default = "{{.region}}"
 }
 
 variable "environment_name" {}
@@ -16,9 +16,9 @@ variable "environment_name" {}
 # VPC
 #----------------------------------------------------------------------------------------------------------------------
 variable "management_cidr_block" {
-    default = "{{ .awsManagementVpcCidrBlock }}"
+    default = "{{.awsManagementVpcCidrBlock}}"
 }
 
 variable "application_cidr_block" {
-    default = "{{ .awsApplicationVpcCidrBlock }}"
+    default = "{{.awsApplicationVpcCidrBlock}}"
 }

@@ -14,7 +14,7 @@ provider "aws" {
 variable "domain_names" {
   description = "List of domains to associate with the new certificate. ACM currently supports up to 10 domains, any or all of which can contain wildcards. The first domain should be the primary domain"
   type        = list(string)
-  default     = ["{{ .projectName }}.pac.pyramidchallenges.com", "*.{{ .projectName }}.pac.pyramidchallenges.com"]
+  default     = ["{{.projectName}}.pac.pyramidchallenges.com", "*.{{.projectName}}.pac.pyramidchallenges.com"]
 }
 
 data "aws_route53_zone" "zid" {

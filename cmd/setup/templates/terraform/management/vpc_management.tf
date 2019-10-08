@@ -26,7 +26,7 @@ module "management_vpc_flow_log" {
   source = "../modules/vpc_flow_log"
 
   iam_role_arn  = aws_iam_role.vpc_flow_log.arn
-  log_group_arn = aws_cloudwatch_log_group.practiceone_log_group.arn
+  log_group_arn = aws_cloudwatch_log_group.{{.projectName}}_log_group.arn
   project_name  = var.project_name
   vpc_id        = aws_vpc.management_vpc.id
 }

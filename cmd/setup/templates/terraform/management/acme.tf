@@ -3,7 +3,7 @@ provider "acme" {
 }
 
 resource "acme_registration" "reg" {
-  account_key_pem = tls_private_key.jumpbox.private_key_pem
+  account_key_pem = data.terraform_remote_state.bootstrap.outputs.management_tls.private_key_pem
   email_address   = var.acme_registration_email
 }
 

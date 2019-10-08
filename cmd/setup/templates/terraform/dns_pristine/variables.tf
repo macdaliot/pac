@@ -1,5 +1,5 @@
 variable "project_name" {
-    default = "{{ .projectName }}"
+    default = "{{.projectName}}"
 }
 
 variable "hosted_zone" {
@@ -7,5 +7,5 @@ variable "hosted_zone" {
 }
 
 variable "region" {
-    default = "{{ .region }}"
+    default = "{{.region}}"
 }

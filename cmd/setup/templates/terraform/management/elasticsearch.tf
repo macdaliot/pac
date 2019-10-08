@@ -13,7 +13,7 @@ resource "aws_elasticsearch_domain" "es" {
     subnet_ids = [
       aws_subnet.private[0].id,
     ]
-    security_group_ids = [aws_security_group.es[0].id]
+    security_group_ids = [aws_security_group.es.id]
   }
 
   ebs_options {
@@ -91,7 +91,7 @@ variable "es_endpoint" {
 
 variable "cwl_endpoint" {
   type = string
-  default = "logs.{{ .region }}.amazonaws.com"
+  default = "logs.{{.region}}.amazonaws.com"
 }
 
 # CloudWatch Logs uses Lambda to deliver log data to Amazon ES. 
@@ -184,13 +184,13 @@ resource "aws_lambda_permission" "cloudwatch_allow" {
   action = "lambda:InvokeFunction"
   function_name = aws_lambda_function.cwl_stream_lambda.arn
   principal = var.cwl_endpoint
-  source_arn = aws_cloudwatch_log_group.{{ .projectName }}_log_group.arn
+  source_arn = aws_cloudwatch_log_group.{{.projectName}}_log_group.arn
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_logs_to_es" {
   depends_on = [aws_lambda_permission.cloudwatch_allow]
   name = "cloudwatch_logs_to_elasticsearch-management"
-  log_group_name = aws_cloudwatch_log_group.{{ .projectName }}_log_group.name
+  log_group_name = aws_cloudwatch_log_group.{{.projectName}}_log_group.name
   filter_pattern = ""
   destination_arn = aws_lambda_function.cwl_stream_lambda.arn
 }
@@ -199,7 +199,7 @@ resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_logs_to_es" {
 # DYNAMOBDB ACTIVITY TO ELASTICSEARCH
 #----------------------------------------------------------------------------------------------------------------------
 
-resource "aws_iam_policy" "{{ .projectName }}_dynamodb_elasticsearch" {
+resource "aws_iam_policy" "{{.projectName}}_dynamodb_elasticsearch" {
   name = "${var.project_name}-management-dynamodb-es-policy"
   policy = <<EOF
 {
@@ -219,9 +219,9 @@ EOF
 
 }
 
-resource "aws_iam_role_policy_attachment" "{{ .projectName }}_lambda_elasticsearch_attach_policy" {
+resource "aws_iam_role_policy_attachment" "{{.projectName}}_lambda_elasticsearch_attach_policy" {
   role       = aws_iam_role.lambda_elasticsearch_execution_role.name
-  policy_arn = aws_iam_policy.{{ .projectName }}_dynamodb_elasticsearch.arn
+  policy_arn = aws_iam_policy.{{.projectName}}_dynamodb_elasticsearch.arn
 }
 
 #----------------------------------------------------------------------------------------------------------------------
@@ -231,22 +231,6 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_lambda_elasticsear
 # https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-vpc.html
 # https://forums.aws.amazon.com/thread.jspa?threadID=279437
 #----------------------------------------------------------------------------------------------------------------------
-
-data "aws_ami" "amzn" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = [var.jumpbox_ami]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["137112412989"] # Amazon
-}
 
 resource "aws_security_group" "es_jumpbox" {
   name                   = "${var.project_name}-es-jumpbox"
@@ -283,14 +267,14 @@ resource "aws_security_group" "es_jumpbox" {
 }
 
 resource "aws_instance" "jumpbox" {
-  ami                         = data.aws_ami.amzn.id
+  ami                         = data.aws_ami.amazon-linux-2.id
   associate_public_ip_address = true
   instance_type               = "t2.micro"
 
   # referring to the key pair to be used to SSH into box
   key_name               = "jumpbox-${var.project_name}"
   subnet_id              = aws_subnet.private[0].id
-  vpc_security_group_ids = [aws_security_group.es_jumpbox[0].id]
+  vpc_security_group_ids = [aws_security_group.es_jumpbox.id]
 
   tags = {
     Name             = "${var.project_name} Management Jumpbox"

@@ -11,8 +11,8 @@ data "aws_ami" "ecs_ami" {
 }
 
 resource "aws_iam_instance_profile" "ecsInstanceProfile" {
-  name = "ecsInstanceProfile-{{ .env }}-${var.project_name}"
-  role = aws_iam_role.ecsInstanceRole_{{ .env }}.name
+  name = "ecsInstanceProfile-{{.env}}-${var.project_name}"
+  role = aws_iam_role.ecsInstanceRole_{{.env}}.name
 
   # Tags not supported
 }
@@ -131,8 +131,8 @@ resource "aws_ecs_service" "jenkins" {
 }
 
 resource "aws_ecs_task_definition" "jenkins" {
-  execution_role_arn       = aws_iam_role.{{ .projectName }}_task_execution.arn
-  task_role_arn            = aws_iam_role.{{ .projectName }}_{{ .env }}_jenkins.arn
+  execution_role_arn       = aws_iam_role.{{.projectName}}_task_execution.arn
+  task_role_arn            = aws_iam_role.{{.projectName}}_{{.env}}_jenkins.arn
   family                   = "${var.project_name}-jenkins"
   network_mode             = "bridge"
   requires_compatibilities = ["EC2"]
@@ -183,7 +183,7 @@ resource "aws_ecs_task_definition" "jenkins" {
         "valueFrom": "/pac/aws/secret_access_key"
       }
     ],
-    "image": "{{ .awsID }}.dkr.ecr.us-east-2.amazonaws.com/${var.project_name}-jenkins",
+    "image": "{{.awsID}}.dkr.ecr.us-east-2.amazonaws.com/${var.project_name}-jenkins",
     "name": "pac-jenkins",
     "portMappings": [
       {
@@ -194,7 +194,7 @@ resource "aws_ecs_task_definition" "jenkins" {
     "logConfiguration": { 
       "logDriver": "awslogs",
       "options": { 
-          "awslogs-group" : "${aws_cloudwatch_log_group.{{ .projectName }}_log_group.name}",
+          "awslogs-group" : "${aws_cloudwatch_log_group.{{.projectName}}_log_group.name}",
           "awslogs-region": "${var.region}",
           "awslogs-stream-prefix": "ecs"
       }

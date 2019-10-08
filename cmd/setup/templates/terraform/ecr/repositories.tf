@@ -1,12 +1,12 @@
 locals {
   repos = [
-    "{{ .projectName }}-jenkins",
-    "{{ .projectName }}-selenium-hub",
-    "{{ .projectName }}-selenium-node-chrome",
-    "{{ .projectName }}-sonar-db",
-    "{{ .projectName }}-sonarqube",
-    "{{ .projectName }}-dotnetml",
-    "{{ .projectName }}-scikit-sagemaker"
+    "{{.projectName}}-jenkins",
+    "{{.projectName}}-selenium-hub",
+    "{{.projectName}}-selenium-node-chrome",
+    "{{.projectName}}-sonar-db",
+    "{{.projectName}}-sonarqube",
+    "{{.projectName}}-dotnetml",
+    "{{.projectName}}-scikit-sagemaker"
   ]
 }
 

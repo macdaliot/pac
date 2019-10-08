@@ -2,7 +2,7 @@
 # BACKEND
 #----------------------------------------------------------------------------------------------------------------------
 
-# Note: Terraform does not allow variables in the terraform block, so change the {{ .projectName }} and {{ .region }}
+# Note: Terraform does not allow variables in the terraform block, so change the {{.projectName}} and {{.region}}
 # to their appropriate values.
 
 terraform {
@@ -24,12 +24,12 @@ terraform {
 #
 # terraform {
 #   backend "s3" {
-#     bucket         = "terraform.{{ .projectName }}.{{ .hostedZone }}"
-#     dynamodb_table = "{{ . projectName }}_tf_lock_table"
+#     bucket         = "terraform.{{.projectName}}.{{.hostedZone}}"
+#     dynamodb_table = "{{.projectName}}_tf_lock_table"
 #     encrypt        = true
 #     key            = "tfstate/bootstrap"
-#     kms_key_id     = "alias/pac/{{ . projectName }}"
-#     region         = "{{ .region }}"
+#     kms_key_id     = "alias/pac/{{.projectName}}"
+#     region         = "{{.region}}"
 #   }
 
 #    required_version = "0.12.7"
@@ -47,24 +47,22 @@ module "kms_key" {
 # Create tls key pair
 module "management_tls" {
   source = "./modules/tls"
-
-  project_name = var.projectName
 }
 
 output "management_tls" {
-  project_name         = var.project_name
-  public_key_openssh   = module.management_tls.tls.public_key_openssh
+  value = module.management_tls.tls
 }
 
 # Create AWS key pair
 module "keypair" {
   source = "./modules/keypair"
 
-  project_name  = var.project_name
+  project_name       = var.project_name
+  public_key_openssh = module.management_tls.tls.public_key_openssh
 }
 
 output "default_keypair" {
-  value = module.keypair.key_name
+  value = module.keypair.default.key_name
 }
 
 #----------------------------------------------------------------------------------------------------------------------
@@ -75,7 +73,7 @@ module "terraform_bucket" {
   source = "./modules/s3"
 
   project_name = "terraform.${var.project_name}.${var.hosted_zone}"
-  key_id       = module.kms_key.key.id
+  key_id       = module.kms_key.kms_key.id
   region       = var.region
 }
 
@@ -93,17 +91,17 @@ module "terraform_lock_table" {
 #----------------------------------------------------------------------------------------------------------------------
 
 # TODO: finish the EC2 module
-module "bootstrap_instance" {
-  source = "./modules/ec2"
+# module "bootstrap_instance" {
+#   source = "./modules/ec2"
 
-  ami                  = data.aws_ami.amazon-linux-2.id
-  availability_zone    = var.availability_zone
-  cpu_core_count       = var.cpu_core_count
-  cpu_threads_per_core = var.cpu_threads_per_core
-  host_id              = var.host_id
-  placement_group      = var.placement_group
-  tenancy              = var.tenancy
-}
+#   ami                  = data.aws_ami.amazon-linux-2.id
+#   availability_zone    = var.availability_zone
+#   cpu_core_count       = var.cpu_core_count
+#   cpu_threads_per_core = var.cpu_threads_per_core
+#   host_id              = var.host_id
+#   placement_group      = var.placement_group
+#   tenancy              = var.tenancy
+# }
 
 #----------------------------------------------------------------------------------------------------------------------
 # AMI
@@ -136,7 +134,7 @@ data "aws_ami" "amazon-linux-2" {
 #
 provider "aws" {
   # not listed as require in documentation but will be asked for it if not set
-  region = "{{ .region }}"
+  region = "{{.region}}"
 
   version = "~>2.21"
 }

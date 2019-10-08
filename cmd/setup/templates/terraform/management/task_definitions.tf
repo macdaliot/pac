@@ -1,6 +1,6 @@
 resource "aws_ecs_task_definition" "sonarqube" {
-  execution_role_arn       = aws_iam_role.{{ .projectName }}_task_execution.arn
-  task_role_arn            = aws_iam_role.{{ .projectName }}_{{ .env }}_jenkins.arn
+  execution_role_arn       = aws_iam_role.{{.projectName}}_task_execution.arn
+  task_role_arn            = aws_iam_role.{{.projectName}}_{{.env}}_jenkins.arn
   family                   = "sonarqube"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
@@ -55,7 +55,7 @@ resource "aws_ecs_task_definition" "sonarqube" {
     "logConfiguration": { 
       "logDriver": "awslogs",
       "options": { 
-          "awslogs-group" : "${aws_cloudwatch_log_group.{{ .projectName }}_log_group.name}",
+          "awslogs-group" : "${aws_cloudwatch_log_group.{{.projectName}}_log_group.name}",
           "awslogs-region": "${var.region}",
           "awslogs-stream-prefix": "ecs"
       }
@@ -81,7 +81,7 @@ resource "aws_ecs_task_definition" "sonarqube" {
     "logConfiguration": { 
       "logDriver": "awslogs",
       "options": { 
-          "awslogs-group" : "${aws_cloudwatch_log_group.{{ .projectName }}_log_group.name}",
+          "awslogs-group" : "${aws_cloudwatch_log_group.{{.projectName}}_log_group.name}",
           "awslogs-region": "${var.region}",
           "awslogs-stream-prefix": "ecs"
       }
@@ -127,7 +127,7 @@ resource "aws_ecs_task_definition" "selenium" {
     "logConfiguration": { 
       "logDriver": "awslogs",
       "options": { 
-          "awslogs-group" : "${aws_cloudwatch_log_group.{{ .projectName }}_log_group.name}",
+          "awslogs-group" : "${aws_cloudwatch_log_group.{{.projectName}}_log_group.name}",
           "awslogs-region": "${var.region}",
           "awslogs-stream-prefix": "ecs"
       }
@@ -160,7 +160,7 @@ resource "aws_ecs_task_definition" "selenium" {
     "logConfiguration": { 
       "logDriver": "awslogs",
       "options": { 
-          "awslogs-group" : "${aws_cloudwatch_log_group.{{ .projectName }}_log_group.name}",
+          "awslogs-group" : "${aws_cloudwatch_log_group.{{.projectName}}_log_group.name}",
           "awslogs-region": "${var.region}",
           "awslogs-stream-prefix": "ecs"
       }
