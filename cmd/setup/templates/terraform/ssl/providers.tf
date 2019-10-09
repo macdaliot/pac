@@ -6,9 +6,11 @@
 terraform {
   backend "s3" {
     bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
-    key    = "tfstate/{{ .env }}/dns"
+    key    = "tfstate/{{ .env }}/ssl"
     region = "{{ .region }}"
   }
+
+  required_version = "0.12.7"
 }
 
 #
@@ -19,7 +21,6 @@ terraform {
 provider "aws" {
   # not listed as require in documentation but will be asked for it if not set
   region = "{{ .region }}"
-
   version = "~>2.21"
 }
 
@@ -32,4 +33,13 @@ provider "template" {
 #
 provider "random" {
   version = "~>2.1"
+}
+
+data "terraform_remote_state" "dns" {
+  backend = "s3"
+  config = {
+    bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
+    key    = "tfstate/{{ .env }}/ssl"
+    region = "{{ .region }}"
+  }
 }
