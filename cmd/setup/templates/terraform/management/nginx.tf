@@ -72,10 +72,10 @@ resource "aws_instance" "nginx" {
 
   # Lookup the correct AMI based on the region
   # we specified 
-  ami = "ami-05c1fa8df71875112"
+  ami = "ami-04b9e92b5572fa0d1"
 
   # The name of our SSH keypair we created above.
-  key_name = "jumpbox-${var.project_name}"
+  key_name = "${var.project_name}-worker"
 
   # Our Security group to allow HTTP and SSH access
   vpc_security_group_ids = [aws_security_group.nginx.id]
