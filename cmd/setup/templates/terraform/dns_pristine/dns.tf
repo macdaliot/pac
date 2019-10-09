@@ -12,10 +12,11 @@ output "main_zone_id" {
 }
 
 resource "aws_route53_record" "ns" {
-  zone_id = "${aws_route53_zone.main.zone_id}"
-  name    = "${var.project_name}.${var.hosted_zone}"
-  type    = "NS"
-  ttl     = "30" # default 30, why so long?
+	allow_overwrite = true
+  name            = "${var.project_name}.${var.hosted_zone}"
+  ttl             = "30"
+  type            = "NS"
+  zone_id         = "${aws_route53_zone.main.zone_id}"
 
   records = [
     "${aws_route53_zone.main.name_servers.0}",
@@ -23,4 +24,8 @@ resource "aws_route53_record" "ns" {
     "${aws_route53_zone.main.name_servers.2}",
     "${aws_route53_zone.main.name_servers.3}"
   ]
+}
+
+output "ns_records" {
+  value = "${aws_route53_zone.main.name_servers}"
 }

@@ -1,11 +1,11 @@
 variable "project_name" {
-    default = "{{ .projectName }}"
+  description = "Project name"
 }
 
 variable "hosted_zone" {
-    default = "pac.pyramidchallenges.com"
+  description = "DNS hosted zone"
 }
 
 variable "region" {
-    default = "{{ .region }}"
+  description = "AWS region"
 }
