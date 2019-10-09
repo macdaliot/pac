@@ -25,7 +25,7 @@ resource "aws_ecs_task_definition" "sonarqube" {
       }
     ],
     "cpu": 2048,
-    "image": "{{ .awsID }}.dkr.ecr.us-east-2.amazonaws.com/sonarqube",
+    "image": "{{ .awsID }}.dkr.ecr.us-east-1.amazonaws.com/sonarqube",
     "memory": 4096,
     "name": "sonarqube",
     "networkMode": "awsvpc",
@@ -51,9 +51,9 @@ resource "aws_ecs_task_definition" "sonarqube" {
       }
     ],
     "cpu": 2048,
-    "image": "{{ .awsID }}.dkr.ecr.us-east-2.amazonaws.com/pac-sonar-db",
+    "image": "{{ .awsID }}.dkr.ecr.us-east-1.amazonaws.com/{{.projectName}}-sonar-db",
     "memory": 4096,
-    "name": "pac-sonar-db",
+    "name": "{{.projectName}}-sonar-db",
     "networkMode": "awsvpc",
     "portMappings": [
       {
@@ -81,7 +81,7 @@ DEFINITION
 resource "aws_ecs_task_definition" "selenium" {
   execution_role_arn = var.execution_role_arn
   task_role_arn = var.task_role_arn
-  family = "pac-selenium"
+  family = "${var.project_name}-selenium"
   network_mode = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu = "4096"
@@ -91,9 +91,9 @@ resource "aws_ecs_task_definition" "selenium" {
 [
   {
     "cpu": 2048,
-    "image": "{{ .awsID }}.dkr.ecr.us-east-2.amazonaws.com/pac-selenium-hub",
+    "image": "{{ .awsID }}.dkr.ecr.us-east-1.amazonaws.com/${var.project_name}-selenium-hub",
     "memory": 4096,
-    "name": "pac-selenium-hub-${var.project_name}",
+    "name": "${var.project_name}-selenium-hub",
     "networkMode": "awsvpc",
     "portMappings": [
       {
@@ -117,9 +117,9 @@ resource "aws_ecs_task_definition" "selenium" {
   },
   {
     "cpu": 2048,
-    "image": "{{ .awsID }}.dkr.ecr.us-east-2.amazonaws.com/pac-selenium-node-chrome",
+    "image": "{{ .awsID }}.dkr.ecr.us-east-1.amazonaws.com/${var.project_name}-selenium-node-chrome",
     "memory": 4096,
-    "name": "pac-selenium-node-chrome-${var.project_name}",
+    "name": "${var.project_name}-selenium-node-chrome",
     "networkMode": "awsvpc",
     "environment": [
       {

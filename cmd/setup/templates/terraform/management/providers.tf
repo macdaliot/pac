@@ -53,8 +53,8 @@ data "terraform_remote_state" "ssl" {
   backend = "s3"
 
   config = {
-    bucket = "terraform.wedtest.pac.pyramidchallenges.com"
+    bucket = "terraform.{{.projectName}}.{{.hostedZone}}"
     key    = "tfstate/dev/ssl"
-    region = "us-east-1"
+    region = "{{.region}}"
   }
 }
