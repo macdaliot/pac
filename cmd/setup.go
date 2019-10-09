@@ -74,10 +74,6 @@ var setupCmd = &cobra.Command{
 		config.Set("terraformAWSVersion", terraform.AWSVersion)
 		config.Set("terraformTemplateVersion", terraform.TemplateVersion)
 
-		// Create encryption key (used to secure Terraform state) which is needed for the Terraform templates
-		encryptionKeyID := setup.CreateEncryptionKey()
-		config.Set("encryptionKeyID", encryptionKeyID)
-
 		// Read AWS Account ID from System Manager
 		awsAccountID := sts.GetAccountID()
 		config.Set("awsID", awsAccountID)

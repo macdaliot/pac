@@ -18,7 +18,6 @@ This command is to be run after templates are generated with 'pac setup'`,
 		// Get the values from the pac config file
 		projectFqdn := config.Get("projectFqdn")
 		projectName := config.Get("projectName")
-		encryptionKeyID := config.Get("encryptionKeyID")
 		gitAuth := config.Get("gitAuth")
 
 		// Perform various checks to ensure we should proceed
@@ -26,9 +25,6 @@ This command is to be run after templates are generated with 'pac setup'`,
 
 		// Set environment variables
 		deploy.SetEnvironmentVariables(projectName)
-
-		// Create an encrypted S3 bucket where Terraform can store state
-		terraformS3Bucket := deploy.TerraformS3Bucket(projectName, encryptionKeyID)
 
 		// Sets up a webhook to queue a Jenkins build every time a push is made to GitHub
 		jenkinsURL := strings.Join([]string{"jenkins.", projectFqdn}, "")
