@@ -31,7 +31,7 @@ variable "enable_elasticsearch" {
 }
 
 variable "es_version" {
-  default = "6.5"
+  default = "7.1"
   description = "Version of ElasticSearch service (only used if enable_elasticsearch is set to 'true')"
 }
 
