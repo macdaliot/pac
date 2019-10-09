@@ -125,7 +125,7 @@ resource "aws_instance" "nginx" {
       "sudo -- sh -c \"echo '${acme_certificate.certificate.private_key_pem}' > /etc/certs/privKey.pem\"",
       "sudo mv /tmp/default.conf /etc/nginx/sites-enabled/",
       "sudo sed -i \"s/SERVERNAME/monitoring.${var.project_name}.${var.hosted_zone}/g\" /etc/nginx/sites-enabled/default.conf",
-      "sudo sed -i \"s/KIBANA_URL/${aws_elasticsearch_domain.es[0].endpoint}/g\" /etc/nginx/sites-enabled/default.conf",
+      "sudo sed -i \"s/KIBANA_URL/${aws_elasticsearch_domain.es.endpoint}/g\" /etc/nginx/sites-enabled/default.conf",
       "RESOLVER_IP=$(grep -o \"[0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}\" /etc/resolv.conf | head -n 1 $1)",
       "sudo sed -i \"s/RESOLVER_IP/$RESOLVER_IP/g\" /etc/nginx/sites-enabled/default.conf",
       "sudo service nginx start",

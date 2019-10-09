@@ -34,6 +34,10 @@ provider "random" {
   version = "~>2.1"
 }
 
+provider "acme" {
+  server_url = "https://acme-v02.api.letsencrypt.org/directory"
+}
+
 // Reference DNS infor in different S3 key
 data "terraform_remote_state" "dns" {
   backend = "s3"

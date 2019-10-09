@@ -2,7 +2,6 @@
 # http://www.terraform.io/docs/providers/aws/r/elasticsearch_domain.html
 #
 resource "aws_elasticsearch_domain" "es" {
-  count                 = var.enable_elasticsearch == "true" ? 1 : 0
   domain_name           = "${var.project_name}-management"
   elasticsearch_version = var.es_version
 
@@ -14,7 +13,7 @@ resource "aws_elasticsearch_domain" "es" {
     subnet_ids = [
       aws_subnet.private[0].id,
     ]
-    security_group_ids = [aws_security_group.es[0].id]
+    security_group_ids = [aws_security_group.es.id]
   }
 
   ebs_options {
@@ -34,12 +33,11 @@ resource "aws_elasticsearch_domain" "es" {
 }
 
 output "elasticsearch_endpoint" {
-  value = aws_elasticsearch_domain.es.*.endpoint
+  value = aws_elasticsearch_domain.es.endpoint
 }
 
 resource "aws_elasticsearch_domain_policy" "vpc_based" {
-  count       = var.enable_elasticsearch == "true" ? 1 : 0
-  domain_name = aws_elasticsearch_domain.es[0].domain_name
+  domain_name = aws_elasticsearch_domain.es.domain_name
 
   access_policies = <<POLICIES
 {
@@ -52,7 +50,7 @@ resource "aws_elasticsearch_domain_policy" "vpc_based" {
       },
       "Action": "es:*",
       "Resource": [
-          "${aws_elasticsearch_domain.es[0].arn}/*"
+          "${aws_elasticsearch_domain.es.arn}/*"
       ]
     }
   ]
@@ -62,7 +60,6 @@ POLICIES
 }
 
 resource "aws_security_group" "es" {
-  count = var.enable_elasticsearch == "true" ? 1 : 0
   name = "elasticsearch-${var.project_name}"
   description = "Managed by Terraform"
   vpc_id = aws_vpc.management_vpc.id
@@ -104,7 +101,6 @@ variable "cwl_endpoint" {
 # Elasticsearch Endpoint of other account and ensure permissions are granted to be able to publish to that ARN.
 #
 resource "aws_iam_role" "lambda_elasticsearch_execution_role" {
-  count = var.enable_elasticsearch == "true" ? 1 : 0
   name = "${var.project_name}_management_lambda_es_xrole"
   assume_role_policy = <<EOF
 {
@@ -131,8 +127,7 @@ EOF
 # When using a non-private Elasticsearch cluster, the Lambda IAM Execution Role needs to have the following permissions 
 # policy: AWSLambdaVPCAccessExecutionRole. So we are attaching it here.
 resource "aws_iam_role_policy_attachment" "AWSLambdaVPCAccessExecutionRole" {
-count = var.enable_elasticsearch == "true" ? 1 : 0
-role  = aws_iam_role.lambda_elasticsearch_execution_role[0].name
+role  = aws_iam_role.lambda_elasticsearch_execution_role.name
 
 # AWS Mananged role, safe to hard code
 policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
@@ -140,9 +135,8 @@ policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRo
 
 # Creates an inline policy on the lambda_elasticsearch_execution_role that allows us to stream logs to Elasticsearch.
 resource "aws_iam_role_policy" "lambda_elasticsearch_execution_policy" {
-count  = var.enable_elasticsearch == "true" ? 1 : 0
 name   = "${var.project_name}_lambda_elasticsearch_execution_policy"
-role   = aws_iam_role.lambda_elasticsearch_execution_role[0].id
+role   = aws_iam_role.lambda_elasticsearch_execution_role.id
 policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -150,7 +144,7 @@ policy = <<EOF
     {
       "Effect": "Allow",
       "Action": "es:ESHttpPost",
-      "Resource": "${aws_elasticsearch_domain.es[0].arn}"
+      "Resource": "${aws_elasticsearch_domain.es.arn}"
     }
   ]
 }
@@ -159,10 +153,9 @@ EOF
 }
 
 resource "aws_lambda_function" "cwl_stream_lambda" {
-  count         = var.enable_elasticsearch == "true" ? 1 : 0
   filename      = "cwl2eslambda.zip"
   function_name = "LogsToElasticsearch-${var.project_name}-management"
-  role          = aws_iam_role.lambda_elasticsearch_execution_role[0].arn
+  role          = aws_iam_role.lambda_elasticsearch_execution_role.arn
   handler       = "exports.handler"
 
   #source_code_hash = "${base64sha256(file("cwl2eslambda.zip"))}"
@@ -170,7 +163,7 @@ resource "aws_lambda_function" "cwl_stream_lambda" {
 
   environment {
     variables = {
-      es_endpoint = aws_elasticsearch_domain.es[0].endpoint
+      es_endpoint = aws_elasticsearch_domain.es.endpoint
     }
   }
 
@@ -187,29 +180,26 @@ resource "aws_lambda_function" "cwl_stream_lambda" {
 }
 
 resource "aws_lambda_permission" "cloudwatch_allow" {
-  count = var.enable_elasticsearch == "true" ? 1 : 0
   statement_id = "cloudwatch_allow"
   action = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.cwl_stream_lambda[0].arn
+  function_name = aws_lambda_function.cwl_stream_lambda.arn
   principal = var.cwl_endpoint
-  source_arn = aws_cloudwatch_log_group.practiceone_log_group.arn
+  source_arn = aws_cloudwatch_log_group.{{.projectName}}_log_group.arn
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_logs_to_es" {
-  count = var.enable_elasticsearch == "true" ? 1 : 0
   depends_on = [aws_lambda_permission.cloudwatch_allow]
   name = "cloudwatch_logs_to_elasticsearch-management"
-  log_group_name = aws_cloudwatch_log_group.practiceone_log_group.name
+  log_group_name = aws_cloudwatch_log_group.{{.projectName}}_log_group.name
   filter_pattern = ""
-  destination_arn = aws_lambda_function.cwl_stream_lambda[0].arn
+  destination_arn = aws_lambda_function.cwl_stream_lambda.arn
 }
 
 #----------------------------------------------------------------------------------------------------------------------
 # DYNAMOBDB ACTIVITY TO ELASTICSEARCH
 #----------------------------------------------------------------------------------------------------------------------
 
-resource "aws_iam_policy" "practiceone_dev_dynamodb_elasticsearch" {
-  count = var.enable_elasticsearch == "true" ? 1 : 0
+resource "aws_iam_policy" "{{.projectName}}_dev_dynamodb_elasticsearch" {
   name = "${var.project_name}-management-dynamodb-es-policy"
   policy = <<EOF
 {
@@ -229,10 +219,9 @@ EOF
 
 }
 
-resource "aws_iam_role_policy_attachment" "practiceone_dev_lambda_elasticsearch_attach_policy" {
-  count      = var.enable_elasticsearch == "true" ? 1 : 0
-  role       = aws_iam_role.lambda_elasticsearch_execution_role[0].name
-  policy_arn = aws_iam_policy.practiceone_dev_dynamodb_elasticsearch[0].arn
+resource "aws_iam_role_policy_attachment" "{{.projectName}}_dev_lambda_elasticsearch_attach_policy" {
+  role       = aws_iam_role.lambda_elasticsearch_execution_role.name
+  policy_arn = aws_iam_policy.{{.projectName}}_dev_dynamodb_elasticsearch.arn
 }
 
 #----------------------------------------------------------------------------------------------------------------------
@@ -260,7 +249,6 @@ data "aws_ami" "amzn" {
 }
 
 resource "aws_security_group" "es_jumpbox" {
-  count                  = var.enable_elasticsearch == "true" ? 1 : 0
   name                   = "${var.project_name}-es-jumpbox"
   description            = "controls access to Kibana"
   vpc_id                 = aws_vpc.management_vpc.id
@@ -295,15 +283,14 @@ resource "aws_security_group" "es_jumpbox" {
 }
 
 resource "aws_instance" "jumpbox" {
-  count                       = var.enable_jumpbox == "true" ? 1 : 0
   ami                         = data.aws_ami.amzn.id
   associate_public_ip_address = true
   instance_type               = "t2.micro"
 
   # referring to the key pair to be used to SSH into box
-  key_name               = "jumpbox-${var.project_name}"
+  key_name               = "${var.project_name}-worker"
   subnet_id              = aws_subnet.private[0].id
-  vpc_security_group_ids = [aws_security_group.es_jumpbox[0].id]
+  vpc_security_group_ids = [aws_security_group.es_jumpbox.id]
 
   tags = {
     Name             = "${var.project_name} Management Jumpbox"
