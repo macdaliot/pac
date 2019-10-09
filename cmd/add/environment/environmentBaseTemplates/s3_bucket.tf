@@ -1,4 +1,4 @@
-resource "aws_s3_bucket" "{{ .environmentName }}" {
+resource "aws_s3_bucket" "{{.environmentName}}" {
   bucket        = "${var.environment_name}.${var.project_fqdn}"
   acl           = "public-read"
   force_destroy = true
@@ -20,6 +20,5 @@ resource "aws_s3_bucket" "{{ .environmentName }}" {
 }
 
 output "s3_bucket_regional_domain_name" {
-  value = aws_s3_bucket.{{ .environmentName }}.bucket_regional_domain_name
+  value = aws_s3_bucket.{{.environmentName}}.bucket_regional_domain_name
 }
-

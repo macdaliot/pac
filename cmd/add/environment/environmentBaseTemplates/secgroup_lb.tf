@@ -27,6 +27,10 @@ resource "aws_security_group" "application_lb" {
   }
 }
 
+output "secgroup_application_lb" {
+  value = aws_security_group.application_lb
+}
+
 output "secgroup_application_lb_name" {
   value = aws_security_group.application_lb.name
 }

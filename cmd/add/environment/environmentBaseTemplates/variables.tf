@@ -7,6 +7,15 @@ variable "region" {
   description = "AWS region to deploy to"
 }
 
+#----------------------------------------------------------------------------------------------------------------------
+# CLOUDWATCH
+#----------------------------------------------------------------------------------------------------------------------
+
+variable "cwl_retention" {
+  description = "Cloudwatch Log rention time in days"
+  default = 1
+}
+
 #----------------------------------------------------------------------------------------------------------------------  
 # DNS  
 #----------------------------------------------------------------------------------------------------------------------  
@@ -70,11 +79,30 @@ variable "environment_abbr" {
   description = "This environment's abbreviation (used in namespacing AWS resources)"
 }
 
+output "environment_abbr" {
+  value = var.environment_abbr
+}
+
+variable "tracing_active" {}
+
 #----------------------------------------------------------------------------------------------------------------------
 # VPC
 #----------------------------------------------------------------------------------------------------------------------
 
 variable "application_cidr_block" {
-  default = "{{ .vpcCidrBlock }}"
+  default = "10.1.0.0/16"
   description = "CIDR block for this application VPC"
+}
+
+#----------------------------------------------------------------------------------------------------------------------
+# DocumentDb
+#----------------------------------------------------------------------------------------------------------------------
+variable "enable_documentdb" {
+  description = "Whether or not to create Amazon DocumentDb"
+}
+variable "documentdb_user" {
+  description = "master username for DocumentDB cluster"
+}
+variable "documentdb_password" {
+  description = "master password for DocumentDB cluster"
 }

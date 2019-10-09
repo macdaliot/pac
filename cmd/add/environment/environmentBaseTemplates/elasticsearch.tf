@@ -107,10 +107,6 @@ resource "aws_security_group" "es" {
   }
 }
 
-resource "aws_iam_service_linked_role" "es" {
-  aws_service_name = "es.amazonaws.com"
-}
-
 #----------------------------------------------------------------------------------------------------------------------
 # SEND CLOUDWATCH LOGS TO ELASTICSEARCH
 #----------------------------------------------------------------------------------------------------------------------
@@ -122,7 +118,7 @@ variable "es_endpoint" {
 
 variable "cwl_endpoint" {
   type = string
-  default = "logs.{{ .region }}.amazonaws.com"
+  default = "logs.{{.region}}.amazonaws.com"
 }
 
 # CloudWatch Logs uses Lambda to deliver log data to Amazon ES. 
@@ -133,7 +129,7 @@ variable "cwl_endpoint" {
 #
 resource "aws_iam_role" "lambda_elasticsearch_execution_role" {
   count = var.enable_elasticsearch == "true" ? 1 : 0
-  name = "${var.project_name}_lambda_elasticsearch_execution_role"
+  name = "${var.project_name}_${var.environment_abbr}_lambda_es_xrole"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -142,6 +138,20 @@ resource "aws_iam_role" "lambda_elasticsearch_execution_role" {
       "Action": "sts:AssumeRole",
       "Principal": {
         "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow"
+    },
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Effect": "Allow"
+    },
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "xray.amazonaws.com"
       },
       "Effect": "Allow"
     }
@@ -156,6 +166,16 @@ EOF
   }
 }
 
+resource "aws_iam_role_policy_attachment" "s3FullAccess" {
+  role = aws_iam_role.lambda_elasticsearch_execution_role[0].id
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "EC2FullAccess" {
+  role = aws_iam_role.lambda_elasticsearch_execution_role[0].id
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
+}
+
 # When using a non-public Elasticsearch cluster, the Lambda IAM Execution Role needs to have the following permissions 
 # policy: AWSLambdaVPCAccessExecutionRole. So we are attaching it here.
 resource "aws_iam_role_policy_attachment" "AWSLambdaVPCAccessExecutionRole" {
@@ -164,6 +184,14 @@ role  = aws_iam_role.lambda_elasticsearch_execution_role[0].name
 
 # AWS Mananged role, safe to hard code
 policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "xray_policy_attachment" {
+  count = var.enable_elasticsearch == "true" ? 1 : 0
+  role  = aws_iam_role.lambda_elasticsearch_execution_role[0].name
+
+  # AWS Mananged role, safe to hard code
+  policy_arn = "arn:aws:iam::aws:policy/AWSXrayFullAccess"
 }
 
 # Creates an inline policy on the lambda_elasticsearch_execution_role that allows us to stream logs to Elasticsearch.
@@ -177,13 +205,18 @@ policy = <<EOF
   "Statement": [
     {
       "Effect": "Allow",
-      "Action": "es:ESHttpPost",
-      "Resource": "${aws_elasticsearch_domain.es[0].arn}"
+      "Action": [
+        "es:ESHttpPost",
+        "xray:PutTraceSegments"
+        ],
+      "Resource": [
+        "${aws_elasticsearch_domain.es[0].arn}",
+        "${aws_lambda_function.lambda_movie.arn}"
+      ]
     }
   ]
 }
 EOF
-
 }
 
 resource "aws_lambda_function" "cwl_stream_lambda" {
@@ -193,7 +226,7 @@ resource "aws_lambda_function" "cwl_stream_lambda" {
   role          = aws_iam_role.lambda_elasticsearch_execution_role[0].arn
   handler       = "exports.handler"
 
-  #source_code_hash = "${base64sha256(file("cwl2eslambda.zip"))}"
+  #  source_code_hash = "${base64sha256(file("cwl2eslambda.zip"))}"
   runtime = "nodejs8.10"
 
   environment {
@@ -215,180 +248,19 @@ resource "aws_lambda_function" "cwl_stream_lambda" {
 }
 
 resource "aws_lambda_permission" "cloudwatch_allow" {
-count = var.enable_elasticsearch == "true" ? 1 : 0
-statement_id = "cloudwatch_allow"
-action = "lambda:InvokeFunction"
-function_name = aws_lambda_function.cwl_stream_lambda[0].arn
-principal = var.cwl_endpoint
-source_arn = data.terraform_remote_state.management.outputs.{{ .projectName }}_log_group_arn
+  count = var.enable_elasticsearch == "true" ? 1 : 0
+  statement_id = "cloudwatch_allow"
+  action = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.cwl_stream_lambda[0].function_name
+  principal = var.cwl_endpoint
+  source_arn = aws_cloudwatch_log_group.{{.environmentName}}_log_group.arn
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_logs_to_es" {
-count = var.enable_elasticsearch == "true" ? 1 : 0
-depends_on = [aws_lambda_permission.cloudwatch_allow]
-name = "cloudwatch_logs_to_elasticsearch"
-log_group_name = data.terraform_remote_state.management.outputs.{{ .projectName }}_log_group_name
-filter_pattern = ""
-destination_arn = aws_lambda_function.cwl_stream_lambda[0].arn
+  count = var.enable_elasticsearch == "true" ? 1 : 0
+  depends_on = [aws_lambda_permission.cloudwatch_allow]
+  name = "cloudwatch_logs_to_elasticsearch-${var.environment_abbr}"
+  log_group_name = aws_cloudwatch_log_group.{{ .environmentName }}_log_group.name
+  filter_pattern = ""
+  destination_arn = aws_lambda_function.cwl_stream_lambda[0].arn
 }
-
-#----------------------------------------------------------------------------------------------------------------------
-# DYNAMOBDB ACTIVITY TO ELASTICSEARCH
-#----------------------------------------------------------------------------------------------------------------------
-
-resource "aws_iam_policy" "{{ .projectName }}_{{ .env }}_dynamodb_elasticsearch" {
-count = var.enable_elasticsearch == "true" ? 1 : 0
-name = "${var.project_name}-{{ .env }}-dynamodb-elasticsearch-policy"
-policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-      {
-          "Sid": "",
-          "Effect": "Allow",
-          "Action": [
-              "dynamodb:DescribeStream",
-              "dynamodb:GetRecords",
-              "dynamodb:GetShardIterator",
-              "dynamodb:ListStreams"
-          ],
-          "Resource": "*"
-      }
-  ]
-}
-EOF
-
-}
-
-resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_lambda_elasticsearch_attach_policy" {
-  count      = var.enable_elasticsearch == "true" ? 1 : 0
-  role       = aws_iam_role.lambda_elasticsearch_execution_role[0].name
-  policy_arn = aws_iam_policy.{{ .projectName }}_{{ .env }}_dynamodb_elasticsearch[0].arn
-}
-
-#
-# https://www.terraform.io/docs/providers/aws/r/s3_bucket_object.html
-# Upload the zip file full of Lambda code to the Lambda S3 bucket
-#
-resource "aws_s3_bucket_object" "lambda_dynamodb_to_elastic_code" {
-  bucket     = "${var.environment_name}.${var.project_name}.${var.hosted_zone}"
-  key        = "dynamoDbToElasticSearch.zip"
-  source     = "${path.cwd}/dynamoDbToElasticSearch.zip"
-  depends_on = [aws_s3_bucket.{{ .environmentName }}]
-
-  tags = {
-    Name             = var.project_name
-    pac-project-name = var.project_name
-    environment      = var.environment_name
-  }
-}
-
-resource "aws_lambda_function" "dynamodb_elasticsearch_lambda" {
-  count         = var.enable_elasticsearch == "true" ? 1 : 0
-  s3_bucket     = "${var.environment_name}.${var.project_name}.${var.hosted_zone}"
-  s3_key        = "dynamoDbToElasticSearch.zip"
-  function_name = "DynamoDBToElasticsearch-${var.project_name}-${var.environment_abbr}"
-
-  #role             = "${aws_iam_role.lambda_dynamodb_elasticsearch_execution_role.arn}"
-  role             = aws_iam_role.lambda_elasticsearch_execution_role[0].arn
-  handler          = "index.lambda_handler"
-  source_code_hash = filebase64sha256("dynamoDbToElasticSearch.zip")
-  runtime          = "python3.7"
-  depends_on       = [aws_s3_bucket_object.lambda_dynamodb_to_elastic_code]
-
-  environment {
-    variables = {
-      es_endpoint = "https://${aws_elasticsearch_domain.es[0].endpoint}"
-      region      = var.region
-    }
-  }
-
-  vpc_config {
-    subnet_ids         = [aws_subnet.public[0].id, aws_subnet.public[1].id]
-    security_group_ids = [aws_vpc.application_vpc.default_security_group_id]
-  }
-
-  tags = {
-    Name             = var.project_name
-    pac-project-name = var.project_name
-    environment      = var.environment_name
-  }
-}
-
-#----------------------------------------------------------------------------------------------------------------------
-# JUMPBOX TO ALLOW ACCESS TO KIBANA
-#
-# https://www.jeremydaly.com/access-aws-vpc-based-elasticsearch-cluster-locally/
-# https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-vpc.html
-# https://forums.aws.amazon.com/thread.jspa?threadID=279437
-#----------------------------------------------------------------------------------------------------------------------
-
-data "aws_ami" "amzn" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = [var.jumpbox_ami]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["137112412989"] # Amazon
-}
-
-resource "aws_security_group" "es_jumpbox" {
-  count                  = var.enable_elasticsearch == "true" ? 1 : 0
-  name                   = "${var.project_name}-es-jumpbox"
-  description            = "controls access to Kibana"
-  vpc_id                 = aws_vpc.application_vpc.id
-  revoke_rules_on_delete = true
-
-  ingress {
-    protocol    = "tcp"
-    from_port   = "22"
-    to_port     = "22"
-    cidr_blocks = [var.end_user_cidr]
-  }
-
-  ingress {
-    protocol    = "tcp"
-    from_port   = "443"
-    to_port     = "443"
-    cidr_blocks = [var.end_user_cidr]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name             = var.project_name
-    pac-project-name = var.project_name
-    environment      = var.environment_name
-  }
-}
-
-resource "aws_instance" "jumpbox" {
-  count                       = var.enable_jumpbox == "true" ? 1 : 0
-  ami                         = data.aws_ami.amzn.id
-  associate_public_ip_address = true
-  instance_type               = "t2.micro"
-
-  # referring to the key pair to be used to SSH into box
-  key_name               = "jumpbox-${var.project_name}"
-  subnet_id              = aws_subnet.public[0].id
-  vpc_security_group_ids = [aws_security_group.es_jumpbox[0].id]
-
-  tags = {
-    Name             = var.project_name
-    pac-project-name = var.project_name
-    environment      = var.environment_name
-  }
-}
-

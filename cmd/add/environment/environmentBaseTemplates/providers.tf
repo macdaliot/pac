@@ -9,6 +9,8 @@ terraform {
     key    = "tfstate/{{ .env }}/{{ .environmentName }}"
     region = "{{ .region }}"
   }
+
+  required_version = "0.12.7"
 }
 
 #
@@ -36,17 +38,26 @@ provider "random" {
 data "terraform_remote_state" "dns" {
   backend = "s3"
   config = {
-    bucket = "terraform.{{ .projectFqdn }}"
-    key    = "tfstate/{{ .env }}/dns"
-    region = "{{ .region }}"
+    bucket = "terraform.{{.projectFqdn}}"
+    key    = "tfstate/dev/dns"
+    region = "{{.region}}"
+  }
+}
+
+data "terraform_remote_state" "ssl" {
+  backend = "s3"
+  config = {
+    bucket = "terraform.{{.projectFqdn}}"
+    key    = "tfstate/dev/ssl"
+    region = "{{.region}}"
   }
 }
 
 data "terraform_remote_state" "management" {
   backend = "s3"
   config = {
-    bucket = "terraform.{{ .projectFqdn }}"
-    key    = "tfstate/{{ .env }}/management_vpc"
-    region = "{{ .region }}"
+    bucket = "terraform.{{.projectFqdn}}"
+    key    = "tfstate/dev/management_vpc"
+    region = "{{.region}}"
   }
 }

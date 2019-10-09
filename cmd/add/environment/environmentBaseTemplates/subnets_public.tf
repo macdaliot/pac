@@ -17,6 +17,10 @@ resource "aws_subnet" "public" {
   }
 }
 
+output "public_subnet" {
+  value = aws_subnet.public
+}
+
 output "public_subnets" {
   value = aws_subnet.public.*.cidr_block
 }
