@@ -51,5 +51,5 @@ func postToGitHub(repoConfig *bytes.Buffer, gitAuth string) {
 
 func setupRepository(projectName string) {
 	commands.Run("git init", "")
-	commands.Run(str.Concat("git remote add origin git@github.com:PyramidSystemsInc/", projectName, ".git"), "")
+	commands.Run(str.Concat("git remote add origin https://github.com/PyramidSystemsInc/", projectName, ".git"), "")
 }
