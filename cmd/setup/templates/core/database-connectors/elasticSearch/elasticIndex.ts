@@ -16,7 +16,7 @@ export class ElasticIndex<T> implements IWritable<T> {
     async deleteById(id: string): Promise<boolean> {
         let result: boolean = false;
         try {
-            await this.client.delete({type:"movie", id, index:this.indexName});
+            await this.client.delete({id, index:this.indexName});
             result =  true;
         } catch (error) {
             console.error(`Error while deleting from elasticsearch. ID: ${id} Stack: ${error}`)
@@ -63,7 +63,7 @@ export class ElasticIndex<T> implements IWritable<T> {
                 // @ts-ignore
                 let _id: string = item._id;
                 ids.push(_id);
-                bulkList.push({ create: {_type:"movie",_index: this.indexName, _id}});
+                bulkList.push({ create: {_index: this.indexName, _id}});
                 // @ts-ignore
                 delete item._id;
                 bulkList.push(item);
@@ -90,7 +90,7 @@ export class ElasticIndex<T> implements IWritable<T> {
         try {
             // @ts-ignore
             delete item._id;
-            await this.client.create({type:"movie", id, index:this.indexName, body:item});
+            await this.client.create({id, index:this.indexName, body:item});
             result = id;
         } catch (error) {
             console.error(`Error while inserting to elasticsearch. ID: ${id} Stack: ${error}`)
@@ -109,7 +109,7 @@ export class ElasticIndex<T> implements IWritable<T> {
         try {
             // @ts-ignore
             delete item._id;
-            await this.client.update({type:"movie", id, index:this.indexName, body: { doc:item }});
+            await this.client.update({id, index:this.indexName, body: { doc:item }});
             result = true;
         } catch (error) {
             console.error(`Error while updating elasticsearch. ID: ${id} Stack: ${error}`)
