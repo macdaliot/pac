@@ -32,11 +32,8 @@ This command is to be run after templates are generated with 'pac setup'`,
 
 		// Call on Terraform to create the infrastructure in the cloud
 		// If the hosted zone fqdn is not already hosted by AWS then the it is considered "pristine"
-		if config.Get("dnsPristine") == "true" {
-			deploy.Infrastructure("dns_pristine")
-		} else {
-			deploy.Infrastructure("dns")
-		}
+		deploy.Infrastructure("dns_pristine")
+		deploy.Infrastructure("ssl")
 		deploy.Infrastructure("management")
 
 		// Set configuration values in the .pac file in the new project directory
