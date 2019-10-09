@@ -39,7 +39,7 @@ data "terraform_remote_state" "dns" {
   backend = "s3"
   config = {
     bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
-    key    = "tfstate/{{ .env }}/ssl"
+    key    = "tfstate/{{ .env }}/dns"
     region = "{{ .region }}"
   }
 }

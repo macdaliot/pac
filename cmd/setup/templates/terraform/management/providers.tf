@@ -45,3 +45,12 @@ data "terraform_remote_state" "dns" {
   }
 }
 
+data "terraform_remote_state" "ssl" {
+  backend = "s3"
+
+  config = {
+    bucket = "terraform.wedtest.pac.pyramidchallenges.com"
+    key    = "tfstate/dev/ssl"
+    region = "us-east-1"
+  }
+}
