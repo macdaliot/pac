@@ -65,7 +65,7 @@ resource "aws_instance" "jumpbox" {
   instance_type               = "t2.micro"
 
   # referring to the key pair to be used to SSH into box
-  key_name               = "jumpbox-${var.project_name}"
+  key_name               = "${var.project_name}-worker"
   subnet_id              = aws_subnet.public[0].id
   vpc_security_group_ids = [aws_security_group.jumpbox[0].id]
 
