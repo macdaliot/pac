@@ -114,7 +114,7 @@ resource "aws_ecs_service" "jenkins" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.jenkins.id
-    container_name   = "pac-jenkins"
+    container_name   = "${var.project_name}-jenkins"
     container_port   = "8080"
   }
 
@@ -129,7 +129,7 @@ resource "aws_ecs_service" "jenkins" {
 resource "aws_ecs_task_definition" "jenkins" {
   execution_role_arn       = var.execution_role_arn
   task_role_arn            = var.task_role_arn
-  family                   = "pac-jenkins"
+  family                   = "${var.project_name}-jenkins"
   network_mode             = "bridge"
   requires_compatibilities = ["EC2"]
 
@@ -179,8 +179,8 @@ resource "aws_ecs_task_definition" "jenkins" {
         "valueFrom": "/pac/aws/secret_access_key"
       }
     ],
-    "image": "{{ .awsID }}.dkr.ecr.us-east-1.amazonaws.com/pac-jenkins:tf-0.12.6",
-    "name": "pac-jenkins",
+    "image": "{{ .awsID }}.dkr.ecr.us-east-1.amazonaws.com/${var.project_name}-jenkins",
+    "name": "${var.project_name}-jenkins",
     "portMappings": [
       {
         "containerPort": 8080,

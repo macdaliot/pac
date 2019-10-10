@@ -61,7 +61,7 @@ resource "aws_instance" "nginx" {
     # The default username for our AMI
     user        = "ubuntu"
     type        = "ssh"
-    private_key = tls_private_key.jumpbox.private_key_pem
+    private_key = data.terraform_remote_state.bootstrap.outputs.worker_private_key
     host        = self.public_ip
 
     # The connection will use the local SSH agent for authentication.

@@ -16,10 +16,11 @@ terraform {
 #
 # AWS provider so terraform can talk to AWS
 #
+# `region` is not listed as required in the documentation, but we are prompted
+#   for a value if a `region` is not specified here
+#
 provider "aws" {
-  # not listed as require in documentation but will be asked for it if not set
   region = "{{ .region }}"
-
   version = "~>2.21"
 }
 
@@ -35,13 +36,20 @@ provider "random" {
 }
 
 provider "acme" {
-  server_url = "https://acme-v02.api.letsencrypt.org/directory"
+  server_url = "https://acme-staging-v02.api.letsencrypt.org/directory"
 }
 
-// Reference DNS infor in different S3 key
+data "terraform_remote_state" "bootstrap" {
+  backend = "s3"
+  config = {
+    bucket = "terraform.{{ .projectName }}.{{ .hostedZone }}"
+    key    = "tfstate/bootstrap"
+    region = "{{ .region }}"
+  }
+}
+
 data "terraform_remote_state" "dns" {
   backend = "s3"
-
   config = {
     bucket = "terraform.{{ .projectName }}.{{ .hostedZone }}"
     key    = "tfstate/{{ .env }}/dns"
@@ -51,7 +59,6 @@ data "terraform_remote_state" "dns" {
 
 data "terraform_remote_state" "ssl" {
   backend = "s3"
-
   config = {
     bucket = "terraform.{{.projectName}}.{{.hostedZone}}"
     key    = "tfstate/dev/ssl"
