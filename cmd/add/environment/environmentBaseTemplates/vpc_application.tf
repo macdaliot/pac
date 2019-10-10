@@ -69,18 +69,6 @@ resource "aws_vpc_endpoint" "sagemaker_runtime" {
 }
 
 #----------------------------------------------------------------------------------------------------------------------
-# VPC FLOW LOGS
-#----------------------------------------------------------------------------------------------------------------------
-module "development_vpc_flow_log" {
-  source = "../modules/vpc_flow_log"
-
-  iam_role_arn  = data.terraform_remote_state.management.outputs.vpc_flow_log_role.arn
-  log_group_arn = data.terraform_remote_state.management.outputs.practiceone_log_group_arn
-  project_name  = var.project_name
-  vpc_id        = aws_vpc.application_vpc.id
-}
-
-#----------------------------------------------------------------------------------------------------------------------
 # OUTPUTS
 #----------------------------------------------------------------------------------------------------------------------
 output "application_vpc_cidr_block" {

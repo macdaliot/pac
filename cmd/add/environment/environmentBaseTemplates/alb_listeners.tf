@@ -22,7 +22,7 @@ resource "aws_lb_listener" "{{.environmentName}}" {
   }
 }
 
-output "aws_lb_listener_development_arn" {
-  value = aws_lb_listener.development.arn
+output "aws_lb_listener_{{.environmentName}}_arn" {
+  value = aws_lb_listener.{{.environmentName}}.arn
 }
 
