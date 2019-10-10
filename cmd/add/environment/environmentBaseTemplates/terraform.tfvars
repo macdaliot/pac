@@ -1,5 +1,4 @@
 application_cidr_block = "{{ .vpcCidrBlock }}"
-enable_elasticsearch    = "true"
 enable_jumpbox          = "true"
 enable_documentdb       = "true"
 documentdb_user         = "pyramid" #need to move this out of here
@@ -13,4 +12,3 @@ project_fqdn            = "{{.projectFqdn}}"
 project_name            = "{{.projectName}}"
 region                  = "{{.region}}"
 tracing_active          = "Active"
-

@@ -26,10 +26,6 @@ variable "hosted_zone" {
 #----------------------------------------------------------------------------------------------------------------------
 # ELASTICSEARCH
 #----------------------------------------------------------------------------------------------------------------------
-variable "enable_elasticsearch" {
-  description = "Whether or not to create Elasticsearch service"
-}
-
 variable "es_version" {
   default = "7.1"
   description = "Version of ElasticSearch service (only used if enable_elasticsearch is set to 'true')"
