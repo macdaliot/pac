@@ -14,7 +14,7 @@ resource "aws_ecs_service" "sonarqube" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.sonarqube.id
-    container_name   = "sonarqube"
+    container_name   = "${var.project_name}-sonarqube"
     container_port   = "9000"
   }
 

@@ -1,7 +1,7 @@
 resource "aws_ecs_task_definition" "sonarqube" {
   execution_role_arn       = var.execution_role_arn
   task_role_arn            = var.task_role_arn
-  family                   = "sonarqube"
+  family                   = "${var.project_name}-sonarqube"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "4096"
@@ -25,9 +25,9 @@ resource "aws_ecs_task_definition" "sonarqube" {
       }
     ],
     "cpu": 2048,
-    "image": "{{ .awsID }}.dkr.ecr.us-east-1.amazonaws.com/sonarqube",
+    "image": "{{ .awsID }}.dkr.ecr.us-east-1.amazonaws.com/${var.project_name}-sonarqube",
     "memory": 4096,
-    "name": "sonarqube",
+    "name": "${var.project_name}-sonarqube",
     "networkMode": "awsvpc",
     "portMappings": [
       {
