@@ -18,11 +18,11 @@ resource "aws_s3_bucket_object" "lambda_{{.serviceName}}_code" {
 # http://www.terraform.io/docs/providers/aws/r/lambda_function.html
 # lambda function
 #
-resource "aws_lambda_function" "lambda_movie" {
+resource "aws_lambda_function" "lambda_{{.serviceName}}" {
   s3_bucket        = aws_s3_bucket.{{.environmentName}}.id
   s3_key           = "{{.serviceName}}.zip"
   function_name    = "pac-${var.project_name}-${var.environment_abbr}-{{.serviceName}}"
-  role             = aws_iam_role.lambda_elasticsearch_execution_role[0].arn
+  role             = aws_iam_role.lambda_elasticsearch_execution_role.arn
   handler          = "lambda.handler"
   source_code_hash = filebase64sha256("${path.cwd}/../../services/{{.serviceName}}/function.zip")
   depends_on       = [aws_s3_bucket_object.lambda_{{ .serviceName }}_code]
@@ -36,7 +36,7 @@ resource "aws_lambda_function" "lambda_movie" {
       JWT_ISSUER  = data.terraform_remote_state.management.outputs.jwt_issuer.value
       JWT_SECRET  = data.terraform_remote_state.management.outputs.jwt_secret.value
       ENV_ABBR    = var.environment_abbr
-      ES_ENDPOINT = "https://${aws_elasticsearch_domain.es[0].endpoint}"
+      ES_ENDPOINT = "https://${aws_elasticsearch_domain.es.endpoint}"
     }
   }
 
@@ -121,6 +121,7 @@ resource "aws_lb_listener_rule" "{{.projectName}}_{{.serviceName}}_rule_200" {
 
   condition {
     field  = "path-pattern"
-    values = ["/api/{{ .serviceName }}/*"]  }
+    values = ["/api/{{ .serviceName }}/*"]
+  }
 }
 

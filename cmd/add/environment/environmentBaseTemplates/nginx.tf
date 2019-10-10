@@ -65,7 +65,7 @@ resource "aws_instance" "nginx" {
     # The default username for our AMI
     user        = "ubuntu"
     type        = "ssh"
-    private_key = data.terraform_remote_state.management.outputs.private_key
+    private_key = data.terraform_remote_state.bootstrap.outputs.worker_private_key
     host = self.public_ip
 
     # The connection will use the local SSH agent for authentication.
@@ -147,7 +147,7 @@ resource "aws_instance" "nginx_2" {
     # The default username for our AMI
     user        = "ubuntu"
     type        = "ssh"
-    private_key = data.terraform_remote_state.management.outputs.private_key
+    private_key = data.terraform_remote_state.bootstrap.outputs.worker_private_key
     host = self.public_ip
 
     # The connection will use the local SSH agent for authentication.
@@ -229,7 +229,7 @@ resource "aws_instance" "nginx_3" {
     # The default username for our AMI
     user        = "ubuntu"
     type        = "ssh"
-    private_key = data.terraform_remote_state.management.outputs.private_key
+    private_key = data.terraform_remote_state.bootstrap.outputs.worker_private_key
     host = self.public_ip
 
     # The connection will use the local SSH agent for authentication.

@@ -35,6 +35,15 @@ provider "random" {
   version = "~>2.1"
 }
 
+data "terraform_remote_state" "bootstrap" {
+  backend = "s3"
+  config = {
+    bucket = "terraform.{{.projectFqdn}}"
+    key    = "tfstate/bootstrap"
+    region = "{{.region}}"
+  }
+}
+
 data "terraform_remote_state" "dns" {
   backend = "s3"
   config = {
