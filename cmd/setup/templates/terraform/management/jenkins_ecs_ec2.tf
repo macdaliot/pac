@@ -194,8 +194,7 @@ resource "aws_ecs_task_definition" "jenkins" {
           "awslogs-region": "${var.region}",
           "awslogs-stream-prefix": "ecs"
       }
-    },
-    "entryPoint": ["/runJenkins.sh"]
+    }
   }
 ]
 DEFINITION
