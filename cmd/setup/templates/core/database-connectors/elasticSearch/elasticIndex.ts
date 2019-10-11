@@ -3,7 +3,7 @@ import { Client } from "@elastic/elasticsearch";
 
 export class ElasticIndex<T> implements IWritable<T> {
 
-    constructor(private client: Client, private indexName: string){
+    constructor(public client: Client, private indexName: string){
         this.client = client;
         this.indexName = indexName
     }

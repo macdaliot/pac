@@ -19,6 +19,20 @@ export class {{.serviceNamePascal}}Controller extends Controller {
     }
 
     /**
+     * @summary Deletes DB collections from Elastic and DocDb
+     * PLEASE REMOVE ONCE data model is mature and confident in persisted data
+     */
+    @Get('wipedb')
+    @SuccessResponse(200, "DEV feature - wipe db collections")
+    async wipeDbs() {
+        if(!this.{{.serviceName}}Repository){
+            await this.initConnection();
+        }
+        await this.indexingService.wipeDbs(this.domainModel);
+        return "Wiped DocumentDB and Elastic Search Collections";
+    }
+
+    /**
      * Get a {{.serviceNamePascal}} by Id
      *
      * @summary Get a {{.serviceNamePascal}}, by Id

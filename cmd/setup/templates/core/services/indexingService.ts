@@ -108,6 +108,15 @@ export class IndexingService<T> implements IWritable<T> {
     }
 
     /**
+     * This is for dev purposes only, remove once data models are mature
+     * @param indexName
+     */
+    async wipeDbs(indexName: string) {
+        await this.mongoRepository._collection.drop();
+        await this.elasticIndex.client.indices.delete({index:indexName});
+    }
+
+    /**
      * This method is in charge of maintaining a consistent state between the primary db and the index db.
      * It does this by executing the same insert/delete/update transaction to both primary/index dbs. Should writting
      * to the index db fail, a rollback function is executed against the primary db.
