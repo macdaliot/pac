@@ -37,6 +37,7 @@ resource "aws_lambda_function" "lambda_{{.serviceName}}" {
       JWT_SECRET  = data.terraform_remote_state.management.outputs.jwt_secret.value
       ENV_ABBR    = var.environment_abbr
       ES_ENDPOINT = "https://${aws_elasticsearch_domain.es.endpoint}"
+      MONGO_CONN_STRING = "mongodb://pyramid:password@${aws_docdb_cluster.docdb[0].endpoint}:27017"
     }
   }
 

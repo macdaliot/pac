@@ -12,7 +12,7 @@ resource "aws_docdb_cluster_parameter_group" "docdb_params" {
 
 resource "aws_docdb_subnet_group" "appsubnets" {
   count      = var.enable_documentdb == "true" ? 1 : 0
-  name       = "documentdb-${var.project_name}"
+  name       = "documentdb-${var.project_name}-${var.environment_abbr}"
   subnet_ids = [aws_subnet.public[0].id, aws_subnet.public[1].id, aws_subnet.public[2].id]
 
 

@@ -10,18 +10,36 @@ resource "aws_ecs_task_definition" "sonarqube" {
   container_definitions = <<DEFINITION
 [
   {
-    "secrets" : [
+    "secrets": [
       {
-        "name" : "sonar.jdbc.username",
-        "valueFrom" : "/pac/${var.project_name}/sonar/sonar_jdbc_username"
+        "name": "sonar.jdbc.username",
+        "valueFrom": "/pac/${var.project_name}/sonar/jdbc_username"
       },
       {
-        "name" : "sonar.jdbc.password",
-        "valueFrom" : "/pac/${var.project_name}/sonar/sonar_jdbc_password"
+        "name": "sonar.jdbc.password",
+        "valueFrom": "/pac/${var.project_name}/sonar/jdbc_password"
+      },
+      {
+        "name": "SONAR_PASSWORD",
+        "valueFrom": "/pac/${var.project_name}/sonar/password"
+      },
+      {
+        "name": "SONAR_SECRET",
+        "valueFrom": "/pac/${var.project_name}/sonar/secret"
+      },
+      {
+        "name": "SONAR_USERNAME",
+        "valueFrom": "/pac/${var.project_name}/sonar/username"
+      }
+    ],
+    "environment": [
+      {
+        "name": "PROJECT_NAME",
+        "value": "${var.project_name}"
       },
       {
         "name": "sonar.jdbc.url",
-        "valueFrom": "/pac/${var.project_name}/sonar/sonar_jdbc_url"
+        "value": "jdbc:postgresql://localhost/sonar"
       }
     ],
     "cpu": 2048,

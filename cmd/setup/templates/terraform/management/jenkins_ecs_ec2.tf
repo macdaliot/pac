@@ -143,6 +143,22 @@ resource "aws_ecs_task_definition" "jenkins" {
   {
     "secrets": [
       {
+        "name": "AWS_ACCESS_KEY_ID",
+        "valueFrom": "/pac/aws/access_id_key"
+      },
+      {
+        "name": "AWS_SECRET_ACCESS_KEY",
+        "valueFrom": "/pac/aws/secret_access_key"
+      },
+      {
+        "name": "GITHUB_PASSWORD",
+        "valueFrom": "/pac/github/password"
+      },
+      {
+        "name": "GITHUB_USERNAME",
+        "valueFrom": "/pac/github/username"
+      },
+      {
         "name": "JWT_ISSUER",
         "valueFrom": "/pac/${var.project_name}/jwt/issuer"
       },
@@ -151,32 +167,16 @@ resource "aws_ecs_task_definition" "jenkins" {
         "valueFrom": "/pac/${var.project_name}/jwt/secret"
       },
       {
-        "name": "USERNAME",
-        "valueFrom": "/pac/${var.project_name}/jenkins/username"
-      },
-      {
         "name": "PASSWORD",
         "valueFrom": "/pac/${var.project_name}/jenkins/password"
       },
       {
         "name": "SONAR_SECRET",
-        "valueFrom": "/pac/sonar/secret"
+        "valueFrom": "/pac/${var.project_name}/sonar/secret"
       },
       {
-        "name": "GITHUB_USERNAME",
-        "valueFrom": "/pac/github/username"
-      },
-      {
-        "name": "GITHUB_PASSWORD",
-        "valueFrom": "/pac/github/password"
-      },
-      {
-        "name": "AWS_ACCESS_KEY_ID",
-        "valueFrom": "/pac/aws/access_id_key"
-      },
-      {
-        "name": "AWS_SECRET_ACCESS_KEY",
-        "valueFrom": "/pac/aws/secret_access_key"
+        "name": "USERNAME",
+        "valueFrom": "/pac/${var.project_name}/jenkins/username"
       }
     ],
     "image": "{{ .awsID }}.dkr.ecr.us-east-1.amazonaws.com/${var.project_name}-jenkins",

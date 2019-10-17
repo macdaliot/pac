@@ -308,7 +308,7 @@ resource "aws_instance" "nginx_3" {
 # LOAD BALANCING
 #----------------------------------------------------------------------------------------------------------------------
 resource "aws_lb_target_group" "nginx" {
-  name        = "${var.project_name}-nginx"
+  name        = "${var.project_name}-${var.environment_abbr}-nginx"
   port        = "80"
   protocol    = "HTTP"
   vpc_id      = aws_vpc.application_vpc.id
