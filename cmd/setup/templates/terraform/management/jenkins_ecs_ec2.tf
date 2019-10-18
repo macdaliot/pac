@@ -144,7 +144,7 @@ resource "aws_ecs_task_definition" "jenkins" {
     "secrets": [
       {
         "name": "AWS_ACCESS_KEY_ID",
-        "valueFrom": "/pac/aws/access_id_key"
+        "valueFrom": "/pac/aws/access_key_id"
       },
       {
         "name": "AWS_SECRET_ACCESS_KEY",
