@@ -1,18 +1,18 @@
-import {Actions, JWT_RECEIVED, LOGOUT} from "@app/redux/Actions/Authentication";
+import { Actions, JWT_RECEIVED, LOGOUT } from "@app/redux/Actions/Authentication";
 import { IUser } from "@pyramid-systems/domain";
 import { WebStorage, tokenName } from '@app/config';
 
-export type Authentication = {
+export type State = {
     user?: IUser;
     token?: string;
   };
 
-const initialApplicationState: Authentication = { user: null, token: null };
+const initialState: State = { user: null, token: null };
 
-export function authenticationReducer (
-    state: Authentication = initialApplicationState,
+export function Reducer (
+    state: State = initialState,
     action: Actions
-): Authentication{
+): State {
     switch (action.type) {
         case JWT_RECEIVED:
             return {
@@ -23,7 +23,7 @@ export function authenticationReducer (
             if (WebStorage.isSupported()) {
                 WebStorage.removeItem(tokenName);
             }
-            return initialApplicationState;
+            return initialState;
         default:
             return { ...state };
     }

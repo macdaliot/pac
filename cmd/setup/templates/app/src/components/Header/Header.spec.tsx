@@ -5,13 +5,10 @@ import { Button, ButtonPriority } from '@pyramidlabs/react-ui';
 import Header, { HeaderComponent, mapStateToProps } from './Header.component';
 import { Route } from '../../routes';
 import { IUser } from '@pyramid-systems/domain';
+import { ApplicationState } from '@app/redux/Reducers/Reducer';
 
 jest.mock('../../routes', () => Array<Route>());
-
 describe('header (unit/shallow)', () => {
-  // if you've exported the class by itself, you can do quick unit tests like the following test
-  // shallow() will not render child components
-
   it('should show a login link when not logged in', () => {
     const hdr = shallow(<HeaderComponent
         logout={() => ({
@@ -50,7 +47,7 @@ describe('header (unit/shallow)', () => {
       authentication: {
         user: fakeUser
       }
-    };
+    } as ApplicationState;
     const expectedProps = {
       userName: 'testUser',
       isAuthenticated: true
@@ -85,4 +82,5 @@ describe('header (integration/mount)', () => {
     const hdr = mountWithState(<Header />, defaultState);
     expect(hdr.contains(<span className="username">testUser</span>)).toBe(true);
   });
+
 });

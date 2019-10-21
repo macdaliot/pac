@@ -6,7 +6,7 @@ import { UrlConfig } from '../../config';
 import './header.scss';
 import { ApplicationState } from '@app/redux/Reducers/Reducer';
 import { bindActionCreators, Dispatch } from "redux";
-import { logoutActions } from "@app/redux/Actions/Authentication";
+import { Actions } from "@app/redux/Actions/Authentication";
 
 export const mapStateToProps = (
   state: ApplicationState
@@ -16,7 +16,7 @@ export const mapStateToProps = (
 });
 
 export const mapDispatchToProps = (dispatch: Dispatch) =>
-    bindActionCreators(logoutActions, dispatch);
+     ({ logout: () => dispatch(Actions.logout()) });
 
 type HeaderComponentState = { userName?: string; isAuthenticated?: boolean };
 type ReduxStateToProps = ReturnType<typeof mapStateToProps>;

@@ -1,16 +1,12 @@
-import {ActionsUnion, createAction} from "@app/core/action";
-import {IUser} from "@pyramid-systems/domain";
+import { ActionsUnion, createAction } from "@app/core/action";
+import { IUser } from "@pyramid-systems/domain";
 
 export const JWT_RECEIVED = 'JWT_RECEIVED'
 export const LOGOUT = 'LOGOUT'
 
-export const logoutActions = {
-    logout: () => createAction(LOGOUT)
+export const Actions = {
+    logout: () => createAction(LOGOUT),
+    setToken: (token: string, user: IUser) => createAction(JWT_RECEIVED, { token, user })
 };
 
-export const loginCallbackActions = {
-    setToken: (token: string, user: IUser) =>
-        createAction(JWT_RECEIVED, { token, user })
-};
-
-export type Actions = ActionsUnion<typeof logoutActions> | ActionsUnion<typeof loginCallbackActions>
+export type Actions = ActionsUnion<typeof Actions>;
