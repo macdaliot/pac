@@ -27,7 +27,7 @@ export class AuthenticationController extends Controller {
         this.logger.error('Error creating JWT ', err);
         response.status(500).send(err);
       } else {
-        response.redirect(process.env.APP_ROOT + '/login?' + encoded);
+        response.redirect(process.env.APP_ROOT + '/login?jwt=' + encoded);
       }
     });
   }
