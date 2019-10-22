@@ -39,7 +39,7 @@ data "terraform_remote_state" "bootstrap" {
   backend = "s3"
   config = {
     bucket = "terraform.{{.projectFqdn}}"
-    key    = "tfstate/bootstrap"
+    key    = "bootstrap/terraform.tfstate"
     region = "{{.region}}"
   }
 }

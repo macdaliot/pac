@@ -151,6 +151,21 @@ resource "aws_ssm_parameter" "sonar_jdbc_password" {
 #
 # http://www.terraform.io/docs/providers/aws/r/ssm_parameter.html
 #
+resource "aws_ssm_parameter" "sonar_jdbc_username" {
+  name        = "/pac/${var.project_name}/sonar/jdbc_username"
+  description = "Sonar JDBC Password"
+  type        = "SecureString"
+  value       = var.sonar_jdbc_username
+  key_id      = data.terraform_remote_state.bootstrap.outputs.kms_key.key.id
+  overwrite   = true
+  tags = {
+    pac-project-name = var.project_name
+  }
+} 
+
+#
+# http://www.terraform.io/docs/providers/aws/r/ssm_parameter.html
+#
 resource "aws_ssm_parameter" "sonar_password" {
   name        = "/pac/${var.project_name}/sonar/password"
   description = "Sonar Password"
