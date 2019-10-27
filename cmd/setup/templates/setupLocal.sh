@@ -1,7 +1,7 @@
 #!/bin/sh
 
-PROJECT=bdsopractwo
-SERVICE=movie
+PROJECT={{.projectName}}
+SERVICE=sample
 docker network create pac-$PROJECT
 docker run -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" --name elastic --network pac-$PROJECT elasticsearch:7.1.0 
 docker run -d -p 27017:27017 --name mongo --network pac-$PROJECT mongo:3.6

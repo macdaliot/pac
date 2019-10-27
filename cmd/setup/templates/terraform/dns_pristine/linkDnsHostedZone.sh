@@ -1,9 +1,5 @@
 #!/bin/bash
 
-echo "@Link DNS Hosted Zones"
-
-# call to get output
-#TODO NEED TO CD INTO DNS_PRISTINE DIR
 TF_OUTPUT_NS=$(terraform output ns_records)
 CLEAN_NS=$(echo $TF_OUTPUT_NS|sed 's/\(.*\),/\1/')
 

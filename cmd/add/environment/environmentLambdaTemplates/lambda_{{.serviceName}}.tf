@@ -4,7 +4,7 @@
 #
 resource "aws_s3_bucket_object" "lambda_{{.serviceName}}_code" {
   bucket     = aws_s3_bucket.{{.environmentName}}.id
-  key        = "{{ .serviceName }}.zip"
+  key        = "{{.serviceName}}.zip"
   source     = "${path.cwd}/../../services/{{.serviceName}}/function.zip"
   depends_on = [aws_s3_bucket.{{.environmentName}}]
   etag = "${filemd5("${path.cwd}/../../services/{{.serviceName}}/function.zip")}"
@@ -25,7 +25,7 @@ resource "aws_lambda_function" "lambda_{{.serviceName}}" {
   role             = aws_iam_role.lambda_elasticsearch_execution_role.arn
   handler          = "lambda.handler"
   source_code_hash = filebase64sha256("${path.cwd}/../../services/{{.serviceName}}/function.zip")
-  depends_on       = [aws_s3_bucket_object.lambda_{{ .serviceName }}_code]
+  depends_on       = [aws_s3_bucket_object.lambda_{{.serviceName}}_code]
   memory_size      = 256
   timeout          = 15
   runtime          = "nodejs10.x"
@@ -33,11 +33,11 @@ resource "aws_lambda_function" "lambda_{{.serviceName}}" {
   environment {
     variables = {
       PROJECTNAME = var.project_name
-      JWT_ISSUER  = data.terraform_remote_state.management.outputs.jwt_issuer.value
-      JWT_SECRET  = data.terraform_remote_state.management.outputs.jwt_secret.value
+      JWT_ISSUER  = data.terraform_remote_state.secrets.outputs.jwt_issuer.value
+      JWT_SECRET  = data.terraform_remote_state.secrets.outputs.jwt_secret.value
       ENV_ABBR    = var.environment_abbr
       ES_ENDPOINT = "https://${aws_elasticsearch_domain.es.endpoint}"
-      MONGO_CONN_STRING = "mongodb://pyramid:password@${aws_docdb_cluster.docdb[0].endpoint}:27017"
+      MONGO_CONN_STRING = "mongodb://pyramid:password@${aws_docdb_cluster.docdb[0].endpoint}:27017/${var.project_name}"
     }
   }
 
@@ -77,21 +77,21 @@ resource "aws_alb_target_group" "{{.projectName}}_{{.environmentAbbr}}_{{.servic
 # Provides the ability to register instances and containers with an Application Load Balancer (ALB) 
 # or Network Load Balancer (NLB) target group
 #
-resource "aws_lambda_permission" "{{ .projectName }}_{{ .serviceName }}_with_lb" {
+resource "aws_lambda_permission" "{{.projectName}}_{{.serviceName}}_with_lb" {
   statement_id  = "AllowExecutionFromlb"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.lambda_{{.serviceName}}.function_name
   principal     = "elasticloadbalancing.amazonaws.com"
 
   #source_arn    = "${aws_alb_target_group.pac_lambda_target_group.arn}"
-  source_arn = aws_alb_target_group.{{ .projectName }}_{{ .environmentAbbr }}_{{ .serviceName }}_tg.id
+  source_arn = aws_alb_target_group.{{.projectName}}_{{.environmentAbbr}}_{{.serviceName}}_tg.id
 }
 
 # register with load balancer target group 
-resource "aws_alb_target_group_attachment" "{{ .projectName }}_{{ .environmentAbbr }}_{{ .serviceName }}_tg_attachment" {
-  target_group_arn = aws_alb_target_group.{{ .projectName }}_{{ .environmentAbbr }}_{{ .serviceName }}_tg.id
-  target_id        = aws_lambda_function.lambda_{{ .serviceName }}.arn
-  depends_on       = [aws_lambda_permission.{{ .projectName }}_{{ .serviceName }}_with_lb]
+resource "aws_alb_target_group_attachment" "{{.projectName}}_{{.environmentAbbr}}_{{.serviceName}}_tg_attachment" {
+  target_group_arn = aws_alb_target_group.{{.projectName}}_{{.environmentAbbr}}_{{.serviceName}}_tg.id
+  target_id        = aws_lambda_function.lambda_{{.serviceName}}.arn
+  depends_on       = [aws_lambda_permission.{{.projectName}}_{{.serviceName}}_with_lb]
 }
 
 #
@@ -122,7 +122,7 @@ resource "aws_lb_listener_rule" "{{.projectName}}_{{.serviceName}}_rule_200" {
 
   condition {
     field  = "path-pattern"
-    values = ["/api/{{ .serviceName }}/*"]
+    values = ["/api/{{.serviceName}}/*"]
   }
 }
 

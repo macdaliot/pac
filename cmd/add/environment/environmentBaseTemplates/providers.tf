@@ -70,3 +70,12 @@ data "terraform_remote_state" "management" {
     region = "{{.region}}"
   }
 }
+
+data "terraform_remote_state" "secrets" {
+  backend = "s3"
+  config = {
+    bucket = "terraform.{{.projectFqdn}}"
+    key    = "tfstate/dev/secrets"
+    region = "{{.region}}"
+  }
+}

@@ -12,7 +12,7 @@
   <properties>
     <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
     <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.4">
-      <projectUrl>http://github.com/PyramidSystemsInc/bdsopractwo</projectUrl>
+      <projectUrl>http://github.com/PyramidSystemsInc/{{.projectName}}</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
     <hudson.model.ParametersDefinitionProperty>
@@ -39,7 +39,7 @@
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>http://github.com/PyramidSystemsInc/bdsopractwo.git</url>
+          <url>http://github.com/PyramidSystemsInc/{{.projectName}}.git</url>
           <credentialsId>gitcredentials</credentialsId>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>

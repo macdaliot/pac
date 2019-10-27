@@ -133,14 +133,18 @@ node {
         }
       }
       stage("Inspect") {
-        withCredentials([string(credentialsId: 'SONARLOGIN', variable: 'SONARLOGIN')]) {
+        withCredentials([
+          string(credentialsId: 'SONAR_USERNAME', variable: 'SONAR_USERNAME'),
+          string(credentialsId: 'SONAR_PASSWORD', variable: 'SONAR_PASSWORD')
+        ]) {
           script {
+            sh 'chmod 755 coverage.sh'
             // scan services for test coverage
-            sh '(test -d services && find services -type d -maxdepth 1 -mindepth 1 -exec sh coverage.sh {} \\;) || true'
+            sh '(test -d services && find services -type d -maxdepth 1 -mindepth 1 -exec ./coverage.sh {} \\;) || true'
             // scan folders for test coverage
-            sh 'sh coverage.sh app'
-            sh 'sh coverage.sh core'
-            sh 'sh coverage.sh domain'
+            sh './coverage.sh app'
+            sh './coverage.sh core'
+            sh './coverage.sh domain'
             // merge coverage
             def script = 'rm -rf coverage ; mkdir coverage ; npx lcov-result-merger "**/lcov.info" coverage/all.info'
             sh script:script, returnStatus:true
@@ -157,7 +161,7 @@ node {
             sh 'npm i typescript'
             // run sonar scan
             sh 'cat test-report.xml'
-            sh 'sonar-scanner -Dsonar.login=$SONARLOGIN'
+            sh 'sonar-scanner -Dsonar.login=$SONAR_USERNAME -Dsonar.password=$SONAR_PASSWORD -Dsonar.host.url=https://sonarqube.{{.projectName}}.pac.pyramidchallenges.com'
           }
         }
       }
@@ -175,28 +179,13 @@ node {
           throw e
         }
       }
-      stage("Deploy to Integration Environment") {
+      stage("Deploy to Integration") {
         try {
           parallel integrationDeployments
         } catch (e) {
           notifySlack("Deploy to Integration Environment", "FAILED")
           throw e
         }        
-      }
-      stage("508 Test") {
-        sh 'cd 508-tests; npm i; npm run build; npm run test; npm run generate-report;'
-        publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: '508-tests', reportFiles: '508Report.html', reportName: '508 Report', reportTitles: ''])
-      }
-      stage("Integration Test") {
-        script {
-          sh 'cd integration-tests/gradle/wrapper; jar cf gradle-wrapper.jar *'
-          def exitCode = sh(script: 'cd integration-tests; chmod 755 gradlew; ./gradlew clean test aggregate', returnStatus: true)
-          publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'integration-tests/target/site/serenity', reportFiles: 'index.html', reportName: 'Serenity Report', reportTitles: ''])
-          if (exitCode > 0) {
-            sh 'one-or-more-integration-tests-failed'
-            notifySlack("Integration Tests", "FAILED")
-          }
-        }
       }
       stage('Promote Release Candidate') {
         try {
@@ -209,7 +198,7 @@ node {
           throw e
         }
       }
-      stage("Deploy to Staging Environment") {
+      stage("Deploy to Staging") {
         try {
           parallel stagingDeployments
         } catch (e) {
