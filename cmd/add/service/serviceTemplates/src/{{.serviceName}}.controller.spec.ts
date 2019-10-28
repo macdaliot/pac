@@ -1,5 +1,10 @@
-// import { {{.serviceNamePascal}}Controller } from './{{.serviceName}}.controller';
-// import { {{.serviceNamePascal}} } from '@pyramid-systems/domain';
+import { {{.serviceNamePascal}}Controller } from './{{.serviceName}}.controller';
+import { {{.serviceNamePascal}} } from '@pyramid-systems/domain';
+
+describe('{{.serviceNamePascal}} Controller', () => {
+  xit('Should not fail', () => {});
+});
+
 //
 // const mockRepository = {
 //   getById: jest.fn(() => {
@@ -19,8 +24,6 @@
 //   })
 // } as any;
 //
-//
-// describe('{{.serviceNamePascal}} Controller', () => {
 //   it('Should call the repository getById once', async () => {
 //     const classToTest = new {{.serviceNamePascal}}Controller(mockRepository);
 //
