@@ -4,8 +4,6 @@ import { {{.serviceNamePascal}}, {{.serviceNamePascal}}Repository } from '@pyram
 import { MongoClient } from "mongodb";
 import { IndexingService } from "../../../core/services/indexingService";
 
-
-
 @Injectable()
 @Route('{{.serviceName}}')
 // Uncomment the line below and add your own scope names from Auth0 (do not change `'groups'`) in order to require a valid JWT to use this service
@@ -13,8 +11,9 @@ import { IndexingService } from "../../../core/services/indexingService";
 export class {{.serviceNamePascal}}Controller extends Controller {
     domainModel: string = `${process.env.PROJECTNAME}-{{.serviceName}}`;
     indexingService: IndexingService<{{.serviceNamePascal}}>;
+    private {{.serviceName}}Repository: {{.serviceNamePascal}}Repository;
 
-    constructor(private {{.serviceName}}Repository: {{.serviceNamePascal}}Repository) {
+    constructor() {
         super();
     }
 
@@ -25,9 +24,7 @@ export class {{.serviceNamePascal}}Controller extends Controller {
     @Get('wipedb')
     @SuccessResponse(200, "DEV feature - wipe db collections")
     async wipeDbs() {
-        if(!this.{{.serviceName}}Repository){
-            await this.initConnection();
-        }
+        await this.initConnection();
         await this.indexingService.wipeDbs(this.domainModel);
         return "Wiped DocumentDB and Elastic Search Collections";
     }
@@ -42,9 +39,7 @@ export class {{.serviceNamePascal}}Controller extends Controller {
     @Get('{id}')
     @SuccessResponse(200, "The {{.serviceNamePascal}} with the given Id")
     async getById(@Path('id') id: string) {
-        if(!this.{{.serviceName}}Repository){
-            await this.initConnection();
-        }
+        await this.initConnection();
         return this.{{.serviceName}}Repository.findById(id);
     }
     /**
@@ -53,9 +48,7 @@ export class {{.serviceNamePascal}}Controller extends Controller {
     @Get()
     @SuccessResponse(200, "A list of all existing {{.serviceNamePascal}}s")
     async getAll() {
-        if(!this.{{.serviceName}}Repository){
-            await this.initConnection();
-        }
+        await this.initConnection();
         return this.{{.serviceName}}Repository.findByFilter({});
     }
     /**
@@ -68,9 +61,7 @@ export class {{.serviceNamePascal}}Controller extends Controller {
     @Post()
     @SuccessResponse(200, "The inserted {{.serviceNamePascal}} (with the new Id?)")
     async post(@Body() newItems: {{.serviceNamePascal}}[]) {
-        if(!this.{{.serviceName}}Repository){
-            await this.initConnection();
-        }
+        await this.initConnection();
         return this.indexingService.insertMany(newItems);
     }
     /**
@@ -84,9 +75,7 @@ export class {{.serviceNamePascal}}Controller extends Controller {
     @Put('{id}')
     @SuccessResponse(200, "The updated {{.serviceNamePascal}} with the given Id")
     async put(@Path('id') idToUpdate: string, @Body() itemWithUpdatedValues: {{.serviceNamePascal}}) {
-        if(!this.{{.serviceName}}Repository){
-            await this.initConnection();
-        }
+        await this.initConnection();
         return this.indexingService.update(idToUpdate, itemWithUpdatedValues);
     }
     /**
@@ -100,9 +89,7 @@ export class {{.serviceNamePascal}}Controller extends Controller {
     @Delete('{id}')
     @SuccessResponse(200, "The {{.serviceNamePascal}} with the given Id")
     async deleteById(@Path('id') idToDelete: string) {
-        if(!this.{{.serviceName}}Repository){
-            await this.initConnection();
-        }
+        await this.initConnection();
         return this.indexingService.deleteById(idToDelete);
     }
 
@@ -110,8 +97,9 @@ export class {{.serviceNamePascal}}Controller extends Controller {
         if (!this.{{.serviceName}}Repository) {
             //local mongo connString `mongodb://<user>:<password>@<host>:27017/<db>`
             const connection = await MongoClient.connect(process.env.MONGO_CONN_STRING, {
-                useNewUrlParser:true,
-                useUnifiedTopology: true});
+                useNewUrlParser: true,
+                useUnifiedTopology: true
+            });
             const db = connection.db(this.domainModel);
             this.{{.serviceName}}Repository = new {{.serviceNamePascal}}Repository(db, this.domainModel);
             this.indexingService = new IndexingService(db, this.domainModel)
