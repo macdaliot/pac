@@ -2,7 +2,7 @@ Feature: Front End Features
 
   @FrontEnd
   Scenario: Checking the Front End Status
-    Then the page will have a status of 200
+    Then page will have a status of 200
 
 
   @FrontEnd

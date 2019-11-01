@@ -19,7 +19,7 @@ public class CucumberFrontEndSteps {
   @Managed
   WebDriver driver;
 
-  @Then("^the page will have a status of 200$")
+  @Then("^page will have a status of 200$")
   public void checkFrontEndStatus() throws Throwable {
     steps.checkFrontEndStatus();
   }

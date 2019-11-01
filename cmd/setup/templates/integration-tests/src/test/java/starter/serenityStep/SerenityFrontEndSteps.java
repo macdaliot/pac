@@ -30,7 +30,7 @@ public class SerenityFrontEndSteps extends SerenitySteps {
 
         SerenityRest
                 .given()
-                .baseUri(baseFrontEndUri)
+                .baseUri(baseFrontEndUri).relaxedHTTPSValidation()
                 .when()
                 .get()
                 .then()
