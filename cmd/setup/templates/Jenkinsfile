@@ -161,7 +161,7 @@ node {
             sh 'npm i typescript'
             // run sonar scan
             sh 'cat test-report.xml'
-            sh 'sonar-scanner -Dsonar.login=$SONAR_USERNAME -Dsonar.password=$SONAR_PASSWORD -Dsonar.host.url=https://sonarqube.[[.projectName]].pac.pyramidchallenges.com'
+            sh 'sonar-scanner -Dsonar.login=$SONAR_USERNAME -Dsonar.password=$SONAR_PASSWORD -Dsonar.host.url=https://sonarqube.[psi[.projectName]].pac.pyramidchallenges.com'
           }
         }
       }
@@ -173,7 +173,7 @@ node {
           // Compress all build products and Terraform templates into a zip file labeled with the environment and build number
           sh 'zip -r build-' + env.BUILD_TAG + ' git-commit.txt app/dist/* services/*/function.zip terraform/*'
           // Push the zip file to AWS S3
-          sh 'aws s3 cp build-' + env.BUILD_TAG + '.zip s3://builds.[[.projectName]].pac.pyramidchallenges.com/'
+          sh 'aws s3 cp build-' + env.BUILD_TAG + '.zip s3://builds.[psi[.projectName]].pac.pyramidchallenges.com/'
         } catch (e) {
           notifySlack("Archive", "FAILED")
           throw e
@@ -192,7 +192,7 @@ node {
           // Copy the build products zip file to a new zip file suffixed with "-rc"
           sh 'cp build-' + env.BUILD_TAG + '.zip build-' + env.BUILD_TAG + '-rc.zip'
           // Push the release candidate zip file to AWS S3
-          sh 'aws s3 cp build-' + env.BUILD_TAG + '-rc.zip s3://builds.[[.projectName]].pac.pyramidchallenges.com/'
+          sh 'aws s3 cp build-' + env.BUILD_TAG + '-rc.zip s3://builds.[psi[.projectName]].pac.pyramidchallenges.com/'
         } catch (e) {
           notifySlack("Promote Release Candidate", "FAILED")
           throw e

@@ -5,9 +5,9 @@
 #
 terraform {
   backend "s3" {
-    bucket = "terraform.[[.projectName]].{{.hostedZone}}"
+    bucket = "terraform.[psi[.projectName]].[psi[.hostedZone]]"
     key    = "tfstate/dev/secrets"
-    region = "{{.region}}"
+    region = "[psi[.region]]"
   }
 }
 
@@ -20,15 +20,15 @@ terraform {
 #   for a value if a `region` is not specified here
 #
 provider "aws" {
-  region = "{{.region}}"
+  region = "[psi[.region]]"
   version = "~>2.21"
 }
 
 data "terraform_remote_state" "bootstrap" {
   backend = "s3"
   config = {
-    bucket = "terraform.[[.projectName]].{{.hostedZone}}"
+    bucket = "terraform.[psi[.projectName]].[psi[.hostedZone]]"
     key    = "bootstrap/terraform.tfstate"
-    region = "{{.region}}"
+    region = "[psi[.region]]"
   }
 }

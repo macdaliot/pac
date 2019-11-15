@@ -1,2 +1,2 @@
-cert_domain_name = "*.{{ .projectName }}.pac.pyramidchallenges.com"
-region           = "{{ .region }}"
+cert_domain_name = "*.[psi[.projectName]].pac.pyramidchallenges.com"
+region           = "[[ .region ]]"

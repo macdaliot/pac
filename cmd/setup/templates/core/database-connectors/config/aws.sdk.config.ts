@@ -1,10 +1,10 @@
 const cloud = {
-    region: '{{ .region }}'
+    region: '[psi[.region]]'
 };
 
 const local = {
     region: 'local',
-    endpoint: 'http://pac-[[.projectName]]-db-local:8000'
+    endpoint: 'http://pac-[psi[.projectName]]-db-local:8000'
 };
 
 export const awsConfig = { local, cloud };

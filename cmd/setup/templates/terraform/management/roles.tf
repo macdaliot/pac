@@ -1,10 +1,10 @@
 #----------------------------------------------------------------------------------------------------------------------
-# {{ .projectName }}-{{ .env }}-jenkins ROLE
+# [psi[.projectName]]-[psi[.env]]-jenkins ROLE
 #----------------------------------------------------------------------------------------------------------------------
 
 # Creates a trust relationship with ecs-tasks.amazonaws.com and assumes that role
-resource "aws_iam_role" "{{ .projectName }}_{{ .env }}_jenkins" {
-    name = "${var.project_name}-{{ .env }}-jenkins"
+resource "aws_iam_role" "[psi[.projectName]]_[psi[.env]]_jenkins" {
+    name = "${var.project_name}-[psi[.env]]-jenkins"
 
     assume_role_policy = <<EOF
 {
@@ -28,9 +28,9 @@ EOF
 }
 
 # Creates an inline policy to allow listing and updating route53 records
-resource "aws_iam_role_policy" "{{ .projectName }}_{{ .env }}_jenkins_update_route53" {
-  name   = "${var.project_name}-{{ .env }}-jenkins-update-route53-policy"
-  role   = "${aws_iam_role.{{ .projectName }}_{{ .env }}_jenkins.id}"
+resource "aws_iam_role_policy" "[psi[.projectName]]_[psi[.env]]_jenkins_update_route53" {
+  name   = "${var.project_name}-[psi[.env]]-jenkins-update-route53-policy"
+  role   = "${aws_iam_role.[psi[.projectName]]_[psi[.env]]_jenkins.id}"
   policy = <<EOF
 {
     "Version": "2012-10-17",
@@ -54,9 +54,9 @@ EOF
 }
 
 # Creates an inline policy on the lambda_elasticsearch_execution_role that allows us to stream logs to Elasticsearch.
-resource "aws_iam_role_policy" "{{ .projectName }}_{{ .env }}_jenkins_ec2_specifics" {
-  name   = "${var.project_name}-{{ .env }}-jenkins-ec2-policy"
-  role   = "${aws_iam_role.{{ .projectName }}_{{ .env }}_jenkins.id}"
+resource "aws_iam_role_policy" "[psi[.projectName]]_[psi[.env]]_jenkins_ec2_specifics" {
+  name   = "${var.project_name}-[psi[.env]]-jenkins-ec2-policy"
+  role   = "${aws_iam_role.[psi[.projectName]]_[psi[.env]]_jenkins.id}"
   policy = <<EOF
 {
     "Version": "2012-10-17",
@@ -77,8 +77,8 @@ EOF
   # Tags not supported
 }
 
-resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_ec2_container_registry_full_access" {
-  role       = "${aws_iam_role.{{ .projectName }}_{{ .env }}_jenkins.name}"
+resource "aws_iam_role_policy_attachment" "[psi[.projectName]]_[psi[.env]]_ec2_container_registry_full_access" {
+  role       = "${aws_iam_role.[psi[.projectName]]_[psi[.env]]_jenkins.name}"
 
   # AWS Mananged policy, safe to hard code
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
@@ -86,8 +86,8 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_ec2_con
   # Tags not supported
 }
 
-resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_s3_read_only_access" {
-  role       = "${aws_iam_role.{{ .projectName }}_{{ .env }}_jenkins.name}"
+resource "aws_iam_role_policy_attachment" "[psi[.projectName]]_[psi[.env]]_s3_read_only_access" {
+  role       = "${aws_iam_role.[psi[.projectName]]_[psi[.env]]_jenkins.name}"
 
   # AWS Mananged policy, safe to hard code
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
@@ -95,8 +95,8 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_s3_read
   # Tags not supported
 }
 
-resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_ecs_full_access" {
-  role       = "${aws_iam_role.{{ .projectName }}_{{ .env }}_jenkins.name}"
+resource "aws_iam_role_policy_attachment" "[psi[.projectName]]_[psi[.env]]_ecs_full_access" {
+  role       = "${aws_iam_role.[psi[.projectName]]_[psi[.env]]_jenkins.name}"
 
   # AWS Mananged policy, safe to hard code
   policy_arn = "arn:aws:iam::aws:policy/AmazonECS_FullAccess"
@@ -105,11 +105,11 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_ecs_ful
 }
 
 #----------------------------------------------------------------------------------------------------------------------
-# {{ .projectName }}-{{ .env }}-task-execution ROLE
+# [psi[.projectName]]-[psi[.env]]-task-execution ROLE
 #----------------------------------------------------------------------------------------------------------------------
 # Creates a trust relationship with ecs-tasks.amazonaws.com and assumes that role
-resource "aws_iam_role" "{{ .projectName }}_task_execution" {
-    name = "${var.project_name}-{{ .env }}-task-execution"
+resource "aws_iam_role" "[psi[.projectName]]_task_execution" {
+    name = "${var.project_name}-[psi[.env]]-task-execution"
 
     assume_role_policy = <<EOF
 {
@@ -132,8 +132,8 @@ EOF
   }
 }
 
-resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_ecs_task_execution" {
-  role       = "${aws_iam_role.{{ .projectName }}_task_execution.name}"
+resource "aws_iam_role_policy_attachment" "[psi[.projectName]]_[psi[.env]]_ecs_task_execution" {
+  role       = "${aws_iam_role.[psi[.projectName]]_task_execution.name}"
 
   # AWS Mananged policy, safe to hard code
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
@@ -143,8 +143,8 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_ecs_tas
 
 # Creates an inline policy to allow reading from System Manager Parameter Store
 resource "aws_iam_role_policy" "parameter_store" {
-  name   = "${var.project_name}-{{ .env }}-parameter-store"
-  role   = "${aws_iam_role.{{ .projectName }}_task_execution.id}"
+  name   = "${var.project_name}-[psi[.env]]-parameter-store"
+  role   = "${aws_iam_role.[psi[.projectName]]_task_execution.id}"
   policy = <<EOF
 {
     "Version": "2012-10-17",
@@ -165,8 +165,8 @@ EOF
   # Tags not supported
 }
 
-resource "aws_iam_role_policy_attachment" "{{ .projectName }}_task_ec2_container_registry_full_access" {
-  role   = "${aws_iam_role.{{ .projectName }}_task_execution.id}"
+resource "aws_iam_role_policy_attachment" "[psi[.projectName]]_task_ec2_container_registry_full_access" {
+  role   = "${aws_iam_role.[psi[.projectName]]_task_execution.id}"
 
   # AWS Mananged policy, safe to hard code
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
@@ -175,11 +175,11 @@ resource "aws_iam_role_policy_attachment" "{{ .projectName }}_task_ec2_container
 }
 
 #----------------------------------------------------------------------------------------------------------------------
-# {{ .projectName }}-{{ .env }}-lambda-execution ROLE
+# [psi[.projectName]]-[psi[.env]]-lambda-execution ROLE
 #----------------------------------------------------------------------------------------------------------------------
 
-resource "aws_iam_role" "{{ .projectName }}_{{ .env }}_lambda_execution_role" {
-  name = "${var.project_name}-{{ .env }}-lambda-execution-role"
+resource "aws_iam_role" "[psi[.projectName]]_[psi[.env]]_lambda_execution_role" {
+  name = "${var.project_name}-[psi[.env]]-lambda-execution-role"
   force_detach_policies = true
 
   assume_role_policy = <<EOF
@@ -204,27 +204,27 @@ EOF
   }
 }
 
-resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_attach_aws_lambda_role" {
-  role       = "${var.project_name}-{{ .env }}-lambda-execution-role"
+resource "aws_iam_role_policy_attachment" "[psi[.projectName]]_[psi[.env]]_attach_aws_lambda_role" {
+  role       = "${var.project_name}-[psi[.env]]-lambda-execution-role"
 
   # managed by AWS so we can hard code it
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaRole"
 
-  depends_on = ["aws_iam_role.{{ .projectName }}_{{ .env }}_lambda_execution_role"]
+  depends_on = ["aws_iam_role.[psi[.projectName]]_[psi[.env]]_lambda_execution_role"]
 
   # Tags not supported
 }
 
-output "{{ .projectName }}_lambda_execution_role" {
-    value = "${aws_iam_role.{{ .projectName }}_{{ .env }}_lambda_execution_role}"
+output "[psi[.projectName]]_lambda_execution_role" {
+    value = "${aws_iam_role.[psi[.projectName]]_[psi[.env]]_lambda_execution_role}"
 }
 
-# output "{{ .projectName }}_lambda_exec_policy_attachment_policy" {
-#     value ="${aws_iam_role_policy_attachment.{{ .projectName }}_{{ .env }}_attach_aws_lambda_role}"
+# output "[psi[.projectName]]_lambda_exec_policy_attachment_policy" {
+#     value ="${aws_iam_role_policy_attachment.[psi[.projectName]]_[psi[.env]]_attach_aws_lambda_role}"
 # }
 
-resource "aws_iam_policy" "{{ .projectName }}_{{ .env }}_lambda_dynamodb" {
-  name = "${var.project_name}-{{ .env }}-lambda-dynamodb-policy"
+resource "aws_iam_policy" "[psi[.projectName]]_[psi[.env]]_lambda_dynamodb" {
+  name = "${var.project_name}-[psi[.env]]-lambda-dynamodb-policy"
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -252,27 +252,27 @@ resource "aws_iam_policy" "{{ .projectName }}_{{ .env }}_lambda_dynamodb" {
 EOF
 }
 
-resource "aws_iam_role_policy_attachment" "{{ .projectName }}_{{ .env }}_lambda_dynamodb_policy_attach" {
-  role       = "${var.project_name}-{{ .env }}-lambda-execution-role"
+resource "aws_iam_role_policy_attachment" "[psi[.projectName]]_[psi[.env]]_lambda_dynamodb_policy_attach" {
+  role       = "${var.project_name}-[psi[.env]]-lambda-execution-role"
 
   # managed by AWS so we can hard code it
-  policy_arn = "${aws_iam_policy.{{ .projectName }}_{{ .env }}_lambda_dynamodb.arn}"
+  policy_arn = "${aws_iam_policy.[psi[.projectName]]_[psi[.env]]_lambda_dynamodb.arn}"
 
-  depends_on = ["aws_iam_role.{{ .projectName }}_{{ .env }}_lambda_execution_role"]
+  depends_on = ["aws_iam_role.[psi[.projectName]]_[psi[.env]]_lambda_execution_role"]
 
   # Tags not supported
 }
 
-# output "{{ .projectName }}_{{ .env }}_lambda_dynamodb_policy" {
-#   value = "${aws_iam_policy.{{ .projectName }}_{{ .env }}_lambda_dynamodb}"
+# output "[psi[.projectName]]_[psi[.env]]_lambda_dynamodb_policy" {
+#   value = "${aws_iam_policy.[psi[.projectName]]_[psi[.env]]_lambda_dynamodb}"
 # }
 
 
 #----------------------------------------------------------------------------------------------------------------------
 # ECS EC2 ROLES
 #----------------------------------------------------------------------------------------------------------------------
-resource "aws_iam_role" "ecsInstanceRole_{{ .env }}" {
-  name = "ecsInstanceRole-{{ .env }}-${var.project_name}"
+resource "aws_iam_role" "ecsInstanceRole_[psi[.env]]" {
+  name = "ecsInstanceRole-[psi[.env]]-${var.project_name}"
 
   assume_role_policy = <<EOF
 {
@@ -296,9 +296,9 @@ EOF
   }
 }
 
-resource "aws_iam_role_policy" "ecsInstanceRolePolicy_{{ .env }}" {
-  name = "ecsInstanceRolePolicy-{{ .env }}-${var.project_name}"
-  role = "${aws_iam_role.ecsInstanceRole_{{ .env }}.id}"
+resource "aws_iam_role_policy" "ecsInstanceRolePolicy_[psi[.env]]" {
+  name = "ecsInstanceRolePolicy-[psi[.env]]-${var.project_name}"
+  role = "${aws_iam_role.ecsInstanceRole_[psi[.env]].id}"
 
   policy = <<EOF
 {
@@ -331,8 +331,8 @@ EOF
 }
 
 # Create ECS IAM Service Role and Policy
-resource "aws_iam_role" "ecsServiceRole_{{ .env }}" {
-  name = "ecsServiceRole-{{ .env }}-${var.project_name}"
+resource "aws_iam_role" "ecsServiceRole_[psi[.env]]" {
+  name = "ecsServiceRole-[psi[.env]]-${var.project_name}"
 
   assume_role_policy = <<EOF
 {
@@ -356,9 +356,9 @@ EOF
   }
 }
 
-resource "aws_iam_role_policy" "ecsServiceRolePolicy_{{ .env }}" {
-  name = "ecsServiceRolePolicy-{{ .env }}-${var.project_name}"
-  role = "${aws_iam_role.ecsServiceRole_{{ .env }}.id}"
+resource "aws_iam_role_policy" "ecsServiceRolePolicy_[psi[.env]]" {
+  name = "ecsServiceRolePolicy-[psi[.env]]-${var.project_name}"
+  role = "${aws_iam_role.ecsServiceRole_[psi[.env]].id}"
 
   policy = <<EOF
 {

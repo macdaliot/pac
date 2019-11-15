@@ -4,7 +4,7 @@
 data "aws_availability_zones" "available" {}
 
 variable "region" {
-    default = "{{ .region }}"
+    default = "[[ .region ]]"
 }
 
 #----------------------------------------------------------------------------------------------------------------------
@@ -29,12 +29,12 @@ variable "hosted_zone" {
 
 variable "execution_role_arn" {
     description = "Role with polices to execute ECS tasks and access Systems Manager Parameter Store to retrieve secrets"
-    default = "arn:aws:iam::{{ .awsID }}:role/{{ .projectName }}-{{ .env }}-task-execution"
+    default = "arn:aws:iam::[[ .awsID ]]:role/[psi[.projectName]]-[psi[.env]]-task-execution"
 }
 
 variable "task_role_arn" {
     description = "Role with EC2, S3, and ECS access policies for ECS tasks"
-    default = "arn:aws:iam::{{ .awsID }}:role/{{ .projectName }}-{{ .env }}-jenkins"
+    default = "arn:aws:iam::[[ .awsID ]]:role/[psi[.projectName]]-[psi[.env]]-jenkins"
 }
 
 variable "app_count" {
@@ -61,7 +61,7 @@ variable "es_automated_snapshot_start_hour" {
 # JUMPBOX / BASTION HOST
 #----------------------------------------------------------------------------------------------------------------------
 # variable "end_user_cidr" {
-#     default = "{{ .endUserIP }}/32"
+#     default = "[psi[.endUserIP]]/32"
 #     description = "The IP address that will be added to the jumpbox security group to allow access to the Kibana endpoint."
 # }
 
@@ -90,5 +90,5 @@ variable "enable_keypair_output" {
 # VPC
 #----------------------------------------------------------------------------------------------------------------------
 variable "management_cidr_block" {
-    default = "{{ .awsManagementVpcCidrBlock }}"
+    default = "[psi[.awsManagementVpcCidrBlock]]"
 }

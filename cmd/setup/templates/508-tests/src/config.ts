@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
 dotenv.load();
 
-const projectName: string = "[[.projectName]]";
+const projectName: string = "[psi[.projectName]]";
 const authDeployed: boolean = false;
 const authEndpoint: string = "/api/auth/login";
 const browser: string = "chrome";

@@ -42,7 +42,7 @@ func createProjectFiles() {
 	files.CreateTemplatedFiles(files.TemplateOptions{
     Box: packr.NewBox("./templates"),
     Config: config.ReadAll(),
-    LeftDelim: "[[",
+    LeftDelim: "[psi[",
     RightDelim: "]]",
   })
 }

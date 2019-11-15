@@ -11,8 +11,8 @@ data "aws_ami" "ecs_ami" {
 }
 
 resource "aws_iam_instance_profile" "ecsInstanceProfile" {
-  name = "ecsInstanceProfile-{{ .env }}-${var.project_name}"
-  role = aws_iam_role.ecsInstanceRole_{{ .env }}.name
+  name = "ecsInstanceProfile-[psi[.env]]-${var.project_name}"
+  role = aws_iam_role.ecsInstanceRole_[psi[.env]].name
 
   # Tags not supported
 }
@@ -179,7 +179,7 @@ resource "aws_ecs_task_definition" "jenkins" {
         "valueFrom": "/pac/${var.project_name}/jenkins/username"
       }
     ],
-    "image": "{{ .awsID }}.dkr.ecr.us-east-1.amazonaws.com/${var.project_name}-jenkins",
+    "image": "[[ .awsID ]].dkr.ecr.us-east-1.amazonaws.com/${var.project_name}-jenkins",
     "name": "${var.project_name}-jenkins",
     "portMappings": [
       {
@@ -190,7 +190,7 @@ resource "aws_ecs_task_definition" "jenkins" {
     "logConfiguration": { 
       "logDriver": "awslogs",
       "options": { 
-          "awslogs-group" : "${aws_cloudwatch_log_group.{{ .projectName }}_log_group.name}",
+          "awslogs-group" : "${aws_cloudwatch_log_group.[psi[.projectName]]_log_group.name}",
           "awslogs-region": "${var.region}",
           "awslogs-stream-prefix": "ecs"
       }

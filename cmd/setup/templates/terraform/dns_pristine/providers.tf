@@ -5,9 +5,9 @@
 #
 terraform {
   backend "s3" {
-    bucket = "terraform.{{ .projectName }}.pac.pyramidchallenges.com"
-    key    = "tfstate/{{ .env }}/dns"
-    region = "{{ .region }}"
+    bucket = "terraform.[psi[.projectName]].pac.pyramidchallenges.com"
+    key    = "tfstate/[psi[.env]]/dns"
+    region = "[[ .region ]]"
   }
 }
 
@@ -18,7 +18,7 @@ terraform {
 #
 provider "aws" {
   # not listed as require in documentation but will be asked for it if not set
-  region = "{{ .region }}"
+  region = "[[ .region ]]"
   version = "~>2.21"
 }
 

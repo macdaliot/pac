@@ -5,9 +5,9 @@
 #
 terraform {
   backend "s3" {
-    bucket = "terraform.{{ .projectName }}.{{ .hostedZone }}"
-    key    = "tfstate/{{ .env }}/management_vpc"
-    region = "{{ .region }}"
+    bucket = "terraform.[psi[.projectName]].[psi[.hostedZone]]"
+    key    = "tfstate/[psi[.env]]/management_vpc"
+    region = "[[ .region ]]"
   }
 }
 
@@ -20,7 +20,7 @@ terraform {
 #   for a value if a `region` is not specified here
 #
 provider "aws" {
-  region = "{{ .region }}"
+  region = "[[ .region ]]"
   version = "~>2.21"
 }
 
@@ -42,26 +42,26 @@ provider "acme" {
 data "terraform_remote_state" "bootstrap" {
   backend = "s3"
   config = {
-    bucket = "terraform.[[.projectName]].{{.hostedZone}}"
+    bucket = "terraform.[psi[.projectName]].[psi[.hostedZone]]"
     key    = "bootstrap/terraform.tfstate"
-    region = "{{.region}}"
+    region = "[psi[.region]]"
   }
 }
 
 data "terraform_remote_state" "dns" {
   backend = "s3"
   config = {
-    bucket = "terraform.{{ .projectName }}.{{ .hostedZone }}"
-    key    = "tfstate/{{ .env }}/dns"
-    region = "{{ .region }}"
+    bucket = "terraform.[psi[.projectName]].[psi[.hostedZone]]"
+    key    = "tfstate/[psi[.env]]/dns"
+    region = "[[ .region ]]"
   }
 }
 
 data "terraform_remote_state" "ssl" {
   backend = "s3"
   config = {
-    bucket = "terraform.[[.projectName]].{{.hostedZone}}"
+    bucket = "terraform.[psi[.projectName]].[psi[.hostedZone]]"
     key    = "tfstate/dev/ssl"
-    region = "{{.region}}"
+    region = "[psi[.region]]"
   }
 }

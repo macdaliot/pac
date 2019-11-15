@@ -15,36 +15,36 @@ To deploy the application to an AWS account, perform the following steps:
     * AWS security credentials with administrator privileges to your account (access key ID and secret access key) in the `us-east-1` region, which can be verified by running `aws configure`. You may need to create these keys using your admin account in AWS IAM.
     * Recommend running the script against a virgin AWS environment to ensure there are no conflicts or limit issues
 2. Run the deployment script:
-    * Open a terminal and navigate to the repo's local folder (such as `./[[.projectName]]`)
-    * Run `[[.projectName]].sh -d` (from a Linux, Mac or Windows box that has either gitbash or Windows Subsystem for Linux)
+    * Open a terminal and navigate to the repo's local folder (such as `./[psi[.projectName]]`)
+    * Run `[psi[.projectName]].sh -d` (from a Linux, Mac or Windows box that has either gitbash or Windows Subsystem for Linux)
     * You will be prompted for the following
     * GitHub Username - IRNSDD-Demo3
     * GitHub Password - <your password>
-    * Project Name - <Please enter `[[.projectName]]`>
+    * Project Name - <Please enter `[psi[.projectName]]`>
     * Wait for the script to complete. This could take more than 2 hours to complete as it will provision three different environments
     * Record any URLs, credentials, and keys provided by the script. You will need these to inspect and maintain the application.
 
 The deployment script will 
 * Launch a local browser to view the logs of the provisioning process
 * Kick-off a Jenkins build and print the URLs in the browser window
-Please copy the URLs and close the browser window and do not refresh the browser window. Please monitor the Jenkins build ( https://jenkins.[[.projectName]].pac.pyramidchallenges.com login:pyramid, password:systems) and after the job completes, browse to the production URLs to access the application, also provided below. Please do not refresh 
+Please copy the URLs and close the browser window and do not refresh the browser window. Please monitor the Jenkins build ( https://jenkins.[psi[.projectName]].pac.pyramidchallenges.com login:pyramid, password:systems) and after the job completes, browse to the production URLs to access the application, also provided below. Please do not refresh 
 
 See [Steps to Teardown](#steps-to-teardown) below for instructions on how to tear down the solution, and [Deployment Script Explanation](#deployment-explanation) for a full description of how our 100% automated deployment script sets up our infrastructure and CI/CD pipeline.
 
 ## Accessing the Application
 
-The deployment script will provide links to access the application at the end of execution. If the government used the default project name `[[.projectName]]`, it should be accessible from the following links. You can replace `[[.projectName]]` with the specific project name to access the applications. Even if the deployment partially fails, we recommend the government to try accessing the applications through the following links 
+The deployment script will provide links to access the application at the end of execution. If the government used the default project name `[psi[.projectName]]`, it should be accessible from the following links. You can replace `[psi[.projectName]]` with the specific project name to access the applications. Even if the deployment partially fails, we recommend the government to try accessing the applications through the following links 
 
 ### Environments
-  * Integration: https://integration.[[.projectName]].pac.pyramidchallenges.com
-  * Staging: https://staging.[[.projectName]].pac.pyramidchallenges.com
-  * Production: https://production.[[.projectName]].pac.pyramidchallenges.com
+  * Integration: https://integration.[psi[.projectName]].pac.pyramidchallenges.com
+  * Staging: https://staging.[psi[.projectName]].pac.pyramidchallenges.com
+  * Production: https://production.[psi[.projectName]].pac.pyramidchallenges.com
 
 ### Supporting Tools
-  * Jenkins: https://jenkins.[[.projectName]].pac.pyramidchallenges.com
-  * SonarQube: https://sonarqube.[[.projectName]].pac.pyramidchallenges.com/dashboard?id=app
-  * Selenium: https://selenium.[[.projectName]].pac.pyramidchallenges.com
-  * Kibana: https://monitoring.[[.projectName]].pac.pyramidchallenges.com/_plugin/kibana
+  * Jenkins: https://jenkins.[psi[.projectName]].pac.pyramidchallenges.com
+  * SonarQube: https://sonarqube.[psi[.projectName]].pac.pyramidchallenges.com/dashboard?id=app
+  * Selenium: https://selenium.[psi[.projectName]].pac.pyramidchallenges.com
+  * Kibana: https://monitoring.[psi[.projectName]].pac.pyramidchallenges.com/_plugin/kibana
 
 Use a login of 'pyramid' and password of 'systems' to access Jenkins and Kibana.
 
@@ -69,8 +69,8 @@ Use a login of 'pyramid' and password of 'systems' to access Jenkins and Kibana.
 
 To tear down the application, assuming you have the same credentials and prerequisites required to run the deployment script, execute the following commands from your terminal window:
 
-1. Open a terminal and navigate to `./[[.projectName]]`
-2. Run `[[.projectName]].sh -t` (from a Linux, Mac or Windows box that has either gitbash or Windows Subsystem for Linux)
+1. Open a terminal and navigate to `./[psi[.projectName]]`
+2. Run `[psi[.projectName]].sh -t` (from a Linux, Mac or Windows box that has either gitbash or Windows Subsystem for Linux)
 3. You will be prompted for the Project Name which should be specified as `castr` or the name that was used during deploy
 
 See [Teardown Explanation](#teardown-explanation) for a discussion of the teardown script.
@@ -86,7 +86,7 @@ The script automatically performs the following steps to accomplish this task:
 * Prompt for user inputs: User confirmation of configuration values
 * Create an AWS EC2 instance using a pre-built, public AMI (Amazon Machine Image) that has all the software in the proper versions needed to run the application.
 * Randomly generate and store secure secrets in an AWS Systems Manager [Parameter Store](https://us-east-1.console.aws.amazon.com/systems-manager/parameters), to be used in the Docker images.
-* Build fresh Docker images from scratch, using the `Dockerfile`s from `/[[.projectName]]/deploy/docker-images/`, to be uploaded to AWS [Elastic Container Repository](https://us-east-1.console.aws.amazon.com/ecr/repositories) (ECR).
+* Build fresh Docker images from scratch, using the `Dockerfile`s from `/[psi[.projectName]]/deploy/docker-images/`, to be uploaded to AWS [Elastic Container Repository](https://us-east-1.console.aws.amazon.com/ecr/repositories) (ECR).
 * Upload images to AWS ECR, to support the Management [Virtual Private Cloud](https://console.aws.amazon.com/vpc) (VPC) and the AI/ML pipeline.
 * Create encryption keys from AWS [Key Management Service](https://console.aws.amazon.com/kms) (KMS), to secure Terraform using the AWS Software Development Kit (SDK).
 * Create the AWS [Simple Storage Service](https://s3.console.aws.amazon.com/s3) (S3) bucket that will house the Terraform state, to track information about infrastructure resources deployed to AWS.
@@ -104,7 +104,7 @@ As the deployment is configuring multiple AWS services across three different en
 * If the deploy script should fail during the creation of management VPC, you will have to manually deprovision resources from the AWS Management Console and then start the deploy script again and use a different project name such as `castr1`
 * If you hit issues with VPC or other limits, please request AWS Technical Support to increase those limits and re-execute the deploy script
 * If there are some issues with that particular AWS account and if you would like to use a different account, then re-run the deployment script with a different project name such as `castr1` to avoid domain name collisions or conflicts
-* Go to https://jenkins.[[.projectName]].pac.pyramidchallenges.com and manually build the "deploy-script" job, if it failed at some stage
+* Go to https://jenkins.[psi[.projectName]].pac.pyramidchallenges.com and manually build the "deploy-script" job, if it failed at some stage
 * Sometimes the Data Scientist or Product Owner view may not fully render the node graph for each role groups. If this should happen, please clear the browser cache by doing a `shift-refresh` on your browser. The preferred browser for testing is Chrome
 
 
@@ -130,7 +130,7 @@ The teardown script leverages Terraform scripts to automatically destroy the res
 └── Scans.PDF           # OWASP Source Code Analysis Results
 └── README.md           # This file
 └── Jenkinsfile         # Jenkins Pipeline as Code
-[[.projectName]].sh          # Deployment and Teardown script
+[psi[.projectName]].sh          # Deployment and Teardown script
 ```
 
 # Solution Description
@@ -249,11 +249,11 @@ There are multiple ways to view and run the Jupyter notebooks which highlight as
 For users who have technical experience with Python and notebooks, the simplest approach is to run and view locally:
 
 * Download and install [Anaconda](https://www.anaconda.com/distribution/#download-section) for Python 3.7+. Anaconda is the easiest way to get started with Python, and installs many dependencies including jupyter.
-* Open a terminal window, navigate to the root directory of the repo `/[[.projectName]]`, and execute `jupyter lab` or `jupyter notebook` to start a notebook server.
-* Once your browser starts the jupyter instance, navigate the project file structure to `[[.projectName]]/data-science/notebooks` to view and run the notebook.
+* Open a terminal window, navigate to the root directory of the repo `/[psi[.projectName]]`, and execute `jupyter lab` or `jupyter notebook` to start a notebook server.
+* Once your browser starts the jupyter instance, navigate the project file structure to `[psi[.projectName]]/data-science/notebooks` to view and run the notebook.
 
 ### Access Jupyter on Amazon SageMaker
 
-For general users who want to view the notebooks online, as part of the deployment script, a SageMaker notebook instance will be provisioned on your AWS environment. If you have credentials and access for this instance, navigate to the URL for the Final Consolidated Notebook - https://[[.projectName]]-notebook-instance.notebook.us-east-1.sagemaker.aws/notebooks/[[.projectName]]/data-science/notebooks/FinalConsolidated.ipynb If the deploy script was run with a different project name, replace `castr` in the URL with the right project name. Our Jupyter notebook is also available here - 
-* https://qwerty-notebook-instance.notebook.us-east-1.sagemaker.aws/notebooks/[[.projectName]]/data-science/notebooks/FinalConsolidated.ipynb
-* AWS Account Number:{{.awsID}}, login:sagemaker-user and password:pyramidsystems
+For general users who want to view the notebooks online, as part of the deployment script, a SageMaker notebook instance will be provisioned on your AWS environment. If you have credentials and access for this instance, navigate to the URL for the Final Consolidated Notebook - https://[psi[.projectName]]-notebook-instance.notebook.us-east-1.sagemaker.aws/notebooks/[psi[.projectName]]/data-science/notebooks/FinalConsolidated.ipynb If the deploy script was run with a different project name, replace `castr` in the URL with the right project name. Our Jupyter notebook is also available here - 
+* https://qwerty-notebook-instance.notebook.us-east-1.sagemaker.aws/notebooks/[psi[.projectName]]/data-science/notebooks/FinalConsolidated.ipynb
+* AWS Account Number:[psi[.awsID]], login:sagemaker-user and password:pyramidsystems

@@ -184,13 +184,13 @@ resource "aws_lambda_permission" "cloudwatch_allow" {
   action = "lambda:InvokeFunction"
   function_name = aws_lambda_function.cwl_stream_lambda.arn
   principal = var.cwl_endpoint
-  source_arn = aws_cloudwatch_log_group.[[.projectName]]_log_group.arn
+  source_arn = aws_cloudwatch_log_group.[psi[.projectName]]_log_group.arn
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_logs_to_es" {
   depends_on = [aws_lambda_permission.cloudwatch_allow]
   name = "cloudwatch_logs_to_elasticsearch-management"
-  log_group_name = aws_cloudwatch_log_group.[[.projectName]]_log_group.name
+  log_group_name = aws_cloudwatch_log_group.[psi[.projectName]]_log_group.name
   filter_pattern = ""
   destination_arn = aws_lambda_function.cwl_stream_lambda.arn
 }
@@ -199,7 +199,7 @@ resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_logs_to_es" {
 # DYNAMOBDB ACTIVITY TO ELASTICSEARCH
 #----------------------------------------------------------------------------------------------------------------------
 
-resource "aws_iam_policy" "[[.projectName]]_dev_dynamodb_elasticsearch" {
+resource "aws_iam_policy" "[psi[.projectName]]_dev_dynamodb_elasticsearch" {
   name = "${var.project_name}-management-dynamodb-es-policy"
   policy = <<EOF
 {
@@ -219,9 +219,9 @@ EOF
 
 }
 
-resource "aws_iam_role_policy_attachment" "[[.projectName]]_dev_lambda_elasticsearch_attach_policy" {
+resource "aws_iam_role_policy_attachment" "[psi[.projectName]]_dev_lambda_elasticsearch_attach_policy" {
   role       = aws_iam_role.lambda_elasticsearch_execution_role.name
-  policy_arn = aws_iam_policy.[[.projectName]]_dev_dynamodb_elasticsearch.arn
+  policy_arn = aws_iam_policy.[psi[.projectName]]_dev_dynamodb_elasticsearch.arn
 }
 
 #----------------------------------------------------------------------------------------------------------------------

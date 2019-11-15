@@ -20,7 +20,7 @@
     </jenkins.model.BuildDiscarderProperty>
     <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
     <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.4">
-      <projectUrl>http://github.com/PyramidSystemsInc/[[.projectName]]/</projectUrl>
+      <projectUrl>http://github.com/PyramidSystemsInc/[psi[.projectName]]/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
     <hudson.model.ParametersDefinitionProperty>
@@ -65,7 +65,7 @@
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>http://github.com/PyramidSystemsInc/[[.projectName]].git</url>
+          <url>http://github.com/PyramidSystemsInc/[psi[.projectName]].git</url>
           <credentialsId>gitcredentials</credentialsId>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>

@@ -20,7 +20,7 @@
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>https://github.com/PyramidSystemsInc/[[.projectName]].git</url>
+          <url>https://github.com/PyramidSystemsInc/[psi[.projectName]].git</url>
           <credentialsId>gitcredentials</credentialsId>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>

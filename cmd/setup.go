@@ -6,7 +6,7 @@ import (
 	"github.com/PyramidSystemsInc/go/errors"
 	"github.com/PyramidSystemsInc/go/str"
 	"github.com/PyramidSystemsInc/go/terraform"
-	"github.com/PyramidSystemsInc/pac/cmd/add"
+	// "github.com/PyramidSystemsInc/pac/cmd/add"
 	"github.com/PyramidSystemsInc/pac/cmd/setup"
 	"github.com/PyramidSystemsInc/pac/config"
 	"github.com/spf13/cobra"
@@ -91,12 +91,12 @@ var setupCmd = &cobra.Command{
 		setup.Templates()
 
 		// Create a GitHub repository for the project
-		setup.GitRepository()
+		// setup.GitRepository()
 
 		// Create the environments
-		add.Environment("integration")
-		add.Environment("staging")
-		add.Environment("production")
+		// add.Environment("integration")
+		// add.Environment("staging")
+		// add.Environment("production")
 	},
 }
 

@@ -43,7 +43,7 @@ resource "aws_ecs_task_definition" "sonarqube" {
       }
     ],
     "cpu": 2048,
-    "image": "{{ .awsID }}.dkr.ecr.us-east-1.amazonaws.com/${var.project_name}-sonarqube",
+    "image": "[[ .awsID ]].dkr.ecr.us-east-1.amazonaws.com/${var.project_name}-sonarqube",
     "memory": 4096,
     "name": "${var.project_name}-sonarqube",
     "networkMode": "awsvpc",
@@ -55,7 +55,7 @@ resource "aws_ecs_task_definition" "sonarqube" {
     "logConfiguration": { 
       "logDriver": "awslogs",
       "options": { 
-          "awslogs-group" : "${aws_cloudwatch_log_group.{{ .projectName }}_log_group.name}",
+          "awslogs-group" : "${aws_cloudwatch_log_group.[psi[.projectName]]_log_group.name}",
           "awslogs-region": "${var.region}",
           "awslogs-stream-prefix": "ecs"
       }
@@ -69,9 +69,9 @@ resource "aws_ecs_task_definition" "sonarqube" {
       }
     ],
     "cpu": 2048,
-    "image": "{{ .awsID }}.dkr.ecr.us-east-1.amazonaws.com/[[.projectName]]-sonar-db",
+    "image": "[[ .awsID ]].dkr.ecr.us-east-1.amazonaws.com/[psi[.projectName]]-sonar-db",
     "memory": 4096,
-    "name": "[[.projectName]]-sonar-db",
+    "name": "[psi[.projectName]]-sonar-db",
     "networkMode": "awsvpc",
     "portMappings": [
       {
@@ -81,7 +81,7 @@ resource "aws_ecs_task_definition" "sonarqube" {
     "logConfiguration": { 
       "logDriver": "awslogs",
       "options": { 
-          "awslogs-group" : "${aws_cloudwatch_log_group.{{ .projectName }}_log_group.name}",
+          "awslogs-group" : "${aws_cloudwatch_log_group.[psi[.projectName]]_log_group.name}",
           "awslogs-region": "${var.region}",
           "awslogs-stream-prefix": "ecs"
       }
@@ -109,7 +109,7 @@ resource "aws_ecs_task_definition" "selenium" {
 [
   {
     "cpu": 2048,
-    "image": "{{ .awsID }}.dkr.ecr.us-east-1.amazonaws.com/${var.project_name}-selenium-hub",
+    "image": "[[ .awsID ]].dkr.ecr.us-east-1.amazonaws.com/${var.project_name}-selenium-hub",
     "memory": 4096,
     "name": "${var.project_name}-selenium-hub",
     "networkMode": "awsvpc",
@@ -127,7 +127,7 @@ resource "aws_ecs_task_definition" "selenium" {
     "logConfiguration": { 
       "logDriver": "awslogs",
       "options": { 
-          "awslogs-group" : "${aws_cloudwatch_log_group.{{ .projectName }}_log_group.name}",
+          "awslogs-group" : "${aws_cloudwatch_log_group.[psi[.projectName]]_log_group.name}",
           "awslogs-region": "${var.region}",
           "awslogs-stream-prefix": "ecs"
       }
@@ -135,7 +135,7 @@ resource "aws_ecs_task_definition" "selenium" {
   },
   {
     "cpu": 2048,
-    "image": "{{ .awsID }}.dkr.ecr.us-east-1.amazonaws.com/${var.project_name}-selenium-node-chrome",
+    "image": "[[ .awsID ]].dkr.ecr.us-east-1.amazonaws.com/${var.project_name}-selenium-node-chrome",
     "memory": 4096,
     "name": "${var.project_name}-selenium-node-chrome",
     "networkMode": "awsvpc",
@@ -160,7 +160,7 @@ resource "aws_ecs_task_definition" "selenium" {
     "logConfiguration": { 
       "logDriver": "awslogs",
       "options": { 
-          "awslogs-group" : "${aws_cloudwatch_log_group.{{ .projectName }}_log_group.name}",
+          "awslogs-group" : "${aws_cloudwatch_log_group.[psi[.projectName]]_log_group.name}",
           "awslogs-region": "${var.region}",
           "awslogs-stream-prefix": "ecs"
       }
