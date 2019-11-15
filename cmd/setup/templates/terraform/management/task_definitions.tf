@@ -69,9 +69,9 @@ resource "aws_ecs_task_definition" "sonarqube" {
       }
     ],
     "cpu": 2048,
-    "image": "{{ .awsID }}.dkr.ecr.us-east-1.amazonaws.com/{{.projectName}}-sonar-db",
+    "image": "{{ .awsID }}.dkr.ecr.us-east-1.amazonaws.com/[[.projectName]]-sonar-db",
     "memory": 4096,
-    "name": "{{.projectName}}-sonar-db",
+    "name": "[[.projectName]]-sonar-db",
     "networkMode": "awsvpc",
     "portMappings": [
       {

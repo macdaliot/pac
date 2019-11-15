@@ -24,7 +24,7 @@ node {
       // Clear the working directory to avoid using older build products previously unzipped here
       sh 'rm -Rf *'
       // Pull the release candidate zip file
-      sh 'aws s3 cp s3://builds.{{.projectName}}.pac.pyramidchallenges.com/build-jenkins-release-through-staging-' + params.BUILD_NUMBER + '-rc.zip .'
+      sh 'aws s3 cp s3://builds.[[.projectName]].pac.pyramidchallenges.com/build-jenkins-release-through-staging-' + params.BUILD_NUMBER + '-rc.zip .'
     } catch (e) {
       notifySlack("Pull Artifacts", "FAILED")
       sh 'echo "No release candidate exists for the build number specified"'
@@ -38,7 +38,7 @@ node {
       // Apply Terraform templates
       sh 'pushd terraform/production; terraform init; terraform plan -out tfplan; terraform apply "tfplan"; popd'
       // Sync the application files with the application S3 bucket
-      sh 'pushd app; aws s3 sync dist s3://production.{{.projectName}}.pac.pyramidchallenges.com --acl public-read; popd'
+      sh 'pushd app; aws s3 sync dist s3://production.[[.projectName]].pac.pyramidchallenges.com --acl public-read; popd'
     } catch (e) {
       notifySlack("Deploy to Production", "FAILED")
       throw e

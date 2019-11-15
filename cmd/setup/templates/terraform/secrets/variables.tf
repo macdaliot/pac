@@ -13,5 +13,5 @@ variable "sonar_password" {}
 variable "sonar_secret" {}
 variable "sonar_username" {}
 variable "project_name" {
-  default = "{{.projectName}}"
+  default = "[[.projectName]]"
 }

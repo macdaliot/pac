@@ -42,7 +42,7 @@ provider "acme" {
 data "terraform_remote_state" "bootstrap" {
   backend = "s3"
   config = {
-    bucket = "terraform.{{.projectName}}.{{.hostedZone}}"
+    bucket = "terraform.[[.projectName]].{{.hostedZone}}"
     key    = "bootstrap/terraform.tfstate"
     region = "{{.region}}"
   }
@@ -60,7 +60,7 @@ data "terraform_remote_state" "dns" {
 data "terraform_remote_state" "ssl" {
   backend = "s3"
   config = {
-    bucket = "terraform.{{.projectName}}.{{.hostedZone}}"
+    bucket = "terraform.[[.projectName]].{{.hostedZone}}"
     key    = "tfstate/dev/ssl"
     region = "{{.region}}"
   }
