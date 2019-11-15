@@ -39,5 +39,10 @@ func GoToRootProjectDirectory(projectName string) {
 // createProjectFiles "boxes" the template files and replaces Go template strings with the variables stored in the
 // .pac.json configuration file
 func createProjectFiles() {
-	files.CreateTemplatedFiles(files.TemplateOptions{Box: packr.NewBox("./templates"), Config: config.ReadAll()})
+	files.CreateTemplatedFiles(files.TemplateOptions{
+    Box: packr.NewBox("./templates"),
+    Config: config.ReadAll(),
+    LeftDelim: "[[",
+    RightDelim: "]]",
+  })
 }

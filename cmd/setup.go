@@ -75,7 +75,7 @@ var setupCmd = &cobra.Command{
 		config.Set("terraformTemplateVersion", terraform.TemplateVersion)
 
 		// Read AWS Account ID from System Manager
-		awsAccountID := sts.GetAccountID()
+		awsAccountID := sts.GetAccountID("")
 		config.Set("awsID", awsAccountID)
 
 		// TODO: Move magic string below to .pac.json
