@@ -1,0 +1,17 @@
+
+<div class="mat-card alert-card" [ngClass]="alertLevel">
+	<div class="alert-content">
+		<div class="icon-wrapper">
+			<fa-icon [icon]="alertIcon" class="main-icon fa-2x"></fa-icon>
+		</div>
+		<div class="text-wrapper">
+			<div class="alert-title">	
+				<ng-content select="[alert-title]"></ng-content>
+			</div>
+			<div class="alert-body">
+				<ng-content select="[alert-body]"></ng-content>
+			</div>
+
+		</div>
+	</div>
+</div>

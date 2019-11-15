@@ -1,0 +1,72 @@
+<h1 mat-dialog-title>{{ data._id ? 'Edit User' : 'Add User' }}</h1>
+<div mat-dialog-content [formGroup]="form">
+	<div>
+
+		<mat-form-field class="short-field">
+		  <mat-label>Title</mat-label>
+		  <mat-select formControlName="title">
+  		  <mat-option *ngFor="let t of titles" [value]="t">
+   		   {{t}}
+  		  </mat-option>
+ 		 </mat-select>
+		</mat-form-field>
+	  <mat-form-field>
+	    <input matInput placeholder="First Name" type="text" formControlName="firstName" required>
+	    <mat-error *ngIf="form.controls.firstName.hasError('required')">
+      		First Name is <strong>required</strong>
+  		</mat-error>
+	  </mat-form-field>
+	  <mat-form-field>
+	    <input matInput placeholder="Last Name" type="text" formControlName="lastName" required>
+	    <mat-error *ngIf="form.controls.lastName.hasError('required')">
+      		Last Name is <strong>required</strong>
+  		</mat-error>
+	  </mat-form-field>
+	</div>
+	<div>
+	  <mat-form-field>
+	    <input matInput placeholder="Phone Number" type="tel" formControlName="phone">
+	  </mat-form-field>
+	  <mat-form-field class="long-field">
+	    <input matInput placeholder="Email Address" type="email" formControlName="email" required>
+	    <mat-error *ngIf="form.controls.email.hasError('required')">
+      		Email address is <strong>required</strong>
+  		</mat-error>
+  		<mat-error *ngIf="form.controls.email.hasError('email')">
+      		Email address is <strong>invalid</strong>
+  		</mat-error>
+	  </mat-form-field>
+	</div>
+
+	<div>
+	  <mat-form-field>
+	  	<input matInput [matDatepicker]="bdaypicker" placeholder="Birthdate" formControlName="birthdate" required>
+	  	<mat-datepicker-toggle matSuffix [for]="bdaypicker"></mat-datepicker-toggle>
+	  	<mat-datepicker #bdaypicker></mat-datepicker>
+	  </mat-form-field>
+	   <mat-form-field>
+		  <mat-label>Role</mat-label>
+		  <mat-select class="capitalize" formControlName="role">
+  		  <mat-option *ngFor="let r of roles" class="capitalize" [value]="r">
+   		   {{r}}
+  		  </mat-option>
+ 		 </mat-select>
+		</mat-form-field>
+	</div>
+
+		<div>
+	  <mat-form-field class='xlong-field'>
+	  	<textarea matInput placeholder="Notes" rows='1'  formControlName="notes" cdkTextareaAutosize></textarea>
+	  </mat-form-field>
+	 
+	  
+	</div>
+
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()" color="primary">Cancel</button>
+  <button mat-flat-button cdkFocusInitial *ngIf="data._id" color="primary" (click)="onSave()" [disabled]="!form.valid">Save</button>
+  <button mat-flat-button cdkFocusInitial *ngIf="!data._id" color="primary" (click)="onAdd()" [disabled]="!form.valid">Add</button>
+  
+</div>

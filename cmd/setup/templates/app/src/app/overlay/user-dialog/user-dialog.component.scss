@@ -1,0 +1,37 @@
+.mat-form-field {
+	margin-left: .5em;
+	margin-right: .5em;
+	width: 200px;
+}
+
+
+// ::ng-deep .mat-form-field-infix {
+// 	width: 200px !important;
+// }
+
+.short-field {
+width: 100px !important	;
+// ::ng-deep .mat-form-field-infix {
+// 	width: 100px !important;
+// }
+}
+
+.long-field {
+width: 320px !important	;
+// ::ng-deep .mat-form-field-infix {
+// 	width: 320px !important;
+// }
+}
+
+
+.xlong-field {
+width: 100% !important;
+}
+
+.capitalize {
+	text-transform: capitalize;
+}
+
+.mat-dialog-actions {
+	justify-content: flex-end;
+}

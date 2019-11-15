@@ -1,0 +1,5 @@
+<nav class="navigation-bar-component">
+	<a mat-button *ngFor="let r of displayRoutes" [routerLink]="r.path" routerLinkActive="active-link" class="router-link">
+		{{ r.displayName }}
+    </a>
+</nav>

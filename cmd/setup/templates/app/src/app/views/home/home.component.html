@@ -1,0 +1,18 @@
+
+<app-alert-card alertLevel="success" *ngIf="username">
+	<div alert-title>	
+		Congratulations!
+	</div>
+	<div alert-body>
+		You are on the home page and logged in. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam ultrices imperdiet lobortis. Vivamus a tristique enim, a auctor enim. Nulla volutpat justo et facilisis dignissim. Nunc egestas volutpat pellentesque. Integer placerat nisi nulla, quis finibus elit lacinia at. Aenean semper justo et nunc placerat, ac bibendum ante auctor. Aenean hendrerit interdum quam, sit amet aliquam nibh tempus ultricies. Sed commodo nisi vel lectus scelerisque mollis. 
+	</div>	
+</app-alert-card>
+
+<app-alert-card alertLevel="warn" *ngIf="!username">
+	<div alert-title>	
+		You Are Unauthenticated
+	</div>
+	<div alert-body>
+		You are on the home page, but you are not logged in. Sed id enim nec massa sollicitudin tempor in sit amet velit. Morbi gravida leo arcu, luctus molestie urna congue eu. Quisque dapibus, velit vitae mattis faucibus, ante nibh consectetur augue, a viverra lorem nisi a.
+	</div>	
+</app-alert-card>

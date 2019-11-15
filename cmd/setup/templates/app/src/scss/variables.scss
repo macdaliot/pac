@@ -8,3 +8,30 @@ $font-serif: "Merriweather", "Georgia", "Cambria", "Times New Roman", "Times", s
 $font-size: 17px;
 
 $hover-highlight: rgba(0, 0, 0, 0.12);
+
+@import '~@angular/material/theming';
+
+// Copy the palettes from your selected theme (usually theme.scss).
+$cap-app-primary: mat-palette($mat-blue, 700, 300,  900);
+$cap-app-accent:  mat-palette($mat-pink, A200, A100, A400);
+$cap-app-info:    mat-palette($mat-cyan);
+$cap-app-error:    mat-palette($mat-red);
+$cap-app-warn:    mat-palette($mat-amber);
+$cap-app-success:    mat-palette($mat-green);
+// Create your Sass color vars (will be available in all the project)
+$primary: mat-color($cap-app-primary);
+$primary-darker: darken(mat-color($cap-app-primary, darker), 20%);
+$primary-background: mat-color($cap-app-primary, 50);
+$accent: mat-color($cap-app-accent);
+$accent-light: mat-color($cap-app-accent, lighter);
+
+$info: mat-color($cap-app-info);
+$info-background: mat-color($cap-app-info, 50);
+$error: mat-color($cap-app-error);
+$error-background: mat-color($cap-app-error, 50);
+$warn: mat-color($cap-app-warn);
+$warn-background: mat-color($cap-app-warn, 50);
+$success: mat-color($cap-app-success);
+$success-background: mat-color($cap-app-success, 50);
+
+//$primary-background: rgb(225, 243, 248);

@@ -1,0 +1,26 @@
+<header class="header-component">
+        <div class="section left">
+            <div class="image"></div>
+            <h1 class="application-title">{{.projectName}}</h1>
+        </div>
+    <div class="section right">
+        
+
+<div class="logged-in-user-section">
+    <div class="user-menu-button" *ngIf="username">
+        <fa-icon [icon]="faUser"></fa-icon>
+        <!--<span class="fas fa-user user-icon"></span>-->
+        <span class="username">{{username}}</span>
+        <fa-icon [icon]="faCaretDown"></fa-icon>
+        {{ expiry | date: 'medium'}}
+        <!-- <span class="fas fa-caret-down"></span> -->
+    </div>
+    <button mat-flat-button (click)="gotoLogin()" color="primary" *ngIf="!username">Login</button>
+    <button mat-flat-button (click)="logout()" color="primary" *ngIf="username">Logout</button>
+<!-- 
+    <Button text={'Logout'} priority={ButtonPriority.Primary} onClick={this.props.logout} /> -->
+</div>
+
+
+    </div>
+</header>

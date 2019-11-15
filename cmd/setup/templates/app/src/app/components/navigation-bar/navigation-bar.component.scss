@@ -1,0 +1,63 @@
+@import '../../../scss/variables.scss';
+//@import '~@angular/material/theming';
+//$primary: map-get($theme, primary);
+
+.navigation-bar-component {
+  align-items: center;
+  background-color: $primary-darker; // #193252;
+  color: white;
+  display: flex;
+  font-weight: 700;
+  height: 40px;
+  min-height: 40px;
+  padding-left: 30px;
+  padding-right: 30px;
+
+  a {
+    color: white;
+  }
+
+  .route-button {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    height: 100%;
+    margin-right: 4px;
+
+  }
+
+  .route-button:hover,
+  .active-route {
+    background-color: white;
+    color: #193252;
+  }
+
+  .router-link {
+    border-radius: 0;
+    border-bottom: 4px solid transparent;
+    padding-bottom: 1px;
+    margin-left: .45rem;
+  }
+
+  .router-link:hover {
+      border-bottom: 4px solid transparentize($accent, .2);
+    }
+
+  .router-link:focus {
+       outline: .25rem solid $accent-light;
+    }
+
+  .active-link {
+    border-radius: 0;
+    border-bottom: 4px solid $accent;
+//    color: #193252;
+  }
+
+  .route-button-inner {
+    border-left: 1px solid white;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+}

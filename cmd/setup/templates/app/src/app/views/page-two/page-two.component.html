@@ -1,0 +1,52 @@
+<div class="button-bar">
+<button mat-button (click)="addUser()" color="primary" >
+  <fa-icon [icon]="faPlus"></fa-icon>
+  Add User
+</button>
+</div>
+<mat-table [dataSource]="users" class="mat-elevation-z2 data-table">
+  <!-- Position Column -->
+  <ng-container matColumnDef="name">
+    <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+    <mat-cell *matCellDef="let user"><div class="truncate-text" title="{{user.title}} {{user.firstName}} {{user.lastName}}"> {{user.title}} {{user.firstName}} {{user.lastName}} </div></mat-cell>
+  </ng-container>
+
+  <!-- Name Column -->
+  <ng-container matColumnDef="role">
+    <mat-header-cell *matHeaderCellDef> Role </mat-header-cell>
+    <mat-cell *matCellDef="let user"> {{user.role}} </mat-cell>
+  </ng-container>
+
+  <!-- Name Column -->
+  <ng-container matColumnDef="phone">
+    <mat-header-cell *matHeaderCellDef> Phone </mat-header-cell>
+    <mat-cell *matCellDef="let user"> {{user.phone | phone}} </mat-cell>
+  </ng-container>
+
+  <!-- Name Column -->
+  <ng-container matColumnDef="email">
+    <mat-header-cell *matHeaderCellDef> Email </mat-header-cell>
+    <mat-cell *matCellDef="let user"><div class="truncate-text" title="{{user.email}}"> {{user.email}} </div></mat-cell>
+  </ng-container>
+
+  <!-- Name Column -->
+  <ng-container matColumnDef="date">
+    <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
+    <mat-cell *matCellDef="let user"> {{user.birthdate | date : 'shortDate' : 'utc'}}  </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <mat-header-cell *matHeaderCellDef class="tab-content-center"> Actions </mat-header-cell>
+    <mat-cell *matCellDef="let user" class="tab-content-center">  
+    	<button mat-icon-button color="primary" (click)="editUser(user)" aria-label="Edit">
+	    	<fa-icon [icon]="faEdit"></fa-icon>
+	    </button>
+	    <button mat-icon-button color="primary" aria-label="Delete">
+	    	<fa-icon [icon]="faTrash" (click)="deleteUser(user)"></fa-icon>
+	    </button>
+    </mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>

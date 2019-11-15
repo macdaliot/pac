@@ -1,0 +1,82 @@
+@import '../../../scss/variables.scss';
+:host {
+
+}
+
+.alert-card {
+ // background: $primary-background !important;
+  margin: 30px 15px;
+  position: relative;
+  padding: 18px 20px 16px 10px;
+ 
+}
+
+.alert-card::before {
+//	background-color: $primary;
+	content: "";
+	height: 100%;
+	left: 0;
+	position: absolute;
+	top: 0;
+	width: .5rem;
+
+}
+
+.error.alert-card {
+	background: $error-background !important;
+}
+.error.alert-card:before {
+	background-color: $error;
+}
+
+.success.alert-card {
+	background: $success-background !important;
+}
+.success.alert-card:before {
+	background-color: $success;
+}
+
+.warn.alert-card {
+	background: $warn-background !important;
+}
+.warn.alert-card:before {
+	background-color: $warn;
+}
+
+
+.info.alert-card {
+	background: $info-background !important;
+}
+.info.alert-card::before {
+	background-color: $info;
+}
+
+
+.alert-content {
+	display: flex;
+}
+
+.icon-wrapper {
+	display: inline-block;
+    text-align: left;
+    height: 100%;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-right: 0.3em;
+}
+
+.main-icon {
+   margin: auto 0.5em;
+   display: block;
+}
+.content {
+	display: inline-block;
+}
+
+.alert-title {
+	 font-family: $font-sans-serif;
+	 font-size: 1.3em;
+	 font-weight: bold;
+	 line-height: 1.1;
+	 margin-bottom: .5em;
+}

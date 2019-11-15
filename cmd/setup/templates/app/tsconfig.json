@@ -1,21 +1,32 @@
 {
-    "extends": "../tsconfig.json",
-    "include": ["src"],
-    "compilerOptions": {
-        "baseUrl": "./",
-        "outDir": "./build/",
-        "sourceMap": true,
-        "noImplicitAny": false,
-        "module": "commonjs",
-        "target": "es5",
-        "lib": ["es2015", "dom"],
-        "jsx": "react",
-        "resolveJsonModule": true,
-        "types": ["jest"],
-        "paths": {
-            "@app/*": ["src/*"],
-            "@app/test-setup": ["./test-setup"],
-            "@pyramid-systems/domain": ["../domain/models"]
-        }
-    }
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "es2015",
+    "paths": {
+        "@pyramid-systems/domain": ["src/domain"],
+        "@app-root": ["src/app"]
+      },
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2018",
+      "dom"
+    ]
+  },
+  "angularCompilerOptions": {
+    "fullTemplateTypeCheck": true,
+    "strictInjectionParameters": true, 
+     
+  }, 
+
 }

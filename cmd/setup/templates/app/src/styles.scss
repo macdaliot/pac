@@ -1,0 +1,87 @@
+
+//@import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+@import './scss/variables.scss';
+
+html, body, #container {
+  height: 100%;
+  font-family: $font-sans-serif;
+  font-size: $font-size;
+  margin: 0;
+  padding: 0;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.main {
+  flex-grow: 1;
+  margin-left: 30px;
+  margin-right: 30px;
+}
+
+// app-alert-card {
+//   background: rgb(225, 243, 248) !important;
+//   margin: 30px 15px;
+
+
+// }
+
+// app-alert-card::before {
+//   background-color: $primary;
+//   content: "CC";
+//   height: 100%;
+//   left: 0;
+//   position: absolute;
+//   top: 0;
+//   width: .5rem;
+
+// }
+
+a {
+  text-decoration: none;
+}
+
+.tab-content-center {
+  justify-content: center;
+}
+
+
+.tab-content-right {
+  justify-content: right;
+}
+
+.mat-table {
+  text-overflow: ellipsis;
+}
+
+.truncate-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  flex: 1 1 0;
+
+}
+
+.mat-header-row {
+  min-height: 32px !important;
+}
+.mat-header-cell {
+  font-weight: bold !important;
+  color: rgba(0, 0, 0, 0.63) !important;
+  font-size: 13px !important;
+}
+
+fa-icon {
+  margin: .75em;
+}
+
+button {
+  font-family: $font-sans-serif;
+}/* You can add global styles to this file, and also import other style files */
+
+// html, body { height: 100%; }
+// body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
