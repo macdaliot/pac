@@ -11,6 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { By } from '@angular/platform-browser';
 describe('UserDialogComponent', () => {
  const data = {msg: 'Dialog Message'};
  let component: UserDialogComponent;
@@ -38,4 +39,14 @@ describe('UserDialogComponent', () => {
  it('should create', () => {
      expect(component).toBeTruthy();
    });
+
+ it('call save on save click', () => {
+    // const button = fixture.debugElement.query(By.css('#saveButton'));
+   //  const compiled = fixture.debugElement.nativeElement;
+///const butt2 = compiled.querySelector('#saveButton');
+   //  debugger; 
+  //   expect(button.nativeElement.innerText).toEqual('Save');
+    // expect(component).toBeTruthy();
+   });
+
 });

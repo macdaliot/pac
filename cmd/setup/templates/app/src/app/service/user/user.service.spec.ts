@@ -55,6 +55,14 @@ describe('UserService', () => {
     expect(req.request.method).toBe('GET');
     req.flush(dummyUsers);
 
+    let sub1 = service.usersObservable.subscribe(users => {
+      expect(users.length).toBe(2);
+      expect(users[0]).toEqual(new User(dummyUsers[0]));
+      done();
+    });
+    sub1.unsubscribe();
+
+
     const newUser = Object.assign({}, dummyUsers[0]);
     newUser.firstName = 'David';
     service.editUser('5678', new User(newUser));
@@ -89,6 +97,29 @@ describe('UserService', () => {
 
     service.usersObservable.subscribe(users => {
       expect(users.length).toBe(1);
+      done();
+    });
+
+  });
+
+  it('add should send messages on observable', (done) => {
+    const service: UserService = TestBed.get(UserService);
+
+    service.loadUsers();
+    const req = httpMock.expectOne(`https://mockdata/api/myuser/`);
+    expect(req.request.method).toBe('GET');
+    req.flush(dummyUsers);
+
+    service.addUser(new User({firstName: 'David', lastName: 'Jones'}));
+
+    const req2 = httpMock.expectOne(`https://mockdata/api/myuser/`);
+    expect(req2.request.method).toBe('POST');
+
+    req2.flush(['ABCD']);
+
+    service.usersObservable.subscribe(users => {
+       expect(users[0]._id).toBe('ABCD');
+      expect(users.length).toBe(3);
       done();
     });
 

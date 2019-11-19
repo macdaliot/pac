@@ -31,7 +31,7 @@ import { AlertCardComponent } from './components/alert-card/alert-card.component
 import { LoginComponent } from './views/login/login.component';
 import { PhonePipe } from './pipe/phone.pipe';
 import { UserDialogComponent } from './overlay/user-dialog/user-dialog.component';
-import { ConfirmDeleteDialogComponent } from './confirm-delete-dialog/confirm-delete-dialog.component';
+/// import { ConfirmDeleteDialogComponent } from './confirm-delete-dialog/confirm-delete-dialog.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -45,8 +45,7 @@ import { ConfirmDeleteDialogComponent } from './confirm-delete-dialog/confirm-de
     AlertCardComponent,
     LoginComponent,
     PhonePipe,
-    UserDialogComponent,
-    ConfirmDeleteDialogComponent
+    UserDialogComponent
   ],
   imports: [
     BrowserModule,
